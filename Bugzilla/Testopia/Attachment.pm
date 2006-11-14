@@ -181,21 +181,6 @@ sub _validate_data {
     my $maxsize = Param('maxattachmentsize');
     $maxsize *= 1024; # Convert from K
     
-    # Windows screenshots are usually uncompressed BMP files which
-    # makes for a quick way to eat up disk space. Let's compress them. 
-    # We do this before we check the size since the uncompressed version
-    # could easily be greater than maxattachmentsize.
-    if (Param('convert_uncompressed_images') 
-          && $self->{'mime_type'} eq 'image/bmp'){
-      require Image::Magick; 
-      my $img = Image::Magick->new(magick=>'bmp');
-      $img->BlobToImage($self->{'contents'});
-      $img->set(magick=>'png');
-      my $imgdata = $img->ImageToBlob();
-      $self->{'contents'} = $imgdata;
-      $self->{'contenttype'} = 'image/png';
-    }
-        
     # Make sure the attachment does not exceed the maximum permitted size
     my $len = $self->{'contents'} ? length($self->{'contents'}) : 0;
     if ($maxsize && $len > $maxsize) {
