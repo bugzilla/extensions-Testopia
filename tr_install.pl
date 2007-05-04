@@ -548,8 +548,8 @@ sub populateMiscTables {
             "WHERE table_name = 'test_cases' " .
             "AND name = 'estimated_time'") == 0) {
         $dbh->do("INSERT INTO test_fielddefs " .
-                "(fieldid, name, description, table_name) " .
-                "VALUES (24, 'estimated_time', 'Estimated Time', 'test_cases')");
+                "(name, description, table_name) " .
+                "VALUES ('estimated_time', 'Estimated Time', 'test_cases')");
     }
 
     # Insert initial values in static tables. Going out on a limb and
@@ -586,12 +586,10 @@ sub populateEnvTables {
         'rep_platform READ');
 
     print "Populating test_environment_category table ...\n";
-    $dbh->do("INSERT INTO test_environment_category " .
-        "(env_category_id, product_id, name) " .
-        "VALUES (1, 0, 'Operating System')");
-    $dbh->do("INSERT INTO test_environment_category " .
-        "(env_category_id, product_id, name) " .
-        "VALUES (2, 0, 'Hardware')");
+    $dbh->do("INSERT INTO test_environment_category (product_id, name) " .
+             "VALUES (0, 'Operating System')");
+    $dbh->do("INSERT INTO test_environment_category (product_id, name) " .
+             "VALUES (0, 'Hardware')");
 
     print "Populating test_environment_element table ...\n";
     $sth = $dbh->prepare("INSERT INTO test_environment_element " .
