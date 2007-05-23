@@ -34,15 +34,18 @@
 
 [% IF deleted %]
   [% title = "Attachment Deleted" %]
-  [% PROCESS global/header.html.tmpl %]
+  [% PROCESS global/header.html.tmpl
+   style_urls = ['testopia.css'] %]
   [% PROCESS testopia/messages.html.tmpl %]
 [% ELSIF removed %]
   [% title = "Attachment Removed from $obj.type $obj.id" %]
-  [% PROCESS global/header.html.tmpl %]
+  [% PROCESS global/header.html.tmpl
+   style_urls = ['testopia.css'] %]
   [% PROCESS testopia/messages.html.tmpl %]
 [% ELSE %]
   [% title = "Delete Attachment '$attachment.description'" %]
-  [% PROCESS global/header.html.tmpl %]
+  [% PROCESS global/header.html.tmpl
+   style_urls = ['testopia.css'] %]
 
 [% IF action == 'do_delete' %]
 You are about to permanantly delete this attachment.

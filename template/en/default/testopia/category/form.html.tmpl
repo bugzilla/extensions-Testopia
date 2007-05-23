@@ -24,7 +24,8 @@
   [% title = "Edit Category $category.name for $product.name" %]
 [% END %]
 
-[% PROCESS global/header.html.tmpl %]
+[% PROCESS global/header.html.tmpl
+   style_urls = ['testopia.css'] %]
 
 <form method="POST" action="tr_categories.cgi" name="form">
   <input type="hidden" name="action" value="[% action FILTER none %]"/>

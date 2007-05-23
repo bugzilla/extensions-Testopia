@@ -38,7 +38,8 @@
 [% ELSE %]
   [% title = "Delete Test Case: $case.id - $case.summary" %]
 [% END %]
-[% PROCESS global/header.html.tmpl %] 
+[% PROCESS global/header.html.tmpl
+   style_urls = ['testopia.css'] %] 
 
 [% IF NOT deleted %]
 You are about to permanently delete this test case with all its history. 

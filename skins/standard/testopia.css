@@ -1,3 +1,51 @@
+
+#header .label {
+    display: none;
+}
+
+#header .testopia_links {
+    background: #546292;
+}
+
+#header li.tr_find {
+	position:absolute;
+	top:0px;
+	right:10px;
+}
+#header li.tr_saved_search {
+    position:absolute;
+    top:2px;
+	right:185px;
+}
+
+#header .testopia_btn {
+    background-color:#546292;
+    color:#ffffff;
+    font-weight:bold;
+    font-size:100%;
+    border:none;
+}
+
+#footer li.tr_find {
+	position:absolute;
+	top:2px;
+	right:10px;
+}
+
+#footer li.tr_saved_search {
+    position:absolute;
+    top:4px;
+	right:185px;
+}
+#footer .tr_btn {
+    background-color: #808285;
+    font-size: 80%;
+    color:#ffffff;
+    font-size:100%;
+    border:none;
+}
+
+/* old default.css */
 textarea {
   background-color: #fff;
   border: 1px solid #999;
