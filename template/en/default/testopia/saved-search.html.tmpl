@@ -23,7 +23,7 @@
     <a href="tr_query.cgi?action=delete_query&query_name=[% qname FILTER url_quote %]">Delete saved query [% qname FILTER html %]</a>
   [% ELSE %]
   <form action="tr_query.cgi" method="POST">
-    <input type="hidden" name="query_part" value="[% table.get_url %][% table.get_query_part %]">
+    <input type="hidden" name="query_part" value="[% table.get_url %]">
     <input type="hidden" name="action" value="save_query">
     <input type="submit" value="Save Search"> as
     <input name="query_name">
