@@ -33,10 +33,10 @@
   </tr>
   
 [% FOREACH b = product.builds %]
-<tr>
+<tr class="[% loop.count % 2 == 1 ? "bz_row_odd" : "bz_row_even" %]">
   <td valign="top">[% b.name FILTER html %]</td>
   <td valign="top">[% b.milestone FILTER html %]</td>
-  <td valign="top">[% b.description FILTER html %]</td>
+  <td valign="top"><pre>[% b.description FILTER html %]</pre></td>
   <td valign="top">[% b.isactive ? "Yes" : "No" %]</td>
   <td valign="top">
   <a href="tr_builds.cgi?action=edit&amp;build_id=[% b.id FILTER none %]&amp;product_id=[% product.id FILTER none %]&plan_id=[% plan_id FILTER url_quote %]">Edit</a>
