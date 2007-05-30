@@ -360,7 +360,6 @@ sub do_update{
     my $est_time    = $cgi->param("estimated_time") || undef;
     if ($tester){
         $tester = login_to_id(trim($cgi->param('tester'))) || ThrowUserError("invalid_username", { name => $cgi->param('tester') });
-        trick_taint($tester);
     }
 
     ThrowUserError('testopia-missing-required-field', {'field' => 'summary'})  if $summary  eq '';
