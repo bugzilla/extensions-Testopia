@@ -76,7 +76,7 @@
 </table>
 [% UNLESS plan.test_case_count OR plan.test_run_count %]
 <script type="text/javascript">
-  getProdVers(document.getElementById('product_id').value);
+  getProdVers(document.getElementById('product_id').value,"[% plan.product_version FILTER html %]");
 </script>
 [% END %]
 <p style="text-align: right">
