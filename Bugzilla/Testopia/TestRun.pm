@@ -987,7 +987,7 @@ sub cases {
     return $self->{'cases'} if exists $self->{'cases'};
     my @cases;
     foreach my $cr (@{$self->current_caseruns}){
-        push @cases, Bugzilla::Testopia::TestCase->new($cr->case_id);
+        push @cases, Bugzilla::Testopia::TestCase->new($cr);
     }
     $self->{'cases'} = \@cases;
     return $self->{'cases'};
