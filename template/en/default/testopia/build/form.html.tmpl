@@ -45,7 +45,7 @@
                                     list      => product.milestones
                                     default   => build.milestone } %]</td>
       <th align="right">Active:</th>
-      <td width="20"><input type="checkbox" name="isactive" value="1" [% 'checked="checked"' IF build.isactive OR action == 'do_add'%]</td>
+      <td width="20"><input type="checkbox" style="border: none" name="isactive" value="1" [% 'checked="checked"' IF build.isactive OR action == 'do_add'%]</td>
     </tr>
     <tr>
       <th align="right" valign="top">Build Description: </th>

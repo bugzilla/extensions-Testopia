@@ -49,7 +49,7 @@ Select:
   </tr>
 [% FOREACH caserun = table.list %]
   <tr class="[% loop.count % 2 == 0 ? "bz_row_odd" : "bz_row_even" %]" [% IF NOT dotweak %]style="cursor:pointer;" onclick="location='tr_show_caserun.cgi?caserun_id=[% caserun.id FILTER none %]'" [% END%]>
-  [% IF dotweak %]<td align="center"><input type="checkbox" id="r_[% caserun.id FILTER none %]" name="r_[% caserun.id FILTER none %]" /></td> [% END %]
+  [% IF dotweak %]<td align="center"><input type="checkbox" style="border: none" id="r_[% caserun.id FILTER none %]" name="r_[% caserun.id FILTER none %]" /></td> [% END %]
   [% IF dotweak %]<td align="center"><a href="tr_show_case.cgi?case_id=[% caserun.case.id FILTER none %]" title="[% caserun.case.summary FILTER html %]">[% caserun.case.id FILTER html %]</a></td>
   <td>[% caserun.case.summary FILTER html %]</td>
   [% END %]

@@ -51,7 +51,7 @@ Select:
   [% FOREACH run = table.list %]
 
 <TR class="[% loop.count % 2 == 1 ? "bz_row_even" : "bz_row_odd" %]">
-  [% IF dotweak %]<td align="center"><input type="checkbox" id="r_[% run.id FILTER none %]" name="r_[% run.id FILTER none %]" /></td> [% END %]
+  [% IF dotweak %]<td align="center"><input type="checkbox" style="border: none" id="r_[% run.id FILTER none %]" name="r_[% run.id FILTER none %]" /></td> [% END %]
   <td align="left"><a href="tr_show_run.cgi?run_id=[% run.id FILTER none %]">[% run.id FILTER html %]</a></td>  
   <td align="left">[% run.summary FILTER html %]</td>
   <td align="left">[% run.build.name FILTER html %]</td>

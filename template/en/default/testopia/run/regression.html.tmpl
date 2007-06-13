@@ -80,7 +80,7 @@
     style="color:grey;"
   [% END %]
 >
-  <td align="right"><input type="CHECKBOX" name="b[% bug.bug_id FILTER none %]"
+  <td align="right"><input type="checkbox" style="border: none" name="b[% bug.bug_id FILTER none %]"
   [% IF bug.enabled %]
     checked="TRUE" onclick="ck(this.checked);" 
   [% ELSE %]
