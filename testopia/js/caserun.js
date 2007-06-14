@@ -217,6 +217,8 @@ function chSortKey(idx, cid, svalue){
 						displayMsg('pp'+ idx, 2, data);
 						return;
 					}
+                    document.getElementById('ra'+idx).style.display='block'; 
+                    document.getElementById('id'+idx).src='testopia/img/td.gif';
 		            displayMsg('pp'+ idx, 1, MSG_TESTLOG_UPDATED);
 		            setTimeout("clearMsg('pp"+ idx +"')",OK_TIMEOUT);
 		            disableAllButtons(false);
