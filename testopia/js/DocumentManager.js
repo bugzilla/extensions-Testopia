@@ -5,26 +5,26 @@ dojo.require("dojo.dom.*");
 dojo.require("dojo.event.*");  
 function DocumentManager(/*string*/ prefix, /*string*/action, /*array of strings*/otherListeners, /*bool*/ directEdit) {
     if (prefix.length > 0) {
-	this.prefix = prefix
-	if ( arguments.length > 1 ) {
-	    this.action = action;
-	} else {
-	    this.action = "Commit";
-	}
-	if ( arguments.length > 2 ) {
-	    this.others = otherListeners;
-	} else {
-	    this.others = [];
-	}
-	if ( arguments.length > 3 ) {
-	    this.directEdit = directEdit;
-	} else {
-	    this.directEdit = false;
-	}
-	this.div;
-	this.widget;
-	this.helpPar;
-	dojo.addOnLoad( dojo.lang.hitch(this, "handleLoad" ) );
+    this.prefix = prefix
+    if ( arguments.length > 1 ) {
+        this.action = action;
+    } else {
+        this.action = "Commit";
+    }
+    if ( arguments.length > 2 ) {
+        this.others = otherListeners;
+    } else {
+        this.others = [];
+    }
+    if ( arguments.length > 3 ) {
+        this.directEdit = directEdit;
+    } else {
+        this.directEdit = false;
+    }
+    this.div;
+    this.widget;
+    this.helpPar;
+    dojo.addOnLoad( dojo.lang.hitch(this, "handleLoad" ) );
     }
 }
 new DocumentManager("");
@@ -42,20 +42,20 @@ DocumentManager.prototype.handleLoad = function() {
     this.helpPar.setAttribute("style", "text-align: right;cursor: default");
     dojo.dom.insertAfter(this.helpPar, this.div);
     if ( this.directEdit ) {
-	return this.gotoEditMode();
+    return this.gotoEditMode();
     } else {
-	var l = document.createElement("a");
-	l.setAttribute("title", "Click here to edit, or double-click document text.");
-	l.setAttribute("style", "cursor: pointer; color: blue");
-	var t = document.createTextNode("Edit Document");
-	l.appendChild(t);
-	this.helpPar.appendChild(l);
-	dojo.event.connect(l, "onclick", this, "gotoEditMode");
-	dojo.event.connect(this.div, "ondblclick", this, "gotoEditMode");
-	for (i = 0; i < this.others.length; ++i) {
-	    var n = document.getElementById(this.others[i]);
-	    dojo.event.connect(n, "ondblclick", this, "gotoEditMode");
-	}
+    var l = document.createElement("a");
+    l.setAttribute("title", "Click here to edit, or double-click document text.");
+    l.setAttribute("style", "cursor: pointer; color: blue");
+    var t = document.createTextNode("Edit Document");
+    l.appendChild(t);
+    this.helpPar.appendChild(l);
+    dojo.event.connect(l, "onclick", this, "gotoEditMode");
+    dojo.event.connect(this.div, "ondblclick", this, "gotoEditMode");
+    for (i = 0; i < this.others.length; ++i) {
+        var n = document.getElementById(this.others[i]);
+        dojo.event.connect(n, "ondblclick", this, "gotoEditMode");
+    }
     }
 }
 DocumentManager.prototype.handleSubmit = function (evt) {
@@ -65,30 +65,30 @@ DocumentManager.prototype.handleSubmit = function (evt) {
     el.setAttribute("type", "hidden");
     var value;
     if (this.widget) {
-	value = this.widget.getEditorContent();
+    value = this.widget.getEditorContent();
     } else {
-	value = "";
-	for (i = 0; i < this.div.childNodes.length; ++i) {
-	    value = value + dojo.dom.innerXML(this.div.childNodes[i]);
-	}
+    value = "";
+    for (i = 0; i < this.div.childNodes.length; ++i) {
+        value = value + dojo.dom.innerXML(this.div.childNodes[i]);
+    }
     }
     el.setAttribute("value", value);
     dojo.dom.insertAfter(el, this.div);
 }
 DocumentManager.prototype.gotoEditMode = function(evt) {
     if (this.widget) {
-	return;
+    return;
     } else {
     this.div.style.border = "1px solid #000";
     this.div.style.padding = "0px 0px 10px 0px";
-	dojo.dom.removeChildren(this.helpPar);
-	var b = document.createElement("input");
-	b.setAttribute("type", "SUBMIT");
-	b.setAttribute("name", "action");
-	b.setAttribute("id", "action");
-	b.setAttribute("class", "tr_button");
-	b.setAttribute("value", this.action);
-	this.helpPar.appendChild(b);
-	this.widget = dojo.widget.createWidget("Editor2", {saveName: this.prefix, minHeight: "3em"}, this.div);
+    dojo.dom.removeChildren(this.helpPar);
+    var b = document.createElement("input");
+    b.setAttribute("type", "SUBMIT");
+    b.setAttribute("name", "action");
+    b.setAttribute("id", "action");
+    b.setAttribute("class", "tr_button");
+    b.setAttribute("value", this.action);
+    this.helpPar.appendChild(b);
+    this.widget = dojo.widget.createWidget("Editor2", {saveName: this.prefix, minHeight: "3em"}, this.div);
     }
 }

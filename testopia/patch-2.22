@@ -3,8 +3,8 @@ Index: checksetup.pl
 RCS file: /cvsroot/mozilla/webtools/bugzilla/checksetup.pl,v
 retrieving revision 1.469
 diff -u -r1.469 checksetup.pl
---- checksetup.pl	12 Jan 2006 07:03:46 -0000	1.469
-+++ checksetup.pl	27 Mar 2007 20:34:34 -0000
+--- checksetup.pl    12 Jan 2006 07:03:46 -0000    1.469
++++ checksetup.pl    27 Mar 2007 20:34:34 -0000
 @@ -313,7 +313,7 @@
      },
      { 
@@ -39,8 +39,8 @@ Index: enter_bug.cgi
 RCS file: /cvsroot/mozilla/webtools/bugzilla/enter_bug.cgi,v
 retrieving revision 1.126
 diff -u -r1.126 enter_bug.cgi
---- enter_bug.cgi	5 Jan 2006 14:54:52 -0000	1.126
-+++ enter_bug.cgi	27 Mar 2007 20:34:34 -0000
+--- enter_bug.cgi    5 Jan 2006 14:54:52 -0000    1.126
++++ enter_bug.cgi    27 Mar 2007 20:34:34 -0000
 @@ -590,6 +590,8 @@
  
  $vars->{'default'} = \%default;
@@ -55,8 +55,8 @@ Index: Bugzilla.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla.pm,v
 retrieving revision 1.29
 diff -u -r1.29 Bugzilla.pm
---- Bugzilla.pm	7 Feb 2006 22:46:28 -0000	1.29
-+++ Bugzilla.pm	27 Mar 2007 20:34:34 -0000
+--- Bugzilla.pm    7 Feb 2006 22:46:28 -0000    1.29
++++ Bugzilla.pm    27 Mar 2007 20:34:34 -0000
 @@ -46,6 +46,7 @@
  use constant SHUTDOWNHTML_EXEMPT => [
      'editparams.cgi',
@@ -70,8 +70,8 @@ Index: post_bug.cgi
 RCS file: /cvsroot/mozilla/webtools/bugzilla/post_bug.cgi,v
 retrieving revision 1.135
 diff -u -r1.135 post_bug.cgi
---- post_bug.cgi	8 Jan 2006 19:56:03 -0000	1.135
-+++ post_bug.cgi	27 Mar 2007 20:34:34 -0000
+--- post_bug.cgi    8 Jan 2006 19:56:03 -0000    1.135
++++ post_bug.cgi    27 Mar 2007 20:34:34 -0000
 @@ -33,6 +33,8 @@
  use Bugzilla::Bug;
  use Bugzilla::User;
@@ -104,8 +104,8 @@ Index: editusers.cgi
 RCS file: /cvsroot/mozilla/webtools/bugzilla/editusers.cgi,v
 retrieving revision 1.113
 diff -u -r1.113 editusers.cgi
---- editusers.cgi	3 Jan 2006 08:40:45 -0000	1.113
-+++ editusers.cgi	27 Mar 2007 20:34:34 -0000
+--- editusers.cgi    3 Jan 2006 08:40:45 -0000    1.113
++++ editusers.cgi    27 Mar 2007 20:34:34 -0000
 @@ -185,6 +185,8 @@
      # Lock tables during the check+creation session.
      $dbh->bz_lock_tables('profiles WRITE',
@@ -129,8 +129,8 @@ Index: Bugzilla/User.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/User.pm,v
 retrieving revision 1.101.2.3
 diff -u -r1.101.2.3 User.pm
---- Bugzilla/User.pm	14 Mar 2006 07:45:54 -0000	1.101.2.3
-+++ Bugzilla/User.pm	27 Mar 2007 20:34:34 -0000
+--- Bugzilla/User.pm    14 Mar 2006 07:45:54 -0000    1.101.2.3
++++ Bugzilla/User.pm    27 Mar 2007 20:34:34 -0000
 @@ -236,6 +236,16 @@
      return $self->{queries};
  }
@@ -225,8 +225,8 @@ Index: Bugzilla/Template.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Template.pm,v
 retrieving revision 1.41
 diff -u -r1.41 Template.pm
---- Bugzilla/Template.pm	22 Jan 2006 21:37:37 -0000	1.41
-+++ Bugzilla/Template.pm	27 Mar 2007 20:34:34 -0000
+--- Bugzilla/Template.pm    22 Jan 2006 21:37:37 -0000    1.41
++++ Bugzilla/Template.pm    27 Mar 2007 20:34:34 -0000
 @@ -499,6 +499,14 @@
                  return $var;
              },
@@ -247,8 +247,8 @@ Index: Bugzilla/DB/Schema/Mysql.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/DB/Schema/Mysql.pm,v
 retrieving revision 1.12
 diff -u -r1.12 Mysql.pm
---- Bugzilla/DB/Schema/Mysql.pm	18 Dec 2005 18:53:00 -0000	1.12
-+++ Bugzilla/DB/Schema/Mysql.pm	27 Mar 2007 20:34:34 -0000
+--- Bugzilla/DB/Schema/Mysql.pm    18 Dec 2005 18:53:00 -0000    1.12
++++ Bugzilla/DB/Schema/Mysql.pm    27 Mar 2007 20:34:34 -0000
 @@ -103,9 +103,10 @@
          INT3 =>         'mediumint',
          INT4 =>         'integer',
@@ -268,8 +268,8 @@ Index: Bugzilla/DB/Schema/Pg.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/DB/Schema/Pg.pm,v
 retrieving revision 1.9
 diff -u -r1.9 Pg.pm
---- Bugzilla/DB/Schema/Pg.pm	15 Jun 2005 03:54:59 -0000	1.9
-+++ Bugzilla/DB/Schema/Pg.pm	27 Mar 2007 20:34:34 -0000
+--- Bugzilla/DB/Schema/Pg.pm    15 Jun 2005 03:54:59 -0000    1.9
++++ Bugzilla/DB/Schema/Pg.pm    27 Mar 2007 20:34:34 -0000
 @@ -69,6 +69,7 @@
          INT3 =>         'integer',
          INT4 =>         'integer',
@@ -283,8 +283,8 @@ Index: Bugzilla/DB/Schema.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/DB/Schema.pm,v
 retrieving revision 1.45
 diff -u -r1.45 Schema.pm
---- Bugzilla/DB/Schema.pm	6 Jan 2006 14:38:42 -0000	1.45
-+++ Bugzilla/DB/Schema.pm	27 Mar 2007 20:34:34 -0000
+--- Bugzilla/DB/Schema.pm    6 Jan 2006 14:38:42 -0000    1.45
++++ Bugzilla/DB/Schema.pm    27 Mar 2007 20:34:34 -0000
 @@ -1040,6 +1040,557 @@
          ],
      },
@@ -847,8 +847,8 @@ Index: createaccount.cgi
 RCS file: /cvsroot/mozilla/webtools/bugzilla/createaccount.cgi,v
 retrieving revision 1.46
 diff -u -r1.46 createaccount.cgi
---- createaccount.cgi	20 Dec 2005 22:16:07 -0000	1.46
-+++ createaccount.cgi	12 Jun 2007 16:31:57 -0000
+--- createaccount.cgi    20 Dec 2005 22:16:07 -0000    1.46
++++ createaccount.cgi    12 Jun 2007 16:31:57 -0000
 @@ -69,8 +69,8 @@
  
      $vars->{'login'} = $login;

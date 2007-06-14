@@ -100,7 +100,7 @@ sub make_fault
 {
     my $self = shift;
 
-	# RPC Fault Code must be an integer
+    # RPC Fault Code must be an integer
     $self->SUPER::make_fault(ERROR_FAULT_SERVER, $_[1]);
 }
 
