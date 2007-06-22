@@ -153,8 +153,8 @@ else {
 sub display {
     my $dbh = Bugzilla->dbh;
     my @tags;
-    my $user = login_to_id($cgi->param('user')) if $cgi->param('user');
-    trick_taint($user);
+    my $user = $cgi->param('user');
+    $user = login_to_id($user) if $user;
     
     if ($cgi->param('action') eq 'show_all' && Bugzilla->user->in_group('admin')){
         my $tags = $dbh->selectcol_arrayref(
