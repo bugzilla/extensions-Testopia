@@ -23,8 +23,6 @@
     dojo.require("dojo.widget.ComboBox");
     dojo.addOnLoad(
       function() {
-       dojo.widget.manager.getWidgetById('environment').setValue('[% run.environment.id FILTER none %]');
-       dojo.widget.manager.getWidgetById('environment').setLabel('[% run.environment.name FILTER html %]');
        dojo.widget.manager.getWidgetById('manager').setValue('[% run.manager.login ? run.manager.login : user.login FILTER none %]');
        dojo.widget.manager.getWidgetById('manager').setLabel('[% run.manager.login ? run.manager.login : user.login FILTER none %]');
       }
@@ -58,6 +56,8 @@
       <td><input dojoType="select" 
                  dataUrl="tr_quicksearch.cgi?action=getuser&search=${searchString}" 
                  mode="remote"
+                 searchDelay="1000"
+                 forceValidOption="true"
                  autoComplete="false"
                  id="manager"
                  name="manager"
@@ -68,7 +68,7 @@
       <th align="right"><a href="tr_builds.cgi?product_id=[% run.plan.product_id FILTER none %]">Build</a></td>
       <td>
         [% PROCESS select sel = { name => "build",
-                                  list => run.plan.product.builds(1),
+                                  list => run.plan.product.builds("ACTIVE_ONLY"),
                                   default => run.build.id }
          %]
        [% IF action == 'Add' %]
@@ -81,23 +81,18 @@
     <tr>
       <th align="right" valign="top">Status</th>
       <td valign="top">
-        [% SET statuslist = [{ id => 1, name => 'Running'}, {id => 0, name=> 'Stopped'}] %]
         [% PROCESS select sel = { name => "status", 
-                                  list => statuslist, 
+                                  list => run.get_status_list, 
                                   default => run.stop_date ? 0 : 1 }
         %]
 
       </td>
       <th align="right" valign="top"><a href="tr_list_environments.cgi?product_id=[% run.plan.product_id FILTER none %]">Environment</a></th>
       <td valign="top">
-          <input dojoType="select" 
-                 dataUrl="tr_quicksearch.cgi?action=getenv&prod_id=[% run.plan.product.id FILTER none %]&search=${searchString}" 
-                 mode="remote"
-                 autoComplete="false"
-                 id="environment"
-                 name="environment"
-                 maxListLength="10" 
-                 value="[% run.environment.id FILTER none %]" >
+        [% PROCESS select sel = { name => "environment",
+                                  list => run.plan.product.environments("ACTIVE_ONLY"),
+                                  default => run.environment.id }
+         %]
        [% IF action == 'Add' %]
          <b>or New:</b> <input name="new_env">
        [% END %]
