@@ -64,30 +64,24 @@ elsif ($action eq 'Attach'){
 
     defined $cgi->upload('data')
         || ThrowUserError("file_not_specified");
-    my $filename = $cgi->upload('data');       
-    $cgi->param('description')
-        || ThrowUserError("missing_attachment_description");
-    my $description = $cgi->param('description');
-    my $contenttype = $cgi->uploadInfo($cgi->param('data'))->{'Content-Type'};
-    trick_taint($description);
+    
     my $fh = $cgi->upload('data');
     my $data;
     # enable 'slurp' mode
     local $/;
-    $data = <$fh>;       
+    $data = <$fh>;
     $data || ThrowUserError("zero_length_file");
     
-    my $attachment = Bugzilla::Testopia::Attachment->new({
+    my $attachment = Bugzilla::Testopia::Attachment->create({
                         caserun_id   => $caserun_id,
                         case_id      => $caserun->case->id,
                         submitter_id => Bugzilla->user->id,
-                        description  => $description,
-                        filename     => $filename,
-                        mime_type    => $contenttype,
+                        description  => $cgi->param('description'),
+                        filename     => $cgi->upload('data'),
+                        mime_type    => $cgi->uploadInfo($cgi->param('data'))->{'Content-Type'},
                         contents     => $data
     });
 
-    $attachment->store;
     $vars->{'tr_message'} = "File attached.";
     $vars->{'backlink'} = $caserun;
     display(Bugzilla::Testopia::TestCaseRun->new($caserun->id));
