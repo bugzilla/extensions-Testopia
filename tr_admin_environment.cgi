@@ -34,6 +34,7 @@ use Bugzilla::Error;
 use Bugzilla::Testopia::Util;
 use Bugzilla::Testopia::TestRun;
 use Bugzilla::Testopia::Product;
+use Bugzilla::Testopia::Constants;
 use Bugzilla::Testopia::Classification;
 use Bugzilla::Testopia::Environment;
 use Bugzilla::Testopia::Environment::Element;
