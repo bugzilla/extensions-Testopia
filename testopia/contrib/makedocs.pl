@@ -10,11 +10,12 @@ opendir DIR, $dir or die "Failed to open $dir: $!";
 while (defined(my $file = readdir(DIR))){
     next if ($file =~ /^\./);
 
-#    print $file . "\n";
     pod2html("$dir/$file",
         "--outfile=../doc/pod/webservice/$file.html",
         "--title=$file");
 }
+
+closedir DIR;
 
 $dir = '../../Bugzilla/Testopia';
 opendir DIR, $dir or die "Failed to open $dir: $!";
