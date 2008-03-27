@@ -1,19 +1,16 @@
 [%# 1.0@bugzilla.org %]
 
 [% test_case_count = bug.get_test_case_count %]
+<ul>
 [% IF test_case_count > 0 %]
-    &nbsp; | &nbsp;
-    <a href="tr_list_cases.cgi?bug_id=[% bug.bug_id %]&current_tab=case">
+    <li><a href="tr_list_cases.cgi?bug_id=[% bug.bug_id %]&current_tab=case">
     View [% terms.Bug %] Test Cases ([% test_case_count %]
     [% IF test_case_count > 1 %]
         cases)
     [% ELSE %]
         case)
     [% END %]
-    </a>
+    </a></li>
 [% END %]
-
-&nbsp; | &nbsp;
-<td align="center">
-<a href="tr_new_case.cgi?product=[% bug.product FILTER url_quote %]&bug=[% bug.bug_id %]">
-Create test case</a></td>
+    <li><a href="tr_new_case.cgi?product=[% bug.product FILTER url_quote %]&bug=[% bug.bug_id %]">Create test case</a></li>
+</ul>
