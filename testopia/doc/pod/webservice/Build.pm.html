@@ -1,0 +1,160 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Build.pm</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:feedback@suse.de" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#extends">EXTENDS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Bugzilla::Testopia::Webservice::Build</p>
+<p>
+</p>
+<hr />
+<h1><a name="extends">EXTENDS</a></h1>
+<p>Bugzilla::Webservice</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Provides methods for automated scripts to manipulate Testopia Builds</p>
+<p>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<dl>
+<dt><strong><a name="item_check_build"><code>check_build($name, $product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Looks up and returns a build by name.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $name - String: name of the build.
+              $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Matching Build object hash or error if not found.</pre>
+</dd>
+<dt><strong><a name="item_create"><code>create($values)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Creates a new build object and stores it in the database</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $values - Hash: A reference to a hash with keys and values  
+              matching the fields of the build to be created. 
+  +-------------+----------------+-----------+------------------------------------+
+  | Field       | Type           | Null      | Description                        |
+  +-------------+----------------+-----------+------------------------------------+
+  | product     | Integer/String | Required  | ID or Name of product              |
+  | name        | String         | Required  |                                    |
+  | milestone   | String         | Optional  | Defaults to product's default MS   |
+  | description | String         | Optional  |                                    |
+  | isactive    | Boolean        | Optional  | Defaults to True (1)               |
+  +-------------+----------------+-----------+------------------------------------+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     The newly created object hash.</pre>
+</dd>
+<dt><strong><a name="item_get"><code>get($id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Used to load an existing build from the database.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id - An integer representing the ID in the database</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     A blessed Bugzilla::Testopia::Build object hash
+
+</pre>
+</dd>
+<dt><strong><a name="item_lookup_id_by_name_deprecated__2d_considered_harmfu"><code>lookup_id_by_name</code> <strong>DEPRECATED - CONSIDERED HARMFUL</strong> Use Build::check_build instead</a></strong>
+
+<dt><strong><a name="item_lookup_name_by_id_deprecated_use_build_3a_3aget_in"><code>lookup_name_by_id</code> <strong>DEPRECATED</strong> Use Build::get instead</a></strong>
+
+<dt><strong><a name="item_update"><code>update($id, $values)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Updates the fields of the selected build or builds.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id - Integer: A single build ID.
+
+</pre>
+</dd>
+<dd>
+<pre>
+              $values - Hash of keys matching Build fields and the new values 
+              to set each field to.
+                        +-------------+----------------+
+                        | Field       | Type           |
+                        +-------------+----------------+
+                        | name        | String         |
+                        | milestone   | String         |
+                        | description | String         |
+                        | isactive    | Boolean        |
+                        +-------------+----------------+
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: The updated Build object hash.
+
+</pre>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p><a href="/Bugzilla/Testopia/Build.html">the Bugzilla::Testopia::Build manpage</a>
+<a href="/Bugzilla/Webservice.html">the Bugzilla::Webservice manpage</a> 
+
+</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Greg Hendricks &lt;<a href="mailto:ghendricks@novell.com">ghendricks@novell.com</a>&gt;</p>
+
+</body>
+
+</html>

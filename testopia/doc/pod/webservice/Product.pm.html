@@ -1,0 +1,392 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Product.pm</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:feedback@suse.de" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#extends">EXTENDS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Bugzilla::Testopia::Webservice::Product</p>
+<p>
+</p>
+<hr />
+<h1><a name="extends">EXTENDS</a></h1>
+<p>Bugzilla::Webservice</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Provides methods for automated scripts to expose Testopia Product data.</p>
+<p>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<dl>
+<dt><strong><a name="item_check_category"><code>check_category($name, $product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Looks up and returns a category by name.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $name - String: name of the category.
+              $product - Integer/String/Object
+                 Integer: product_id of the product in the Database
+                 String: Product name
+                 Object: Blessed Bugzilla::Product object</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Matching Category object hash or error if not found.</pre>
+</dd>
+<dt><strong><a name="item_check_component"><code>check_component($name, $product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Looks up and returns a component by name.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $name - String: name of the category.
+              $product - Integer/String/Object
+                 Integer: product_id of the product in the Database
+                 String: Product name
+                 Object: Blessed Bugzilla::Product object</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Matching component object hash or error if not found.</pre>
+</dd>
+<dt><strong><a name="item_check_product"><code>check_product($name, $product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Looks up and returns a validated product.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $name - String: name of the product.
+              $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Matching Product object hash or error if not found.</pre>
+</dd>
+<dt><strong><a name="item_get"><code>get($id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Used to load an existing product from the database.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id - An integer representing the ID in the database</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     A blessed Bugzilla::Testopia::Product object hash</pre>
+</dd>
+<dt><strong><a name="item_get_builds"><code>get_builds($product, $active)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of builds associated with this product.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+              $active  - Boolean: True to only include builds where isactive is true.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Build objects.</pre>
+</dd>
+<dt><strong><a name="item_get_cases"><code>get_cases($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of cases associated with this product.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of TestCase objects.</pre>
+</dd>
+<dt><strong><a name="item_get_categories"><code>get_categories($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of categories associated with this product.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Case Category objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_category"><code>get_category($id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the category matching the given id.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id - Integer: ID of the category in the database.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Category object hash.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_component"><code>get_component($id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the component matching the given id.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id - Integer: ID of the component in the database.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Component object hash.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_components"><code>get_components($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of components associated with this product.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Component objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_environments"><code>get_environments($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of environments associated with this product.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Environment objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_milestones"><code>get_milestones($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of milestones associated with this product.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Milestone objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_plans"><code>get_plans($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of plans associated with this product.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Test Plan objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_runs"><code>get_runs($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of runs associated with this product.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Test Run objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_tags"><code>get_tags($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of tags associated with this product.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Tags objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_get_versions"><code>get_versions($product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of versions associated with this product.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Returns an array of Version objects.
+
+</pre>
+</dd>
+<dt><strong><a name="item_lookup_name_by_id_deprecated_use_product_3a_3aget_"><code>lookup_name_by_id</code> <strong>DEPRECATED</strong> Use Product::get instead</a></strong>
+
+<dt><strong><a name="item_lookup_id_by_name_deprecated__2d_considered_harmfu"><code>lookup_id_by_name</code> <strong>DEPRECATED - CONSIDERED HARMFUL</strong> Use Product::check_product instead</a></strong>
+
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p><a href="/Bugzilla/Testopia/Product.html">the Bugzilla::Testopia::Product manpage</a>
+<a href="/Bugzilla/Webservice.html">the Bugzilla::Webservice manpage</a> 
+
+</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Greg Hendricks &lt;<a href="mailto:ghendricks@novell.com">ghendricks@novell.com</a>&gt;</p>
+
+</body>
+
+</html>

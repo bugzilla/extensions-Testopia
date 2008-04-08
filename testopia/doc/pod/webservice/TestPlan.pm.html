@@ -1,0 +1,392 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>TestPlan.pm</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:feedback@suse.de" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#extends">EXTENDS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Bugzilla::Testopia::Webservice::TestPlan</p>
+<p>
+</p>
+<hr />
+<h1><a name="extends">EXTENDS</a></h1>
+<p>Bugzilla::Webservice</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Provides methods for automated scripts to manipulate Testopia TestPlans</p>
+<p>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<dl>
+<dt><strong><a name="item_add_tag"><code>add_tag($plan_ids, $tags)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Add one or more tags to the selected test plans.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_ids - Integer/Array/String: An integer or alias representing the ID in the database,
+                  an arry of plan_ids or aliases, or a string of comma separated plan_ids.</pre>
+</dd>
+<dd>
+<pre>
+              $tags - String/Array - A single tag, an array of tags,
+                  or a comma separated list of tags.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     undef/Array: undef on success or an array of hashes with failure 
+              codes if a failure occured.</pre>
+</dd>
+<dt><strong><a name="item_create"><code>create($values)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Creates a new Test Plan object and stores it in the database.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $values - Hash: A reference to a hash with keys and values  
+              matching the fields of the test plan to be created. 
+  +-------------------------+----------------+-----------+------------------------------------+
+  | Field                   | Type           | Null      | Description                        |
+  +-------------------------+----------------+-----------+------------------------------------+
+  | product                 | Integer/String | Required  | ID or Name of product              |
+  | name                    | String         | Required  |                                    |
+  | type                    | Integer/String | Required  | ID or name of plan type            |
+  | default_product_version | String         | Required  |                                    |
+  | isactive                | Boolean        | Optional  | 0: Archived 1: Active (Default 1)  |
+  +-------------------------+----------------+-----------+------------------------------------+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     The newly created object hash.</pre>
+</dd>
+<dt><strong><a name="item_get"><code>get($plan_id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Used to load an existing test plan from the database.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id - Integer/String: An integer representing the ID in the database
+                    for this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     A blessed Bugzilla::Testopia::TestPlan object hash</pre>
+</dd>
+<dt><strong><a name="item_get_change_history"><code>get_change_history($plan_id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of changes to the fields of this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_id - Integer/String: An integer representing the ID in the database
+                    or a string representing the unique alias for this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: An array of hashes with changed fields and their details.</pre>
+</dd>
+<dt><strong><a name="item_get_tags"><code>get_tags($plan_id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of tags attached to this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_id - Integer/String: An integer representing the ID in the database
+                    or a string representing the unique alias for this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: An array of tag object hashes.</pre>
+</dd>
+<dt><strong><a name="item_get_test_cases"><code>get_test_cases($plan_id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of cases that this plan is linked to.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_id - Integer/String: An integer representing the ID in the database
+                    for this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: An array of test case object hashes.</pre>
+</dd>
+<dt><strong><a name="item_get_test_runs"><code>get_test_runs($plan_id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Get the list of runs in this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_id - Integer/String: An integer representing the ID in the database
+                    for this plan.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: An array of test run object hashes.</pre>
+</dd>
+<dt><strong><a name="item_get_text"><code>get_text($plan_id, $version)</code></a></strong>
+
+<dd>
+<pre>
+ Description: The associated large text fields: Action, Expected Results, Setup, Breakdown
+              for a given version.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_id - Integer/String: An integer representing the ID in the database
+                    or a string representing the unique alias for this plan.</pre>
+</dd>
+<dd>
+<pre>
+              $version - Integer: (OPTIONAL) The version of the text you want returned.
+                    Defaults to the latest.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Text fields and values.</pre>
+</dd>
+<dt><strong><a name="item_list"><code>list($query)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Performs a search and returns the resulting list of test plans.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $query - Hash: keys must match valid search fields.</pre>
+</dd>
+<dd>
+<pre>
+    +--------------------------------------------------------+
+    |                 Plan Search Parameters                 |
+    +--------------------------------------------------------+
+    |        Key          |          Valid Values            |
+    | author              | A bugzilla login (email address) |
+    | author_type         | (select from email_variants)     |
+    | plan_id             | comma separated integers         |
+    | plan_text           | String                           |
+    | plan_text_type      | (select from query_variants)     |
+    | plan_type           | String: Product Name             |
+    | product             | String: Product Name             |
+    | product_id          | Integer                          |
+    | tags                | String                           |
+    | tags_type           | (select from tag_variants)       |
+    | type_id             | Integer                          |
+    | version             | String: Product version          |
+    +--------------------------------------------------------+</pre>
+</dd>
+<dd>
+<pre>
+    +--------------------------------------------------------+
+    |                Paging and Sorting                      |
+    +--------------------------------------------------------+
+    |      Key       |            Description                |
+    | dir            | &quot;ASC&quot; or &quot;DESC&quot;                       |
+    | order          | field to sort by                      |
+    +--------------------------------------------------------+
+    | page_size      | integer: how many per page            |
+    | page           | integer: page number                  |
+    |            +++++++ OR +++++++                          |
+    | start          | integer: Start with which record      |
+    | limit          | integer: limit to how many            |
+    +--------------------------------------------------------+
+    | viewall        | 1: returns all records 0: first 25    |
+    +--------------------------------------------------------+</pre>
+</dd>
+<dd>
+<pre>
+    +----------------------------------------------------+
+    |                 query_variants                     |
+    +----------------+-----------------------------------+
+    |      Key       |            Description            |
+    | allwordssubstr | contains all of the words/strings |
+    | anywordssubstr | contains any of the words/strings |
+    | substring      | contains the string               |
+    | casesubstring  | contains the string (exact case)  |
+    | allwords       | contains all of the words         |
+    | anywords       | contains any of the words         |
+    | regexp         | matches the regexp                |
+    | notregexp      | doesn't match the regexp          |
+    +----------------+-----------------------------------+</pre>
+</dd>
+<dd>
+<pre>
+            +-------------------------------------+
+            |            email_variants           |
+            +--------------+----------------------+
+            |      Key     |      Description     |
+            | substring    | contains             |
+            | exact        | is                   |
+            | regexp       | matches regexp       |
+            | notregexp    | doesn't match regexp |
+            +--------------+----------------------+</pre>
+</dd>
+<dd>
+<pre>
+    +----------------------------------------------------+
+    |                    tag_variants                    |
+    +----------------+-----------------------------------+
+    |      Key       |            Description            |
+    | anyexact       | is tagged with                    |
+    | allwordssubstr | contains all of the words/strings |
+    | anywordssubstr | contains any of the words/strings |
+    | substring      | contains the string               |
+    | casesubstring  | contains the string (exact case)  |
+    | regexp         | matches the regexp                |
+    | notregexp      | doesn't match the regexp          |
+    | allwords       | contains all of the words         |
+    | anywords       | contains any of the words         |
+    | nowords        | contains none of the words        | 
+    +----------------------------------------------------+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Matching test plans are retuned in a list of hashes.</pre>
+</dd>
+<dt><strong><a name="item_lookup_type_id_by_name"><code>lookup_type_id_by_name</code></a></strong>
+
+<dd>
+<pre>
+ Params:      $name - String: the status name.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Integer: ID of the plan type.</pre>
+</dd>
+<dt><strong><a name="item_lookup_type_name_by_id"><code>lookup_type_name_by_id</code></a></strong>
+
+<dd>
+<pre>
+ Params:      $id - Integer: ID of the plan stype to return</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     String: the type name.</pre>
+</dd>
+<dt><strong><a name="item_remove_tag"><code>remove_tag($plan_id, $tag)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Remove a tag from a plan.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_id - Integer/String: An integer or alias representing the ID in the database.</pre>
+</dd>
+<dd>
+<pre>
+              $tag - String - A single tag to be removed.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     0 on success.</pre>
+</dd>
+<dt><strong><a name="item_store_text"><code>store_text($plan_id, $text, [$author_id])</code></a></strong>
+
+<dd>
+<pre>
+ Description: Update the document field of a plan.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $plan_id - Integer: An integer representing the ID in the database.
+              $text - String: Text for the document. Can contain HTML.
+              [$author_id] = Integer/String: (OPTIONAL) The numeric ID or the login of the author. 
+                  Defaults to logged in user.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Empty on success.</pre>
+</dd>
+<dt><strong><a name="item_update"><code>update($ids, $values)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Updates the fields of the selected test plan.
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $ids - Integer: A single TestPlan ID.
+
+</pre>
+</dd>
+<dd>
+<pre>
+              $values - Hash of keys matching TestPlan fields and the new values 
+              to set each field to.
+                      +-------------------------+----------------+
+                      | Field                   | Type           |
+                      +-------------------------+----------------+
+                      | name                    | String         |
+                      | type                    | Integer/String |
+                      | default_product_version | String         |
+                      | isactive                | Boolean        |
+                      +-------------------------+----------------+
+
+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: The updated test plan object.
+
+</pre>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p><a href="/Bugzilla/Testopia/TestPlan.html">the Bugzilla::Testopia::TestPlan manpage</a>
+<a href="/Bugzilla/Webservice.html">the Bugzilla::Webservice manpage</a> 
+
+</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Greg Hendricks &lt;<a href="mailto:ghendricks@novell.com">ghendricks@novell.com</a>&gt;</p>
+
+</body>
+
+</html>
