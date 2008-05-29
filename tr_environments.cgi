@@ -21,7 +21,7 @@
 #                 Brian Kramer <bkramer@novell.com>
 #                 Michael Hight <mjhight@gmail.com>
 #                 Garrett Braden <gbraden@novell.com>
-#                  Andrew Nelson <anelson@novell.com>
+#                 Andrew Nelson <anelson@novell.com>
 
 use strict;
 use lib ".";
