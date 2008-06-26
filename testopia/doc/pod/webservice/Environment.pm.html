@@ -1,0 +1,195 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Environment.pm</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:feedback@suse.de" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#extends">EXTENDS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Bugzilla::Testopia::Webservice::Environment</p>
+<p>
+</p>
+<hr />
+<h1><a name="extends">EXTENDS</a></h1>
+<p>Bugzilla::Webservice</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Provides methods for automated scripts to manipulate Testopia Environments</p>
+<p>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<dl>
+<dt><strong><a name="item_check_environment"><code>check_environment($name, $product)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Looks up and returns an environment by name.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $name - String: name of the environment.
+              $product - Integer/String/Object
+                         Integer: product_id of the product in the Database
+                         String: Product name
+                         Object: Blessed Bugzilla::Product object</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: Matching Environment object hash or error if not found.</pre>
+</dd>
+<dt><strong><a name="item_create"><code>create($values)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Creates a new environment object and stores it in the database</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $values - Hash: A reference to a hash with keys and values  
+              matching the fields of the environment to be created. 
+  +-------------+----------------+-----------+------------------------------------+
+  | Field       | Type           | Null      | Description                        |
+  +-------------+----------------+-----------+------------------------------------+
+  | product_id  | Integer/String | Required  | ID or Name of product              |
+  | name        | String         | Required  |                                    |
+  | isactive    | Boolean        | Optional  | Defaults to True (1)               |
+  +-------------+----------------+-----------+------------------------------------+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     The newly created object hash.</pre>
+</dd>
+<dt><strong><a name="item_get"><code>get($id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Used to load an existing Environment from the database.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id - An integer representing the ID in the database</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     A blessed Bugzilla::Testopia::Environment object hash</pre>
+</dd>
+<dt><strong><a name="item_get_caseruns"><code>get_caseruns($id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Returns the list of case-runs that this Environment is used in.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id -  Integer: Environment ID.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: List of case-run object hashes.</pre>
+</dd>
+<dt><strong><a name="item_get_runs"><code>get_runs($id)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Returns the list of runs that this Environment is used in.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $id -  Integer: Environment ID.</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: List of run object hashes.</pre>
+</dd>
+<dt><strong><a name="item_list"><code>list($query)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Performs a search and returns the resulting list of Environments</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $query - Hash: keys must match valid search fields.</pre>
+</dd>
+<dd>
+<pre>
+                        +--------------------------+
+                        | classification           |
+                        | env_products             |
+                        | env_categories           |
+                        | env_elements             |
+                        | env_properties           |
+                        | env_expressions          |
+                        | name                     |
+                        | env_value_selected_type  |
+                        +--------------------------+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Array: Matching Environments are retuned in a list of hashes.</pre>
+</dd>
+<dt><strong><a name="item_update"><code>update($ids, $values)</code></a></strong>
+
+<dd>
+<pre>
+ Description: Updates the fields of the selected environment or environments.</pre>
+</dd>
+<dd>
+<pre>
+ Params:      $ids - Integer  A single environment ID.</pre>
+</dd>
+<dd>
+<pre>
+              $values - Hash of keys matching Environment fields and the new values 
+              to set each field to.
+                      +-------------+----------------+
+                      | Field       | Type           |
+                      +-------------+----------------+
+                      | name        | String         |
+                      | isactive    | Boolean        |
+                      +-------------+----------------+</pre>
+</dd>
+<dd>
+<pre>
+ Returns:     Hash: The updated environment object hash.</pre>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p><a href="/Bugzilla/Testopia/Environment.html">the Bugzilla::Testopia::Environment manpage</a>
+<a href="/Bugzilla/Webservice.html">the Bugzilla::Webservice manpage</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Greg Hendricks &lt;<a href="mailto:ghendricks@novell.com">ghendricks@novell.com</a>&gt;</p>
+
+</body>
+
+</html>
