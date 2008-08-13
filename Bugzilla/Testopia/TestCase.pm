@@ -1688,6 +1688,8 @@ sub TO_JSON {
     $obj->{'candelete'}    = $self->candelete;
     $obj->{'category_name'} = $self->category->name if $self->category;
     $obj->{'product_id'}   = $self->plans->[0]->product_id if $self->plans;
+    $obj->{'blocked'}      = $self->blocked_list;
+    $obj->{'dependson'}    = $self->dependson_list;
 
     return $json->encode($obj); 
 }

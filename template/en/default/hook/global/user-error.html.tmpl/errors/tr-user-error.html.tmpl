@@ -24,6 +24,10 @@
   [% ELSIF error == "testopia-read-only" %]
     [% title = "Insufficient Permissions" %]
     You are not authorized to edit [% object.type FILTER html %]&nbsp;[% object.id FILTER html %]
+    [% IF object.type == 'caserun' %]
+    Only test runs in the RUNNING state may be updated. Otherwise, 
+    [% END %]
+    Contact the plan administrator to grant rights to update these [% object.type FILTER html %]s
   [% ELSIF error == "testopia-no-delete" %]
     [% title = "Insufficient Permissions" %]
     You are not authorized to delete [% object.type FILTER html %]&nbsp;[% object.id FILTER html %]
@@ -149,7 +153,7 @@
     Update of one or more of your [% object %]s failed. The most likely cause is that you don't have permissions
     to update them. 
     [% IF object == 'case-run' %]
-      If the case is in the RUNNING state, only the asignee may update it. Otherwise,
+      If the case is in the RUNNING state, only the assignee may update it. Otherwise,
     [% END %]
     Contact the plan administrator to grant rights to update these [% object %]s.
     <p>

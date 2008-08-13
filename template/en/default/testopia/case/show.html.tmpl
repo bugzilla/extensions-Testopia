@@ -310,7 +310,31 @@ Ext.onReady(function(){
                         testopia_form.submit({
                             url: 'tr_process_case.cgi',
                             params: params,
-                            success: function(){
+                            success: function(f,a){
+                                var blocked = '';
+                                var blist = a.result.case.blocked.split(',');
+                                for (var i in blist){
+                                    if (typeof blist[i] != "string"){
+                                        continue;
+                                    }
+                                    blocked = blocked +'<a href="tr_show_case.cgi?case_id=' + blist[i] + '">' + blist[i] + '</a>';
+                                    if (i != blist.length - 1){
+                                        blocked = blocked + ', ';
+                                    }
+                                }
+                                var deps = '';
+                                var dlist = a.result.case.dependson.split(',');
+                                for (var i in dlist){
+                                    if (typeof dlist[i] != "string"){
+                                        continue;
+                                    }
+                                    deps = deps +'<a href="tr_show_case.cgi?case_id=' + dlist[i] + '">' + dlist[i] + '</a>, ';
+                                    if (i != dlist.length - 1){
+                                        deps = deps + ', ';
+                                    }
+                                }
+                                Ext.getCmp('case_blocked_list').body.dom.innerHTML = blocked;
+                                Ext.getCmp('case_dependson_list').body.dom.innerHTML = deps;
                                 TestopiaUtil.notify.msg('Test Case updated', 'Test Case {0} was updated successfully', 'dependencies');
                             },
                             failure: testopiaError
@@ -356,13 +380,15 @@ Ext.onReady(function(){
                             },{
                                 border: false,
                                 height: 200,
+                                id: 'case_blocked_list',
                                 autoScroll: true,
-                                html:'[% FOREACH dep = case.blocked %]<a href="tr_show_case.cgi?case_id=[% dep.id FILTER none %]" title="[% dep.summary %]">[% dep.id FILTER none %]</a> [% END %]'
+                                html:'[% FOREACH dep = case.blocked %]<a href="tr_show_case.cgi?case_id=[% dep.id FILTER none %]" title="[% dep.summary %]">[% dep.id FILTER none %]</a>[% ', ' IF NOT loop.last%] [% END %]'
                             },{
                                 border: false,
                                 height: 200,
+                                id: 'case_dependson_list',
                                 autoScroll: true,
-                                html:'[% FOREACH dep = case.dependson %]<a href="tr_show_case.cgi?case_id=[% dep.id FILTER none %]" title="[% dep.summary %]">[% dep.id FILTER none %]</a> [% END %]'
+                                html:'[% FOREACH dep = case.dependson %]<a href="tr_show_case.cgi?case_id=[% dep.id FILTER none %]" title="[% dep.summary %]">[% dep.id FILTER none %]</a>[% ', ' IF NOT loop.last%] [% END %]'
                             }]
                         }]
                     }]
