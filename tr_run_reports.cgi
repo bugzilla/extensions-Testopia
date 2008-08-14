@@ -39,22 +39,16 @@ my $cgi = Bugzilla->cgi;
 
 Bugzilla->login(LOGIN_REQUIRED);
 
-my $type = $cgi->param('type') || '';
-
-if ($type eq 'completion'){
-    print $cgi->header;
-    my $dbh = Bugzilla->dbh;
-    my @run_ids  = $cgi->param('run_ids');
-    my @plan_ids = $cgi->param('plan_ids');
+sub get_runs {
+    my ($plan_ids, $run_ids) = @_;
     my @runs;
-
-    foreach my $g (@plan_ids){
+    foreach my $g (@$plan_ids){
         foreach my $id (split(',', $g)){
             my $obj = Bugzilla::Testopia::TestPlan->new($id);
             push @runs, @{$obj->test_runs} if $obj && $obj->canview;
         }
     }
-    foreach my $g (@run_ids){
+    foreach my $g (@$run_ids){
         foreach my $id (split(',', $g)){
             my $obj = Bugzilla::Testopia::TestRun->new($id);
             push @runs, $obj if $obj && $obj->canview;
@@ -66,10 +60,24 @@ if ($type eq 'completion'){
         exit;
     }
     
-    @run_ids = ();
+    my @run_ids;
     foreach my $r (@runs){
         push @run_ids, $r->id;
     }
+    return (\@runs,\@run_ids);
+}
+
+my $type = $cgi->param('type') || '';
+
+if ($type eq 'completion'){
+    print $cgi->header;
+    my $dbh = Bugzilla->dbh;
+    my @r = $cgi->param('run_ids');
+    my @p = $cgi->param('plan_ids');
+    
+    my ($runs, $run_ids) = get_runs(\@p, \@r);
+    my @runs = @$runs;
+    my @run_ids = @$run_ids;
 
     my $bugs = $dbh->selectcol_arrayref("
         SELECT DISTINCT tcb.bug_id 
@@ -84,38 +92,57 @@ if ($type eq 'completion'){
     my $passed = $runs[0]->case_run_count(PASSED, \@runs);
     my $failed = $runs[0]->case_run_count(FAILED, \@runs);
     my $blocked = $runs[0]->case_run_count(BLOCKED, \@runs);
-    my $idle = $runs[0]->case_run_count(IDLE, \@runs);
-    my $error = $runs[0]->case_run_count(ERROR, \@runs);
 
     my $completed = $passed + $failed + $blocked;
-    
     my $unfinished = $total - $completed;
-    my $unpassed = $completed - $passed;
-    my $unfailed = $completed - $failed;
-    my $unblocked = $completed - $blocked;
 
     $vars->{'total'} = $total;
     $vars->{'completed'} = $completed;
+    $vars->{'uncompleted'} = $unfinished;
     $vars->{'passed'} = $passed;
     $vars->{'failed'} = $failed;
     $vars->{'blocked'} = $blocked;
-    $vars->{'idle'} = $idle;
-    $vars->{'error'} = $error;
 
     $vars->{'percent_completed'} = calculate_percent($total, $completed);
     $vars->{'percent_passed'} = calculate_percent($completed, $passed);
     $vars->{'percent_failed'} = calculate_percent($completed, $failed);
     $vars->{'percent_blocked'} = calculate_percent($completed, $blocked);
-    $vars->{'percent_idle'} = calculate_percent($total, $idle);
-    $vars->{'percent_error'} = calculate_percent($total, $error);
+    $vars->{'percent_idle'} = calculate_percent($total, $unfinished);
     
     $vars->{'runs'} = join(',',@run_ids);
-    $vars->{'plans'} = join(',',@plan_ids);
+    $vars->{'plans'} = join(',',@p);
     $vars->{'bugs'} = join(',',@$bugs);
     $vars->{'bug_count'} = scalar @$bugs;
     $vars->{'run_count'} = scalar @run_ids;
     
     $template->process("testopia/reports/completion.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+    exit;
+}
+elsif ($type eq 'status'){
+    print $cgi->header;
+    my $dbh = Bugzilla->dbh;
+    my @r = $cgi->param('run_ids');
+    my @p = $cgi->param('plan_ids');
+    
+    my ($runs, $run_ids) = get_runs(\@p, \@r);
+    my @runs = @$runs;
+    my @run_ids = @$run_ids;
+
+    $vars->{'total'} = $runs[0]->case_run_count(undef, \@runs);
+    $vars->{'passed'} = $runs[0]->case_run_count(PASSED, \@runs);
+    $vars->{'failed'} = $runs[0]->case_run_count(FAILED, \@runs);
+    $vars->{'blocked'} = $runs[0]->case_run_count(BLOCKED, \@runs);
+    $vars->{'idle'} = $runs[0]->case_run_count(IDLE, \@runs);
+    $vars->{'running'} = $runs[0]->case_run_count(RUNNING, \@runs);
+    $vars->{'paused'} = $runs[0]->case_run_count(PAUSED, \@runs);
+    $vars->{'error'} = $runs[0]->case_run_count(ERROR, \@runs);
+
+    $vars->{'runs'} = join(',',@run_ids);
+    $vars->{'plans'} = join(',',@p);
+    $vars->{'run_count'} = scalar @run_ids;
+    
+    $template->process("testopia/reports/status.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
     exit;
 }

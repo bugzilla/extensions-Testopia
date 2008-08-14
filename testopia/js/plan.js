@@ -304,6 +304,24 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                     text: "Reports",
                     menu: {
                         items: [{
+                            text: 'New Status Report',
+                            handler: function(){
+                                Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                
+                                var newPortlet = new Ext.ux.Portlet({
+                                    title: 'Status Report',
+                                    closable: true,
+                                    autoScroll: true,
+                                    tools: PortalTools
+                                });
+                                newPortlet.url = 'tr_run_reports.cgi?type=status&plan_ids=' + getSelectedObjects(grid, 'plan_id');
+                                Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                Ext.getCmp('dashboard_leftcol').doLayout();
+                        		newPortlet.load({
+                                    url: newPortlet.url
+                                });
+                            }
+                        },{
                             text: 'New Completion Report',
                             handler: function(){
                                 Ext.getCmp('object_panel').setActiveTab('dashboardpanel');

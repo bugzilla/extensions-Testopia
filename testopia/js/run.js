@@ -266,6 +266,25 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                         text: "Reports",
                         menu: {
                             items: [{
+                                text: 'New Run Status Report',
+                                handler: function(){
+                                    Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                    
+                                    var newPortlet = new Ext.ux.Portlet({
+                                        title: 'Status Report',
+                                        closable: true,
+                                        autoScroll: true,
+                                        tools: PortalTools
+                                    });
+                                    newPortlet.url = 'tr_run_reports.cgi?type=status&run_ids=' + getSelectedObjects(grid, 'run_id');
+                                    Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                    Ext.getCmp('dashboard_leftcol').doLayout();
+                            		newPortlet.load({
+                                        url: newPortlet.url
+                                    });
+
+                                }
+                            },{
                                 text: 'New Run Completion Report',
                                 handler: function(){
                                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
