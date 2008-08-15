@@ -70,5 +70,9 @@ my $action = $cgi->param('action') || '';
 $vars->{'table'} = $table;
 $vars->{'search'} = $cgi->param('search');
 $vars->{'case'} = Bugzilla::Testopia::TestCase->new({});
+
+$vars->{'dashboard'} = $cgi->param('dashboard');
+$vars->{'userid'} = $cgi->param('userid');
+
 $template->process("testopia/product/show.html.tmpl", $vars)
     || ThrowTemplateError($template->error());

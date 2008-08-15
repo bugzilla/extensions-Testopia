@@ -135,6 +135,7 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
                                     tools: PortalTools
                                 });
                                 newPortlet.url = 'tr_builds.cgi?action=report&product_id=' + grid.product_id + '&build_ids=' + getSelectedObjects(grid, 'id');
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
                         		newPortlet.load({

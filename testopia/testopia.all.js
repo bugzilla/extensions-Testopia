@@ -1307,11 +1307,12 @@ Ext.extend(ToolbarText, Ext.menu.BaseItem, {
         Ext.menu.TextItem.superclass.onRender.apply(this, arguments);
     }
 });
-DashboardPanel = function(){
+DashboardPanel = function(cfg){
     DashboardPanel.superclass.constructor.call(this,{
-        title: 'Dashboard',
+        title: cfg.title || 'Dashboard',
         layout: 'fit',
-        id: 'dashboardpanel',
+        closable: cfg.closable || false,
+        id: cfg.id || 'dashboardpanel',
         tbar:[{
             xtype: 'button',
             text: 'Add Custom Panel',
@@ -1319,6 +1320,7 @@ DashboardPanel = function(){
                 Ext.Msg.prompt('Enter URL', '', function(btn, text){
                     if (btn == 'ok'){
                         var url = text + '&noheader=1';
+                        Testopia.Search.dashboard_urls.push(url);
                         var newPortlet = new Ext.ux.Portlet({
                             title: 'Custom',
                             closable: true,
@@ -1336,7 +1338,8 @@ DashboardPanel = function(){
                     }
                 });
             }
-        }],
+        },new Ext.Toolbar.Fill()
+        ],
         items:[{
             id:'the_portal',
             xtype: 'portal',
@@ -1345,7 +1348,7 @@ DashboardPanel = function(){
                 columnWidth: 0.5,
                 baseCls:'x-plain',
                 bodyStyle:'padding:10px 10px 10px 10px',
-                id: 'dashboard_leftcol',
+                id: cfg.lc || 'dashboard_leftcol',
                 items: [{
                     title: ' ',
                     hidden: true
@@ -1354,7 +1357,7 @@ DashboardPanel = function(){
                 columnWidth: 0.5,
                 baseCls:'x-plain',
                 bodyStyle:'padding:10px 10px 10px 10px',
-                id: 'dashboard_rightcol',
+                id: cfg.rc || 'dashboard_rightcol',
                 items: [{
                     title: ' ',
                     hidden: true
@@ -1494,38 +1497,51 @@ editFirstSelection = function(grid){
 
 saveSearch = function(type,params){
     var loc;
-    if (type == 'custom'){
-        loc = params;
-        params = {report: true};
+    var ntype;
+    
+    if (type == 'dashboard') {
+        ntype = 3;
+        loc = Testopia.Search.dashboard_urls.join('::>');
     }
-    else{
-        if (type == 'caserun'){
-            params.current_tab = 'case_run';
-        }
-        else{
-            params.current_tab = type;
-        }
-        if (params.report == 1){
-            loc = 'tr_' + type +'_reports.cgi?';
+    else 
+        if (type == 'custom') {
+            loc = params;
+            params = {
+                report: true
+            };
+            ntype = 1;
         }
         else {
-            loc = 'tr_list_' + type +'s.cgi?';
+            if (type == 'caserun') {
+                params.current_tab = 'case_run';
+            }
+            else {
+                params.current_tab = type;
+            }
+            if (params.report == 1) {
+                loc = 'tr_' + type + '_reports.cgi?';
+            }
+            else {
+                loc = 'tr_list_' + type + 's.cgi?';
+            }
+            ntype = 0;
+            loc = loc + jsonToSearch(params, '', ['ctype']);
         }
-        
-        loc = loc + jsonToSearch(params,'',['ctype']);
-    }
     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
      Ext.Msg.prompt('Save Search As', '', function(btn, text){
         if (btn == 'ok'){
             form.submit({
                 url: 'tr_query.cgi',
-                params: {action: 'save_query', query_name: text, query_part: loc, type: params.report ? 1 : 0},
+                params: {action: 'save_query', query_name: text, query_part: loc, type: ntype},
                 success: function(){
                     if (Ext.getCmp('searches_grid')){
                         Ext.getCmp('searches_grid').store.load();
                     }
                     if (Ext.getCmp('reports_grid')){
                         Ext.getCmp('reports_grid').store.load();
+                    }
+                    if (Ext.getCmp('dashboard_grid')){
+                        Ext.getCmp('dashboard_grid').store.load();
                     }
                 },
                 failure: testopiaError
@@ -2356,6 +2372,25 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                     text: "Reports",
                     menu: {
                         items: [{
+                            text: 'New Status Report',
+                            handler: function(){
+                                Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                
+                                var newPortlet = new Ext.ux.Portlet({
+                                    title: 'Status Report',
+                                    closable: true,
+                                    autoScroll: true,
+                                    tools: PortalTools
+                                });
+                                newPortlet.url = 'tr_run_reports.cgi?type=status&plan_ids=' + getSelectedObjects(grid, 'plan_id');
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                Ext.getCmp('dashboard_leftcol').doLayout();
+                        		newPortlet.load({
+                                    url: newPortlet.url
+                                });
+                            }
+                        },{
                             text: 'New Completion Report',
                             handler: function(){
                                 Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
@@ -2367,6 +2402,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                     tools: PortalTools
                                 });
                                 newPortlet.url = 'tr_run_reports.cgi?type=completion&plan_ids=' + getSelectedObjects(grid, 'plan_id');
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
                         		newPortlet.load({
@@ -2415,6 +2451,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                                     tools: PortalTools
                                                 });
                                                 newPortlet.url = 'tr_run_reports.cgi?type=execution&plan_ids=' + getSelectedObjects(grid, 'plan_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
+                                                Testopia.Search.dashboard_urls.push(newPortlet.url);
                                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                                 Ext.getCmp('dashboard_leftcol').doLayout();
                                         		newPortlet.load({
@@ -6143,6 +6180,26 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                         text: "Reports",
                         menu: {
                             items: [{
+                                text: 'New Run Status Report',
+                                handler: function(){
+                                    Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                    
+                                    var newPortlet = new Ext.ux.Portlet({
+                                        title: 'Status Report',
+                                        closable: true,
+                                        autoScroll: true,
+                                        tools: PortalTools
+                                    });
+                                    newPortlet.url = 'tr_run_reports.cgi?type=status&run_ids=' + getSelectedObjects(grid, 'run_id');
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                    Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                    Ext.getCmp('dashboard_leftcol').doLayout();
+                            		newPortlet.load({
+                                        url: newPortlet.url
+                                    });
+
+                                }
+                            },{
                                 text: 'New Run Completion Report',
                                 handler: function(){
                                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
@@ -6154,6 +6211,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                         tools: PortalTools
                                     });
                                     newPortlet.url = 'tr_run_reports.cgi?type=completion&run_ids=' + getSelectedObjects(grid, 'run_id');
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
                             		newPortlet.load({
@@ -6203,6 +6261,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                     tools: PortalTools
                                                 });
                                                 newPortlet.url = 'tr_run_reports.cgi?type=execution&run_ids=' + getSelectedObjects(grid, 'run_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
+                                                Testopia.Search.dashboard_urls.push(newPortlet.url);
                                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                                 Ext.getCmp('dashboard_leftcol').doLayout();
                                         		newPortlet.load({
@@ -7271,6 +7330,7 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
                                     tools: PortalTools
                                 });
                                 newPortlet.url = 'tr_builds.cgi?action=report&product_id=' + grid.product_id + '&build_ids=' + getSelectedObjects(grid, 'id');
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
                         		newPortlet.load({
@@ -8082,6 +8142,7 @@ Ext.extend(EnvironmentGrid, Ext.grid.EditorGridPanel, {
  */
 
 Testopia.Search = {};
+Testopia.Search.dashboard_urls = [];
 
 Testopia.Search.fillInForm = function(type, params, name){
     var f = document.getElementById(type + '_search_form');
@@ -8550,6 +8611,7 @@ ReportGrid = function(cfg){
                     
                     Ext.getCmp(current_col).add(newPortlet);
                     Ext.getCmp(current_col).doLayout();
+                    Testopia.Search.dashboard_urls.push(r.get('query'));
             		newPortlet.load({
                         url: r.get('query')
                     });
@@ -8679,30 +8741,81 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
         var cfg = {
             id: 'search' + r.get('name'), 
             closable: true,
-            title: r.get('name')
+            title: r.get('name'),
+            lc: 'lc_' + r.get('name'),
+            rc: 'rc_' + r.get('name')
         };
-        var params = searchToJson(r.get('query'));
-        var tab = params.current_tab;
-        switch(tab){
-            case 'plan':
-                Ext.getCmp('object_panel').add(new PlanGrid(params,cfg));
-                break;
-            case 'run':
-                Ext.getCmp('object_panel').add(new RunGrid(params,cfg));
-                break;
-            case 'case':
-                Ext.getCmp('object_panel').add(new CaseGrid(params,cfg));
-                break;
-            default:
-                Ext.Msg.show({
-                    title:'No Type Found',
-                    msg: 'There must have been a problem saving this search. I can\'t find a type',
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.MessageBox.ERROR
+        if (r.get('type') == 3){
+            Ext.getCmp('object_panel').add(new DashboardPanel(cfg));
+            Ext.getCmp('object_panel').activate('search' + r.get('name'));
+            Ext.getCmp('search' + r.get('name')).getTopToolbar().add({
+                xtype: 'button',
+                id: 'link_dashboard_btn',
+                icon: 'testopia/img/link.png',
+                iconCls: 'img_button_16x',
+                tooltip: 'Create a link to this dashboard',
+                handler: function(b,e){
+                    var l = window.location;
+                    var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
+                    pathprefix = pathprefix[1];
+                    var win = new Ext.Window({
+                        width: 300,
+                        plain: true,
+                        shadow: false,
+                        items: [new Ext.form.TextField({
+                            value: l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia.userid,
+                            width: 287
+                        })]
+                    });
+                    win.show();
+                }
+            });
+            
+            var current_col = 'lc_' + r.get('name');
+            var urls = r.get('query').split('::>');
+            for (var i in urls){
+                if (typeof urls[i] != 'string'){
+                    continue;
+                }
+                var newPortlet = new Ext.ux.Portlet({
+                    title: r.get('name') + ' ' + i,
+                    closable: true,
+                    autoScroll: true,
+                    tools: PortalTools
                 });
-                return;
+                Ext.getCmp(current_col).add(newPortlet);
+                Ext.getCmp(current_col).doLayout();
+                current_col = current_col == 'lc_' + r.get('name') ? 'rc_' + r.get('name') : 'lc_' + r.get('name');
+
+                newPortlet.load({
+                    url: urls[i]
+                });
+            }
         }
-        Ext.getCmp('object_panel').activate('search' + r.get('name'));
+        else{
+            var params = searchToJson(r.get('query'));
+            var tab = params.current_tab;
+            switch(tab){
+                case 'plan':
+                    Ext.getCmp('object_panel').add(new PlanGrid(params,cfg));
+                    break;
+                case 'run':
+                    Ext.getCmp('object_panel').add(new RunGrid(params,cfg));
+                    break;
+                case 'case':
+                    Ext.getCmp('object_panel').add(new CaseGrid(params,cfg));
+                    break;
+                default:
+                    Ext.Msg.show({
+                        title:'No Type Found',
+                        msg: 'There must have been a problem saving this search. I can\'t find a type',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.MessageBox.ERROR
+                    });
+                    return;
+            }
+            Ext.getCmp('object_panel').activate('search' + r.get('name'));
+        }
     }
 });
 

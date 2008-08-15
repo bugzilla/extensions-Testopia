@@ -48,6 +48,7 @@
 }
 </style>
 <script type="text/javascript">
+Testopia.userid = [% user.id FILTER js %];
 
 Ext.onReady(function(){
     var product_id;
@@ -66,6 +67,11 @@ Ext.onReady(function(){
     var egrid = new EnvironmentGrid({product_id: product_id});
     var utag = new TestopiaProductTags("User Tags", "user");
     var ptag = new TestopiaProductTags("Product Tags", "product", product_id);
+    var dtab = new ReportGrid({
+        title: 'Dashboards',
+        id: 'dashboard_grid',
+        type: 3
+    });
     var rtab = new ReportGrid({
         title: 'Reports',
         id: 'reports_grid',
@@ -255,7 +261,7 @@ Ext.onReady(function(){
               }
             },
             items: [ 
-                rtab, stab, utag, ptag
+                dtab, rtab, stab, utag, ptag
             ]
         },{
             region: 'center',
@@ -268,7 +274,7 @@ Ext.onReady(function(){
                     Ext.state.Manager.set('product_active_tab', Ext.getCmp('object_panel').getActiveTab().getId());
               }
             },
-            items: [new DashboardPanel(),
+            items: [new DashboardPanel({}),
                 pgrid, 
                 cgrid, 
                 rgrid, 
@@ -278,6 +284,18 @@ Ext.onReady(function(){
             ]
     
         }]
+    });
+    Ext.getCmp('dashboardpanel').on('render', function(){
+        Ext.getCmp('dashboardpanel').getTopToolbar().add({
+            xtype: 'button',
+            id: 'save_dashboard_btn',
+            icon: 'testopia/img/save.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Save this dashboard',
+            handler: function(b,e){
+                saveSearch('dashboard', Testopia.Search.dashboard_urls);
+            }
+        });
     });
   [% IF product %]
     Ext.getCmp('products_pane').getLoader().on('load', function(l,n,r){
@@ -291,6 +309,53 @@ Ext.onReady(function(){
         });
         
     });
+  [% END %]
+  [% IF dashboard AND user.in_group('Testers')  %]
+    var dstore = new Ext.data.JsonStore({
+        url: 'tr_query.cgi',
+        baseParams: {action: 'get_saved_searches', type: 3, user: [% userid || user.id FILTER js %]},
+        root: 'searches',
+        fields: ["name","query","author","type"],
+        listeners: {'load': function(obj, rs){
+            Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+            var current_col = 'dashboard_leftcol';
+            var query;
+            for (var i in rs){
+                if(typeof rs[i] == 'function'){
+                    continue;
+                }
+                if (rs[i].get('name') == '[% dashboard FILTER js %]'){
+                    r = rs[i];
+                    break;
+                }
+            }
+            var qs = r.get('query').split('::>');
+            i = 0;
+            for (i in qs){ 
+                if(typeof rs[i] == 'function'){
+                    continue;
+                }
+                var newPortlet = new Ext.ux.Portlet({
+                    title: r.get('name') + ' ' + i,
+                    id: r.get('name') + i,
+                    closable: true,
+                    autoScroll: true,
+                    tools: PortalTools,
+                    url: qs[i]
+                });
+                
+                Ext.getCmp(current_col).add(newPortlet);
+                Ext.getCmp(current_col).doLayout();
+                Testopia.Search.dashboard_urls.push(qs[i]);
+                newPortlet.load({
+                    url: qs[i]
+                });
+                current_col = current_col == 'dashboard_leftcol' ? 'dashboard_rightcol' : 'dashboard_leftcol';
+            }        
+        }}
+    });
+    dstore.load();
+
   [% END %]
     var s = searchToJson(window.location.search);
     if (s.tab){

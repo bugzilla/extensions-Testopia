@@ -52,6 +52,7 @@ CASE_RUN_STATUSES
 SAVED_SEARCH
 SAVED_REPORT
 SAVED_FILTER
+SAVED_DASHBORD
 
 );
 
@@ -114,6 +115,7 @@ use constant TR_ADMIN   => 8;
 use constant SAVED_SEARCH => 0;
 use constant SAVED_REPORT => 1;
 use constant SAVED_FILTER => 2;
+use constant SAVED_DASHBORD => 3;
 
 # Testopia Relationships
 use constant REL_AUTHOR             => 100;

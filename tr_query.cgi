@@ -334,7 +334,9 @@ elsif ($action eq 'delete_query'){
 elsif ($action eq 'get_saved_searches'){
     print $cgi->header;
     my $type = $cgi->param('type');
+    my $user = $cgi->param('userid') || Bugzilla->user->id;
     detaint_natural($type);
+    detaint_natural($user);
     $type ||= SAVED_SEARCH;
     
     my $ref = $dbh->selectall_arrayref(
@@ -343,7 +345,7 @@ elsif ($action eq 'get_saved_searches'){
            INNER JOIN profiles ON tnq.userid = profiles.userid
           WHERE tnq.userid = ? AND isvisible = 1 
             AND type = ?",
-            {'Slice' =>{}} ,(Bugzilla->user->id, $type));
+            {'Slice' =>{}} ,($user, $type));
     
     print $cgi->header;
     print "{'searches':" . to_json($ref) . "}";

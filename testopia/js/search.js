@@ -21,6 +21,7 @@
  */
 
 Testopia.Search = {};
+Testopia.Search.dashboard_urls = [];
 
 Testopia.Search.fillInForm = function(type, params, name){
     var f = document.getElementById(type + '_search_form');
@@ -489,6 +490,7 @@ ReportGrid = function(cfg){
                     
                     Ext.getCmp(current_col).add(newPortlet);
                     Ext.getCmp(current_col).doLayout();
+                    Testopia.Search.dashboard_urls.push(r.get('query'));
             		newPortlet.load({
                         url: r.get('query')
                     });
@@ -618,30 +620,81 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
         var cfg = {
             id: 'search' + r.get('name'), 
             closable: true,
-            title: r.get('name')
+            title: r.get('name'),
+            lc: 'lc_' + r.get('name'),
+            rc: 'rc_' + r.get('name')
         };
-        var params = searchToJson(r.get('query'));
-        var tab = params.current_tab;
-        switch(tab){
-            case 'plan':
-                Ext.getCmp('object_panel').add(new PlanGrid(params,cfg));
-                break;
-            case 'run':
-                Ext.getCmp('object_panel').add(new RunGrid(params,cfg));
-                break;
-            case 'case':
-                Ext.getCmp('object_panel').add(new CaseGrid(params,cfg));
-                break;
-            default:
-                Ext.Msg.show({
-                    title:'No Type Found',
-                    msg: 'There must have been a problem saving this search. I can\'t find a type',
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.MessageBox.ERROR
+        if (r.get('type') == 3){
+            Ext.getCmp('object_panel').add(new DashboardPanel(cfg));
+            Ext.getCmp('object_panel').activate('search' + r.get('name'));
+            Ext.getCmp('search' + r.get('name')).getTopToolbar().add({
+                xtype: 'button',
+                id: 'link_dashboard_btn',
+                icon: 'testopia/img/link.png',
+                iconCls: 'img_button_16x',
+                tooltip: 'Create a link to this dashboard',
+                handler: function(b,e){
+                    var l = window.location;
+                    var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
+                    pathprefix = pathprefix[1];
+                    var win = new Ext.Window({
+                        width: 300,
+                        plain: true,
+                        shadow: false,
+                        items: [new Ext.form.TextField({
+                            value: l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia.userid,
+                            width: 287
+                        })]
+                    });
+                    win.show();
+                }
+            });
+            
+            var current_col = 'lc_' + r.get('name');
+            var urls = r.get('query').split('::>');
+            for (var i in urls){
+                if (typeof urls[i] != 'string'){
+                    continue;
+                }
+                var newPortlet = new Ext.ux.Portlet({
+                    title: r.get('name') + ' ' + i,
+                    closable: true,
+                    autoScroll: true,
+                    tools: PortalTools
                 });
-                return;
+                Ext.getCmp(current_col).add(newPortlet);
+                Ext.getCmp(current_col).doLayout();
+                current_col = current_col == 'lc_' + r.get('name') ? 'rc_' + r.get('name') : 'lc_' + r.get('name');
+
+                newPortlet.load({
+                    url: urls[i]
+                });
+            }
         }
-        Ext.getCmp('object_panel').activate('search' + r.get('name'));
+        else{
+            var params = searchToJson(r.get('query'));
+            var tab = params.current_tab;
+            switch(tab){
+                case 'plan':
+                    Ext.getCmp('object_panel').add(new PlanGrid(params,cfg));
+                    break;
+                case 'run':
+                    Ext.getCmp('object_panel').add(new RunGrid(params,cfg));
+                    break;
+                case 'case':
+                    Ext.getCmp('object_panel').add(new CaseGrid(params,cfg));
+                    break;
+                default:
+                    Ext.Msg.show({
+                        title:'No Type Found',
+                        msg: 'There must have been a problem saving this search. I can\'t find a type',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.MessageBox.ERROR
+                    });
+                    return;
+            }
+            Ext.getCmp('object_panel').activate('search' + r.get('name'));
+        }
     }
 });
 

@@ -277,6 +277,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                         tools: PortalTools
                                     });
                                     newPortlet.url = 'tr_run_reports.cgi?type=status&run_ids=' + getSelectedObjects(grid, 'run_id');
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
                             		newPortlet.load({
@@ -296,6 +297,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                         tools: PortalTools
                                     });
                                     newPortlet.url = 'tr_run_reports.cgi?type=completion&run_ids=' + getSelectedObjects(grid, 'run_id');
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
                             		newPortlet.load({
@@ -345,6 +347,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                     tools: PortalTools
                                                 });
                                                 newPortlet.url = 'tr_run_reports.cgi?type=execution&run_ids=' + getSelectedObjects(grid, 'run_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
+                                                Testopia.Search.dashboard_urls.push(newPortlet.url);
                                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                                 Ext.getCmp('dashboard_leftcol').doLayout();
                                         		newPortlet.load({

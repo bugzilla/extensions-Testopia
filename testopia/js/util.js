@@ -1265,11 +1265,12 @@ Ext.extend(ToolbarText, Ext.menu.BaseItem, {
         Ext.menu.TextItem.superclass.onRender.apply(this, arguments);
     }
 });
-DashboardPanel = function(){
+DashboardPanel = function(cfg){
     DashboardPanel.superclass.constructor.call(this,{
-        title: 'Dashboard',
+        title: cfg.title || 'Dashboard',
         layout: 'fit',
-        id: 'dashboardpanel',
+        closable: cfg.closable || false,
+        id: cfg.id || 'dashboardpanel',
         tbar:[{
             xtype: 'button',
             text: 'Add Custom Panel',
@@ -1277,6 +1278,7 @@ DashboardPanel = function(){
                 Ext.Msg.prompt('Enter URL', '', function(btn, text){
                     if (btn == 'ok'){
                         var url = text + '&noheader=1';
+                        Testopia.Search.dashboard_urls.push(url);
                         var newPortlet = new Ext.ux.Portlet({
                             title: 'Custom',
                             closable: true,
@@ -1294,7 +1296,8 @@ DashboardPanel = function(){
                     }
                 });
             }
-        }],
+        },new Ext.Toolbar.Fill()
+        ],
         items:[{
             id:'the_portal',
             xtype: 'portal',
@@ -1303,7 +1306,7 @@ DashboardPanel = function(){
                 columnWidth: 0.5,
                 baseCls:'x-plain',
                 bodyStyle:'padding:10px 10px 10px 10px',
-                id: 'dashboard_leftcol',
+                id: cfg.lc || 'dashboard_leftcol',
                 items: [{
                     title: ' ',
                     hidden: true
@@ -1312,7 +1315,7 @@ DashboardPanel = function(){
                 columnWidth: 0.5,
                 baseCls:'x-plain',
                 bodyStyle:'padding:10px 10px 10px 10px',
-                id: 'dashboard_rightcol',
+                id: cfg.rc || 'dashboard_rightcol',
                 items: [{
                     title: ' ',
                     hidden: true
@@ -1452,38 +1455,51 @@ editFirstSelection = function(grid){
 
 saveSearch = function(type,params){
     var loc;
-    if (type == 'custom'){
-        loc = params;
-        params = {report: true};
+    var ntype;
+    
+    if (type == 'dashboard') {
+        ntype = 3;
+        loc = Testopia.Search.dashboard_urls.join('::>');
     }
-    else{
-        if (type == 'caserun'){
-            params.current_tab = 'case_run';
-        }
-        else{
-            params.current_tab = type;
-        }
-        if (params.report == 1){
-            loc = 'tr_' + type +'_reports.cgi?';
+    else 
+        if (type == 'custom') {
+            loc = params;
+            params = {
+                report: true
+            };
+            ntype = 1;
         }
         else {
-            loc = 'tr_list_' + type +'s.cgi?';
+            if (type == 'caserun') {
+                params.current_tab = 'case_run';
+            }
+            else {
+                params.current_tab = type;
+            }
+            if (params.report == 1) {
+                loc = 'tr_' + type + '_reports.cgi?';
+            }
+            else {
+                loc = 'tr_list_' + type + 's.cgi?';
+            }
+            ntype = 0;
+            loc = loc + jsonToSearch(params, '', ['ctype']);
         }
-        
-        loc = loc + jsonToSearch(params,'',['ctype']);
-    }
     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
      Ext.Msg.prompt('Save Search As', '', function(btn, text){
         if (btn == 'ok'){
             form.submit({
                 url: 'tr_query.cgi',
-                params: {action: 'save_query', query_name: text, query_part: loc, type: params.report ? 1 : 0},
+                params: {action: 'save_query', query_name: text, query_part: loc, type: ntype},
                 success: function(){
                     if (Ext.getCmp('searches_grid')){
                         Ext.getCmp('searches_grid').store.load();
                     }
                     if (Ext.getCmp('reports_grid')){
                         Ext.getCmp('reports_grid').store.load();
+                    }
+                    if (Ext.getCmp('dashboard_grid')){
+                        Ext.getCmp('dashboard_grid').store.load();
                     }
                 },
                 failure: testopiaError
