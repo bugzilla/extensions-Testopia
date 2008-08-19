@@ -164,7 +164,8 @@ CaseRunListGrid = function(params, cfg){
                {name: "close_date", mapping:"close_date"},
                {name: "bug_count", mapping:"bug_count"},
                {name: "case_summary", mapping:"case_summary"},
-               {name: "component", mapping:"component"}
+               {name: "component", mapping:"component"},
+               {name: "bug_list", mapping:"bug_list"}
                
         ]}),
         remoteSort: true,
@@ -174,7 +175,8 @@ CaseRunListGrid = function(params, cfg){
     this.store.paramNames.sort = 'order';
     this.bbar = new TestopiaPager('caserun', this.store);
     this.columns = [
-        {header: "Case", width: 50, dataIndex: 'case_id', sortable: true},
+        {header: "Case", width: 50, dataIndex: 'case_id', sortable: true,groupRenderer: function(v){return v;},
+         renderer: tutil.caseLink},
         {header: "Run", width: 50, dataIndex: 'run_id', sortable: true, 
          groupRenderer: function(v){return v;},
          renderer: tutil.runLink },
@@ -186,7 +188,25 @@ CaseRunListGrid = function(params, cfg){
         {header: "Closed", width: 60, sortable: true, dataIndex: 'close_date'},
         {header: "Priority", width: 60, sortable: true, dataIndex: 'priority'},
         {header: "Category", width: 100, sortable: true,dataIndex: 'category'},
-        {header: "Component", width: 100, sortable: true,dataIndex: 'component'}
+        {header: "Component", width: 100, sortable: true,dataIndex: 'component'},
+        {
+            header: "Bugs In This Build and Environment",
+            width: 100,
+            dataIndex: "bug_list",
+            sortable: false,
+            hideable: true,
+            renderer: function(v){
+                var bugs = v.bugs;
+                var rets = '';
+                for (var i=0; i< bugs.length; i++){
+                    if (typeof bugs[i] != 'function'){
+                        rets = rets + '<a href="show_bug.cgi?id=' + bugs[i].bug_id +'" ' + (bugs[i].closed ? 'class="bz_closed"' : '') +'>' + bugs[i].bug_id + '</a>, ';
+                    }
+                    
+                }
+                return rets;
+            }
+        }
     ];
     this.view = new Ext.grid.GroupingView({
         forceFit: true,
@@ -1211,7 +1231,8 @@ CaseRunHistory = function(){
             {name: 'status', mapping: 'status_name'},
             {name: 'testedby', mapping: 'testedby'},
             {name: 'closed', mapping: 'close_date'},
-            {name: 'isactive', mapping: 'isactive'}
+            {name: 'isactive', mapping: 'isactive'},
+            {name: "bug_list", mapping:"bug_list"}
         ]
     });
     this.columns = [
@@ -1219,7 +1240,25 @@ CaseRunHistory = function(){
         {header: "Environment", width: 150, dataIndex: 'environment', sortable: true},
         {header: "Status", width: 50, dataIndex: 'status', sortable: true, renderer: t.statusIcon},
         {header: "Tested By", width: 200, dataIndex: 'testedby', sortable: true },
-        {header: "Closed", width: 150, dataIndex: 'closed', sortable: true}
+        {header: "Closed", width: 150, dataIndex: 'closed', sortable: true},
+        {
+            header: "Bugs In This Build and Environment",
+            width: 100,
+            dataIndex: "bug_list",
+            sortable: false,
+            hideable: true,
+            renderer: function(v){
+                var bugs = v.bugs;
+                var rets = '';
+                for (var i=0; i< bugs.length; i++){
+                    if (typeof bugs[i] != 'function'){
+                        rets = rets + '<a href="show_bug.cgi?id=' + bugs[i].bug_id +'" ' + (bugs[i].closed ? 'class="bz_closed"' : '') +'>' + bugs[i].bug_id + '</a>, ';
+                    }
+                    
+                }
+                return rets;
+            }
+        }
     ];
     CaseRunHistory.superclass.constructor.call(this,{
         border: false,
