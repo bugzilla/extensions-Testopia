@@ -36,6 +36,7 @@ use Bugzilla::Testopia::Environment;
 use Bugzilla::Testopia::Build;
 
 use JSON;
+use Date::Parse;
 use base qw(Exporter Bugzilla::Object);
 
 @Bugzilla::Testopia::TestRun::EXPORT = qw(calculate_percent);
@@ -933,6 +934,24 @@ sub completion_percent {
     my $run_ids = join (',',@runs);
     
     
+}
+
+sub total_time {
+    my $self = shift;
+
+    return 0 unless $self->stop_date;
+    
+    my $seconds = str2time($self->stop_date) - str2time($self->start_date);    
+    
+    my @time = gmtime($seconds);
+    my %time;
+    
+    $time{day} = $time[7];
+    $time{hr}  = $time[2];
+    $time{min} = $time[1];
+    $time{sec} = $time[0];
+
+    return $time{day}.":".$time{hr}.":".$time{min}.":".$time{sec};
 }
 
 ###############################

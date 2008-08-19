@@ -507,7 +507,7 @@ Ext.onReady(function(){
           [% run.product_version FILTER html %]
           [% END %]
       </td>
-      <td>[% run.stop_date FILTER time %]</td>
+      <td>[% run.stop_date FILTER time %][% IF run.total_time %]&nbsp;([% run.total_time FILTER none %] D:H:M:S)[% END %]</td>
     </tr>
     <tr class="bz_row_header">
       <th>Default Build</th>

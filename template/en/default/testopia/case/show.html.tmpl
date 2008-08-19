@@ -653,7 +653,7 @@ Ext.onReady(function(){
       </tr>
     <tr class="bz_row_header">
       <th>Tester</th>
-      <th>Estimated Time</th>
+      <td><table><tr><th width="200">Estimated Time</th><td width="20"></td><th>Average Time</th></tr></table></td>
       <th>Automated</th>
       </tr>
     <tr class="bz_row_data">
@@ -666,8 +666,9 @@ Ext.onReady(function(){
       </td>
       <td>
         <table>
-          <tr><td><div id="estimated_time_div">[% case.estimated_time FILTER html %]</div></td>
+          <tr><td width="200"><div id="estimated_time_div">[% case.estimated_time FILTER html %]&nbsp;(H:M:S)</div></td>
           <td><div id="time_edit_btn_div"></div></td>
+          <td>[% case.calculate_average_time FILTER none %]&nbsp;(H:M:S)</td>
           </tr>
         </table>
       </td>

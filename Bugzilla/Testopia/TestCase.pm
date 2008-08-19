@@ -2274,9 +2274,6 @@ sub calculate_average_time {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
     my $totalseconds;
-    my $min = 0;
-    my $hours = 0;
-    my $sec = 0;
     my $i = 0;
     foreach my $cr (@{$self->caseruns}){
         if ($cr->completion_time){
@@ -2286,14 +2283,15 @@ sub calculate_average_time {
     }
     
     my $average = $i ? int($totalseconds / $i) : 0;
-    $min = int($average/60);
-    $sec = $average % 60;
-    if ($min > 60){
-        $hours = int($min/60);
-        $min = $min % 60;
-    }
-     
-    return "$hours:$min:$sec";
+    
+    my @time = gmtime($average);
+    my %time;
+    
+    $time{hr}  = $time[2];
+    $time{min} = $time[1];
+    $time{sec} = $time[0];
+        
+    return $time{hr}.":".$time{min}.":".$time{sec};
 }
 
 
