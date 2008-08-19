@@ -172,6 +172,12 @@ CaseRunListGrid = function(params, cfg){
         sortInfo: {field: 'run_id', direction: "ASC"},
         groupField: 'run_id'
     });
+    this.summary_sort = function(){
+        this.store.sortInfo.field = 'summary';
+        this.store.sortInfo.direction == 'DESC' ? this.store.sortInfo.direction = 'ASC' : this.store.sortInfo.direction = 'DESC';
+        this.getView().mainHd.select('td').removeClass(this.getView().sortClasses);
+        this.store.load();
+    };
     this.store.paramNames.sort = 'order';
     this.bbar = new TestopiaPager('caserun', this.store);
     this.columns = [
@@ -210,7 +216,12 @@ CaseRunListGrid = function(params, cfg){
     ];
     this.view = new Ext.grid.GroupingView({
         forceFit: true,
-        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
+        enableRowBody:true,
+        getRowClass : function(record, rowIndex, p, ds){
+            p.body = '<p><a href="javascript:Ext.getCmp(\'caserun_list_grid\').summary_sort()">Summary:</a> '+record.data.case_summary+'</p>';
+            return 'x-grid3-row-expanded';
+        }
     });
 
     CaseRunListGrid.superclass.constructor.call(this,{
@@ -219,6 +230,7 @@ CaseRunListGrid = function(params, cfg){
         loadMask: {msg:'Loading Test Cases...'},
         layout: 'fit',
         region: 'center',
+        stripeRows: true,
         autoExpandColumn: "caserun_list_build_col",
         autoScroll: true,
         sm: new Ext.grid.RowSelectionModel({
@@ -575,6 +587,7 @@ CaseRunGrid = function(params, run){
         border: false,
         bodyBorder: false,
         height: '400',
+        stripeRows: true,
         split: true,
         enableDragDrop: true,
         loadMask: {msg:'Loading Test Cases...'},
