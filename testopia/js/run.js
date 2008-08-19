@@ -332,7 +332,10 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                    id: 'execution_stop_date',
                                                    emptyText: 'Now',
                                                    name: 'chfieldto'
-                                               }]
+                                               },new UserLookup({
+                                                   id: 'exec_tester',
+                                                   fieldLabel: 'Tester (optional)',
+                                               })]
                                            })
                                        ],
                                         buttons: [{
@@ -346,7 +349,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                     autoScroll: true,
                                                     tools: PortalTools
                                                 });
-                                                newPortlet.url = 'tr_run_reports.cgi?type=execution&run_ids=' + getSelectedObjects(grid, 'run_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
+                                                newPortlet.url = 'tr_run_reports.cgi?type=execution&run_ids=' + getSelectedObjects(grid, 'run_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue() +'&tester=' + Ext.getCmp('exec_tester').getValue();
                                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                                 Ext.getCmp('dashboard_leftcol').doLayout();
@@ -433,6 +436,58 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                 text: 'Tags',
                                 handler: function(){
                                    TagsUpdate('run', grid);
+                                }
+                            },{
+                                 text: 'Targets',
+                                 handler: function(){
+                                   var win = new Ext.Window({
+                                       title: 'Change Run Targets',
+                                       id: 'run_target_win',
+                                       layout: 'fit',
+                                       split: true,
+                                       plain: true,
+                                       shadow: false,
+                                       width: 350,
+                                       height: 150,
+                                       items: [
+                                           new Ext.FormPanel({
+                                               bodyStyle: 'padding: 5px',
+                                               items: [
+                                                   new Ext.form.NumberField({
+                                                       type: 'numberfield',
+                                                       maxValue: 100,
+                                                       minValue: 0,
+                                                       id: 'target_completion',
+                                                       fieldLabel: 'Target Completion Rate',
+                                                       hiddenName: 'target_completion',
+                                                       listeners: {'valid': function(f){
+                                                           Ext.getCmp('target_pass').maxValue = f.getValue();
+                                                       }}
+                                                   }),
+                                                   new Ext.form.NumberField({
+                                                       maxValue: 100,
+                                                       minValue: 0,
+                                                       id: 'target_pass',
+                                                       fieldLabel: 'Target Pass Rate',
+                                                       hiddenName: 'target_pass'
+                                                   })
+                                               ]
+                                           })
+                                        ],
+                                        buttons: [{
+                                          text:'Update Targets',
+                                           handler: function(){
+                                               TestopiaUpdateMultiple('run', {target_pass: Ext.getCmp('target_pass').getValue(), target_completion: Ext.getCmp('target_completion').getValue(), ids: getSelectedObjects(grid,'run_id')}, grid);
+                                               win.close();
+                                           }
+                                       },{
+                                           text: 'Cancel',
+                                           handler: function(){
+                                               win.close();
+                                           }
+                                       }]
+                                   });
+                                   win.show();
                                 }
                             }]
                         }
@@ -642,32 +697,48 @@ var NewRunForm = function(plan){
                             hiddenName: 'manager',
                             fieldLabel: '<b>Run Manager</b>', 
                             allowBlank: false
+                        }),new Ext.form.NumberField({
+                            type: 'numberfield',
+                            maxValue: 100,
+                            minValue: 0,
+                            id: 'target_completion',
+                            fieldLabel: 'Target Completion Rate',
+                            hiddenName: 'target_completion',
+                            listeners: {'valid': function(f){
+                                Ext.getCmp('target_pass').maxValue = f.getValue();
+                            }}
                         })
                     ]
                 },{
                     columnWidth: 0.5,
                     layout: 'form',
                     items: [
-                    new BuildCombo({
-                        fieldLabel: '<b>Build</b>',
-                        hiddenName: 'build',
-                        mode: 'local',
-                        forceSelection: false,
-                        allowBlank: false,
-                        typeAhead: true,
-                        params: {product_id: plan.product_id},
-                        emptyText: 'Select or type a new name'
-                    }),
-                    new EnvironmentCombo({
-                        fieldLabel: '<b>Environment</b>',
-                        hiddenName: 'environment',
-                        mode: 'local',
-                        forceSelection: false,
-                        allowBlank: false,
-                        typeAhead: true,
-                        params: {product_id: plan.product_id},
-                        emptyText: 'Select or type a new name'
-                    })
+                        new BuildCombo({
+                            fieldLabel: '<b>Build</b>',
+                            hiddenName: 'build',
+                            mode: 'local',
+                            forceSelection: false,
+                            allowBlank: false,
+                            typeAhead: true,
+                            params: {product_id: plan.product_id},
+                            emptyText: 'Select or type a new name'
+                        }),
+                        new EnvironmentCombo({
+                            fieldLabel: '<b>Environment</b>',
+                            hiddenName: 'environment',
+                            mode: 'local',
+                            forceSelection: false,
+                            allowBlank: false,
+                            typeAhead: true,
+                            params: {product_id: plan.product_id},
+                            emptyText: 'Select or type a new name'
+                        }),new Ext.form.NumberField({
+                            maxValue: 100,
+                            minValue: 0,
+                            id: 'target_pass',
+                            fieldLabel: 'Target Pass Rate',
+                            hiddenName: 'target_pass'
+                        })
                     ]
                 }]
             },{ 

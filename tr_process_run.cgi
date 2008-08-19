@@ -52,13 +52,16 @@ unless ($run){
 
 if ($action eq 'edit'){
     ThrowUserError("testopia-read-only", {'object' => $run}) unless $run->canedit;
-    ThrowUserError("testopia-no-status") if $cgi->param('status') && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'status'}) if $cgi->param('status') && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'manager'}) if $cgi->param('manager') && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'target'}) if exists $cgi->{'target_pass'} && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'target'}) if exists $cgi->{'target_completion'} && !$run->canstatus;
     
     my $timestamp;
     $timestamp = $run->stop_date;
     $timestamp = undef if $cgi->param('status');
     $timestamp = get_time_stamp() if $cgi->param('status') == 0 && !$run->stop_date;
- 	print STDERR "Summary: " . $cgi->param('summary') if $cgi->param('summary');
+
     $run->set_summary($cgi->param('summary')) if $cgi->param('summary');
     $run->set_product_version($cgi->param('run_product_version')) if $cgi->param('run_product_version');
     $run->set_plan_text_version($cgi->param('plan_version')) if $cgi->param('plan_version');
@@ -67,6 +70,8 @@ if ($action eq 'edit'){
     $run->set_manager($cgi->param('manager')) if $cgi->param('manager');
     $run->set_notes($cgi->param('run_notes')) if exists $cgi->{'run_notes'};
     $run->set_stop_date($timestamp) if $cgi->param('status');
+    $run->set_target_pass($cgi->param('target_pass')) if exists $cgi->{'target_pass'};
+    $run->set_target_completion($cgi->param('target_completion')) if exists $cgi->{'target_completion'};
     
     $run->update();
     

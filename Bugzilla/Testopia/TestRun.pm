@@ -59,6 +59,8 @@ use constant DB_COLUMNS => qw(
     stop_date
     summary
     notes
+    target_pass
+    target_completion
 );
 
 sub report_columns {
@@ -86,7 +88,7 @@ use constant REQUIRED_CREATE_FIELDS => qw(plan_id environment_id build_id
 
 use constant UPDATE_COLUMNS         => qw(environment_id build_id product_version 
                                           summary manager_id plan_text_version notes
-                                          stop_date);
+                                          stop_date target_pass target_completion);
 
 use constant VALIDATORS => {
     plan_id           => \&_check_plan,
@@ -96,6 +98,8 @@ use constant VALIDATORS => {
     manager_id        => \&_check_manager,
     plan_text_version => \&_check_plan_text_version,
     notes             => \&_check_notes,
+    target_pass       => \&_check_target,
+    target_completion => \&_check_target,
 };
 
 ###############################
@@ -176,6 +180,13 @@ sub _check_notes {
     return $notes;
 }
 
+sub _check_target {
+    my ($invocant, $target) = @_;
+    detaint_natural($target);
+    ThrowUserError('invalid_target') unless $target && $target >= 0 && $target <= 100;
+    return $target;
+}
+
 ###############################
 ####       Mutators        ####
 ###############################
@@ -186,6 +197,9 @@ sub set_manager            { $_[0]->set('manager_id', $_[1]); }
 sub set_plan_text_version  { $_[0]->set('plan_text_version', $_[1]); }
 sub set_notes              { $_[0]->set('notes', $_[1]); }
 sub set_stop_date          { $_[0]->set('stop_date', $_[1]); }
+sub set_target_pass        { $_[0]->set('target_pass', $_[1]); }
+sub set_target_completion  { $_[0]->set('target_completion', $_[1]); }
+
 sub set_product_version    { 
     my ($self, $value) = @_;
     $value = $self->_check_product_version($value);
@@ -979,6 +993,8 @@ sub stop_date         { return $_[0]->{'stop_date'}; }
 sub summary           { return $_[0]->{'summary'};  }
 sub notes             { return $_[0]->{'notes'};  }
 sub product_version   { return $_[0]->{'product_version'};  }
+sub target_pass       { return $_[0]->{'target_pass'};  }
+sub target_completion { return $_[0]->{'target_completion'};  }
 
 =head2 type
 
@@ -1216,7 +1232,7 @@ sub case_run_count {
 
 sub case_run_count_by_date {
     my $self = shift;
-    my ($start, $stop, $status_id, $runs, $plans, $products) = @_;    
+    my ($start, $stop, $status_id, $tester, $runs, $plans, $products) = @_;    
     my $dbh = Bugzilla->dbh;
     
     my @runs;
@@ -1246,7 +1262,8 @@ sub case_run_count_by_date {
                AND close_date >= ?
                AND close_date <= ?";
     $query .= " AND case_run_status_id = ?" if $status_id;
-
+    $query .= " AND testedby = $tester" if $tester;
+    
     my $count;
     if ($status_id){
         ($count) = $dbh->selectrow_array($query,undef,($start,$stop,$status_id));

@@ -26,6 +26,7 @@ use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
+use Bugzilla::User;
 
 use Bugzilla::Testopia::Util;
 use Bugzilla::Testopia::Constants;
@@ -177,15 +178,17 @@ elsif ($type eq 'execution'){
     }
     my $chfieldfrom = trim(lc($cgi->param('chfieldfrom'))) || '';
     my $chfieldto = trim(lc($cgi->param('chfieldto'))) || '';
+    my $tester = login_to_id(trim($cgi->param('tester')), 'THROW_ERROR');
+    
     trick_taint($chfieldfrom);
     trick_taint($chfieldto);
     my $sql_chfrom = Bugzilla::Testopia::Search::SqlifyDate($chfieldfrom);
     my $sql_chto   = Bugzilla::Testopia::Search::SqlifyDate($chfieldto);
     
-    my $total = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, undef, \@runs);
-    my $passed = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, PASSED, \@runs);
-    my $failed = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, FAILED, \@runs);
-    my $blocked = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, BLOCKED, \@runs);
+    my $total = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, undef, $tester, \@runs);
+    my $passed = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, PASSED, $tester, \@runs);
+    my $failed = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, FAILED, $tester, \@runs);
+    my $blocked = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, BLOCKED, $tester, \@runs);
     
     $vars->{'total'} = $total;
     $vars->{'passed'} = $passed;

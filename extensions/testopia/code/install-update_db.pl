@@ -71,6 +71,8 @@ sub testopiaUpdateDB {
     $dbh->bz_add_column('test_environments', 'isactive', {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => '1'}, 1);
     $dbh->bz_add_column('test_plan_tags', 'userid', {TYPE => 'INT3', NOTNULL => 1}, 0);
     $dbh->bz_add_column('test_runs', 'default_tester_id', {TYPE => 'INT3'});
+    $dbh->bz_add_column('test_runs', 'target_pass', {TYPE => 'INT1'});
+    $dbh->bz_add_column('test_runs', 'target_completion', {TYPE => 'INT1'});
     $dbh->bz_add_column('test_run_tags', 'userid', {TYPE => 'INT3', NOTNULL => 1}, 0);
     $dbh->bz_add_column('test_builds', 'isactive', {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => '1'}, 1);
     $dbh->bz_add_column('test_cases', 'estimated_time', {TYPE => 'TIME'}, 0);
@@ -312,6 +314,10 @@ sub populateMiscTables {
     
     $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('ERROR', 7)") 
       if ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status WHERE name = ?", undef, 'ERROR');
+    $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_pass', 'Target Pass Rate', 'test_runs')") 
+      if ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_pass');
+    $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_completion', 'Target Completion Rate', 'test_runs')") 
+      if ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_completion');
       
     return if $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status");
 

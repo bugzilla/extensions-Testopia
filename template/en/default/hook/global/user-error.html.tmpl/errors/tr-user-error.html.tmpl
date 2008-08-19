@@ -147,7 +147,14 @@
     You may wish to clone the plan instead.
   [% ELSIF error == "testopia-no-status" %]
     [% title = "Permission Denied" %]
-    You must either be the run manager or a plan administrator to change the status of a run.
+    You must either be the run manager or a plan administrator to change 
+    [% IF field == 'status' %]
+      the status of a run.
+    [% ELSIF field == 'manager' %]
+      the run manager
+    [% ELSIF field == 'target' %]
+      the target pass or completion rates
+    [% END %]
   [% ELSIF error == "testopia-update-failed" %]
     [% title = "One or more of your test $object failed to update" %]
     Update of one or more of your [% object %]s failed. The most likely cause is that you don't have permissions
@@ -178,5 +185,7 @@
   [% ELSIF error == "testopia-no-action" %]
     I give up. What were you trying to do?
     Either there was no action specified, or I didn't recognize it.
+  [% ELSIF error == "invalid_target" %]
+    Target Completion and Pass rates must be a number between 0 and 100 inclusive.
   [% END %]
   

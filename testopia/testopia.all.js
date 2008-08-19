@@ -6246,7 +6246,10 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                    id: 'execution_stop_date',
                                                    emptyText: 'Now',
                                                    name: 'chfieldto'
-                                               }]
+                                               },new UserLookup({
+                                                   id: 'exec_tester',
+                                                   fieldLabel: 'Tester (optional)',
+                                               })]
                                            })
                                        ],
                                         buttons: [{
@@ -6260,7 +6263,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                     autoScroll: true,
                                                     tools: PortalTools
                                                 });
-                                                newPortlet.url = 'tr_run_reports.cgi?type=execution&run_ids=' + getSelectedObjects(grid, 'run_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
+                                                newPortlet.url = 'tr_run_reports.cgi?type=execution&run_ids=' + getSelectedObjects(grid, 'run_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue() +'&tester=' + Ext.getCmp('exec_tester').getValue();
                                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                                 Ext.getCmp('dashboard_leftcol').doLayout();

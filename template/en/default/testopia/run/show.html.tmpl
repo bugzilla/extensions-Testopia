@@ -63,6 +63,12 @@ Ext.onReady(function(){
             case 'manager': 
                 params.manager = value;
                 break;
+            case 'target_pass': 
+                params.target_pass = value;
+                break;
+            case 'target_completion': 
+                params.target_completion = value;
+                break;
         }
         testopia_form.submit({
             url: 'tr_process_run.cgi',
@@ -224,7 +230,8 @@ Ext.onReady(function(){
             ]
         }]
     });
-[% IF run.canedit %]    
+[% IF run.canedit %]   
+  [% IF run.canstatus %] 
 // Manager Editing
     var manager_edit_btn = new Ext.Button({
         applyTo: 'manager_edit_btn_div',
@@ -253,6 +260,70 @@ Ext.onReady(function(){
     manager_edt.on('complete', function(e,v){
         submitEdits('manager', v);
     });
+// Target Complete edit    
+    var tcomp_edit_btn = new Ext.Button({
+        applyTo: 'run_tcomp_edit_btn_div',
+        template: button_16x_tmpl,
+        id:'run_tcomp_edit_btn',
+        icon: 'testopia/img/edit.png',
+        iconCls: 'img_button_16x',
+        tooltip: 'Edit Run Summary',
+        handler: function(){
+            Ext.getCmp('run_tcomp_edt').startEdit(Ext.get('run_tcomp_div'));
+        }
+    });
+    var run_tcomp_edt = new Ext.Editor(
+        new Ext.form.NumberField({
+            width: 30,
+            name: 'tcomp',
+            minValue: 0,
+            maxValue: 100
+        }),{
+            alignment: 'tl-tl',
+            id: 'run_tcomp_edt',
+            ignoreNoChange: true,
+            updateEl: true,
+            completeOnEnter: true,
+            ignoreNoChange: true,
+            cancelOnEsc: true
+    });
+    run_tcomp_edt.on('complete', function(e,v,sv){
+        submitEdits('target_completion', v);
+        Ext.getCmp('tpass_nf').maxValue = v;
+    });
+// Target Pass edit    
+    var tpass_edit_btn = new Ext.Button({
+        applyTo: 'run_tpass_edit_btn_div',
+        template: button_16x_tmpl,
+        id:'run_tpass_edit_btn',
+        icon: 'testopia/img/edit.png',
+        iconCls: 'img_button_16x',
+        tooltip: 'Edit Run Summary',
+        handler: function(){
+            Ext.getCmp('run_tpass_edt').startEdit(Ext.get('run_tpass_div'));
+        }
+    });
+    var run_tpass_edt = new Ext.Editor(
+        new Ext.form.NumberField({
+            width: 30,
+            name: 'tpass',
+            id: 'tpass_nf',
+            minValue: 0,
+            maxValue: [% run.target_completion || 100 FILTER js %]
+        }),{
+            alignment: 'tl-tl',
+            id: 'run_tpass_edt',
+            ignoreNoChange: true,
+            updateEl: true,
+            completeOnEnter: true,
+            ignoreNoChange: true,
+            cancelOnEsc: true
+    });
+    run_tpass_edt.on('complete', function(e,v,sv){
+        submitEdits('target_pass', v);
+    });
+
+  [% END %]
 
 // Summary Editing    
     var summary_edit_btn = new Ext.Button({
@@ -441,7 +512,11 @@ Ext.onReady(function(){
     <tr class="bz_row_header">
       <th>Default Build</th>
       <th>Default Environment</th>
-      <th>Run Status</th>
+      <td>
+      <table>
+        <tr><th width="120">Run&nbsp;Status</th><th width="120">Target&nbsp;Comp.&nbsp;%</th><th width="120">Target&nbsp;Pass&nbsp;%</th></tr>
+      </table>
+      </td>
     </tr>
     <tr class="bz_row_data">
       <td>[% IF run.canedit %]
@@ -460,7 +535,17 @@ Ext.onReady(function(){
           [% run.environment.name FILTER html %]
           [% END %]
       </td>
-      <td align="center"><div id="run_status_btn"></div></td>      
+      <td align="left">
+      <table>
+        <tr>
+          <td width="120"><div id="run_status_btn"></div></td>
+          <td width="120"><div id="run_tcomp_div" style="width:30px;">[% run.target_completion FILTER none %]</div></td>
+          <td><div id="run_tcomp_edit_btn_div"></div></td>
+          <td width="120"><div id="run_tpass_div" style="width:30px;">[% run.target_pass FILTER none %]</div></td>
+          <td><div id="run_tpass_edit_btn_div"></div></td>
+        </tr>
+      </table>
+      </td>      
     </tr>
   </tbody>
 </table>

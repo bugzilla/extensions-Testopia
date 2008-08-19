@@ -106,6 +106,8 @@ if ($action eq 'add'){
             'manager_id'        => $cgi->param('manager'),
             'summary'           => $cgi->param('summary'),
             'notes'             => $cgi->param('notes') || '',
+            'target_pass'       => $cgi->param('target_pass'),
+            'target_completion' => $cgi->param('target_completion'),
             'status'            => 1,
     });
     

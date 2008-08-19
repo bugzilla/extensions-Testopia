@@ -88,6 +88,8 @@ sub test_create_by_id {
             plan_text_version => $plan->version,
             notes             => 'API TEST RUN NOTES' . time(),
             status            => 1,
+            target_pass       => 90,
+            target_completion => 95,
             cases             => [ get_rep('test_cases')->{'case_id'}, get_rep('test_cases')->{'case_id'} ],
         }
     );
@@ -212,6 +214,8 @@ sub test_update {
             product_version   => $version->{'value'},
             plan_text_version => $plan->version,
             notes             => 'API TEST RUN NOTES' . time(),
+            target_pass       => 90,
+            target_completion => 95,
             status            => 1,
         }
     );

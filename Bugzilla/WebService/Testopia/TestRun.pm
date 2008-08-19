@@ -161,6 +161,12 @@ sub update {
     $new_values->{'manager_id'} ||= $new_values->{'manager'};
     $new_values->{'build_id'} ||= $new_values->{'build'};
     $new_values->{'environment_id'} ||= $new_values->{'environment'};
+    
+    ThrowUserError("testopia-no-status", {field => 'status'}) if $new_values->{'status'} && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'manager'}) if $new_values->{'manager'} && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'target'}) if exists $new_values->{'target_pass'} && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'target'}) if exists $new_values->{'target_completion'} && !$run->canstatus;
+    
 
     if ($new_values->{'build_id'} && trim($new_values->{'build_id'}) !~ /^\d+$/ ){
         my $build = Bugzilla::Testopia::Build::check_build($new_values->{'build_id'}, $run->plan->product, "THROWERROR");
@@ -184,7 +190,9 @@ sub update {
     $run->set_manager($new_values->{'manager_id'}) if $new_values->{'manager_id'};
     $run->set_notes($new_values->{'notes'}) if defined $new_values->{'notes'};
     $run->set_stop_date($timestamp) if $new_values->{'status'};
-    
+    $run->set_target_pass($new_values->{'target_pass'}) if defined $new_values->{'target_pass'};
+    $run->set_target_completion($new_values->{'target_completion'}) if defined $new_values->{'target_completion'};
+
     $run->update();
     
     # Result is modified test run, otherwise an exception will be thrown
@@ -469,6 +477,8 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
   | summary           | String         | Required  |                                    |
   | product_version   | String         | Optional  | Defaults to plan's version         |
   | plan_text_version | Integer        | Optional  |                                    |
+  | target_completion | Integer        | Optional  | Targetted Completion percentage    |
+  | target_pass       | Integer        | Optional  | Targetted Pass percentage          |
   | notes             | String         | Optional  |                                    |
   | status            | Integer        | Optional  | 0:STOPPED 1: RUNNING (default 1)   |
   | cases             | Array/String   | Optional  | list of case ids to add to the run |
@@ -669,6 +679,8 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
                       | summary           | String         |
                       | product_version   | String         |
                       | plan_text_version | Integer        |
+                      | target_completion | Integer        |
+                      | target_pass       | Integer        |
                       | notes             | String         |
                       | status            | Integer        |
                       +-------------------+----------------+

@@ -263,6 +263,9 @@ $schema->{test_runs} = {
         stop_date         => {TYPE => 'DATETIME'},
         summary           => {TYPE => 'TINYTEXT', NOTNULL => 1},
         notes             => {TYPE => 'MEDIUMTEXT'},
+        target_pass       => {TYPE => 'INT1'},
+        target_completion => {TYPE => 'INT1'},
+        
     ],
     INDEXES => [
         test_run_plan_id_run_id_idx => [qw(plan_id run_id)],

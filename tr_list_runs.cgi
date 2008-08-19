@@ -71,7 +71,9 @@ if ($action eq 'update'){
         $run->set_manager($cgi->param('manager')) if $cgi->param('manager');
         $run->set_build($cgi->param('build')) if $cgi->param('build');
         $run->set_environment($cgi->param('environment')) if $cgi->param('environment');
-        
+        $run->set_target_pass($cgi->param('target_pass')) if exists $cgi->{'target_pass'};
+        $run->set_target_completion($cgi->param('target_completion')) if exists $cgi->{'target_completion'};
+
         $run->update();
     }
             
