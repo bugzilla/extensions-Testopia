@@ -1069,8 +1069,8 @@ CaseRun = function(){
     appendNote = function(){
         var form = new Ext.form.BasicForm('testopia_helper_frm',{});
         form.submit({
-            url: 'tr_caserun.cgi',
-            params: {action: 'update_note', note: Ext.getCmp('caserun_append_note_fld').getValue(), caserun_id: this.caserun_id},
+            url: 'tr_list_caseruns.cgi',
+            params: {action: 'update', note: Ext.getCmp('caserun_append_note_fld').getValue(), ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')},
             success: function(){
                 Ext.getCmp('caserun_append_note_fld').reset();
                 store.reload();

@@ -58,6 +58,10 @@ if ($action eq 'update'){
     my @uneditable;
     my $assignee_id; 
     my $status_id;
+    my $note = $cgi->param('note');
+
+    trick_taint($note) if $note;
+    
     if ($cgi->param('applyall') eq 'true'){
         my $run = Bugzilla::Testopia::TestRun->new($cgi->param('run_id'));
         exit if $run->stop_date;
@@ -88,6 +92,7 @@ if ($action eq 'update'){
         $cr = $cr->switch($cr->build->id, $cgi->param('env_id')) if $cgi->param('env_id');
         $cr->set_status($status_id, $cgi->param('update_bug') eq 'true' ? 1 : 0) if $status_id;
         $cr->set_assignee($assignee_id) if $assignee_id;
+        $cr->append_note($note);
     }
 
     ThrowUserError('testopia-update-failed', {'object' => 'case-run', 'list' => join(',',@uneditable)}) if (scalar @uneditable);
