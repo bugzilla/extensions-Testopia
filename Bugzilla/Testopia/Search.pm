@@ -1268,7 +1268,7 @@ sub init {
     } 
     my $email = trim($cgi->param("bug_email"));
     my $email_type = $cgi->param("bug_emailtype");
-    if ($email_type eq "exact") {
+    if ($email_type && $email_type eq "exact") {
         $email_type = "anyexact";
         foreach my $name (split(',', $email)) {
             $name = trim($name);

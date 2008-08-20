@@ -107,12 +107,11 @@ sub create {
         $new_values->{'environment_id'} = $environment->id;
     }
     
-    if ($new_values->{'status'}){
-        $new_values->{'case_run_status_id'} = Bugzilla::Testopia::TestCaseRun::lookup_status_by_name($new_values->{'status'});
-        delete $new_values->{'status'};
-    }
-    $new_values->{'case_run_status_id'} = IDLE unless $new_values->{'case_run_status_id'}; 
-
+    $new_values->{'case_run_status_id'} ||= $new_values->{'status'};
+    $new_values->{'case_run_status_id'} ||= IDLE; 
+    
+    delete $new_values->{'status'};
+    
     my $caserun = Bugzilla::Testopia::TestCaseRun->create($new_values);
     
     # Result is new test case run object hash
@@ -151,14 +150,10 @@ sub update {
         } 
     }
 
-    if ($new_values->{'status'}){
-        $new_values->{'case_run_status_id'} = Bugzilla::Testopia::TestCaseRun::lookup_status_by_name($new_values->{'status'});
-        delete $new_values->{'status'};
-    }
-
+    $new_values->{'case_run_status_id'} ||= $new_values->{'status'};
     $new_values->{'build_id'} ||= $new_values->{'build'};
     $new_values->{'environment_id'} ||= $new_values->{'environment'};
-
+    
     my @results;
    
     foreach my $caserun (@caseruns){

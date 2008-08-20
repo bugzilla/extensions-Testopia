@@ -406,6 +406,7 @@ if the status is a closed status.
 sub set_status {
     my $self = shift;
     my ($status_id, $update_bugs) = @_;
+    $status_id = $self->_check_case_run_status_id($status_id);
     return if $self->status_id == $status_id;
     my $oldstatus = $self->status;
     my $newstatus = lookup_status($status_id);
