@@ -423,7 +423,13 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                     Ext.getCmp('dashboard_leftcol').doLayout();
                                     bug_list.store.load();
                                 }
-                            }]
+                            },{
+                                text: 'Missing Cases Report',
+                                handler: function(){
+                                    window.open('tr_list_cases.cgi?report_type=missing&plan_ids=' + getSelectedObjects(grid, 'plan_id'));
+                                }
+                            }
+                        ]
                     }
                 },{
                     text: 'Refresh List',

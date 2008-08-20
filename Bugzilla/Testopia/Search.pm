@@ -111,7 +111,25 @@ sub init {
     my $sortdir; 
     if ($cgi->param('dir')){
         $sortdir = $cgi->param('dir') eq 'ASC' ? 'ASC' : 'DESC';
-    } 
+    }
+    # What a Hack!
+    # For the missing cases report, this is the simplest query that can return the list
+    # Just set it and forget the rest. 
+    if ($cgi->param('report_type') eq 'missing'){
+        my @plan_ids = split(',',$cgi->param('plan_ids'));
+        my @plans;
+        foreach my $p (@plan_ids){
+            my $plan = Bugzilla::Testopia::TestPlan->new(trim($p));
+            push @plans, $plan->id if $plan && $plan->canview;
+        }
+        my $plans = join(',',@plans);
+        my $query = "SELECT case_id 
+                       FROM test_case_plans 
+                      WHERE case_id NOT IN (SELECT case_id FROM test_case_runs) 
+                        AND plan_id IN ($plans)";
+        $self->{'sql'} = $query;
+        return;
+    }
     
     my $distinct = $cgi->param('distinct') ? 'DISTINCT' : '';
     
