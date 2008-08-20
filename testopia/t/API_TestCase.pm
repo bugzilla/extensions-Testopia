@@ -266,7 +266,9 @@ sub test_list {
     
 #    dump_all($table->list, $response->result);
     cmp_deeply( $response->result, noclass( $table->list ), "TestCase - test_list" );
-
+    
+    $response = $proxy->call( "TestCase.list_count", { pagesize => 25, } );
+    ok($response->result == $table->list_count, 'list_count');
 }
 
 sub test_add_component {

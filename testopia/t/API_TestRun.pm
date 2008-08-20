@@ -253,6 +253,8 @@ sub test_list {
     check_fault( $response, $self );
     cmp_deeply( $response->result, noclass( $table->list ), "TestRun - test_list" );
 
+    $response = $proxy->call( "TestRun.list_count", { pagesize => 25, } );
+    ok($response->result == $table->list_count, 'list_count');
 }
 
 sub test_add_tag {

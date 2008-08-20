@@ -115,7 +115,7 @@ sub init {
     # What a Hack!
     # For the missing cases report, this is the simplest query that can return the list
     # Just set it and forget the rest. 
-    if ($cgi->param('report_type') eq 'missing'){
+    if ($cgi->param('report_type') && $cgi->param('report_type') eq 'missing'){
         my @plan_ids = split(',',$cgi->param('plan_ids'));
         my @plans;
         foreach my $p (@plan_ids){

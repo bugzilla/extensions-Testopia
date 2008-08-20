@@ -82,6 +82,25 @@ sub list {
     return Bugzilla::Testopia::Table->new('case_run','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list();
 }
 
+sub list_count {
+    my $self = shift;
+    my ($query) = @_;
+
+    Bugzilla->login(LOGIN_REQUIRED);
+    
+    my $cgi = Bugzilla->cgi;
+    
+    $cgi->param("current_tab", "case_run");
+    
+    foreach (keys(%$query)){
+        $cgi->param($_, $$query{$_});
+    }
+    $cgi->param('distinct', 1);
+    
+    my $search = Bugzilla::Testopia::Search->new($cgi);
+    return Bugzilla::Testopia::Table->new('case_run','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list_count();
+}
+
 sub create {
     my $self = shift;
     my ($new_values) = @_;
@@ -618,6 +637,14 @@ TestCaseRun->get($run_id, $case_id, $build_id, $environment_id)
     +----------------------------------------------------+
 
  Returns:     Array: Matching test cases are retuned in a list of hashes.
+
+=item C<list_count($query)>
+
+ Description: Performs a search and returns the resulting count of cases.
+
+ Params:      $query - Hash: keys must match valid search fields (see list).
+
+ Returns:     Integer - total matching cases.
 
 =item C<lookup_status_name_by_id> 
 
