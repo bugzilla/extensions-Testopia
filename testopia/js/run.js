@@ -371,24 +371,20 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                 text: 'New Run Bug Report',
                                 handler: function(){
                                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                                    var bug_list = new Testopia.BugReport({
-                                            run_ids: getSelectedObjects(grid, 'run_id')
-                                        });
                                     var newPortlet = new Ext.ux.Portlet({
                                         title: 'Bug Report',
                                         closable: true,
                                         autoScroll: true,
-                                        tools: [{
-                                            id:'close',
-                                            handler: function(e, target, panel){
-                                                panel.ownerCt.remove(panel, true);
-                                            }
-                                        }],
-                                        items: bug_list
+                                        tools: PortalTools
                                     });
+                                    newPortlet.url = 'tr_run_reports.cgi?type=bug_grid&run_ids=' + getSelectedObjects(grid, 'run_id') + '&noheader=1';
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
-                                    bug_list.store.load();
+                                    newPortlet.load({
+                                        scripts: true,
+                                        url: newPortlet.url
+                                    });
                                 }
                             }]
                         }
@@ -1317,7 +1313,7 @@ Testopia.BugReport = function(params){
                {name: "severity", mapping:"bug_severity"}
 
         ]}),
-        remoteSort: true,
+        remoteSort: false,
         sortInfo: {field: 'run_id', direction: "ASC"},
         groupField: 'bug_id'
     });

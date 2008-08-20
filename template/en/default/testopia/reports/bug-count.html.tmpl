@@ -22,27 +22,25 @@
   # ...
   #%]
   
-[% title = "Bug Impact Report for Plan $plan.id - $plan.name" %]
-[% PROCESS global/header.html.tmpl
-    %]
-
-<p>This report details the bugs detected in this test plan and the number of test cases that each bug is attached to.
-Those bugs impacting the most test cases appear at the top. 
-Click the link under Test Cases to be taken to a list of those cases.
-</p>
-<table>
-  <tr class="bz_row_header">
-    <th># of Test Cases</th>
-    <th>Bug</th>
-  </tr>
-[% FOREACH row = bug_table %]
-  <tr class="[% loop.count % 2 == 1 ? "bz_row_odd" : "bz_row_even" %]">
-    <td align="center"><a href="tr_list_cases.cgi?bug_id=[% row.bug_id %]&plan_id=[% plan.id FILTER none %]">[% row.casecount FILTER html %]</a></td>
-    <td align="center">[% row.bug_id FILTER bug_link(row.bug_id) %]</td>
-  </tr>
+[% PROCESS testopia/style.none.tmpl %]
+[% UNLESS stripheader %]
+[% PROCESS global/header.html.tmpl %]
 [% END %]
-</table>
-<p>
-<a href="tr_show_plan.cgi?plan_id=[% plan.id FILTER none %]">Back</a> to plan.
-</p>
+<script type="text/javascript">
+Ext.onReady(function(){
+    
+    var bug_list = new Testopia.BugReport({
+            run_ids: '[% runs || 0 FILTER js %]',
+            plan_ids: '[% plans || 0 FILTER js %]'
+        });
+    bug_list.render('bug_count_report');
+    bug_list.store.load();
+});
+
+</script>
+
+<div id="bug_count_report"></div>
+
+[% UNLESS stripheader %]
 [% PROCESS global/footer.html.tmpl %]
+[% END %]

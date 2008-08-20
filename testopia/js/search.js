@@ -492,6 +492,7 @@ ReportGrid = function(cfg){
                     Ext.getCmp(current_col).doLayout();
                     Testopia.Search.dashboard_urls.push(r.get('query'));
             		newPortlet.load({
+                        scripts: true,
                         url: r.get('query')
                     });
                     current_col = current_col == 'dashboard_leftcol' ? 'dashboard_rightcol' : 'dashboard_leftcol';
@@ -702,85 +703,84 @@ PortalTools = [{
     id:'gear',
     handler: function(e,target,panel){
         var form = new Ext.form.BasicForm('testopia_helper_frm',{});
-        if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
-                id: 'portal_tools_menu',
-                items: [
-                {
-                    text: 'Save',
-                    handler: function(){
-                         Ext.Msg.prompt('Save Report As', '', function(btn, text){
-                            if (btn == 'ok'){
+        this.menu = new Ext.menu.Menu({
+            id: 'portal_tools_menu',
+            items: [
+            {
+                text: 'Save',
+                handler: function(){
+                     Ext.Msg.prompt('Save Report As', '', function(btn, text){
+                        if (btn == 'ok'){
+                            form.submit({
+                                url: 'tr_query.cgi',
+                                params: {action: 'save_query', query_name: text, query_part: panel.url, type: 1},
+                                success: function(){
+                                    Ext.getCmp('reports_grid').store.load();
+                                    panel.title = text;
+                                },
+                                failure: testopiaError
+                            });
+                        }
+                    });
+                }
+            },{
+                text: 'Refresh',
+                icon: 'testopia/img/refresh.png',
+                iconCls: 'img_button_16x',
+                handler: function(){
+                    panel.load({url: panel.url});
+                }
+            },{
+                text: 'Link to this report',
+                handler: function(){
+                    var path;
+                    if (panel.url.match(/^http/)){
+                        path = panel.url;
+                        path = path.replace(/\&noheader=1/gi, '');
+                    }
+                    else{
+                        var l = window.location;
+                        var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
+                        pathprefix = pathprefix[1];
+                        path = l.protocol + '//' + l.host + pathprefix + '/' + panel.url;
+                        path = path.replace(/\&noheader=1/gi, '');
+                    }
+                    var win = new Ext.Window({
+                        width: 300,
+                        plain: true,
+                        shadow: false,
+                        items: [new Ext.form.TextField({
+                            value: path,
+                            width: 287
+                        })]
+                    });
+                    win.show();
+                }
+            },{
+                text: 'Delete',
+                handler: function(){
+                     Ext.Msg.show({
+                        title:'Confirm Delete?',
+                        icon: Ext.MessageBox.QUESTION,
+                        msg: 'Are you sure you want to delete this report?',
+                        buttons: Ext.Msg.YESNO,
+                        fn: function(btn, text){
+                            if (btn == 'yes'){
                                 form.submit({
                                     url: 'tr_query.cgi',
-                                    params: {action: 'save_query', query_name: text, query_part: panel.url, type: 1},
+                                    params: {action: 'delete_query', query_name: panel.title},
                                     success: function(){
                                         Ext.getCmp('reports_grid').store.load();
-                                        panel.title = text;
+                                        panel.ownerCt.remove(panel, true);
                                     },
                                     failure: testopiaError
                                 });
                             }
-                        });
-                    }
-                },{
-                    text: 'Refresh',
-                    icon: 'testopia/img/refresh.png',
-                    iconCls: 'img_button_16x',
-                    handler: function(){
-                        panel.load({url: panel.url});
-                    }
-                },{
-                    text: 'Link to this report',
-                    handler: function(){
-                        var path;
-                        if (panel.url.match(/^http/)){
-                            path = panel.url;
-                            path = path.replace(/\&noheader=1/gi, '');
                         }
-                        else{
-                            var l = window.location;
-                            var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
-                            pathprefix = pathprefix[1];
-                            path = l.protocol + '//' + l.host + pathprefix + '/' + panel.url;
-                        }
-                        var win = new Ext.Window({
-                            width: 300,
-                            plain: true,
-                            shadow: false,
-                            items: [new Ext.form.TextField({
-                                value: path,
-                                width: 287
-                            })]
-                        });
-                        win.show();
-                    }
-                },{
-                    text: 'Delete',
-                    handler: function(){
-                         Ext.Msg.show({
-                            title:'Confirm Delete?',
-                            icon: Ext.MessageBox.QUESTION,
-                            msg: 'Are you sure you want to delete this report?',
-                            buttons: Ext.Msg.YESNO,
-                            fn: function(btn, text){
-                                if (btn == 'yes'){
-                                    form.submit({
-                                        url: 'tr_query.cgi',
-                                        params: {action: 'delete_query', query_name: panel.title},
-                                        success: function(){
-                                            Ext.getCmp('reports_grid').store.load();
-                                            panel.ownerCt.remove(panel, true);
-                                        },
-                                        failure: testopiaError
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }]
-            });
-        }
+                    });
+                }
+            }]
+        });
         e.stopEvent();
         this.menu.showAt(e.getXY());
     }

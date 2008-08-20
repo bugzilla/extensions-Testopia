@@ -275,6 +275,17 @@ elsif ($type eq 'bug'){
     exit;
 }
 
+elsif ($type eq 'bug_grid'){
+    $vars->{'runs'} = $cgi->param('run_ids');
+    $vars->{'plans'} = $cgi->param('plan_ids');
+    $vars->{'stripheader'} = 1 if $cgi->param('noheader');
+    
+    print $cgi->header;
+    $template->process("testopia/reports/bug-count.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+    exit;    
+}
+
 $cgi->param('current_tab', 'run');
 $cgi->param('viewall', 1);
 my $report = Bugzilla::Testopia::Report->new('run', 'tr_list_runs.cgi', $cgi);
