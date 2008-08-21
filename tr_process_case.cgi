@@ -210,7 +210,9 @@ elsif($action eq 'getcomponents'){
 elsif ($action eq 'case_to_bug'){
     
     ThrowUserError("testopia-read-only", {'object' => $case}) unless $case->canedit;
-    
+    $case->text;
+    $case->{text}->{action} =~ s/(<br[\s\/>]+|<p.*?>|<li.*?>)/\n\n/g;
+    $case->{text}->{action} =~ s/<.*?>//g;
     my $vars;
     $vars->{'caserun'} = Bugzilla::Testopia::TestCaseRun->new($cgi->param('caserun_id')) if $cgi->param('caserun_id');
     $vars->{'case'} = $case;
