@@ -2472,26 +2472,28 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                 text: 'New Bug Report',
                                 handler: function(){
                                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                                    var bug_list = new Testopia.BugReport({
-                                            plan_ids: getSelectedObjects(grid, 'plan_id')
-                                        });
                                     var newPortlet = new Ext.ux.Portlet({
                                         title: 'Bug Report',
                                         closable: true,
                                         autoScroll: true,
-                                        tools: [{
-                                            id:'close',
-                                            handler: function(e, target, panel){
-                                                panel.ownerCt.remove(panel, true);
-                                            }
-                                        }],
-                                        items: bug_list
+                                        tools: PortalTools
                                     });
+                                    newPortlet.url = 'tr_run_reports.cgi?type=bug_grid&plan_ids=' + getSelectedObjects(grid, 'plan_id') + '&noheader=1';
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
-                                    bug_list.store.load();
+                                    newPortlet.load({
+                                        scripts: true,
+                                        url: newPortlet.url
+                                    });
                                 }
-                            }]
+                            },{
+                                text: 'Missing Cases Report',
+                                handler: function(){
+                                    window.open('tr_list_cases.cgi?report_type=missing&plan_ids=' + getSelectedObjects(grid, 'plan_id'));
+                                }
+                            }
+                        ]
                     }
                 },{
                     text: 'Refresh List',
@@ -4406,17 +4408,25 @@ CaseRunListGrid = function(params, cfg){
                {name: "close_date", mapping:"close_date"},
                {name: "bug_count", mapping:"bug_count"},
                {name: "case_summary", mapping:"case_summary"},
-               {name: "component", mapping:"component"}
+               {name: "component", mapping:"component"},
+               {name: "bug_list", mapping:"bug_list"}
                
         ]}),
         remoteSort: true,
         sortInfo: {field: 'run_id', direction: "ASC"},
         groupField: 'run_id'
     });
+    this.summary_sort = function(){
+        this.store.sortInfo.field = 'summary';
+        this.store.sortInfo.direction == 'DESC' ? this.store.sortInfo.direction = 'ASC' : this.store.sortInfo.direction = 'DESC';
+        this.getView().mainHd.select('td').removeClass(this.getView().sortClasses);
+        this.store.load();
+    };
     this.store.paramNames.sort = 'order';
     this.bbar = new TestopiaPager('caserun', this.store);
     this.columns = [
-        {header: "Case", width: 50, dataIndex: 'case_id', sortable: true},
+        {header: "Case", width: 50, dataIndex: 'case_id', sortable: true,groupRenderer: function(v){return v;},
+         renderer: tutil.caseLink},
         {header: "Run", width: 50, dataIndex: 'run_id', sortable: true, 
          groupRenderer: function(v){return v;},
          renderer: tutil.runLink },
@@ -4428,11 +4438,34 @@ CaseRunListGrid = function(params, cfg){
         {header: "Closed", width: 60, sortable: true, dataIndex: 'close_date'},
         {header: "Priority", width: 60, sortable: true, dataIndex: 'priority'},
         {header: "Category", width: 100, sortable: true,dataIndex: 'category'},
-        {header: "Component", width: 100, sortable: true,dataIndex: 'component'}
+        {header: "Component", width: 100, sortable: true,dataIndex: 'component'},
+        {
+            header: "Bugs In This Build and Environment",
+            width: 100,
+            dataIndex: "bug_list",
+            sortable: false,
+            hideable: true,
+            renderer: function(v){
+                var bugs = v.bugs;
+                var rets = '';
+                for (var i=0; i< bugs.length; i++){
+                    if (typeof bugs[i] != 'function'){
+                        rets = rets + '<a href="show_bug.cgi?id=' + bugs[i].bug_id +'" ' + (bugs[i].closed ? 'class="bz_closed"' : '') +'>' + bugs[i].bug_id + '</a>, ';
+                    }
+                    
+                }
+                return rets;
+            }
+        }
     ];
     this.view = new Ext.grid.GroupingView({
         forceFit: true,
-        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
+        enableRowBody:true,
+        getRowClass : function(record, rowIndex, p, ds){
+            p.body = '<p><a href="javascript:Ext.getCmp(\'caserun_list_grid\').summary_sort()">Summary:</a> '+record.data.case_summary+'</p>';
+            return 'x-grid3-row-expanded';
+        }
     });
 
     CaseRunListGrid.superclass.constructor.call(this,{
@@ -4441,6 +4474,7 @@ CaseRunListGrid = function(params, cfg){
         loadMask: {msg:'Loading Test Cases...'},
         layout: 'fit',
         region: 'center',
+        stripeRows: true,
         autoExpandColumn: "caserun_list_build_col",
         autoScroll: true,
         sm: new Ext.grid.RowSelectionModel({
@@ -4797,6 +4831,7 @@ CaseRunGrid = function(params, run){
         border: false,
         bodyBorder: false,
         height: '400',
+        stripeRows: true,
         split: true,
         enableDragDrop: true,
         loadMask: {msg:'Loading Test Cases...'},
@@ -5278,8 +5313,8 @@ CaseRun = function(){
     appendNote = function(){
         var form = new Ext.form.BasicForm('testopia_helper_frm',{});
         form.submit({
-            url: 'tr_caserun.cgi',
-            params: {action: 'update_note', note: Ext.getCmp('caserun_append_note_fld').getValue(), caserun_id: this.caserun_id},
+            url: 'tr_list_caseruns.cgi',
+            params: {action: 'update', note: Ext.getCmp('caserun_append_note_fld').getValue(), ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')},
             success: function(){
                 Ext.getCmp('caserun_append_note_fld').reset();
                 store.reload();
@@ -5453,7 +5488,8 @@ CaseRunHistory = function(){
             {name: 'status', mapping: 'status_name'},
             {name: 'testedby', mapping: 'testedby'},
             {name: 'closed', mapping: 'close_date'},
-            {name: 'isactive', mapping: 'isactive'}
+            {name: 'isactive', mapping: 'isactive'},
+            {name: "bug_list", mapping:"bug_list"}
         ]
     });
     this.columns = [
@@ -5461,7 +5497,25 @@ CaseRunHistory = function(){
         {header: "Environment", width: 150, dataIndex: 'environment', sortable: true},
         {header: "Status", width: 50, dataIndex: 'status', sortable: true, renderer: t.statusIcon},
         {header: "Tested By", width: 200, dataIndex: 'testedby', sortable: true },
-        {header: "Closed", width: 150, dataIndex: 'closed', sortable: true}
+        {header: "Closed", width: 150, dataIndex: 'closed', sortable: true},
+        {
+            header: "Bugs In This Build and Environment",
+            width: 100,
+            dataIndex: "bug_list",
+            sortable: false,
+            hideable: true,
+            renderer: function(v){
+                var bugs = v.bugs;
+                var rets = '';
+                for (var i=0; i< bugs.length; i++){
+                    if (typeof bugs[i] != 'function'){
+                        rets = rets + '<a href="show_bug.cgi?id=' + bugs[i].bug_id +'" ' + (bugs[i].closed ? 'class="bz_closed"' : '') +'>' + bugs[i].bug_id + '</a>, ';
+                    }
+                    
+                }
+                return rets;
+            }
+        }
     ];
     CaseRunHistory.superclass.constructor.call(this,{
         border: false,
@@ -6285,24 +6339,20 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                 text: 'New Run Bug Report',
                                 handler: function(){
                                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                                    var bug_list = new Testopia.BugReport({
-                                            run_ids: getSelectedObjects(grid, 'run_id')
-                                        });
                                     var newPortlet = new Ext.ux.Portlet({
                                         title: 'Bug Report',
                                         closable: true,
                                         autoScroll: true,
-                                        tools: [{
-                                            id:'close',
-                                            handler: function(e, target, panel){
-                                                panel.ownerCt.remove(panel, true);
-                                            }
-                                        }],
-                                        items: bug_list
+                                        tools: PortalTools
                                     });
+                                    newPortlet.url = 'tr_run_reports.cgi?type=bug_grid&run_ids=' + getSelectedObjects(grid, 'run_id') + '&noheader=1';
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
-                                    bug_list.store.load();
+                                    newPortlet.load({
+                                        scripts: true,
+                                        url: newPortlet.url
+                                    });
                                 }
                             }]
                         }
@@ -6350,6 +6400,58 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                 text: 'Tags',
                                 handler: function(){
                                    TagsUpdate('run', grid);
+                                }
+                            },{
+                                 text: 'Targets',
+                                 handler: function(){
+                                   var win = new Ext.Window({
+                                       title: 'Change Run Targets',
+                                       id: 'run_target_win',
+                                       layout: 'fit',
+                                       split: true,
+                                       plain: true,
+                                       shadow: false,
+                                       width: 350,
+                                       height: 150,
+                                       items: [
+                                           new Ext.FormPanel({
+                                               bodyStyle: 'padding: 5px',
+                                               items: [
+                                                   new Ext.form.NumberField({
+                                                       type: 'numberfield',
+                                                       maxValue: 100,
+                                                       minValue: 0,
+                                                       id: 'target_completion',
+                                                       fieldLabel: 'Target Completion Rate',
+                                                       hiddenName: 'target_completion',
+                                                       listeners: {'valid': function(f){
+                                                           Ext.getCmp('target_pass').maxValue = f.getValue();
+                                                       }}
+                                                   }),
+                                                   new Ext.form.NumberField({
+                                                       maxValue: 100,
+                                                       minValue: 0,
+                                                       id: 'target_pass',
+                                                       fieldLabel: 'Target Pass Rate',
+                                                       hiddenName: 'target_pass'
+                                                   })
+                                               ]
+                                           })
+                                        ],
+                                        buttons: [{
+                                          text:'Update Targets',
+                                           handler: function(){
+                                               TestopiaUpdateMultiple('run', {target_pass: Ext.getCmp('target_pass').getValue(), target_completion: Ext.getCmp('target_completion').getValue(), ids: getSelectedObjects(grid,'run_id')}, grid);
+                                               win.close();
+                                           }
+                                       },{
+                                           text: 'Cancel',
+                                           handler: function(){
+                                               win.close();
+                                           }
+                                       }]
+                                   });
+                                   win.show();
                                 }
                             }]
                         }
@@ -6559,32 +6661,48 @@ var NewRunForm = function(plan){
                             hiddenName: 'manager',
                             fieldLabel: '<b>Run Manager</b>', 
                             allowBlank: false
+                        }),new Ext.form.NumberField({
+                            type: 'numberfield',
+                            maxValue: 100,
+                            minValue: 0,
+                            id: 'target_completion',
+                            fieldLabel: 'Target Completion Rate',
+                            hiddenName: 'target_completion',
+                            listeners: {'valid': function(f){
+                                Ext.getCmp('target_pass').maxValue = f.getValue();
+                            }}
                         })
                     ]
                 },{
                     columnWidth: 0.5,
                     layout: 'form',
                     items: [
-                    new BuildCombo({
-                        fieldLabel: '<b>Build</b>',
-                        hiddenName: 'build',
-                        mode: 'local',
-                        forceSelection: false,
-                        allowBlank: false,
-                        typeAhead: true,
-                        params: {product_id: plan.product_id},
-                        emptyText: 'Select or type a new name'
-                    }),
-                    new EnvironmentCombo({
-                        fieldLabel: '<b>Environment</b>',
-                        hiddenName: 'environment',
-                        mode: 'local',
-                        forceSelection: false,
-                        allowBlank: false,
-                        typeAhead: true,
-                        params: {product_id: plan.product_id},
-                        emptyText: 'Select or type a new name'
-                    })
+                        new BuildCombo({
+                            fieldLabel: '<b>Build</b>',
+                            hiddenName: 'build',
+                            mode: 'local',
+                            forceSelection: false,
+                            allowBlank: false,
+                            typeAhead: true,
+                            params: {product_id: plan.product_id},
+                            emptyText: 'Select or type a new name'
+                        }),
+                        new EnvironmentCombo({
+                            fieldLabel: '<b>Environment</b>',
+                            hiddenName: 'environment',
+                            mode: 'local',
+                            forceSelection: false,
+                            allowBlank: false,
+                            typeAhead: true,
+                            params: {product_id: plan.product_id},
+                            emptyText: 'Select or type a new name'
+                        }),new Ext.form.NumberField({
+                            maxValue: 100,
+                            minValue: 0,
+                            id: 'target_pass',
+                            fieldLabel: 'Target Pass Rate',
+                            hiddenName: 'target_pass'
+                        })
                     ]
                 }]
             },{ 
@@ -7163,7 +7281,7 @@ Testopia.BugReport = function(params){
                {name: "severity", mapping:"bug_severity"}
 
         ]}),
-        remoteSort: true,
+        remoteSort: false,
         sortInfo: {field: 'run_id', direction: "ASC"},
         groupField: 'bug_id'
     });
@@ -8616,6 +8734,7 @@ ReportGrid = function(cfg){
                     Ext.getCmp(current_col).doLayout();
                     Testopia.Search.dashboard_urls.push(r.get('query'));
             		newPortlet.load({
+                        scripts: true,
                         url: r.get('query')
                     });
                     current_col = current_col == 'dashboard_leftcol' ? 'dashboard_rightcol' : 'dashboard_leftcol';
@@ -8826,85 +8945,84 @@ PortalTools = [{
     id:'gear',
     handler: function(e,target,panel){
         var form = new Ext.form.BasicForm('testopia_helper_frm',{});
-        if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
-                id: 'portal_tools_menu',
-                items: [
-                {
-                    text: 'Save',
-                    handler: function(){
-                         Ext.Msg.prompt('Save Report As', '', function(btn, text){
-                            if (btn == 'ok'){
+        this.menu = new Ext.menu.Menu({
+            id: 'portal_tools_menu',
+            items: [
+            {
+                text: 'Save',
+                handler: function(){
+                     Ext.Msg.prompt('Save Report As', '', function(btn, text){
+                        if (btn == 'ok'){
+                            form.submit({
+                                url: 'tr_query.cgi',
+                                params: {action: 'save_query', query_name: text, query_part: panel.url, type: 1},
+                                success: function(){
+                                    Ext.getCmp('reports_grid').store.load();
+                                    panel.title = text;
+                                },
+                                failure: testopiaError
+                            });
+                        }
+                    });
+                }
+            },{
+                text: 'Refresh',
+                icon: 'testopia/img/refresh.png',
+                iconCls: 'img_button_16x',
+                handler: function(){
+                    panel.load({url: panel.url});
+                }
+            },{
+                text: 'Link to this report',
+                handler: function(){
+                    var path;
+                    if (panel.url.match(/^http/)){
+                        path = panel.url;
+                        path = path.replace(/\&noheader=1/gi, '');
+                    }
+                    else{
+                        var l = window.location;
+                        var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
+                        pathprefix = pathprefix[1];
+                        path = l.protocol + '//' + l.host + pathprefix + '/' + panel.url;
+                        path = path.replace(/\&noheader=1/gi, '');
+                    }
+                    var win = new Ext.Window({
+                        width: 300,
+                        plain: true,
+                        shadow: false,
+                        items: [new Ext.form.TextField({
+                            value: path,
+                            width: 287
+                        })]
+                    });
+                    win.show();
+                }
+            },{
+                text: 'Delete',
+                handler: function(){
+                     Ext.Msg.show({
+                        title:'Confirm Delete?',
+                        icon: Ext.MessageBox.QUESTION,
+                        msg: 'Are you sure you want to delete this report?',
+                        buttons: Ext.Msg.YESNO,
+                        fn: function(btn, text){
+                            if (btn == 'yes'){
                                 form.submit({
                                     url: 'tr_query.cgi',
-                                    params: {action: 'save_query', query_name: text, query_part: panel.url, type: 1},
+                                    params: {action: 'delete_query', query_name: panel.title},
                                     success: function(){
                                         Ext.getCmp('reports_grid').store.load();
-                                        panel.title = text;
+                                        panel.ownerCt.remove(panel, true);
                                     },
                                     failure: testopiaError
                                 });
                             }
-                        });
-                    }
-                },{
-                    text: 'Refresh',
-                    icon: 'testopia/img/refresh.png',
-                    iconCls: 'img_button_16x',
-                    handler: function(){
-                        panel.load({url: panel.url});
-                    }
-                },{
-                    text: 'Link to this report',
-                    handler: function(){
-                        var path;
-                        if (panel.url.match(/^http/)){
-                            path = panel.url;
-                            path = path.replace(/\&noheader=1/gi, '');
                         }
-                        else{
-                            var l = window.location;
-                            var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
-                            pathprefix = pathprefix[1];
-                            path = l.protocol + '//' + l.host + pathprefix + '/' + panel.url;
-                        }
-                        var win = new Ext.Window({
-                            width: 300,
-                            plain: true,
-                            shadow: false,
-                            items: [new Ext.form.TextField({
-                                value: path,
-                                width: 287
-                            })]
-                        });
-                        win.show();
-                    }
-                },{
-                    text: 'Delete',
-                    handler: function(){
-                         Ext.Msg.show({
-                            title:'Confirm Delete?',
-                            icon: Ext.MessageBox.QUESTION,
-                            msg: 'Are you sure you want to delete this report?',
-                            buttons: Ext.Msg.YESNO,
-                            fn: function(btn, text){
-                                if (btn == 'yes'){
-                                    form.submit({
-                                        url: 'tr_query.cgi',
-                                        params: {action: 'delete_query', query_name: panel.title},
-                                        success: function(){
-                                            Ext.getCmp('reports_grid').store.load();
-                                            panel.ownerCt.remove(panel, true);
-                                        },
-                                        failure: testopiaError
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }]
-            });
-        }
+                    });
+                }
+            }]
+        });
         e.stopEvent();
         this.menu.showAt(e.getXY());
     }
