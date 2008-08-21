@@ -401,6 +401,25 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                     win.show();
                                 }
                             },{
+                                text: 'New Priority Breakdown Report',
+                                handler: function(){
+                                    Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                    
+                                    var newPortlet = new Ext.ux.Portlet({
+                                        title: 'Status Report',
+                                        closable: true,
+                                        autoScroll: true,
+                                        tools: PortalTools
+                                    });
+                                    newPortlet.url = 'tr_run_reports.cgi?type=priority&plan_ids=' + getSelectedObjects(grid, 'plan_id');
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                    Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                    Ext.getCmp('dashboard_leftcol').doLayout();
+                                    newPortlet.load({
+                                        url: newPortlet.url
+                                    });
+                                }
+                            },{
                                 text: 'New Bug Report',
                                 handler: function(){
                                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');

@@ -286,6 +286,38 @@ elsif ($type eq 'bug_grid'){
     exit;    
 }
 
+elsif ($type eq 'priority'){
+    print $cgi->header;
+    my $dbh = Bugzilla->dbh;
+    my @r = $cgi->param('run_ids');
+    my @plans = $cgi->param('plan_ids');
+    
+    my ($runs, $run_ids) = get_runs(\@plans, \@r);
+    my @runs = @$runs;
+    my @run_ids = @$run_ids;
+    my $priorities;
+    
+    foreach my $p (@{$dbh->selectall_arrayref("SELECT id, value FROM priority")}){
+        $priorities->{$p->[1]}->{'total'} = $runs[0]->case_run_count_by_priority($p->[0], undef, \@runs);
+        $priorities->{$p->[1]}->{'passed'} = $runs[0]->case_run_count_by_priority($p->[0], PASSED, \@runs);
+        $priorities->{$p->[1]}->{'failed'} = $runs[0]->case_run_count_by_priority($p->[0], FAILED, \@runs);
+        $priorities->{$p->[1]}->{'blocked'} = $runs[0]->case_run_count_by_priority($p->[0], BLOCKED, \@runs);
+        $priorities->{$p->[1]}->{'idle'} = $runs[0]->case_run_count_by_priority($p->[0], IDLE, \@runs);
+        $priorities->{$p->[1]}->{'running'} = $runs[0]->case_run_count_by_priority($p->[0], RUNNING, \@runs);
+        $priorities->{$p->[1]}->{'paused'} = $runs[0]->case_run_count_by_priority($p->[0], PAUSED, \@runs);
+        $priorities->{$p->[1]}->{'error'} = $runs[0]->case_run_count_by_priority($p->[0], ERROR, \@runs);
+    }
+    $vars->{'priorities'} = $priorities;
+    $vars->{'runs'} = join(',',@run_ids);
+    $vars->{'plans'} = join(',',@plans);
+    $vars->{'run_count'} = scalar @run_ids;
+    
+    $template->process("testopia/reports/priority-breakdown.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+    exit;
+
+}
+
 $cgi->param('current_tab', 'run');
 $cgi->param('viewall', 1);
 my $report = Bugzilla::Testopia::Report->new('run', 'tr_list_runs.cgi', $cgi);

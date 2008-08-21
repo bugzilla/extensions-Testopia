@@ -1279,7 +1279,8 @@ sub case_run_count_by_date {
               FROM test_case_runs 
              WHERE run_id IN (" . $run_ids .") 
                AND close_date >= ?
-               AND close_date <= ?";
+               AND close_date <= ?
+               AND iscurrent = 1";
     $query .= " AND case_run_status_id = ?" if $status_id;
     $query .= " AND testedby = $tester" if $tester;
     
@@ -1289,6 +1290,52 @@ sub case_run_count_by_date {
     }
     else {
         ($count) = $dbh->selectrow_array($query,undef,($start,$stop));
+    }
+
+    return $count;
+}
+
+sub case_run_count_by_priority {
+    my $self = shift;
+    my ($priority, $status_id, $runs, $plans, $products) = @_;    
+    trick_taint($priority);
+    my $dbh = Bugzilla->dbh;
+    
+    my @runs;
+    if ($products){
+        foreach my $p (@$products){
+            foreach my $plan (@{$p->plans}){
+                push @runs, $_->id foreach (@{$plan->test_runs});
+            }
+        }
+    }
+    if ($plans){
+        push @runs, $_->id foreach (@{$plans->test_runs});
+    }
+    if ($runs){
+        push @runs, $_->id foreach (@$runs);
+    }
+    push @runs, $self->id if $self->id;
+    
+    return 0 unless scalar @runs > 0;
+    
+    my $run_ids = join (',', @runs);
+
+    my $query = 
+           "SELECT COUNT(*) 
+              FROM test_case_runs
+        INNER JOIN test_cases on test_case_runs.case_id = test_cases.case_id 
+             WHERE run_id IN (" . $run_ids .") 
+               AND test_cases.priority_id = ?
+               AND iscurrent = 1";
+    $query .= " AND case_run_status_id = ?" if $status_id;
+
+    my $count;
+    if ($status_id){
+        ($count) = $dbh->selectrow_array($query,undef,($priority, $status_id));
+    }
+    else {
+        ($count) = $dbh->selectrow_array($query,undef,($priority));
     }
 
     return $count;
