@@ -3050,6 +3050,7 @@ CaseGrid = function(params, cfg){
                {name: "run_count", mapping:"run_count"},
                {name: "requirement", mapping:"requirement"},
                {name: "product_id", mapping:"product_id"},
+               {name: "component", mapping:"component"},
                {name: "isautomated", mapping:"isautomated"}
 
         ]}),
@@ -3102,6 +3103,7 @@ CaseGrid = function(params, cfg){
                  }}
          ), renderer: TestopiaComboRenderer.createDelegate(this)
         },
+        {header: "Component", width: 110, sortable: true, dataIndex: 'component'},
         {header: "Status", width: 100, sortable: true, dataIndex: 'status',
          editor: new Ext.grid.GridEditor(new CaseStatusCombo('status')),
          renderer: TestopiaComboRenderer.createDelegate(this)},

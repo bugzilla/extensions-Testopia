@@ -1690,6 +1690,7 @@ sub TO_JSON {
     $obj->{'product_id'}   = $self->plans->[0]->product_id if $self->plans;
     $obj->{'blocked'}      = $self->blocked_list;
     $obj->{'dependson'}    = $self->dependson_list;
+    $obj->{'component'}    = $self->components->[0]->name;
 
     return $json->encode($obj); 
 }
