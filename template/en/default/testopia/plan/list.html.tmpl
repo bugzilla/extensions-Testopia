@@ -16,7 +16,7 @@
   # Maciej Maczynski. All Rights Reserved.
   #
   # Contributor(s): Ed Fuentetaja <efuentetaja@acm.org>
-  #         Greg Hendricks <ghendricks@novell.com>
+  #                 Greg Hendricks <ghendricks@novell.com>
   #%]
 
 [%# INTERFACE:
@@ -27,16 +27,74 @@
 [% PROCESS testopia/blocks.html.tmpl %]
 [% PROCESS testopia/style.none.tmpl %]
 
+[% javascript_urls.push("testopia/extjs/examples/portal/Portal.js") %]
+[% javascript_urls.push("testopia/extjs/examples/portal/PortalColumn.js") %]
+[% javascript_urls.push("testopia/extjs/examples/portal/Portlet.js") %]
+
 [% PROCESS global/header.html.tmpl %]
 
 <script type="text/javascript">
 Ext.onReady(function(){
     Ext.QuickTips.init();
     var params = searchToJson(window.location.search);
-    var objPanel = new PlanGrid(params,{height: 600});
-    objPanel.render('list_div');
-    objPanel.store.load();
+    var list_grid = new PlanGrid(params, {});
+    var objPanel = new Ext.Panel({
+        layout: 'border',
+        height: 650,
+        monitorResize: true,
+        split: true,
+        id:'list_view',
+        applyTo: 'list_div',
+        items: [{
+            id: 'object_panel',
+            region: 'center',
+            xtype: 'tabpanel',
+            enableTabScroll: true,
+            activeTab: 0,
+            items: [list_grid, new DashboardPanel({})]
+        },{
+            region: 'east',
+            width: 250,
+            split: true,
+            enableTabScroll: true,
+            activeTab: 2,
+            xtype: 'tabpanel',
+            items: [
+                new ReportGrid({
+                    title: 'Dashboards',
+                    id: 'dashboard_grid',
+                    type: 3
+                }),
+                new ReportGrid({
+                    title: 'Reports',
+                    id: 'reports_grid',
+                    type: 1
+                }),
+                new ReportGrid({
+                    title: 'Searches',
+                    id: 'searches_grid',
+                    type: 0
+                })
+            ]
+        }]
+    });
+    
+    list_grid.store.load();
+
+    Ext.getCmp('dashboardpanel').on('render', function(){
+        Ext.getCmp('dashboardpanel').getTopToolbar().add({
+            xtype: 'button',
+            id: 'save_dashboard_btn',
+            icon: 'testopia/img/save.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Save this dashboard',
+            handler: function(b,e){
+                saveSearch('dashboard', Testopia.Search.dashboard_urls);
+            }
+        });
+    });
 }); 
+
 </script>
-<div id="list_div" style="height:600px"></div>
+<div id="list_div" style="height:650px"></div>
 [% PROCESS global/footer.html.tmpl %]

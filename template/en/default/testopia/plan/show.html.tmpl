@@ -370,6 +370,19 @@ Ext.onReady(function(){
         });
     });
 [% END %]
+    Ext.getCmp('dashboardpanel').on('render', function(){
+        Ext.getCmp('dashboardpanel').getTopToolbar().add({
+            xtype: 'button',
+            id: 'save_dashboard_btn',
+            icon: 'testopia/img/save.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Save this dashboard',
+            handler: function(b,e){
+                saveSearch('dashboard', Testopia.Search.dashboard_urls);
+            }
+        });
+    });
+
     tgrid.store.load();
 });
 </script>
