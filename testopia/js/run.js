@@ -80,7 +80,7 @@ RunGrid = function(params, cfg){
     });
 
     this.columns = [
-        {header: "Run ID", width: 30,  dataIndex: "run_id", id: "run_id", sortable: true, renderer: tutil.runLink}, 
+        {header: "Run ID", width: 30,  dataIndex: "run_id", id: "run_id", sortable: true, renderer: tutil.runLink, hideable: false}, 
         {header: "Plan ID", width: 30, dataIndex: "plan_id", sortable: true, renderer: tutil.planLink},
         {header: "Summary", width: 220, dataIndex: "summary", id: "run_name", sortable: true,
          editor: new Ext.grid.GridEditor(

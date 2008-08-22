@@ -114,7 +114,7 @@ CaseGrid = function(params, cfg){
     });
     
     this.columns = [
-        {header: "ID", width: 50, dataIndex: 'case_id', sortable: true, groupRenderer: function(v){return v;}, renderer: tutil.caseLink},
+        {header: "ID", width: 50, dataIndex: 'case_id', sortable: true, groupRenderer: function(v){return v;}, renderer: tutil.caseLink, hideable: false},
 		{header: "Summary", 
          width: 220, 
          dataIndex: 'summary', 

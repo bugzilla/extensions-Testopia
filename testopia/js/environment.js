@@ -34,7 +34,7 @@ EnvironmentGrid = function(params, cfg){
     var ds = this.store;
     
     this.columns = [
-        {header: "ID", width: 30, dataIndex: "environment_id", sortable: true, renderer: environmentLink},
+        {header: "ID", width: 30, dataIndex: "environment_id", sortable: true, renderer: environmentLink, hideable: false},
         {header: "Environment Name", width: 110, dataIndex: "name", id: 'env_name_col', sortable: true,
           editor: new Ext.grid.GridEditor(
           new Ext.form.TextField({allowBlank: false}),{id: 'env_name_edt'})},

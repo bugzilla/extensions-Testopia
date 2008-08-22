@@ -85,7 +85,7 @@ PlanGrid = function(params,cfg){
     var ds = this.store;
 
     this.columns = [
-        {header: "ID", width: 30, dataIndex: 'plan_id', sortable: true, renderer: tutil.planLink},
+        {header: "ID", width: 30, dataIndex: 'plan_id', sortable: true, renderer: tutil.planLink, hideable: false},
 		{header: "Name", 
          width: 220, 
          dataIndex: 'name', 
