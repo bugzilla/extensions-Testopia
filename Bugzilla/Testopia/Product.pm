@@ -211,10 +211,12 @@ sub check_product_by_name {
 
 sub versions {
     my $self = shift;
+    my ($byid) = shift;
+    my $id = $byid ? 'id' : 'value';
     my $dbh = Bugzilla->dbh;
 
     my $values = $dbh->selectall_arrayref(
-        "SELECT value AS id, value AS name
+        "SELECT $id AS id, value AS name
            FROM versions
           WHERE product_id = ?
           ORDER BY value", {'Slice' =>{}}, $self->id);
@@ -225,10 +227,12 @@ sub versions {
 
 sub milestones {
     my $self = shift;
+    my ($byid) = shift;
+    my $id = $byid ? 'id' : 'value';
     my $dbh = Bugzilla->dbh;
 
     my $values = $dbh->selectall_arrayref(
-        "SELECT value AS id, value AS name
+        "SELECT $id AS id, value AS name
            FROM milestones
           WHERE product_id = ?
           ORDER BY value", {'Slice' =>{}}, $self->id);
