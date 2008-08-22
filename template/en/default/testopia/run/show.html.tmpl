@@ -214,20 +214,24 @@ Ext.onReady(function(){
             contentEl: 'run_overview',
             height: 'auto'
         },{
-            xtype: 'tabpanel',
+            collapsible: true,
             id: 'run_east_panel',
+            title: ' ',
             split: true,
             region:'east',
             width: 200,
-            activeTab: 0,
-            items:[
-                new TestopiaObjectTags('run', [% run.id FILTER none %]),
-//                {
-//                    title: 'CC List'
-//                },
-                new RunFilterGrid(run)
-                
-            ]
+            items: [{
+                xtype: 'tabpanel',
+                activeTab: 0,
+                items:[
+                    new TestopiaObjectTags('run', [% run.id FILTER none %]),
+    //                {
+    //                    title: 'CC List'
+    //                },
+                    new RunFilterGrid(run)
+                    
+                ]
+            }]
         }]
     });
 [% IF run.canedit %]   
