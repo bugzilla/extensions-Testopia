@@ -3051,6 +3051,7 @@ CaseGrid = function(params, cfg){
                {name: "requirement", mapping:"requirement"},
                {name: "product_id", mapping:"product_id"},
                {name: "component", mapping:"component"},
+               {name: "modified", mapping:"modified"},
                {name: "isautomated", mapping:"isautomated"}
 
         ]}),
@@ -3081,6 +3082,7 @@ CaseGrid = function(params, cfg){
          editor: new Ext.grid.GridEditor(new UserLookup({hiddenName:'tester'})),
          renderer: TestopiaComboRenderer.createDelegate(this)},
 		{header: "Created", width: 110, sortable: true, dataIndex: 'creation_date'},
+        {header: "Last Modified", width: 110, sortable: true, dataIndex: 'modified'},
         {header: "Priority", width: 100, sortable: true, dataIndex: 'priority',
          editor: new Ext.grid.GridEditor(
              new PriorityCombo({
@@ -5320,6 +5322,8 @@ CaseRun = function(){
             {name: 'results', mapping: 'effect'},
             {name: 'setup', mapping: 'setup'},
             {name: 'breakdown', mapping: 'breakdown'},
+            {name: 'case_id', mapping: 'case_id'},
+            {name: 'summary', mapping: 'summary'},
             {name: 'notes', mapping: 'notes'}
         ])
     });
@@ -5329,6 +5333,8 @@ CaseRun = function(){
         Ext.getCmp('effect_editor').setValue(r[0].get('results'));
         Ext.getCmp('setup_editor').setValue(r[0].get('setup'));
         Ext.getCmp('breakdown_editor').setValue(r[0].get('breakdown'));
+        Ext.getCmp('summary_tb').items.items[0].destroy();
+        Ext.getCmp('summary_tb').add(new Ext.Toolbar.TextItem('Case ' + r[0].get('case_id') + ' - ' + r[0].get('summary')));
     });
     
     appendNote = function(){
@@ -5361,22 +5367,27 @@ CaseRun = function(){
             failure: testopiaError
         });
     }
+    var summary_tb = new Ext.Toolbar({
+        id: 'summary_tb',
+        items: [new Ext.Toolbar.TextItem('')]
+    })
     CaseRun.superclass.constructor.call(this,{
         id: 'case_details_panel',
         layout: 'fit',
         region: 'south',
         split: true,
         border: false,
+        style: 'padding-bottom: 10px',
         bodyBorder: false,
         collapsible: true,
-        height: 300,
+        height: 330,
         items:[{
             xtype: 'tabpanel',
             bodyBorder: false,
             activeTab: 0,
             id: 'caserun_center_region',
             title:'Details',
-            width: 200,
+            tbar: summary_tb,
             items: [{
                 layout: 'column',
                 title: 'Action / Expected Results',
@@ -5386,7 +5397,8 @@ CaseRun = function(){
                     layout:'fit',
                     items:{
                         title: 'Action',
-                        height: 230,
+                        height: Ext.state.Manager.get('bigtext_height', 230),
+                        id: 'cr_action_panel',
                         bodyBorder: false,
                         border: false,
                         layout: 'fit',
@@ -5401,7 +5413,8 @@ CaseRun = function(){
                     layout:'fit',
                     items:{
                         title: 'Expected Results',
-                        height: 230,
+                        height: Ext.state.Manager.get('bigtext_height', 230),
+                        id: 'cr_results_panel',
                         bodyBorder: false,
                         border: false,
                         autoScroll: true,
@@ -5424,7 +5437,8 @@ CaseRun = function(){
                     layout:'fit',
                     items:{
                         title: 'Setup',
-                        height: 230,
+                        height: Ext.state.Manager.get('bigtext_height', 230),
+                        id: 'cr_setup_panel',
                         bodyBorder: false,
                         autoScroll: true,
                         border: false,
@@ -5439,7 +5453,8 @@ CaseRun = function(){
                     layout:'fit',
                     items:{
                         title: 'Breakdown',
-                        height: 230,
+                        height: Ext.state.Manager.get('bigtext_height', 230),
+                        id: 'cr_breakdown_panel',
                         bodyBorder: false,
                         autoScroll: true,
                         border: false,
@@ -5526,6 +5541,9 @@ CaseRunHistory = function(){
             sortable: false,
             hideable: true,
             renderer: function(v){
+                if (!v){
+                    return;
+                }
                 var bugs = v.bugs;
                 var rets = '';
                 for (var i=0; i< bugs.length; i++){

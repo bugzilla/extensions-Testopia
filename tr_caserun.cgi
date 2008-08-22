@@ -179,6 +179,7 @@ elsif ($action eq 'gettext'){
     my $text = $caserun->case->text;
     $text->{'notes'} = $caserun->notes;
     $text->{'case_id'} = $caserun->case->id;
+    $text->{'summary'} = $caserun->case->summary;
     
     $vars->{'text'} = $text;
     

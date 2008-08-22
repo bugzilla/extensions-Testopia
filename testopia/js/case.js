@@ -99,6 +99,7 @@ CaseGrid = function(params, cfg){
                {name: "requirement", mapping:"requirement"},
                {name: "product_id", mapping:"product_id"},
                {name: "component", mapping:"component"},
+               {name: "modified", mapping:"modified"},
                {name: "isautomated", mapping:"isautomated"}
 
         ]}),
@@ -129,6 +130,7 @@ CaseGrid = function(params, cfg){
          editor: new Ext.grid.GridEditor(new UserLookup({hiddenName:'tester'})),
          renderer: TestopiaComboRenderer.createDelegate(this)},
 		{header: "Created", width: 110, sortable: true, dataIndex: 'creation_date'},
+        {header: "Last Modified", width: 110, sortable: true, dataIndex: 'modified'},
         {header: "Priority", width: 100, sortable: true, dataIndex: 'priority',
          editor: new Ext.grid.GridEditor(
              new PriorityCombo({

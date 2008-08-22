@@ -1673,7 +1673,7 @@ sub TO_JSON {
     foreach my $field ($self->DB_COLUMNS){
         $obj->{$field} = $self->{$field};
     }
-    
+
     $obj->{'run_count'}    = $self->run_count;
     $obj->{'author_name'}  = $self->author->name if $self->author;
     $obj->{'default_tester'}  = $self->default_tester->name if $self->default_tester;
@@ -1687,10 +1687,11 @@ sub TO_JSON {
     $obj->{'canview'}      = $self->canview;
     $obj->{'candelete'}    = $self->candelete;
     $obj->{'category_name'} = $self->category->name if $self->category;
-    $obj->{'product_id'}   = $self->plans->[0]->product_id if $self->plans;
+    $obj->{'product_id'}   = $self->plans->[0]->product_id if scalar @{$self->plans};
     $obj->{'blocked'}      = $self->blocked_list;
     $obj->{'dependson'}    = $self->dependson_list;
-    $obj->{'component'}    = $self->components->[0]->name;
+    $obj->{'component'}    = $self->components->[0]->name if scalar @{$self->components};
+    $obj->{'modified'}     = $self->last_changed;
 
     return $json->encode($obj); 
 }

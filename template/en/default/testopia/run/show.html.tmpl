@@ -437,6 +437,13 @@ Ext.onReady(function(){
         runpanel.doLayout();
         Ext.state.Manager.set('run_height', h);
     });
+    Ext.getCmp('case_details_panel').on('resize', function(c,aw,ah,rw,rh){
+        Ext.getCmp('cr_action_panel').setHeight(ah - 100);
+        Ext.getCmp('cr_results_panel').setHeight(ah - 100);
+        Ext.getCmp('cr_breakdown_panel').setHeight(ah - 100);
+        Ext.getCmp('cr_setup_panel').setHeight(ah - 100);
+        Ext.state.Manager.set('bigtext_height', ah - 100);
+    });
   [% IF run.case_run_count == 0 %]
     Ext.getCmp('run_progress').updateProgress(0,0,0,'0%');
   [% ELSE %]
