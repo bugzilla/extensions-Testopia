@@ -1642,9 +1642,15 @@ sub init {
     my $query;
     if ($self->{'fields'}){
         $query = "SELECT $distinct". join(",", @{$self->{'fields'}});
+        foreach my $qfield (@{$self->{'fields'}}){
+            push @groupby, $qfield unless $qfield == '42217354';
+        }
     }
     else {
         $query = "SELECT $distinct test_". $obj ."s.". $obj. "_id";
+    }
+    if (scalar @orderby){
+        $query .= ',' . join(',', @orderby);
     }
     $query .= " FROM $suppstring";
     $query .= " WHERE " . join(' AND ', (@wherepart, @andlist));

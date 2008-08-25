@@ -302,7 +302,7 @@ sub _check_alias {
 sub _check_time{
     my ($invocant, $time) = @_;
     $time = trim($time);
-    return 0 unless $time;    
+    return '0:0:0' unless $time;    
     $time =~ m/^(\d+)[:\s](\d+)[:\s](\d+)$/;
     ThrowUserError('testopia-format-error', {'field' => 'Estimated Time' })
       unless (defined $1 && defined $2 && $2 < 60 && defined $3 && $3 < 60);

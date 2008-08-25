@@ -319,7 +319,7 @@ sub populateMiscTables {
     $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_completion', 'Target Completion Rate', 'test_runs')") 
       if ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_completion');
       
-    return if $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status");
+    return if $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_status");
 
     print "Populating test_case_run_status table ...\n";
     print "Populating test_case_status table ...\n";
