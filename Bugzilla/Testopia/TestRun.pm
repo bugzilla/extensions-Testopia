@@ -184,7 +184,8 @@ sub _check_notes {
 sub _check_target {
     my ($invocant, $target) = @_;
     detaint_natural($target);
-    ThrowUserError('invalid_target') unless $target && $target >= 0 && $target <= 100;
+    return unless $target;
+    ThrowUserError('invalid_target') unless $target >= 0 && $target <= 100;
     return $target;
 }
 

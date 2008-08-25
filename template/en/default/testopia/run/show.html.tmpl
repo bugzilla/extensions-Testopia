@@ -280,6 +280,7 @@ Ext.onReady(function(){
         new Ext.form.NumberField({
             width: 30,
             name: 'tcomp',
+            allowBlank:true,
             minValue: 0,
             maxValue: 100
         }),{
@@ -311,6 +312,7 @@ Ext.onReady(function(){
         new Ext.form.NumberField({
             width: 30,
             name: 'tpass',
+            allowBlank: true,
             id: 'tpass_nf',
             minValue: 0,
             maxValue: [% run.target_completion || 100 FILTER js %]

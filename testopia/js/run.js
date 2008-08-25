@@ -470,10 +470,10 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                bodyStyle: 'padding: 5px',
                                                items: [
                                                    new Ext.form.NumberField({
-                                                       type: 'numberfield',
                                                        maxValue: 100,
                                                        minValue: 0,
                                                        id: 'target_completion',
+                                                       allowBlank:true,
                                                        fieldLabel: 'Target Completion Rate',
                                                        hiddenName: 'target_completion',
                                                        listeners: {'valid': function(f){
@@ -483,6 +483,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                    new Ext.form.NumberField({
                                                        maxValue: 100,
                                                        minValue: 0,
+                                                       allowBlank:true,
                                                        id: 'target_pass',
                                                        fieldLabel: 'Target Pass Rate',
                                                        hiddenName: 'target_pass'
@@ -714,9 +715,9 @@ var NewRunForm = function(plan){
                             fieldLabel: '<b>Run Manager</b>', 
                             allowBlank: false
                         }),new Ext.form.NumberField({
-                            type: 'numberfield',
                             maxValue: 100,
                             minValue: 0,
+                            allowBlank:true,
                             id: 'target_completion',
                             fieldLabel: 'Target Completion Rate',
                             hiddenName: 'target_completion',
@@ -751,6 +752,7 @@ var NewRunForm = function(plan){
                         }),new Ext.form.NumberField({
                             maxValue: 100,
                             minValue: 0,
+                            allowBlank:true,
                             id: 'target_pass',
                             fieldLabel: 'Target Pass Rate',
                             hiddenName: 'target_pass'
