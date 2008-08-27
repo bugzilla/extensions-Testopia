@@ -1643,6 +1643,7 @@ sub init {
     if ($self->{'fields'}){
         $query = "SELECT $distinct". join(",", @{$self->{'fields'}});
         foreach my $qfield (@{$self->{'fields'}}){
+            # Remove the magic placeholder (See Report.pm)
             push @groupby, $qfield unless $qfield == '42217354';
         }
     }
