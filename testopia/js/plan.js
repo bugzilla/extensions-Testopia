@@ -377,7 +377,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                                 Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
                                                 
                                                 var newPortlet = new Ext.ux.Portlet({
-                                                    title: 'Completion Report',
+                                                    title: 'Execution Report',
                                                     closable: true,
                                                     autoScroll: true,
                                                     tools: PortalTools

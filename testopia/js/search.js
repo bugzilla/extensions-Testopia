@@ -476,9 +476,6 @@ ReportGrid = function(cfg){
                 var name = r.get('name');
                 if(r.get('type') == 1){
                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                    if(Ext.getCmp(name)){
-                        return;
-                    }
                     var newPortlet = new Ext.ux.Portlet({
                         title: name,
                         id: name,
@@ -657,8 +654,12 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 if (typeof urls[i] != 'string'){
                     continue;
                 }
+                var p = searchToJson(urls[i]);
+                var t;
+                typeof p.qname == 'object' ? t = p.qname[0] : t = p.qname;
                 var newPortlet = new Ext.ux.Portlet({
-                    title: r.get('name') + ' ' + i,
+                    title: t || '',
+                    id: 'search' + r.get('name') + i,
                     closable: true,
                     autoScroll: true,
                     tools: PortalTools
@@ -668,6 +669,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 current_col = current_col == 'lc_' + r.get('name') ? 'rc_' + r.get('name') : 'lc_' + r.get('name');
 
                 newPortlet.load({
+                    scripts: true,
                     url: urls[i]
                 });
             }

@@ -66,6 +66,7 @@
 }
 
 </style>
+<h1>[% qname FILTER html %]</h1>
 <h4>Status Report for Runs: 
 [% FOREACH r IN runs.split(',') %]
  <a href="tr_show_run.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;

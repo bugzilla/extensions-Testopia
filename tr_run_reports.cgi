@@ -69,6 +69,7 @@ sub get_runs {
 }
 
 my $type = $cgi->param('type') || '';
+$vars->{'qname'} = $cgi->param('qname');
 
 if ($type eq 'completion'){
     print $cgi->header;
@@ -178,7 +179,10 @@ elsif ($type eq 'execution'){
     }
     my $chfieldfrom = trim(lc($cgi->param('chfieldfrom'))) || '';
     my $chfieldto = trim(lc($cgi->param('chfieldto'))) || '';
-    my $tester = login_to_id(trim($cgi->param('tester')), 'THROW_ERROR');
+    my $tester;
+    if ($cgi->param('tester')){
+        $tester = login_to_id(trim($cgi->param('tester')), 'THROW_ERROR');
+    }
     
     trick_taint($chfieldfrom);
     trick_taint($chfieldto);
@@ -279,6 +283,7 @@ elsif ($type eq 'bug_grid'){
     $vars->{'runs'} = $cgi->param('run_ids');
     $vars->{'plans'} = $cgi->param('plan_ids');
     $vars->{'stripheader'} = 1 if $cgi->param('noheader');
+    $vars->{'uid'} = rand(10000);
     
     print $cgi->header;
     $template->process("testopia/reports/bug-count.html.tmpl", $vars)
@@ -322,7 +327,6 @@ $cgi->param('current_tab', 'run');
 $cgi->param('viewall', 1);
 my $report = Bugzilla::Testopia::Report->new('run', 'tr_list_runs.cgi', $cgi);
 $vars->{'report'} = $report;
-$vars->{'qname'} = $cgi->param('qname');
 
 ### From Bugzilla report.cgi by Gervase Markham
 my $formatparam = $cgi->param('format');

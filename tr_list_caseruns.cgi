@@ -121,7 +121,7 @@ elsif ($action eq 'delete'){
     foreach my $id (@case_ids){
         my $case = Bugzilla::Testopia::TestCaseRun->new($id);
         unless ($case->candelete){
-            push @uneditable, $case;
+            push @uneditable, $case->id;
             next;
         }
         

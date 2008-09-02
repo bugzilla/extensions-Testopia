@@ -1299,7 +1299,6 @@ DashboardPanel = function(cfg){
         },new Ext.Toolbar.Fill()
         ],
         items:[{
-            id:'the_portal',
             xtype: 'portal',
             margins:'35 5 5 0',
             items:[{
@@ -1486,7 +1485,7 @@ saveSearch = function(type,params){
             loc = loc + jsonToSearch(params, '', ['ctype']);
         }
     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
-     Ext.Msg.prompt('Save Search As', '', function(btn, text){
+     Ext.Msg.prompt('Save As', '', function(btn, text){
         if (btn == 'ok'){
             form.submit({
                 url: 'tr_query.cgi',
