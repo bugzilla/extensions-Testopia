@@ -332,11 +332,15 @@ Ext.onReady(function(){
             var qs = r.get('query').split('::>');
             i = 0;
             for (i in qs){ 
-                if(typeof rs[i] == 'function'){
+                if(typeof qs[i] == 'function'){
                     continue;
                 }
+                var p = searchToJson(qs[i]);
+                var t;
+                typeof p.qname == 'object' ? t = p.qname[0] : t = p.qname;
+                
                 var newPortlet = new Ext.ux.Portlet({
-                    title: r.get('name') + ' ' + i,
+                    title: t || '',
                     id: r.get('name') + i,
                     closable: true,
                     autoScroll: true,
