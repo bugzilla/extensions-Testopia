@@ -215,14 +215,15 @@ Ext.onReady(function(){
             height: 'auto'
         },{
             collapsible: true,
-            id: 'run_east_panel',
             title: ' ',
             split: true,
             region:'east',
+            layout: 'fit',
             width: 200,
             items: [{
                 xtype: 'tabpanel',
                 activeTab: 0,
+                id: 'run_east_panel',
                 items:[
                     new TestopiaObjectTags('run', [% run.id FILTER none %]),
     //                {
