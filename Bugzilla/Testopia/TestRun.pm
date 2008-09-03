@@ -456,11 +456,12 @@ sub clone {
     my $columns = join(", ", grep {$_ ne 'run_id'} DB_COLUMNS);
     my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
 
-    $dbh->do("INSERT INTO test_runs ($columns) VALUES (?,?,?,?,?,?,?,?,?,?)",
+    $dbh->do("INSERT INTO test_runs ($columns) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
               undef, ($plan_id, $env_id,
               $self->{'product_version'}, $build_id, 
               $self->{'plan_text_version'}, $manager, 
-              $timestamp, undef, $summary, undef));
+              $timestamp, undef, $summary, undef, 
+              $self->{'target_pass'}, $self->{'target_completion'}));
     my $key = $dbh->bz_last_key( 'test_runs', 'run_id' );
     return $key;   
 }
