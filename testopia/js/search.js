@@ -650,6 +650,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             
             var current_col = 'lc_' + r.get('name');
             var urls = r.get('query').split('::>');
+            var newPortlet;
             for (var i in urls){
                 if (typeof urls[i] != 'string'){
                     continue;
@@ -657,8 +658,8 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 var p = searchToJson(urls[i]);
                 var t;
                 typeof p.qname == 'object' ? t = p.qname[0] : t = p.qname;
-                var newPortlet = new Ext.ux.Portlet({
-                    title: t || '',
+                newPortlet = new Ext.ux.Portlet({
+                    title: t || ' ',
                     id: 'search' + r.get('name') + i,
                     closable: true,
                     autoScroll: true,

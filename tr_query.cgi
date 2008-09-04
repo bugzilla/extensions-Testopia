@@ -308,7 +308,7 @@ elsif ($action eq 'save_query'){
     }
     else{
         my $quoted_qname = url_quote($qname);
-        $query .= "&qname=$quoted_qname";
+        $query .= "&qname=$quoted_qname" unless $type == 3;
         $dbh->do("INSERT INTO test_named_queries 
                   VALUES(?,?,?,?,?)",
                   undef, (Bugzilla->user->id, $qname, 1, $query, $type)); 
