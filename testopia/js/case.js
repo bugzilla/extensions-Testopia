@@ -184,12 +184,16 @@ CaseGrid = function(params, cfg){
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: false,
             listeners: {'rowselect':function(sm,i,r){
-                Ext.getCmp('delete_case_list_btn').enable();
-                Ext.getCmp('edit_case_list_btn').enable();
+                if (Ext.getCmp('delete_case_list_btn')){
+                    Ext.getCmp('delete_case_list_btn').enable();
+                    Ext.getCmp('edit_case_list_btn').enable();
+                }
             },'rowdeselect': function(sm,i,r){
                 if (sm.getCount() < 1){
-                    Ext.getCmp('delete_case_list_btn').disable();
-                    Ext.getCmp('edit_case_list_btn').disable();
+                    if (Ext.getCmp('delete_case_list_btn')) {
+                        Ext.getCmp('delete_case_list_btn').disable();
+                        Ext.getCmp('edit_case_list_btn').disable();
+                    }
                 }
             }}
         }),

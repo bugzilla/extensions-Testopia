@@ -629,6 +629,7 @@ var NewRunForm = function(plan){
         id: 'newrun_casegrid',
         height: 500
     });
+    this.casegrid = casegrid;
     casegrid.on('render', function(g){
         for (var i=0; i < g.getTopToolbar().items.length; i++){
             g.getTopToolbar().items.items[i].destroy();
