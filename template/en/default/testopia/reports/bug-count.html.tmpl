@@ -26,8 +26,10 @@
 [% UNLESS stripheader %]
 [% PROCESS global/header.html.tmpl %]
 [% END %]
+<h1>[% qname FILTER html %]</h1>
+
+<div id="bug_count_report[% uid FILTER html IF qname %]"></div>
 <script type="text/javascript">
-Ext.onReady(function(){
     
     var bug_list = new Testopia.BugReport({
             run_ids: '[% runs || 0 FILTER js %]',
@@ -35,11 +37,8 @@ Ext.onReady(function(){
         });
     bug_list.render('bug_count_report[% uid FILTER js IF qname %]');
     bug_list.store.load();
-});
 
 </script>
-<h1>[% qname FILTER html %]</h1>
-<div id="bug_count_report[% uid FILTER html IF qname %]"></div>
 
 [% UNLESS stripheader %]
 [% PROCESS global/footer.html.tmpl %]

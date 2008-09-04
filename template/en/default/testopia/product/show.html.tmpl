@@ -313,13 +313,14 @@ Ext.onReady(function(){
   [% IF dashboard AND user.in_group('Testers')  %]
     var dstore = new Ext.data.JsonStore({
         url: 'tr_query.cgi',
-        baseParams: {action: 'get_saved_searches', type: 3, user: [% userid || user.id FILTER js %]},
+        baseParams: {action: 'get_saved_searches', type: 3, userid: [% userid || user.id FILTER js %]},
         root: 'searches',
         fields: ["name","query","author","type"],
         listeners: {'load': function(obj, rs){
             Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
             var current_col = 'dashboard_leftcol';
             var query;
+            var r;
             for (var i in rs){
                 if(typeof rs[i] == 'function'){
                     continue;

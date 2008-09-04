@@ -1526,7 +1526,7 @@ linkPopup = function(params){
         plain: true,
         shadow: false,
         items: [new Ext.form.TextField({
-            value: l.protocol + '//' + l.host + pathprefix + '/' + file + '?' + jsonToSearch(params,'',['ctype']),
+            value: unceodeURI(l.protocol + '//' + l.host + pathprefix + '/' + file + '?' + jsonToSearch(params,'',['ctype'])),
             width: 287
         })]
     });
