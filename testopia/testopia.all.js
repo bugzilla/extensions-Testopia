@@ -8355,7 +8355,9 @@ Testopia.Search.fillInForm = function(type, params, name){
             }
         }
         else{
-            f[i].value = params[f[i].name] || '';
+            if (params[f[i].name]){
+                f[i].value = params[f[i].name] || '';
+            }
         }
     }
 };
