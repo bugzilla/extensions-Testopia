@@ -7,16 +7,16 @@ Though it is designed with software testing in mind, it can be used to track
 testing on virtually anything in the engineering process.
 
 === Requirements ===
-* Bugzilla 3.0.x (3.0, 3.0.1+)
-* Perl JSON 1.14 (2.01 and above are not compatible. Please see bug 409309)
-* Ext JS library 2.0.x
+* Bugzilla 3.0.x 
+* Perl JSON 2.07+ 
+* Ext JS library 2.2 (included in tarball)
 
 Testopia is an extension to Bugzilla. This means that if you have one of the
 supported versions of Bugzilla installed, you are all set to install Testopia.
 Installation instructions for Bugzilla can be found at http://bugzilla.org
 
 Note: The following assumes you have installed Bugzilla according to the 
-Bugzilla instructions. Installations from Debian .deb or from some RPM packages
+Bugzilla tarball instructions. Installations from Debian .deb or from some RPM packages
 may place Bugzilla files in separate directories in which case, these will not
 work.
 
