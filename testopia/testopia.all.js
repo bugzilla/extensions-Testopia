@@ -1341,7 +1341,6 @@ DashboardPanel = function(cfg){
         },new Ext.Toolbar.Fill()
         ],
         items:[{
-            id:'the_portal',
             xtype: 'portal',
             margins:'35 5 5 0',
             items:[{
@@ -1528,7 +1527,7 @@ saveSearch = function(type,params){
             loc = loc + jsonToSearch(params, '', ['ctype']);
         }
     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
-     Ext.Msg.prompt('Save Search As', '', function(btn, text){
+     Ext.Msg.prompt('Save As', '', function(btn, text){
         if (btn == 'ok'){
             form.submit({
                 url: 'tr_query.cgi',
@@ -1569,7 +1568,7 @@ linkPopup = function(params){
         plain: true,
         shadow: false,
         items: [new Ext.form.TextField({
-            value: l.protocol + '//' + l.host + pathprefix + '/' + file + '?' + jsonToSearch(params,'',['ctype']),
+            value: unceodeURI(l.protocol + '//' + l.host + pathprefix + '/' + file + '?' + jsonToSearch(params,'',['ctype'])),
             width: 287
         })]
     });
@@ -2153,7 +2152,7 @@ PlanGrid = function(params,cfg){
     var ds = this.store;
 
     this.columns = [
-        {header: "ID", width: 30, dataIndex: 'plan_id', sortable: true, renderer: tutil.planLink},
+        {header: "ID", width: 30, dataIndex: 'plan_id', sortable: true, renderer: tutil.planLink, hideable: false},
 		{header: "Name", 
          width: 220, 
          dataIndex: 'name', 
@@ -2445,7 +2444,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                                 Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
                                                 
                                                 var newPortlet = new Ext.ux.Portlet({
-                                                    title: 'Completion Report',
+                                                    title: 'Execution Report',
                                                     closable: true,
                                                     autoScroll: true,
                                                     tools: PortalTools
@@ -3066,7 +3065,7 @@ CaseGrid = function(params, cfg){
     });
     
     this.columns = [
-        {header: "ID", width: 50, dataIndex: 'case_id', sortable: true, groupRenderer: function(v){return v;}, renderer: tutil.caseLink},
+        {header: "ID", width: 50, dataIndex: 'case_id', sortable: true, groupRenderer: function(v){return v;}, renderer: tutil.caseLink, hideable: false},
 		{header: "Summary", 
          width: 220, 
          dataIndex: 'summary', 
@@ -3136,12 +3135,16 @@ CaseGrid = function(params, cfg){
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: false,
             listeners: {'rowselect':function(sm,i,r){
-                Ext.getCmp('delete_case_list_btn').enable();
-                Ext.getCmp('edit_case_list_btn').enable();
+                if (Ext.getCmp('delete_case_list_btn')){
+                    Ext.getCmp('delete_case_list_btn').enable();
+                    Ext.getCmp('edit_case_list_btn').enable();
+                }
             },'rowdeselect': function(sm,i,r){
                 if (sm.getCount() < 1){
-                    Ext.getCmp('delete_case_list_btn').disable();
-                    Ext.getCmp('edit_case_list_btn').disable();
+                    if (Ext.getCmp('delete_case_list_btn')) {
+                        Ext.getCmp('delete_case_list_btn').disable();
+                        Ext.getCmp('edit_case_list_btn').disable();
+                    }
                 }
             }}
         }),
@@ -6087,7 +6090,7 @@ RunGrid = function(params, cfg){
     });
 
     this.columns = [
-        {header: "Run ID", width: 30,  dataIndex: "run_id", id: "run_id", sortable: true, renderer: tutil.runLink}, 
+        {header: "Run ID", width: 30,  dataIndex: "run_id", id: "run_id", sortable: true, renderer: tutil.runLink, hideable: false}, 
         {header: "Plan ID", width: 30, dataIndex: "plan_id", sortable: true, renderer: tutil.planLink},
         {header: "Summary", width: 220, dataIndex: "summary", id: "run_name", sortable: true,
          editor: new Ext.grid.GridEditor(
@@ -6351,7 +6354,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                 Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
                                                 
                                                 var newPortlet = new Ext.ux.Portlet({
-                                                    title: 'Completion Report',
+                                                    title: 'Execution Report',
                                                     closable: true,
                                                     autoScroll: true,
                                                     tools: PortalTools
@@ -6477,10 +6480,10 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                bodyStyle: 'padding: 5px',
                                                items: [
                                                    new Ext.form.NumberField({
-                                                       type: 'numberfield',
                                                        maxValue: 100,
                                                        minValue: 0,
                                                        id: 'target_completion',
+                                                       allowBlank:true,
                                                        fieldLabel: 'Target Completion Rate',
                                                        hiddenName: 'target_completion',
                                                        listeners: {'valid': function(f){
@@ -6490,6 +6493,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                    new Ext.form.NumberField({
                                                        maxValue: 100,
                                                        minValue: 0,
+                                                       allowBlank:true,
                                                        id: 'target_pass',
                                                        fieldLabel: 'Target Pass Rate',
                                                        hiddenName: 'target_pass'
@@ -6635,6 +6639,7 @@ var NewRunForm = function(plan){
         id: 'newrun_casegrid',
         height: 500
     });
+    this.casegrid = casegrid;
     casegrid.on('render', function(g){
         for (var i=0; i < g.getTopToolbar().items.length; i++){
             g.getTopToolbar().items.items[i].destroy();
@@ -6721,9 +6726,9 @@ var NewRunForm = function(plan){
                             fieldLabel: '<b>Run Manager</b>', 
                             allowBlank: false
                         }),new Ext.form.NumberField({
-                            type: 'numberfield',
                             maxValue: 100,
                             minValue: 0,
+                            allowBlank:true,
                             id: 'target_completion',
                             fieldLabel: 'Target Completion Rate',
                             hiddenName: 'target_completion',
@@ -6758,6 +6763,7 @@ var NewRunForm = function(plan){
                         }),new Ext.form.NumberField({
                             maxValue: 100,
                             minValue: 0,
+                            allowBlank:true,
                             id: 'target_pass',
                             fieldLabel: 'Target Pass Rate',
                             hiddenName: 'target_pass'
@@ -8008,7 +8014,7 @@ EnvironmentGrid = function(params, cfg){
     var ds = this.store;
     
     this.columns = [
-        {header: "ID", width: 30, dataIndex: "environment_id", sortable: true, renderer: environmentLink},
+        {header: "ID", width: 30, dataIndex: "environment_id", sortable: true, renderer: environmentLink, hideable: false},
         {header: "Environment Name", width: 110, dataIndex: "name", id: 'env_name_col', sortable: true,
           editor: new Ext.grid.GridEditor(
           new Ext.form.TextField({allowBlank: false}),{id: 'env_name_edt'})},
@@ -8777,9 +8783,6 @@ ReportGrid = function(cfg){
                 var name = r.get('name');
                 if(r.get('type') == 1){
                     Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                    if(Ext.getCmp(name)){
-                        return;
-                    }
                     var newPortlet = new Ext.ux.Portlet({
                         title: name,
                         id: name,
@@ -8944,7 +8947,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                         plain: true,
                         shadow: false,
                         items: [new Ext.form.TextField({
-                            value: l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia.userid,
+                            value: encodeURI(l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia.userid),
                             width: 287
                         })]
                     });
@@ -8954,12 +8957,17 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             
             var current_col = 'lc_' + r.get('name');
             var urls = r.get('query').split('::>');
+            var newPortlet;
             for (var i in urls){
                 if (typeof urls[i] != 'string'){
                     continue;
                 }
-                var newPortlet = new Ext.ux.Portlet({
-                    title: r.get('name') + ' ' + i,
+                var p = searchToJson(urls[i]);
+                var t;
+                typeof p.qname == 'object' ? t = p.qname[0] : t = p.qname;
+                newPortlet = new Ext.ux.Portlet({
+                    title: t || ' ',
+                    id: 'search' + r.get('name') + i,
                     closable: true,
                     autoScroll: true,
                     tools: PortalTools
@@ -8969,6 +8977,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 current_col = current_col == 'lc_' + r.get('name') ? 'rc_' + r.get('name') : 'lc_' + r.get('name');
 
                 newPortlet.load({
+                    scripts: true,
                     url: urls[i]
                 });
             }
