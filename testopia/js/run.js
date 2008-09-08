@@ -334,7 +334,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                    name: 'chfieldto'
                                                },new UserLookup({
                                                    id: 'exec_tester',
-                                                   fieldLabel: 'Tester (optional)',
+                                                   fieldLabel: 'Tester (optional)'
                                                })]
                                            })
                                        ],
