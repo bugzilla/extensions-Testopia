@@ -259,7 +259,7 @@ sub testopiaUpdateDB {
     $dbh->bz_add_index('test_run_tags', 'run_tags_secondary_idx', {FIELDS => [qw(tag_id run_id)], TYPE => 'UNIQUE'});
     $dbh->bz_add_index('test_run_tags', 'run_tags_userid_idx', [qw(userid)]);
     $dbh->bz_add_index('test_tags', 'test_tag_name_idx_v2', [qw(tag_name)]);
-
+    
     populateMiscTables();
     populateEnvTables();
     migrateEnvData();
@@ -308,17 +308,31 @@ sub migrateAttachments {
 
 sub populateMiscTables {
     my $dbh = Bugzilla->dbh;
+    
+    # Fix and add values to an existing intall. 
+
+    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('ERROR', 7)") 
+      if $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status") 
+        && ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status WHERE name = ?", undef, 'ERROR');
+    $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_pass', 'Target Pass Rate', 'test_runs')") 
+      if $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs") 
+        && ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_pass');
+    $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_completion', 'Target Completion Rate', 'test_runs')") 
+      if $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs") 
+        && ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_completion');
+
+    if ($dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status")){
+        $dbh->do("UPDATE test_case_run_status SET name='IDLE', sortkey=1 where case_run_status_id=1");
+        $dbh->do("UPDATE test_case_run_status SET name='PASSED', sortkey=4 where case_run_status_id=2");
+        $dbh->do("UPDATE test_case_run_status SET name='FAILED', sortkey=5 where case_run_status_id=3");
+        $dbh->do("UPDATE test_case_run_status SET name='RUNNING', sortkey=2 where case_run_status_id=4");
+        $dbh->do("UPDATE test_case_run_status SET name='PAUSED', sortkey=3 where case_run_status_id=5");
+        $dbh->do("UPDATE test_case_run_status SET name='BLOCKED', sortkey=6 where case_run_status_id=6");
+        $dbh->do("UPDATE test_case_run_status SET name='ERROR', sortkey=7 where case_run_status_id=7");        
+    }
 
     # Insert initial values in static tables. Going out on a limb and
     # assuming that if one table is empty, they all are.
-    
-    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('ERROR', 7)") 
-      if ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status WHERE name = ?", undef, 'ERROR');
-    $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_pass', 'Target Pass Rate', 'test_runs')") 
-      if ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_pass');
-    $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_completion', 'Target Completion Rate', 'test_runs')") 
-      if ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_completion');
-      
     return if $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_status");
 
     print "Populating test_case_run_status table ...\n";
@@ -327,10 +341,10 @@ sub populateMiscTables {
     print "Populating test_fielddefs table ...\n";
 
     $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('IDLE', 1)");
-    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('PASSED', 2)");
-    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('FAILED', 3)");
-    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('RUNNING', 4)");
-    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('PAUSED', 5)");
+    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('PASSED', 4)");
+    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('FAILED', 5)");
+    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('RUNNING', 2)");
+    $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('PAUSED', 3)");
     $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('BLOCKED', 6)");
     $dbh->do("INSERT INTO test_case_run_status (name, sortkey) VALUES ('ERROR', 7)");
     $dbh->do("INSERT INTO test_case_status (name) VALUES ('PROPOSED')");
