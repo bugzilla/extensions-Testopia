@@ -17,7 +17,7 @@
   #
   # Contributor(s): Greg Hendricks <ghendricks@novell.com>
   #%]
-[% IF user.login %]
+[% IF user.login AND user.settings.view_testopia.value == 'on' %]
     
 <div id="links-saved">
   <div class="label">
