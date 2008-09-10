@@ -669,6 +669,14 @@ sub init {
                }
                $f = "test_cases.isautomated";
          },
+         "^alias," => sub {
+               if ($obj eq 'case_run'){
+                    push(@supptables,
+                        "INNER JOIN test_cases 
+                         ON test_cases.case_id = test_case_runs.case_id");
+               }
+               $f = "test_cases.alias";
+         },
          "^milestone," => sub {
                push(@supptables,
                       "INNER JOIN test_builds AS builds " .
@@ -1319,7 +1327,7 @@ sub init {
            
     # Check the Multi select fields and add them to the chart
     my @legal_fields = ("case_status_id", "category", "category_id", "priority_id",
-                        "component", "isautomated", "case_run_status_id",
+                        "component", "isautomated", "alias", "case_run_status_id",
                         "default_product_version", "run_product_version", "type_id", 
                         "build", "build_id", "environment_id", "milestone", "env_products",
                         "env_categories", "env_elements", "env_properties", 
