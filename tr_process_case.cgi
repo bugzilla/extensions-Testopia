@@ -75,7 +75,7 @@ if ($action eq 'edit'){
     
     $case->update();
 
-    print "{'success': true, 'case': " . $case->TO_JSON ."}";
+    print "{'success': true, 'tcase': " . $case->TO_JSON ."}";
 }
 
 elsif ($action eq 'update_doc'){

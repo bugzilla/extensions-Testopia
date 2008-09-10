@@ -53,7 +53,9 @@ my $product;
 my $pid = $cgi->param('product_id') || $cgi->cookie('TESTOPIA_PRODUCT_ID') || 0;
 if ($pid){
     $product = Bugzilla::Testopia::Product->new($pid);
-    ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canview;
+    if ($product){
+        ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canview;
+    }
     $vars->{'product'} = $product;
     $vars->{'cookiepath'} = Bugzilla->params->{'cookiepath'};
 }

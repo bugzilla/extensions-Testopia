@@ -312,7 +312,7 @@ Ext.onReady(function(){
                             params: params,
                             success: function(f,a){
                                 var blocked = '';
-                                var blist = a.result.case.blocked.split(',');
+                                var blist = a.result.tcase.blocked.split(',');
                                 for (var i in blist){
                                     if (typeof blist[i] != "string"){
                                         continue;
@@ -323,7 +323,7 @@ Ext.onReady(function(){
                                     }
                                 }
                                 var deps = '';
-                                var dlist = a.result.case.dependson.split(',');
+                                var dlist = a.result.tcase.dependson.split(',');
                                 for (var i in dlist){
                                     if (typeof dlist[i] != "string"){
                                         continue;
