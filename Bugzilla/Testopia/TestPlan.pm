@@ -894,6 +894,8 @@ sub obliterate {
     $dbh->do("DELETE FROM test_plan_texts WHERE plan_id = ?", undef, $self->id);
     $dbh->do("DELETE FROM test_plan_tags WHERE plan_id = ?", undef, $self->id);
     $dbh->do("DELETE FROM test_plan_activity WHERE plan_id = ?", undef, $self->id);
+    $dbh->do("DELETE FROM test_plan_permissions WHERE plan_id = ?", undef, $self->id);
+    $dbh->do("DELETE FROM test_plan_permissions_regexp WHERE plan_id = ?", undef, $self->id);
     $dbh->do("DELETE FROM test_case_plans WHERE plan_id = ?", undef, $self->id);
     $dbh->do("DELETE FROM test_plans WHERE plan_id = ?", undef, $self->id);
     return 1;

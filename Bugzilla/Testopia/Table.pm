@@ -153,7 +153,8 @@ sub init {
         $self->{'viewall'} = $cgi->param('viewall');
         $self->{'page'} = $cgi->param('page') || 0;
     }
-    
+
+    print $query if $debug;
     exit if $debug;
 #    elsif (!$query && !$list){
 #        my @list;
