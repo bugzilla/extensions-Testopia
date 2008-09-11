@@ -1,0 +1,439 @@
+2008-09-05 14:10  ghendricks%novell.com
+
+	* template/en/default/testopia/search/report-matrix.html.tmpl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js,
+	testopia/js/search.js:
+
+	Tabular reports borked
+
+2008-09-05 10:35  ghendricks%novell.com
+
+	* testopia/: testopia.all.ycomp.js, testopia.all.js:
+
+	Minified files
+
+2008-09-04 16:34  ghendricks%novell.com
+
+	* testopia/js/: case.js, run.js:
+
+	Selcting cases for new run is broken
+
+2008-09-04 16:11  ghendricks%novell.com
+
+	* tr_query.cgi, testopia/js/search.js:
+
+	Title bars on some dashboard panels were not displayed
+
+2008-09-04 14:03  ghendricks%novell.com
+
+	* template/en/default/testopia/product/show.html.tmpl,
+	template/en/default/testopia/reports/bug-count.html.tmpl,
+	testopia/js/search.js, testopia/js/util.js:
+
+	fixed saved dashboard issues - non sharable by other users, spaces
+	in name caused breakage, bug_grids not loaded
+
+2008-09-04 12:05  ghendricks%novell.com
+
+	* template/en/default/testopia/case/show.html.tmpl:
+
+	 Bug 453557 -  Dependent testcases that have a ' (single quote) in
+	the summary field break the UI
+
+2008-09-03 12:10  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Search.pm,
+	template/en/default/hook/global/common-links.html.tmpl/links/testopia.html.tmpl:
+
+	Reoptimize "My Plans" search
+
+2008-09-03 11:03  ghendricks%novell.com
+
+	* template/en/default/testopia/run/show.html.tmpl:
+
+	Save filter throws error.
+
+2008-09-03 10:04  ghendricks%novell.com
+
+	* Bugzilla/Testopia/TestRun.pm:
+
+	Target fields missing from clone run
+
+2008-09-02 17:13  ghendricks%novell.com
+
+	* template/en/default/testopia/product/show.html.tmpl:
+
+	Titles on link to dashboard not showing up
+
+2008-09-02 16:54  ghendricks%novell.com
+
+	* tr_list_caseruns.cgi, tr_run_reports.cgi,
+	template/en/default/testopia/reports/bug-count.html.tmpl,
+	template/en/default/testopia/reports/completion.html.tmpl,
+	template/en/default/testopia/reports/priority-breakdown.html.tmpl,
+	template/en/default/testopia/reports/status.html.tmpl,
+	testopia/js/plan.js, testopia/js/run.js, testopia/js/search.js,
+	testopia/js/util.js:
+
+	Add titles and clean up several id issues.
+
+2008-08-27 09:35  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Search.pm,
+	template/en/default/testopia/plan/show.html.tmpl:
+
+	Plan tags were not being displayed
+
+2008-08-25 17:34  ghendricks%novell.com
+
+	* extensions/testopia/code/install-update_db.pl,
+	Bugzilla/Testopia/Search.pm, Bugzilla/Testopia/TestCase.pm:
+
+	Fixed a couple of Postgres issues
+
+2008-08-25 10:01  ghendricks%novell.com
+
+	* Bugzilla/Testopia/TestRun.pm,
+	template/en/default/testopia/run/show.html.tmpl,
+	testopia/js/run.js:
+
+	Bug 451547 – Error message when submitting a new test run
+
+2008-08-22 17:11  ghendricks%novell.com
+
+	* testopia/js/: case.js, environment.js, plan.js, run.js:
+
+	Don't allow hiding of ID link column
+
+2008-08-22 16:47  ghendricks%novell.com
+
+	* template/en/default/:
+	hook/global/banner.html.tmpl/version/testopia.html.tmpl,
+	testopia/run/list.html.tmpl, testopia/case/list.html.tmpl,
+	testopia/caserun/list.html.tmpl, testopia/plan/list.html.tmpl,
+	testopia/plan/show.html.tmpl:
+
+	Bug 426460 – New completion report - not functional
+
+2008-08-22 14:16  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Product.pm:
+
+	Bug 444120 – Testopia::Product::versions returns name for both id
+	and name
+
+2008-08-22 14:04  ghendricks%novell.com
+
+	* template/en/default/testopia/run/show.html.tmpl:
+
+	Allow collapse of tags in runs
+
+2008-08-22 13:46  ghendricks%novell.com
+
+	* template/en/default/testopia/run/show.html.tmpl,
+	testopia/js/case.js, testopia/js/caserun.js,
+	testopia/testopia.all.ycomp.js, tr_caserun.cgi,
+	Bugzilla/Testopia/TestCase.pm,
+	template/en/default/testopia/case/text.xml.tmpl,
+	testopia/testopia.all.js:
+
+	Add last modified column to cases Allow case details section in a
+	run to be resized
+
+2008-08-21 17:27  ghendricks%novell.com
+
+	* template/en/default/testopia/case/new-bug.xml.tmpl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js,
+	testopia/js/case.js, Bugzilla/Testopia/TestCase.pm:
+
+	Allow components on case grid
+
+2008-08-21 17:12  ghendricks%novell.com
+
+	* template/en/default/testopia/case/new-bug.xml.tmpl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js,
+	tr_process_case.cgi:
+
+	Filter out HTML on creating a bug from a test case
+
+2008-08-21 15:55  ghendricks%novell.com
+
+	* tr_run_reports.cgi, Bugzilla/Testopia/TestRun.pm,
+	template/en/default/testopia/reports/priority-breakdown.html.tmpl,
+	testopia/js/plan.js, testopia/js/run.js:
+
+	add priority breakdown report
+
+2008-08-21 10:06  ghendricks%novell.com
+
+	* testopia/: testopia.all.ycomp.js, testopia.all.js:
+
+	update minified versions of js files
+
+2008-08-20 17:18  ghendricks%novell.com
+
+	* tr_run_reports.cgi, testopia/js/plan.js, testopia/js/run.js,
+	testopia/js/search.js,
+	template/en/default/testopia/reports/bug-count.html.tmpl:
+
+	Save bug reports
+
+2008-08-20 14:54  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Search.pm,
+	Bugzilla/WebService/Testopia/TestCase.pm,
+	Bugzilla/WebService/Testopia/TestCaseRun.pm,
+	Bugzilla/WebService/Testopia/TestPlan.pm,
+	Bugzilla/WebService/Testopia/TestRun.pm,
+	testopia/t/API_TestCase.pm, testopia/t/API_TestCaseRun.pm,
+	testopia/t/API_TestPlan.pm, testopia/t/API_TestRun.pm:
+
+	add list_count methods to api
+
+2008-08-20 13:53  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Search.pm, testopia/js/plan.js:
+
+	Missing cases report.
+
+2008-08-20 11:41  ghendricks%novell.com
+
+	* Bugzilla/: Testopia/Search.pm, Testopia/TestCaseRun.pm,
+	WebService/Testopia/TestCaseRun.pm:
+
+	Allow API calls to caseruns to use status or status_id as in other
+	objects.
+
+2008-08-20 10:49  ghendricks%novell.com
+
+	* tr_list_caseruns.cgi, testopia/js/caserun.js:
+
+	Make appending notes work for all selected cases.
+
+2008-08-19 17:32  ghendricks%novell.com
+
+	* testopia/js/caserun.js:
+
+	Add summary row to caserun list
+
+2008-08-19 16:48  ghendricks%novell.com
+
+	* testopia/js/caserun.js,
+	template/en/default/testopia/plan/show.html.tmpl:
+
+	Add bug links in case run search list
+
+2008-08-19 16:06  ghendricks%novell.com
+
+	* template/en/default/testopia/case/show.html.tmpl,
+	template/en/default/testopia/run/show.html.tmpl,
+	Bugzilla/Testopia/TestCase.pm, Bugzilla/Testopia/TestRun.pm:
+
+	Provide average and total times for runs and cases.
+
+2008-08-19 14:09  ghendricks%novell.com
+
+	* Bugzilla/Testopia/TestRun.pm,
+	extensions/testopia/code/db_schema-abstract_schema.pl,
+	extensions/testopia/code/install-update_db.pl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js,
+	testopia/t/API_TestRun.pm, tr_list_runs.cgi, tr_new_run.cgi,
+	tr_process_run.cgi, tr_run_reports.cgi,
+	Bugzilla/WebService/Testopia/TestRun.pm,
+	template/en/default/hook/global/user-error.html.tmpl/errors/tr-user-error.html.tmpl,
+	template/en/default/testopia/run/show.html.tmpl,
+	testopia/js/run.js:
+
+	Add target fields to test runs
+
+2008-08-15 15:54  ghendricks%novell.com
+
+	* testopia/js/build.js, testopia/js/plan.js, testopia/js/run.js,
+	testopia/js/search.js, testopia/js/util.js, tr_query.cgi,
+	tr_show_product.cgi, Bugzilla/Testopia/Constants.pm,
+	template/en/default/testopia/product/show.html.tmpl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js:
+
+	Saving and linking to whole dashboards.
+
+2008-08-14 14:20  ghendricks%novell.com
+
+	* tr_run_reports.cgi, Bugzilla/Testopia/Search.pm,
+	template/en/default/testopia/reports/completion.html.tmpl,
+	template/en/default/testopia/reports/status.html.tmpl,
+	testopia/js/plan.js, testopia/js/run.js:
+
+	Add status report and modify completion report.
+
+2008-08-13 17:11  ghendricks%novell.com
+
+	*
+	template/en/default/hook/global/useful-links.html.tmpl/end/tr.html.tmpl,
+	template/en/default/testopia/case/show.html.tmpl,
+	tr_process_case.cgi, Bugzilla/Testopia/TestCase.pm,
+	template/en/default/hook/global/common-links.html.tmpl/links/testopia.html.tmpl,
+	template/en/default/hook/global/user-error.html.tmpl/errors/tr-user-error.html.tmpl,
+	template/en/default/testopia/caserun/filter.html.tmpl:
+
+	Fixed several small issues
+
+2008-08-11 13:17  ghendricks%novell.com
+
+	* testopia/: img/refresh.png, img/refresh.svg, js/build.js,
+	js/case.js, js/caserun.js, js/category.js, js/environment.js,
+	js/plan.js, js/run.js, js/search.js, js/tags.js, js/util.js,
+	testopia.all.js, testopia.all.ycomp.js:
+
+	Add icon to refresh menus
+
+2008-08-07 16:48  ghendricks%novell.com
+
+	* testopia/js/util.js, Bugzilla/Testopia/Search.pm,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js:
+
+	Allow direct type of email address in user fields.
+
+2008-08-07 13:02  ghendricks%novell.com
+
+	* Bugzilla/Testopia/TestRun.pm:
+
+	Bug 437998 – SQL error on a DISTINCT/ORDER BY query (PostgreSQL
+	backend) Patch by romulo@videosoft.com.br r=ghendricks
+
+2008-08-07 12:30  ghendricks%novell.com
+
+	* Bugzilla/WebService/Testopia/: TestCase.pm, TestCaseRun.pm,
+	TestPlan.pm, TestRun.pm:
+
+	Note in XMLRPC docs that default search only returns 25 records at
+	a time
+
+2008-08-06 16:35  ghendricks%novell.com
+
+	* tr_run_reports.cgi, Bugzilla/Testopia/Search.pm,
+	Bugzilla/Testopia/TestRun.pm,
+	template/en/default/testopia/reports/execution.html.tmpl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js,
+	testopia/js/plan.js, testopia/js/run.js, testopia/js/search.js:
+
+	Add execution report
+
+2008-08-04 17:29  ghendricks%novell.com
+
+	* tr_case_reports.cgi, tr_caserun_reports.cgi, tr_plan_reports.cgi,
+	tr_run_reports.cgi,
+	template/en/default/testopia/reports/report.html.tmpl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js,
+	testopia/js/caserun.js:
+
+	allow sorting of cases by summary in a run show title of reports
+
+2008-08-04 14:05  ghendricks%novell.com
+
+	* tr_list_cases.cgi, testopia/testopia.all.ycomp.js,
+	testopia/js/case.js, testopia/testopia.all.js:
+
+	Allow unlink of multiple cases from a plan.
+
+2008-08-04 13:12  ghendricks%novell.com
+
+	* tr_plan_access.cgi, Bugzilla/Testopia/TestPlan.pm,
+	testopia/js/search.js:
+
+	Edit search was not working.  Check that we have at least one admin
+	in a plan.
+
+2008-07-29 14:37  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Search.pm, testopia/import_example.csv,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js:
+
+	Test case lists were broken
+
+2008-07-18 14:39  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Search.pm, Bugzilla/Testopia/Table.pm,
+	template/en/default/hook/global/common-links.html.tmpl/links/testopia.html.tmpl,
+	template/en/default/hook/global/useful-links.html.tmpl/end/tr.html.tmpl:
+
+	My Plans now includes any plans I have explicit rights to as well
+	as plans that contain cases I own.
+
+2008-07-17 17:17  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Attachment.pm,
+	Bugzilla/Testopia/TestCaseRun.pm, testopia/js/attachments.js:
+
+	Caserun attachments should show all attachments on the case.
+
+2008-07-17 15:41  ghendricks%novell.com
+
+	* template/en/default/testopia/case/text.xml.tmpl:
+
+	Use CDATA blocks for large text fields in caseruns to avoid
+	truncating.
+
+2008-07-17 13:00  ghendricks%novell.com
+
+	* template/en/default/admin/params/testopia.html.tmpl,
+	template/en/default/testopia/plan/add.html.tmpl,
+	template/en/default/testopia/plan/choose.html.tmpl,
+	template/en/default/testopia/plan/list.html.tmpl,
+	template/en/default/testopia/plan/show.html.tmpl,
+	testopia/testopia.all.js, testopia/testopia.all.ycomp.js,
+	testopia/js/case.js, testopia/js/caserun.js, testopia/js/run.js,
+	testopia/js/search.js, testopia/js/tags.js, testopia/js/util.js,
+	template/en/default/testopia/caserun/list.html.tmpl,
+	template/en/default/testopia/case/add.html.tmpl,
+	template/en/default/testopia/case/list.html.tmpl,
+	template/en/default/testopia/case/show.html.tmpl,
+	template/en/default/testopia/environment/show.html.tmpl,
+	template/en/default/testopia/product/show.html.tmpl,
+	Bugzilla/Config/Testopia.pm,
+	template/en/default/testopia/style.none.tmpl,
+	template/en/default/testopia/run/add.html.tmpl,
+	template/en/default/testopia/run/list.html.tmpl,
+	template/en/default/testopia/run/show.html.tmpl:
+
+	Minify Testopia javascript
+
+2008-07-16 15:51  ghendricks%novell.com
+
+	* Bugzilla/Testopia/Search.pm,
+	template/en/default/testopia/caserun/filter.html.tmpl,
+	testopia/js/caserun.js, testopia/js/search.js, testopia/js/util.js:
+
+	Quick search filter in grid filters now accepts column info.
+
+2008-07-16 10:53  ghendricks%novell.com
+
+	* testopia/js/: case.js, util.js:
+
+	Bug 445450 – Create TC from Bug in Testopia 2.0 not using in bug
+	info correctly
+
+2008-07-16 10:51  ghendricks%novell.com
+
+	* testopia/js/search.js, testopia/js/util.js, tr_query.cgi,
+	Bugzilla/Testopia/Search.pm, Bugzilla/Testopia/TestCase.pm,
+	Bugzilla/Testopia/TestPlan.pm, Bugzilla/Testopia/TestRun.pm,
+	template/en/default/testopia/blocks.html.tmpl,
+	template/en/default/testopia/product/show.html.tmpl,
+	template/en/default/testopia/search/case.html.tmpl,
+	template/en/default/testopia/search/caserun.html.tmpl,
+	template/en/default/testopia/search/plan.html.tmpl,
+	template/en/default/testopia/search/run.html.tmpl,
+	testopia/import_example.csv:
+
+	Add search based on bug fields as well as numerous other search
+	additions.  Edit searches.
+
+2008-07-08 17:12  ghendricks%novell.com
+
+	* tr_importer.cgi,
+	extensions/testopia/code/install-requirements.pl,
+	template/en/default/hook/global/user-error.html.tmpl/errors/tr-user-error.html.tmpl,
+	testopia/js/attachments.js, testopia/js/plan.js:
+
+	Fixed some minor importer issues.
+
