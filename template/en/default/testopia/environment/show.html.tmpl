@@ -165,10 +165,10 @@ Ext.onReady(function(){
                                 url: 'tr_environments.cgi', 
                                 params:{
                                     action: 'set_selected',
-                                    id: node.id, 
-                                    type: node.attributes.type, 
+                                    id: node.attributes.property_id,
+                                    type: node.attributes.cls, 
                                     env_id: [% environment.id FILTER js %],
-                                    value: node.attributes.value
+                                    value: node.attributes.text
                                 }, 
                                 success:function(object){
                                     var parentNode = node.parentNode;
@@ -200,7 +200,7 @@ Ext.onReady(function(){
                     Ext.getCmp('etree_remove_node').enable();
                 }
                 else 
-                    if (node.attributes.type == 'validexp') {
+                    if (node.attributes.type == 'value') {
                         Ext.getCmp('etree_value_selector').show();
                     }
                     else 
