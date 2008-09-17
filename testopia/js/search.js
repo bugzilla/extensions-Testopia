@@ -574,7 +574,29 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 text: 'Delete',
                 icon: 'testopia/img/delete.png',
                 iconCls: 'img_button_16x',
-                handler: this.deleteSearch.createDelegate(this)
+                handler: function (){
+                    var form = new Ext.form.BasicForm('testopia_helper_frm',{});
+                    Ext.Msg.show({
+                        msg: 'Are you sure you want to delete this search?',
+                        buttons: Ext.MessageBox.YESNO,
+                        icon: Ext.MessageBox.QUESTION,
+                        fn: function(btn, text){
+                            if (btn == 'yes'){
+                                var r = grid.store.getAt(index);
+                                form.submit({
+                                    url: 'tr_query.cgi',
+                                    params: {action: 'delete_query', query_name: r.get('name')},
+                                    success: function(){
+                                        if (grid){
+                                            grid.store.load();
+                                        }
+                                    },
+                                    failure: testopiaError
+                                });
+                            }
+                        }
+                    });
+                }
             },{
                 text: 'Refresh List',
                 icon: 'testopia/img/refresh.png',
@@ -586,30 +608,6 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
         });
         e.stopEvent();
         this.menu.showAt(e.getXY());
-    },
-    deleteSearch: function(){
-        var grid = this;
-        var form = new Ext.form.BasicForm('testopia_helper_frm',{});
-        Ext.Msg.show({
-            msg: 'Are you sure you want to delete this search?',
-            buttons: Ext.MessageBox.YESNO,
-            icon: Ext.MessageBox.QUESTION,
-            fn: function(btn, text){
-                if (btn == 'yes'){
-                    var r = grid.getSelectionModel().getSelected();
-                    form.submit({
-                        url: 'tr_query.cgi',
-                        params: {action: 'delete_query', query_name: r.get('name')},
-                        success: function(){
-                            if (grid){
-                                grid.store.load();
-                            }
-                        },
-                        failure: testopiaError
-                    });
-                }
-            }
-        });
     },
     onActivate: function(event){
         if (!this.store.getCount()){
