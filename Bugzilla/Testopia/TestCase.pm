@@ -384,7 +384,8 @@ sub _check_components {
                 push @comp_ids, $comp->id;
             }
             else{
-                @comp_ids = $c;
+                validate_selection($c,'id','components');
+                push @comp_ids, $c;
             }
         }
     }

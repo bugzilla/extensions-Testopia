@@ -368,7 +368,7 @@ CaseRunSearch = function(params){
     this.params = params;
     CaseRunSearch.superclass.constructor.call(this,{
         title: 'Case-Run Search',
-        id: 'caserun_search_panel',
+        id: 'case_run_search_panel',
         layout:'fit',
         buttons:[{
             text: 'Submit',
