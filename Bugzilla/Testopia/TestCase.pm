@@ -2045,7 +2045,7 @@ sub bugs {
     my $dbh = Bugzilla->dbh;
     return $self->{'bugs'} if exists $self->{'bugs'};
     my $ref = $dbh->selectall_arrayref(
-        "SELECT DISTINCT bug_id, case_run_id
+        "SELECT bug_id, case_run_id
            FROM test_case_bugs 
           WHERE case_id = ?", 
          {'Slice' => {}}, $self->{'case_id'});
@@ -2058,6 +2058,7 @@ sub bugs {
             $bug->{'build'} = $cr->build->name;
             $bug->{'env'} = $cr->environment->name;
             $bug->{'run_id'} = $cr->run_id;
+            $bug->{'case_run_id'} = $cr->id;
         }
         push @bugs, $bug; 
     }

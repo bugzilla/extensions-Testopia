@@ -601,6 +601,8 @@ sub attach_bug {
     
     $dbh->bz_start_transaction();
     foreach my $bug (@$bugs){ 
+        trick_taint($bug) if $bug;
+        trick_taint($caserun_id) if $caserun_id;
         my ($exists) = $dbh->selectrow_array(
                 "SELECT bug_id 
                    FROM test_case_bugs 
@@ -644,7 +646,7 @@ sub detach_bug {
     my $self = shift;
     my ($bug) = @_;
     my $dbh = Bugzilla->dbh;
-
+    trick_taint($bug) if $bug;
     $dbh->do("DELETE FROM test_case_bugs 
                WHERE bug_id = ? 
                  AND case_run_id = ?", 

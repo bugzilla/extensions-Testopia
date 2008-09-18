@@ -156,7 +156,7 @@ elsif ($action eq 'report'){
     
     $vars->{'builds'} = join(',',@build_ids);
     $vars->{'bugs'} = join(',',@bug_ids);
-    $vars->{'bug_count'} = scalar split(',', $vars->{'bugs'});
+    $vars->{'bug_count'} = scalar @bug_ids;
     
     $template->process("testopia/reports/completion.html.tmpl", $vars)
        || ThrowTemplateError($template->error());

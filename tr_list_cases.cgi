@@ -288,10 +288,10 @@ elsif ($action eq 'update_bugs'){
         } elsif($cgi->param('type') eq 'caserun'){
             my $caserun = Bugzilla::Testopia::TestCaseRun->new($id);
             if ($cgi->param('bug_action') eq 'attach'){
-                $caserun->case->attach_bug($cgi->param('bugs'), $id) if $caserun->case->canedit;
+                $caserun->attach_bug($cgi->param('bugs'), $id) if $caserun->canedit;
             }
             else {
-                $caserun->case->detach_bug($cgi->param('bugs')) if $caserun->case->canedit;
+                $caserun->detach_bug($cgi->param('bugs')) if $caserun->canedit;
             }
         } 
     }

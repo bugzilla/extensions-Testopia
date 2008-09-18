@@ -327,6 +327,7 @@ CaseRunGrid = function(params, run){
                {name: "requirement", mapping:"requirement"},
                {name: "category", mapping:"category"},
                {name: "priority", mapping:"priority"},
+               {name: "close_date", mapping:"close_date"},
                {name: "bug_count", mapping:"bug_count"},
                {name: "case_summary", mapping:"case_summary"},
                {name: "type", mapping:"type"},
@@ -404,6 +405,7 @@ CaseRunGrid = function(params, run){
              new UserLookup({id: 'caserun_assignee'})
          ),renderer: TestopiaComboRenderer.createDelegate(this)},
         {header: "Tested By", width: 150, sortable: true, dataIndex: 'testedby'},
+        {header: "Closed", width: 90, sortable: true, dataIndex: 'close_date'},
 		{header: "Status", width: 30, sortable: true, dataIndex: 'status', align: 'center', renderer: t.statusIcon},
         {header: "Priority", width: 60, sortable: true, dataIndex: 'priority',
          editor: new Ext.grid.GridEditor(
@@ -1332,12 +1334,12 @@ CaseBugsGrid = function(id){
         url: 'tr_process_case.cgi',
         root: 'bugs',
         baseParams: {action: 'getbugs'},
-        id: 'bug_id',
         fields: [
             {name: 'run_id', mapping: 'run_id'},
             {name: 'build', mapping: 'build'},
             {name: 'env', mapping: 'env'},
             {name: 'summary', mapping: 'summary'},
+            {name: 'case_run_id', mapping: 'case_run_id'},
             {name: 'bug_id', mapping: 'bug_id'},
             {name: 'status', mapping: 'status'},
             {name: 'resolution', mapping: 'resolution'},
@@ -1459,7 +1461,7 @@ CaseBugsGrid = function(id){
             handler: newbug.createDelegate(this)
         },{
             xtype: 'button',
-            tooltip: "Remove selected bugs from test case",
+            tooltip: "Remove selected bugs from test case or run",
             icon: 'testopia/img/delete.png',
             iconCls: 'img_button_16x',
             handler: removebug.createDelegate(this)
@@ -1482,19 +1484,36 @@ CaseBugsGrid = function(id){
 };
 Ext.extend(CaseBugsGrid, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
-        if(!this.menu){ // create context menu on first right click
-            this.menu = new Ext.menu.Menu({
-                id:'tags-ctx-menu',
-                items: [{
-                    text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
-                    iconCls: 'img_button_16x',
-                    handler: function(){
-                        grid.store.reload();
-                    } 
-                }]
-            });
-        }
+        this.menu = new Ext.menu.Menu({
+            id:'tags-ctx-menu',
+            items: [{
+                text: 'Refresh List', 
+                icon: 'testopia/img/refresh.png',
+                iconCls: 'img_button_16x',
+                handler: function(){
+                    grid.store.reload();
+                } 
+            },{
+                text: 'Attach Selected Bug to Current Run/Build/Environment', 
+                id: 'reattach_bug',
+                icon: 'testopia/img/add.png',
+                disabled: Ext.getCmp('caserun_grid') ? false : true,
+                iconCls: 'img_button_16x',
+                handler: function(){
+                    var r = grid.store.getAt(index);
+                    var testopia_form = new Ext.form.BasicForm('testopia_helper_frm',{});
+                    testopia_form.submit({
+                        url: 'tr_list_cases.cgi',
+                        params: {action: 'update_bugs', bug_action: 'attach', bugs: getSelectedObjects(Ext.getCmp('case_bugs_panel'), 'bug_id'), type: 'caserun', ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')},
+                        success: function(){
+                            Ext.getCmp('caserun_grid').store.reload();
+                            Ext.getCmp('attachbug').reset();
+                        },
+                        failure: testopiaError
+                    });
+                }                 
+            }]
+        });
         e.stopEvent();
         if (grid.getSelectionModel().getCount() < 1){
             grid.getSelectionModel().selectRow(index);
