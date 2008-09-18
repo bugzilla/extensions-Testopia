@@ -88,16 +88,6 @@ diff -u -r1.148.2.6 User.pm
  }
  
  sub product_responsibilities {
-@@ -1547,7 +1591,8 @@
- 
-     $dbh->bz_lock_tables('profiles WRITE', 'profiles_activity WRITE',
-         'user_group_map WRITE', 'email_setting WRITE', 'groups READ', 
--        'tokens READ', 'fielddefs READ');
-+        'tokens READ', 'fielddefs READ', 'test_plan_permissions_regexp READ',
-+        'test_plan_permissions READ');
- 
-     my $user = $class->SUPER::create(@_);
- 
 Index: Bugzilla/Error.pm
 ===================================================================
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Error.pm,v
@@ -181,40 +171,6 @@ diff -u -r1.7 common-links.html.tmpl
  </ul>
 +[% Hook.process("links") %]
 \ No newline at end of file
-Index: editusers.cgi
-===================================================================
-RCS file: /cvsroot/mozilla/webtools/bugzilla/editusers.cgi,v
-retrieving revision 1.141.2.1
-diff -u -r1.141.2.1 editusers.cgi
---- editusers.cgi	19 Nov 2007 12:45:31 -0000	1.141.2.1
-+++ editusers.cgi	29 Feb 2008 23:19:44 -0000
-@@ -229,6 +229,8 @@
-     # Lock tables during the check+update session.
-     $dbh->bz_lock_tables('profiles WRITE',
-                          'profiles_activity WRITE',
-+                         'test_plan_permissions WRITE',
-+                         'test_plan_permissions_regexp READ',
-                          'fielddefs READ',
-                          'tokens WRITE',
-                          'logincookies WRITE',
-Index: votes.cgi
-===================================================================
-RCS file: /cvsroot/mozilla/webtools/bugzilla/votes.cgi,v
-retrieving revision 1.50.2.1
-diff -u -r1.50.2.1 votes.cgi
---- votes.cgi	10 Jun 2007 10:20:52 -0000	1.50.2.1
-+++ votes.cgi	29 Feb 2008 23:19:44 -0000
-@@ -130,8 +130,8 @@
- 
-     my $canedit = (Bugzilla->params->{'usevotes'} && $userid == $who) ? 1 : 0;
- 
--    $dbh->bz_lock_tables('bugs READ', 'products READ', 'votes WRITE',
--             'cc READ', 'bug_group_map READ', 'user_group_map READ',
-+    $dbh->bz_lock_tables('bugs READ', 'products READ', 'products AS tr_products READ', 'votes WRITE',
-+             'cc READ', 'bug_group_map READ', 'user_group_map READ', 'test_plans READ', 'test_plan_permissions READ', 
-              'group_group_map READ', 'groups READ', 'group_control_map READ');
- 
-     if ($canedit && $bug_id) {
 Index: Bugzilla/WebService/User.pm
 ===================================================================
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/WebService/User.pm,v
@@ -328,3 +284,37 @@ diff -u -r1.171.2.2 Bug.pm
  #####################################################################
  # Subroutines
  #####################################################################
+Index: Bugzilla/Install.pm
+===================================================================
+RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Install.pm,v
+retrieving revision 1.12
+diff -u -r1.12 Install.pm
+--- Bugzilla/Install.pm 28 Dec 2006 18:16:42 -0000  1.12
++++ Bugzilla/Install.pm 10 Sep 2008 20:17:45 -0000
+@@ -59,8 +59,11 @@
+     skin               => { subclass => 'Skin', default => 'standard' },
+     # 2006-12-10 LpSolit@gmail.com -- Bug 297186
+     lang               => { options => [split(/[\s,]+/, Bugzilla->params->{'languages'})],
+-                            default => Bugzilla->params->{'defaultlanguage'} }
++                            default => Bugzilla->params->{'defaultlanguage'} },
++    view_testopia      => { options => ['on', 'off'],
++                            default  => 'on' },
+     }
++    
+ };
+ 
+ use constant SYSTEM_GROUPS => (
+Index: template/en/default/global/setting-descs.none.tmpl
+===================================================================
+RCS file: /cvsroot/mozilla/webtools/bugzilla/template/en/default/global/setting-descs.none.tmpl,v
+retrieving revision 1.11.2.1
+diff -u -r1.11.2.1 setting-descs.none.tmpl
+--- template/en/default/global/setting-descs.none.tmpl  20 Jul 2007 12:12:55 -0000  1.11.2.1
++++ template/en/default/global/setting-descs.none.tmpl  10 Sep 2008 20:18:18 -0000
+@@ -41,5 +41,6 @@
+    "never"                            => "Never",
+    "cc_unless_role"                   => "Only if I have no role on them",
+    "lang"                             => "Language used in email",
++   "view_testopia"                    => "View the Testopia links",
+                    } 
+ %]

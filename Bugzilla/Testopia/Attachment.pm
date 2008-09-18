@@ -278,7 +278,7 @@ sub link_plan {
     my ($plan_id) = @_;
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('test_plan_attachments WRITE');
+    $dbh->bz_start_transaction();
     my ($is) = $dbh->selectrow_array(
             "SELECT 1 
                FROM test_plan_attachments
@@ -286,14 +286,14 @@ sub link_plan {
                 AND plan_id = ?",
                undef, ($self->id, $plan_id));
     if ($is) {
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
         return;
     }
 
     $dbh->do("INSERT INTO test_plan_attachments (attachment_id, plan_id)
               VALUES (?,?)",
               undef, ($self->id, $plan_id));
-    $dbh->bz_unlock_tables(); 
+    $dbh->bz_commit_transaction(); 
 }
 
 sub link_case {
@@ -301,7 +301,7 @@ sub link_case {
     my ($case_id) = @_;
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('test_case_attachments WRITE');
+    $dbh->bz_start_transaction();
     my ($is) = $dbh->selectrow_array(
             "SELECT 1 
                FROM test_case_attachments
@@ -309,14 +309,14 @@ sub link_case {
                 AND case_id = ?",
                undef, ($self->id, $case_id));
     if ($is) {
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
         return;
     }
 
     $dbh->do("INSERT INTO test_case_attachments (attachment_id, case_id)
               VALUES (?,?)",
               undef, ($self->id, $case_id));
-    $dbh->bz_unlock_tables();
+    $dbh->bz_bz_commit_transaction();
 }
 
 sub unlink_plan {

@@ -651,11 +651,11 @@ sub update {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('test_environments WRITE');
+    $dbh->bz_start_transaction();
     
     $self->SUPER::update();
     
-    $dbh->bz_unlock_tables;
+    $dbh->bz_commit_transaction();
 
     my $elements = $self->{'elements'};
     

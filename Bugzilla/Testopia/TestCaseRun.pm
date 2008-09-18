@@ -358,14 +358,14 @@ sub _update_fields{
         $self->_update_deps(IDLE);
     }
 
-    $dbh->bz_lock_tables('test_case_runs WRITE');
+    $dbh->bz_start_transaction();
     foreach my $field (keys %{$newvalues}){
         $dbh->do("UPDATE test_case_runs 
                   SET $field = ? WHERE case_run_id = ?",
                   undef, $newvalues->{$field}, $self->{'case_run_id'});
         $self->{$field} = $newvalues->{$field};
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     return $self->{'case_run_id'};   
 }
@@ -383,7 +383,7 @@ sub set_as_current {
     $caserun = $self->{'case_run_id'} unless defined $caserun;
     my $dbh = Bugzilla->dbh;
 
-    $dbh->bz_lock_tables('test_case_runs WRITE');
+    $dbh->bz_start_transaction();
     $dbh->do("UPDATE test_case_runs
               SET iscurrent = 0
               WHERE case_id = ? AND run_id = ?",
@@ -393,7 +393,7 @@ sub set_as_current {
               SET iscurrent = 1
               WHERE case_run_id = ?",
               undef, $caserun);
-    $dbh->bz_unlock_tables;
+    $dbh->bz_commit_transaction();
 }
 
 =head2 set_status
@@ -511,7 +511,7 @@ sub _update_deps {
     return unless $deplist;
     
     my $dbh = Bugzilla->dbh;    
-    $dbh->bz_lock_tables("test_case_runs WRITE");
+    $dbh->bz_start_transaction();
     my $caseruns = $dbh->selectcol_arrayref(
        "SELECT case_run_id 
           FROM test_case_runs    
@@ -528,7 +528,7 @@ sub _update_deps {
     foreach my $id (@$caseruns){
         $sth->execute($status, $id);
     }
-    $dbh->bz_unlock_tables;
+    $dbh->bz_commit_transaction();
     
     $self->{'updated_deps'} = $caseruns;
 }
@@ -599,7 +599,7 @@ sub attach_bug {
     $caserun_id ||= $self->{'case_run_id'};
     my $dbh = Bugzilla->dbh;
     
-    $dbh->bz_lock_tables('test_case_bugs WRITE');
+    $dbh->bz_start_transaction();
     foreach my $bug (@$bugs){ 
         my ($exists) = $dbh->selectrow_array(
                 "SELECT bug_id 
@@ -608,7 +608,7 @@ sub attach_bug {
                     AND bug_id=?", 
                  undef, ($caserun_id, $bug));
         if ($exists) {
-            $dbh->bz_unlock_tables();
+            $dbh->bz_commit_transaction();
             return;
         }
         my ($check) = $dbh->selectrow_array(
@@ -631,7 +631,7 @@ sub attach_bug {
                       VALUES(?,?,?)", undef, ($bug, $self->{'case_run_id'}, $self->{'case_id'}));
         }
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 }
 
 =head2 detach_bug
@@ -682,7 +682,7 @@ sub update_bugs {
         my $comment  = "Status updated by Testopia:  ". Bugzilla->params->{"urlbase"};
            $comment .= "tr_show_case.cgi?case_id=" . $self->case->id;
           
-        $dbh->bz_lock_tables("bugs WRITE, fielddefs READ, longdescs WRITE, bugs_activity WRITE");
+        $dbh->bz_start_transaction();
         $dbh->do("UPDATE bugs 
                      SET bug_status = ?,
                         resolution = ?,
@@ -696,7 +696,7 @@ sub update_bugs {
         AppendComment($bug->bug_id, Bugzilla->user->id, $comment, 
                       !Bugzilla->user->in_group(Bugzilla->params->{'insidergroup'}), $timestamp);
         
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
     }
 }
 

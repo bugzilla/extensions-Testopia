@@ -157,19 +157,19 @@ sub attach {
     my ($obj) = shift;
     my $dbh = Bugzilla->dbh;
     
-    $dbh->bz_lock_tables("test_". $obj->type ."_tags WRITE");
+    $dbh->bz_start_transaction();
     my $tagged = $dbh->selectrow_array(
              "SELECT 1 FROM test_". $obj->type ."_tags 
               WHERE tag_id = ? AND ". $obj->type ."_id = ?",
               undef, $self->id, $obj->id);
     if ($tagged) {
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
         return;
     }
     $dbh->do("INSERT INTO test_". $obj->type ."_tags(tag_id, ". $obj->type ."_id, userid) 
               VALUES(?,?,?)",
               undef, $self->id, $obj->id, Bugzilla->user->id);
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 } 
 
 =head2 store
@@ -185,18 +185,18 @@ sub store {
     my $dbh = Bugzilla->dbh;
     my $key;
     $self->{'tag_name'} = trim($self->{'tag_name'});
-    $dbh->bz_lock_tables('test_tags WRITE');
+    $dbh->bz_start_transaction();
     ($key) = $dbh->selectrow_array("SELECT tag_id FROM test_tags 
                                     WHERE LOWER(tag_name) = ?", 
                                     undef, lc($self->{'tag_name'}));
     if ($key) {
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
         return $key;
     }
     $dbh->do("INSERT INTO test_tags (tag_name) VALUES (?)",
               undef, ($self->{'tag_name'}));
     $key = $dbh->bz_last_key( 'test_tags', 'tag_id' );
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
     
     $self->{'tag_id'} = $key;
     return $key;

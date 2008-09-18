@@ -261,15 +261,14 @@ sub update {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
     my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
-    $dbh->bz_lock_tables('test_plans WRITE', 'test_plan_activity WRITE',
-            'test_fielddefs READ');
+    $dbh->bz_start_transaction();
 
     my $changed = $self->SUPER::update();
     
     foreach my $field (keys %$changed){
         Bugzilla::Testopia::Util::log_activity('plan', $self->id, $field, $timestamp, $changed->{$field}->[0], $changed->{$field}->[1]);
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 }
 
 ###############################

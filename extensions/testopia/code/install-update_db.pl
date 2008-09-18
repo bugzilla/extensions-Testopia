@@ -399,11 +399,7 @@ sub populateEnvTables {
         return;
     }
 
-    $dbh->bz_lock_tables(
-        'test_environment_category WRITE',
-        'test_environment_element WRITE',
-        'op_sys READ',
-        'rep_platform READ');
+    $dbh->bz_start_transaction();
 
     print "Populating test_environment_category table ...\n";
     $dbh->do("INSERT INTO test_environment_category (product_id, name) " .
@@ -424,7 +420,7 @@ sub populateEnvTables {
         $sth->execute(2, $value, 0, 0);
     }
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 }
 
 sub migrateEnvData {
@@ -458,9 +454,7 @@ sub migrateEnvData {
         "AND env_elem.env_category_id = 2",
         'rep_platform_id');
 
-    $dbh->bz_lock_tables(
-        'test_environment_map WRITE',
-        'test_environments READ');
+    $dbh->bz_start_transaction();
     print "Migrating data from test_environments to test_environment_map ...\n";
     $sth = $dbh->prepare("INSERT INTO test_environment_map " .
         "(environment_id, property_id, element_id, value_selected) " .
@@ -475,7 +469,7 @@ sub migrateEnvData {
     foreach $i (@$ary_ref) {
         $sth->execute(@$i[0], 0, $platform_mapping->{@$i[1]}->{'element_id'}, '');
     }
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 
     print "Saving data from test_environments.xml column into text files ...\n";
     $ary_ref = $dbh->selectall_arrayref("SELECT environment_id, name, xml " .

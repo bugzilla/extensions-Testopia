@@ -246,7 +246,7 @@ sub save_list {
 #    my $list = join(",", @ids);
     my $dbh = Bugzilla->dbh;
     if ($self->{'id_list'}){
-        $dbh->bz_lock_tables('test_named_queries WRITE');
+        $dbh->bz_start_transaction();
         my ($is) = $dbh->selectrow_array(
                 "SELECT 1 FROM test_named_queries 
                  WHERE userid = ? AND name = ?", undef,
@@ -261,7 +261,7 @@ sub save_list {
             $dbh->do("INSERT INTO test_named_queries (userid, name, isvisible, query) VALUES(?,?,?,?)", undef,
                       ($self->{'user'}->id, "__". $self->{'type'} ."__", 0, join(",", $self->{'id_list'})));
         }
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
     }
 #    $self->{'list_count'} = scalar @ids unless $self->{'query'};
 }

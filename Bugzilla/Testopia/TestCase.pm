@@ -547,8 +547,7 @@ sub update {
     
     $self->update_deps($self->{'dependson'}, $self->{'blocks'});
     
-    $dbh->bz_lock_tables('test_cases WRITE', 'test_case_activity WRITE',
-                         'test_fielddefs READ');
+    $dbh->bz_start_transaction();
     
     my $changed = $self->SUPER::update();
     
@@ -559,7 +558,7 @@ sub update {
                                                $changed->{$field}->[0], $changed->{$field}->[1]);
     }
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 }
 
 ###############################
@@ -856,14 +855,14 @@ sub attach_bug {
     
     $bugids = $self->_check_bugs($bugids, "ATTACH");
     
-    $dbh->bz_lock_tables('test_case_bugs WRITE');
+    $dbh->bz_start_transaction();
     
     foreach my $bug (@$bugids){
         $dbh->do("INSERT INTO test_case_bugs (bug_id, case_run_id, case_id)
                   VALUES(?,?,?)", undef, ($bug, $caserun_id, $self->id));
     }
 
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
 }
 
 =head2 detach_bug
@@ -1233,7 +1232,7 @@ sub link_plan {
     
     #Check that it isn't linked already
 
-    $dbh->bz_lock_tables('test_case_plans WRITE');
+    $dbh->bz_start_transaction();
     my ($is) = $dbh->selectrow_array(
             "SELECT 1 
                FROM test_case_plans
@@ -1241,12 +1240,12 @@ sub link_plan {
                 AND plan_id = ?",
                undef, ($case_id, $plan_id));
     if ($is) {
-        $dbh->bz_unlock_tables();
+        $dbh->bz_commit_transaction();
         return;
     }
     $dbh->do("INSERT INTO test_case_plans (plan_id, case_id) 
               VALUES (?,?)", undef, $plan_id, $case_id);
-    $dbh->bz_unlock_tables();
+    $dbh->bz_commit_transaction();
     
     # Update the plans array to include new plan added.
         
@@ -1271,8 +1270,7 @@ sub unlink_plan {
         return 0; #Return failure
     }
 
-    $dbh->bz_lock_tables('test_case_plans WRITE', 'test_case_runs WRITE', 
-                         'test_runs READ', 'test_plans READ');
+    $dbh->bz_start_transaction();
     
     foreach my $run (@{$plan->test_runs}){
         $dbh->do("DELETE FROM test_case_runs 
@@ -1285,7 +1283,7 @@ sub unlink_plan {
                  AND case_id = ?", 
                  undef, $plan_id, $self->{'case_id'});
     
-    $dbh->bz_unlock_tables();   
+    $dbh->bz_commit_transaction();   
 
     # Update the plans array.
     delete $self->{'plans'}; 
