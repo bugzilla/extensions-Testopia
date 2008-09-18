@@ -170,6 +170,7 @@ elsif ($action eq 'getbugs'){
     foreach my $bug (@{$case->bugs}){
         push @bugs, { bug_id => $bug->bug_id, 
                       summary => $bug->short_desc,
+                      case_run_id => $bug->{'case_run_id'},
                       status => $bug->bug_status,
                       resolution => $bug->resolution,
                       assignee => $bug->assigned_to->name,
