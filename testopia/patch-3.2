@@ -88,16 +88,6 @@ diff -u -r1.148.2.6 User.pm
  }
  
  sub product_responsibilities {
-@@ -1547,7 +1591,8 @@
- 
-     $dbh->bz_lock_tables('profiles WRITE', 'profiles_activity WRITE',
-         'user_group_map WRITE', 'email_setting WRITE', 'groups READ', 
--        'tokens READ', 'fielddefs READ');
-+        'tokens READ', 'fielddefs READ', 'test_plan_permissions_regexp READ',
-+        'test_plan_permissions READ');
- 
-     my $user = $class->SUPER::create(@_);
- 
 Index: Bugzilla/Error.pm
 ===================================================================
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Error.pm,v
@@ -181,40 +171,6 @@ diff -u -r1.7 common-links.html.tmpl
  </ul>
 +[% Hook.process("links") %]
 \ No newline at end of file
-Index: editusers.cgi
-===================================================================
-RCS file: /cvsroot/mozilla/webtools/bugzilla/editusers.cgi,v
-retrieving revision 1.141.2.1
-diff -u -r1.141.2.1 editusers.cgi
---- editusers.cgi	19 Nov 2007 12:45:31 -0000	1.141.2.1
-+++ editusers.cgi	29 Feb 2008 23:19:44 -0000
-@@ -229,6 +229,8 @@
-     # Lock tables during the check+update session.
-     $dbh->bz_lock_tables('profiles WRITE',
-                          'profiles_activity WRITE',
-+                         'test_plan_permissions WRITE',
-+                         'test_plan_permissions_regexp READ',
-                          'fielddefs READ',
-                          'tokens WRITE',
-                          'logincookies WRITE',
-Index: votes.cgi
-===================================================================
-RCS file: /cvsroot/mozilla/webtools/bugzilla/votes.cgi,v
-retrieving revision 1.50.2.1
-diff -u -r1.50.2.1 votes.cgi
---- votes.cgi	10 Jun 2007 10:20:52 -0000	1.50.2.1
-+++ votes.cgi	29 Feb 2008 23:19:44 -0000
-@@ -130,8 +130,8 @@
- 
-     my $canedit = (Bugzilla->params->{'usevotes'} && $userid == $who) ? 1 : 0;
- 
--    $dbh->bz_lock_tables('bugs READ', 'products READ', 'votes WRITE',
--             'cc READ', 'bug_group_map READ', 'user_group_map READ',
-+    $dbh->bz_lock_tables('bugs READ', 'products READ', 'products AS tr_products READ', 'votes WRITE',
-+             'cc READ', 'bug_group_map READ', 'user_group_map READ', 'test_plans READ', 'test_plan_permissions READ', 
-              'group_group_map READ', 'groups READ', 'group_control_map READ');
- 
-     if ($canedit && $bug_id) {
 Index: Bugzilla/WebService/User.pm
 ===================================================================
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/WebService/User.pm,v
@@ -362,3 +318,29 @@ diff -u -r1.11.2.1 setting-descs.none.tmpl
 +   "view_testopia"                    => "View the Testopia links",
                     } 
  %]
+Index: Bugzilla/DB/Schema.pm
+===================================================================
+RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/DB/Schema.pm,v
+retrieving revision 1.99
+diff -u -r1.99 Schema.pm
+--- Bugzilla/DB/Schema.pm   7 May 2008 21:08:48 -0000   1.99
++++ Bugzilla/DB/Schema.pm   19 Sep 2008 22:14:29 -0000
+@@ -1544,6 +1544,18 @@
+     my ($self, $table, $column, $references) = @_;
+     my $to_table  = $references->{TABLE}; 
+     my $to_column = $references->{COLUMN};
++
++    ### Testopia Patch ###
++    # Some table names are too long for foreign keys. Shorten them
++    $table =~ s/^test_case_run/tcr/;
++    $to_table =~ s/^test_case_run/tcr/;
++    $table =~ s/^test_email.*/ter/;
++    $table =~ s/^test_environment/te/;
++    $to_table =~ s/^test_environment/te/;
++    $table =~ s/^test_/t/;
++    $to_table =~ s/^test_/t/;
++    ### END PATCH ###
++
+     return "fk_${table}_${column}_${to_table}_${to_column}";
+ }
+ 
