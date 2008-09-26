@@ -60,14 +60,14 @@ if ($action eq 'edit'){
     $case->set_case_status($cgi->param('status')) if $cgi->param('status');
     $case->set_priority($cgi->param('priority')) if $cgi->param('priority');
     $case->set_isautomated($cgi->param('isautomated') eq 'on' ? 1 : 0) if $cgi->param('isautomated');
-    $case->set_script($cgi->param('script')) if exists $cgi->{'script'};
-    $case->set_arguments($cgi->param('arguments')) if exists $cgi->{'arguments'};    
+    $case->set_script($cgi->param('script')) if exists $cgi->{param}->{'script'} || exists $cgi->{'script'};
+    $case->set_arguments($cgi->param('arguments')) if exists $cgi->{param}->{'arguments'} || exists $cgi->{'arguments'};    
     $case->set_summary($cgi->param('summary')) if $cgi->param('summary');
-    $case->set_requirement($cgi->param('requirement')) if exists $cgi->{'requirement'};
-    $case->set_dependson($cgi->param('tcdependson')) if exists $cgi->{'tcdependson'};
-    $case->set_blocks($cgi->param('tcblocks')) if exists $cgi->{'tcblocks'};
-    $case->set_default_tester($cgi->param('tester')) if exists $cgi->{'tester'};
-    $case->set_estimated_time($cgi->param('estimated_time')) if exists $cgi->{'estimated_time'};
+    $case->set_requirement($cgi->param('requirement')) if exists $cgi->{param}->{'requirement'} || exists $cgi->{'requirement'};
+    $case->set_dependson($cgi->param('tcdependson')) if exists $cgi->{param}->{'tcdependson'} || exists $cgi->{'tcdependson'};
+    $case->set_blocks($cgi->param('tcblocks')) if exists $cgi->{param}->{'tcblocks'} || exists $cgi->{'tcblocks'};
+    $case->set_default_tester($cgi->param('tester')) if exists $cgi->{param}->{'tester'} || exists $cgi->{'tester'};
+    $case->set_estimated_time($cgi->param('estimated_time')) if exists $cgi->{param}->{'estimated_time'} || exists $cgi->{'estimated_time'};
     
     $case->add_to_run($cgi->param('addruns'));
     $case->add_tag($cgi->param('newtag'));
