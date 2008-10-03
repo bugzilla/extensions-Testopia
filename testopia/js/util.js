@@ -475,9 +475,27 @@ UserLookup = function(cfg){
                 {name: 'name', mapping: 'name'}
             ]
         }),
-        listeners: {'valid': function(f) {
-            f.value = f.getRawValue();
-        }},
+        listeners: {
+            'valid': function(f) {
+                f.value = f.getRawValue();
+            },
+            'beforequery': function(o){
+                if (cfg.multistring){
+                    var term = o.query.match(/(^.*),(.*)/);
+                    if (term){
+                        o.combo.multivalue = term[1];
+                        o.query = term[2];
+                    }
+                }
+            },
+            'select': function(c,r,i){
+                if (cfg.multistring) {
+                    var v = c.multivalue || '';
+                    v = v ? v + ', '+ r.get('login') : r.get('login');
+                    c.setValue(v);
+                }
+            }
+        },
         queryParam: 'search',
         loadingText: 'Looking up users...',
         displayField: 'login',

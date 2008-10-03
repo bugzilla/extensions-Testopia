@@ -143,21 +143,6 @@ diff -u -r1.68.2.11 Constants.pm
  
  # The various modes that checksetup.pl can run in.
  use constant INSTALLATION_MODE_INTERACTIVE => 0;
-Index: template/en/default/global/header.html.tmpl
-===================================================================
-RCS file: /cvsroot/mozilla/webtools/bugzilla/template/en/default/global/header.html.tmpl,v
-retrieving revision 1.49.2.1
-diff -u -r1.49.2.1 header.html.tmpl
---- template/en/default/global/header.html.tmpl	29 Jul 2007 19:24:04 -0000	1.49.2.1
-+++ template/en/default/global/header.html.tmpl	29 Feb 2008 23:19:45 -0000
-@@ -96,6 +96,7 @@
-     [% IF user.settings.skin.value != 'standard' %]
-       [% user_skin = user.settings.skin.value %]
-     [% END %]
-+    [% style_urls.unshift('skins/standard/testopia.css') %]
-     [% style_urls.unshift('skins/standard/global.css') %]
- 
-     [%# CSS cascade, part 1: Standard Bugzilla stylesheet set (persistent).
 Index: template/en/default/global/common-links.html.tmpl
 ===================================================================
 RCS file: /cvsroot/mozilla/webtools/bugzilla/template/en/default/global/common-links.html.tmpl,v

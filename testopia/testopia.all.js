@@ -5777,6 +5777,7 @@ Ext.extend(CaseBugsGrid, Ext.grid.GridPanel, {
                         params: {action: 'update_bugs', bug_action: 'attach', bugs: getSelectedObjects(Ext.getCmp('case_bugs_panel'), 'bug_id'), type: 'caserun', ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')},
                         success: function(){
                             Ext.getCmp('caserun_grid').store.reload();
+                            grid.store.reload();
                             Ext.getCmp('attachbug').reset();
                         },
                         failure: testopiaError

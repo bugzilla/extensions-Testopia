@@ -382,9 +382,11 @@ sub init {
         push @supptables, "INNER JOIN profiles as map_manager ON map_manager.userid = test_". $obj ."s.manager_id";
         push @orderby, 'map_manager.login_name';
     }
-    elsif ($order eq 'assignee') {        
+    elsif ($order eq 'assignee') { 
+      if ($obj eq 'case_run'){       
         push @supptables, "LEFT JOIN profiles as map_assignee ON map_assignee.userid = test_". $obj ."s.assignee";
         push @orderby, 'map_assignee.login_name';
+      }
     }
     elsif ($order eq 'testedby') {        
         push @supptables, "LEFT JOIN profiles as map_testedby ON map_testedby.userid = test_". $obj ."s.testedby";
