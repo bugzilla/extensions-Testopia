@@ -454,9 +454,13 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                         grid.store.reload();
                     } 
                 },{
-                    text: 'View Test Plan in a New Tab',
+                    text: 'View Test Plan(s) in a New Tab',
                     handler: function(){
-                        window.open('tr_show_plan.cgi?plan_id=' + grid.store.getAt(grid.selindex).get('plan_id'));
+                        var plan_ids = getSelectedObjects(grid,'plan_id').split(',');
+                        var i;
+                        for (i=0; i<plan_ids.length; i+=1) {
+                            window.open('tr_show_plan.cgi?plan_id=' + plan_ids[i]);
+                        }
                     }
                 }]
             });
