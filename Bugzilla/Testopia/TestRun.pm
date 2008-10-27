@@ -387,6 +387,8 @@ sub add_case_run {
     trick_taint($case_id);
     return 0 if $self->check_case($case_id);
     my $case = Bugzilla::Testopia::TestCase->new($case_id);
+    $sortkey = $case->sortkey unless $sortkey;
+
     return 0 if $case->status ne 'CONFIRMED';
     my $assignee = $case->default_tester ? $case->default_tester->id : undef;
     my $caserun = Bugzilla::Testopia::TestCaseRun->create({

@@ -68,6 +68,7 @@ if ($action eq 'edit'){
     $case->set_blocks($cgi->param('tcblocks')) if exists $cgi->{param}->{'tcblocks'} || exists $cgi->{'tcblocks'};
     $case->set_default_tester($cgi->param('tester')) if exists $cgi->{param}->{'tester'} || exists $cgi->{'tester'};
     $case->set_estimated_time($cgi->param('estimated_time')) if exists $cgi->{param}->{'estimated_time'} || exists $cgi->{'estimated_time'};
+    $case->set_sortkey($cgi->param('sortkey')) if exists $cgi->{param}->{'sortkey'};
     
     $case->add_to_run($cgi->param('addruns'));
     $case->add_tag($cgi->param('newtag'));
