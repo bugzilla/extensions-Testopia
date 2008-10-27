@@ -572,9 +572,13 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                         grid.store.reload();
                     } 
                 },{
-                    text: 'View Test Case in a New Tab',
+                    text: 'View Test Case(s) in a New Tab',
                     handler: function(){
-                        window.open('tr_show_case.cgi?case_id=' + grid.store.getAt(grid.selindex).get('case_id'));
+                        var case_ids = getSelectedObjects(grid,'case_id').split(',');
+                        var i;
+                        for (i=0; i<case_ids.length; i+=1) {
+                            window.open('tr_show_case.cgi?case_id=' + case_ids[i]);
+                        }
                     }
                 }]
             });
