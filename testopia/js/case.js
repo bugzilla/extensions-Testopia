@@ -86,6 +86,7 @@ CaseGrid = function(params, cfg){
             id: 'case_id',
             fields: [
                {name: "case_id", mapping:"case_id"},
+               {name: "sortkey", mapping:"sortkey"},
                {name: "plan_id", mapping: "plan_id"},
                {name: "alias", mapping:"alias"},
                {name: "summary", mapping:"summary"},
@@ -115,6 +116,15 @@ CaseGrid = function(params, cfg){
     
     this.columns = [
         {header: "ID", width: 50, dataIndex: 'case_id', sortable: true, groupRenderer: function(v){return v;}, renderer: tutil.caseLink, hideable: false},
+        {header: "Sort Key", width: 50, sortable: true, dataIndex: 'sortkey',
+         editor: new Ext.grid.GridEditor(
+             new Ext.form.NumberField({
+                 allowBlank: true,
+                 allowDecimals: false,
+                 allowNegative: false,
+             })),
+         id: "sortkey"
+        },
 		{header: "Summary", 
          width: 220, 
          dataIndex: 'summary', 
@@ -594,6 +604,9 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
         var ds = this.store;
         var display_value = '';
         switch(gevent.field){
+        case 'sortkey':
+            myparams.sortkey = gevent.value; 
+            break;
         case 'summary':
             myparams.summary = gevent.value; 
             break;
