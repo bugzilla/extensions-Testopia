@@ -462,17 +462,33 @@ sub edit_validexp {
     ThrowUserError( "testopia-read-only", { 'object' => $property } ) unless $property->canedit;
     
     my $name  = $cgi->param('text');
-    TrhowUserError('testopia-invalid-char') if $name =~ /\|/;
-    
+    ThrowUserError('testopia-invalid-char') if $name =~ /\|/;
     trick_taint($name);
 
+    my $oldname  = $cgi->param('oldtext');
+    ThrowUserError('testopia-invalid-char') if $oldname =~ /\|/;
+    trick_taint($oldname);
+
     my $expressions = $property->validexp();
-    
+
     if ($expressions =~ qr($name)){
         ThrowUserError('testopia-name-not-unique', {object => 'property value'});
     }
-    
-    $property->update_property_validexp($expressions . '|' . $name);
+
+    # Gather existing values:
+    my %values;
+    foreach my $v ( split /\|/, $property->validexp ) {
+        $values{$v} = 1;
+    }
+
+    # Delete old value:
+    delete $values{$oldname};
+    my $exp     = join( "|", keys %values );
+
+    # And add new one:
+    $exp .= '|' . $name;
+
+    $property->update_property_validexp($exp);
     
     print "{'success':true}";
 }

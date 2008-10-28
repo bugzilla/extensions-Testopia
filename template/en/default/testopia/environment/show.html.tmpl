@@ -319,8 +319,9 @@ Ext.onReady(function(){
             params:{
                 action: 'edit',
                 text: text, 
+                oldtext: oldText,
                 id: node.attributes.property_id || node.attributes.id, 
-                type: node.attributes.type
+                type: node.attributes.cls
             }, 
             success:function(f,a){
                 TestopiaUtil.notify.msg('Environment' + type + 'Updated', type + ' renamed successfully');
