@@ -202,7 +202,7 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
             params: myparams,
             success: function(f,a){
                 if (a.result.build_id){
-                    e.record.set('build_id', a.result.build_id);
+                    e.record.set('id', a.result.build_id);
                 }
                 ds.commitChanges();
             },
