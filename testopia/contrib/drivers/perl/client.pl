@@ -297,6 +297,7 @@ if (defined($Bugzilla_login)) {
 #$soapresult = $proxy->call('TestRun.remove_tag', 501, 'fish' );
 #$soapresult = $proxy->call('TestRun.update', 501, {environment_id => 'test', build_id => 'linux', summary => 'API TEST RUN', manager_id => 'ghendricks@novell.com', product_version=>'1.2'});
 #$soapresult = $proxy->call('TestRun.update', 501, { summary => 'API TEST RUN', manager_id => 'ghendricks@novell.com', product_version=>'1.2'});
+#$soapresult = $proxy->call('TestRun.update', 501, { status => 0});
 
 #$soapresult = $proxy->call('User.lookup_login_by_id', 9 );
 #$soapresult = $proxy->call('User.lookup_id_by_login', 'ghendricks@novell.com' );

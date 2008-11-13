@@ -181,7 +181,7 @@ sub update {
     $new_values->{'build_id'} ||= $new_values->{'build'};
     $new_values->{'environment_id'} ||= $new_values->{'environment'};
     
-    ThrowUserError("testopia-no-status", {field => 'status'}) if $new_values->{'status'} && !$run->canstatus;
+    ThrowUserError("testopia-no-status", {field => 'status'}) if exists $new_values->{'status'} && !$run->canstatus;
     ThrowUserError("testopia-no-status", {field => 'manager'}) if $new_values->{'manager'} && !$run->canstatus;
     ThrowUserError("testopia-no-status", {field => 'target'}) if exists $new_values->{'target_pass'} && !$run->canstatus;
     ThrowUserError("testopia-no-status", {field => 'target'}) if exists $new_values->{'target_completion'} && !$run->canstatus;
@@ -198,9 +198,9 @@ sub update {
        
     my $timestamp;
     $timestamp = $run->stop_date;
-    $timestamp = undef if $new_values->{'status'};
+    $timestamp = undef if $new_values->{'status'} == 1;
     $timestamp = Bugzilla::Testopia::Util::get_time_stamp() if $new_values->{'status'} == 0 && !$run->stop_date;
- 
+    
     $run->set_summary(trim($new_values->{'summary'})) if defined $new_values->{'summary'};
     $run->set_product_version($new_values->{'product_version'}) if $new_values->{'product_version'};
     $run->set_plan_text_version($new_values->{'plan_text_version'}) if $new_values->{'plan_text_version'};
@@ -208,7 +208,7 @@ sub update {
     $run->set_environment($new_values->{'environment_id'}) if $new_values->{'environment_id'};
     $run->set_manager($new_values->{'manager_id'}) if $new_values->{'manager_id'};
     $run->set_notes($new_values->{'notes'}) if defined $new_values->{'notes'};
-    $run->set_stop_date($timestamp) if $new_values->{'status'};
+    $run->set_stop_date($timestamp) if exists $new_values->{'status'};
     $run->set_target_pass($new_values->{'target_pass'}) if defined $new_values->{'target_pass'};
     $run->set_target_completion($new_values->{'target_completion'}) if defined $new_values->{'target_completion'};
 
