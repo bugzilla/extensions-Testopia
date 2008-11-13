@@ -384,13 +384,13 @@ sub init {
     }
     elsif ($order eq 'assignee') { 
       if ($obj eq 'case_run'){       
-        push @supptables, "LEFT JOIN profiles as map_assignee ON map_assignee.userid = test_". $obj ."s.assignee";
-        push @orderby, 'map_assignee.login_name';
+        push @supptables, "LEFT JOIN profiles as map_assignee_order ON map_assignee_order.userid = test_". $obj ."s.assignee";
+        push @orderby, 'map_assignee_order.login_name';
       }
     }
     elsif ($order eq 'testedby') {        
-        push @supptables, "LEFT JOIN profiles as map_testedby ON map_testedby.userid = test_". $obj ."s.testedby";
-        push @orderby, 'map_testedby.login_name';
+        push @supptables, "LEFT JOIN profiles as map_testedby_order ON map_testedby_order.userid = test_". $obj ."s.testedby";
+        push @orderby, 'map_testedby_order.login_name';
     }
     elsif ($order eq 'tester') {        
         push @supptables, "LEFT JOIN profiles as map_tester ON map_tester.userid = test_". $obj ."s.default_tester_id";
@@ -1015,7 +1015,7 @@ sub init {
                       "ON case_run.run_id = test_runs.run_id");
                    push(@supptables,
                       "LEFT JOIN profiles AS map_$1 " . 
-                      "ON case_run.". $1 ." = map_$1.userid");
+                      "ON map_$1.userid = case_run.". $1 );
                }
                else {
                    push(@supptables,
