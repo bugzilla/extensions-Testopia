@@ -859,25 +859,26 @@ RunClonePanel = function(product_id, runs, caselist){
         id: 'run_clone_version_chooser',
         mode: 'local',
         hiddenName: 'new_run_prod_version',
-        fieldLabel: '<b>Product Version</b>',
-        params: {product_id: product_id},
-        allowBlank: false
+        fieldLabel: 'Product Version',
+        params: {product_id: product_id}
     });
     var bbox  = new BuildCombo({
-        fieldLabel: '<b>Select a Build</b>',
+        fieldLabel: 'Select a Build',
         id: 'run_clone_build_chooser',
         mode: 'local',
         hiddenName: 'new_run_build',
         params: {product_id: product_id},
-        allowBlank: false
+        validator: function(a){
+            var foo = 1;
+            return false;
+        }
     });
     var ebox = new EnvironmentCombo({
-        fieldLabel: '<b>Select an Environment</b>',
+        fieldLabel: 'Select an Environment',
         id: 'run_clone_environment_chooser',
         mode: 'local',
         hiddenName: 'new_run_env',
-        params: {product_id: product_id},
-        allowBlank: false
+        params: {product_id: product_id}
     });
     
     function doSubmit(){
@@ -967,9 +968,8 @@ RunClonePanel = function(product_id, runs, caselist){
                     items: [{
                         id: 'run_clone_name',
                         xtype: 'textfield',
-                        fieldLabel: '<b>New Run Summary</b>',
+                        fieldLabel: 'New Run Summary',
                         name: 'new_run_summary',
-                        allowBlank: false,
                         width: 500
                     }]
                 },{
@@ -1096,6 +1096,16 @@ RunClonePopup = function(product_id, runs, caselist){
         Ext.getCmp('run_clone_build_chooser').store.load();
         Ext.getCmp('run_clone_environment_chooser').store.load();
         
+        if(r.get('id') != product_id){
+            Ext.getCmp('run_clone_build_chooser').allowBlank = false;
+            Ext.getCmp('run_clone_environment_chooser').allowBlank = false;
+            Ext.getCmp('run_clone_version_chooser').allowBlank = false;
+        }
+        else {
+            Ext.getCmp('run_clone_build_chooser').allowBlank = true;
+            Ext.getCmp('run_clone_environment_chooser').allowBlank = true;
+            Ext.getCmp('run_clone_version_chooser').allowBlank = true;            
+        }
 
         Ext.getCmp('run_clone_product_id').setValue(r.get('id'));
         pg.store.load();
