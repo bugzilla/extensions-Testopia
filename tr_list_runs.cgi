@@ -104,11 +104,12 @@ elsif ($action eq 'clone'){
     my $build = $cgi->param('new_run_build');
     my $env = $cgi->param('new_run_environment');
     
-    trick_taint($summary);
-    detaint_natural($build);
-    detaint_natural($env);
-    validate_test_id($build, 'build');
-    validate_test_id($env, 'environment');
+    trick_taint($summary) if $cgi->param('new_run_summary');
+    detaint_natural($build) if $cgi->param('new_run_build');
+    detaint_natural($env) if $cgi->param('new_run_environment');
+    validate_test_id($build, 'build') if $cgi->param('new_run_build');
+    validate_test_id($env, 'environment') if $cgi->param('new_run_environment');
+
     my @newruns;
     my @failures;
     foreach my $run_id (@run_ids){
@@ -116,6 +117,11 @@ elsif ($action eq 'clone'){
         next unless $run->canview;
         
         my $manager = $cgi->param('keep_run_manager') ? $run->manager->id : Bugzilla->user->id;
+        
+        $summary ||= $run->summary;
+        $build   ||= $run->build->id;
+        $env     ||= $run->environment->id;
+
         my @caseruns;
         if ($cgi->param('copy_cases')){
             if ($cgi->param('case_list')){
@@ -130,11 +136,13 @@ elsif ($action eq 'clone'){
                 $cgi->param('run_id', $run->id);
                 $cgi->param('viewall', 1);
                 $cgi->param('distinct', 1);
+                $cgi->delete('product_id');
+                $cgi->delete('plan_ids');
+                
                 my $search = Bugzilla::Testopia::Search->new($cgi);
                 my $table = Bugzilla::Testopia::Table->new('case_run', 'tr_list_caseruns.cgi', $cgi, undef, $search->query);
                 @caseruns = @{$table->list};
             }
-            
         }
         
         foreach my $plan_id (keys %planseen){
