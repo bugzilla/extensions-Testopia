@@ -94,7 +94,7 @@ sub check_component {
     
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
     require Bugzilla::Component;
-    return Bugzilla::Component::check_component($product,$name);
+    return Bugzilla::Component->check({product => $product, name => $name});
 }
 
 sub get_builds {

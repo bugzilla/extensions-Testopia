@@ -134,7 +134,8 @@ if (defined($Bugzilla_login)) {
         # Log in.
         $soapresult = $proxy->call('User.login',
                                    { login => $Bugzilla_login, 
-                                     password => $Bugzilla_password } );
+                                     password => $Bugzilla_password,
+                                     remember => 1 } );
         print "Login successful.\n";
     }
     else {

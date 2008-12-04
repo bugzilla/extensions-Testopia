@@ -75,7 +75,7 @@ elsif ($action eq 'clone'){print STDERR "YOU ARE HERE!";
     trick_taint($plan_name);
     trick_taint($version);
     detaint_natural($product_id);
-    Bugzilla::Version::check_version($product,$version);
+    Bugzilla::Version->check({product => $product, name => $version});
     if ($cgi->param('copy_runs')){
         ThrowUserError("invalid-test-id-non-existent", 
             {'id' => $cgi->param('new_run_build'), 'type' => 'Build'}) unless $cgi->param('new_run_build');

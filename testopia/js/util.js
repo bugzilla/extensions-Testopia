@@ -139,7 +139,7 @@ TestopiaUtil = function(){
             plain: true,
             shadow: false,
             layout: 'fit',
-            items: [new NewPlanForm()]
+            items: [new NewPlanForm(product_id)]
         });
         win.show(this);
     };

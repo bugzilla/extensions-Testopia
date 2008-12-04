@@ -137,7 +137,7 @@ sub _check_product_version {
     }
     $version = trim($version);
     trick_taint($version);
-    $version = Bugzilla::Version::check_version($product, $version);
+    $version = Bugzilla::Version->check({product => $product, name => $version});
     return $version->name;
 }
 

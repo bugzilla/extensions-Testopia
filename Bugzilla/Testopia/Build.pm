@@ -113,7 +113,7 @@ sub _check_milestone {
         $product = $invocant->product;
     }
     $milestone = trim($milestone);
-    $milestone = Bugzilla::Milestone::check_milestone($product, $milestone);
+    $milestone = Bugzilla::Milestone->check({product => $product, name => $milestone});
     return $milestone->name;
 }
 

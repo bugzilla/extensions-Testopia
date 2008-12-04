@@ -36,16 +36,18 @@ Bugzilla->usage_mode(USAGE_MODE_WEBSERVICE);
 die 'Content-Type must be "text/xml" when using API' unless
     $ENV{'CONTENT_TYPE'} eq 'text/xml';
 
+my $dispatch = { 'TestPlan'    => 'Bugzilla::WebService::Testopia::TestPlan',
+                 'TestCase'    => 'Bugzilla::WebService::Testopia::TestCase',
+                 'TestRun'     => 'Bugzilla::WebService::Testopia::TestRun',
+                 'TestCaseRun' => 'Bugzilla::WebService::Testopia::TestCaseRun',
+                 'Product'     => 'Bugzilla::WebService::Testopia::Product',
+                 'Environment' => 'Bugzilla::WebService::Testopia::Environment',
+                 'Build'       => 'Bugzilla::WebService::Testopia::Build',
+                 'Testopia'    => 'Bugzilla::WebService::Testopia::Testopia',
+                 'User'        => 'Bugzilla::WebService::User',
+               };
 my $response = Bugzilla::WebService::XMLRPC::Transport::HTTP::CGI
-    ->dispatch_with({'TestPlan'    => 'Bugzilla::WebService::Testopia::TestPlan',
-                     'TestCase'    => 'Bugzilla::WebService::Testopia::TestCase',
-                     'TestRun'     => 'Bugzilla::WebService::Testopia::TestRun',
-                     'TestCaseRun' => 'Bugzilla::WebService::Testopia::TestCaseRun',
-                     'Product'     => 'Bugzilla::WebService::Testopia::Product',
-                     'Environment' => 'Bugzilla::WebService::Testopia::Environment',
-                     'Build'       => 'Bugzilla::WebService::Testopia::Build',
-                     'Testopia'    => 'Bugzilla::WebService::Testopia::Testopia',
-                     'User'        => 'Bugzilla::WebService::User',
-                    })
-    ->on_action(\&Bugzilla::WebService::handle_login)
+    ->dispatch_with($dispatch)
+    ->on_action(sub { Bugzilla::WebService::handle_login($dispatch, @_) } )
     ->handle;
+    

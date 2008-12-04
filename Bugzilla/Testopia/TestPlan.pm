@@ -163,7 +163,7 @@ sub _check_product_version {
         $product = $invocant->product;
     }
     $version = trim($version);
-    $version = Bugzilla::Version::check_version($product, $version);
+    $version = Bugzilla::Version->check({product => $product, name => $version});
     return $version->name;
 }
 

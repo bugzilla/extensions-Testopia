@@ -121,7 +121,7 @@ CaseGrid = function(params, cfg){
              new Ext.form.NumberField({
                  allowBlank: true,
                  allowDecimals: false,
-                 allowNegative: false,
+                 allowNegative: false
              })),
          id: "sortkey"
         },
