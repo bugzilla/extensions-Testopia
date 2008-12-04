@@ -1364,10 +1364,10 @@ sub init {
         my @sta = $cgi->param('run_status');
         unless (scalar @sta > 1){
             if ($cgi->param('run_status') == 1){
-                push(@specialchart, ['stop_date', 'isnotnull', 'null']);
+                push(@specialchart, ['stop_date', 'isnull', 'null']);
             }
             else {
-                push(@specialchart, ['stop_date', 'isnull', 'null']);
+                push(@specialchart, ['stop_date', 'isnotnull', 'null']);
             }
         }
     }
@@ -1714,7 +1714,7 @@ sub init {
         $query .= " LIMIT $pagesize OFFSET ". $page*$pagesize;
     }
     if ($debug) {
-        print "<p><code>" . value_quote($query) . "</code></p>\n";
+        print "<p><code>" . $query . "</code></p>\n";
     }
     
     $self->{'sql'} = $query;
