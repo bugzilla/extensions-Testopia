@@ -30,6 +30,7 @@ use Bugzilla::Error;
 use Bugzilla::Constants;
 use Bugzilla::Testopia::Search;
 use Bugzilla::Testopia::Util;
+use Bugzilla::Testopia::Category;
 use Bugzilla::Testopia::TestCase;
 use Bugzilla::Testopia::TestCaseRun;
 use Bugzilla::Testopia::TestPlan;
@@ -147,7 +148,7 @@ elsif ($action eq 'clone'){
     my $product = Bugzilla::Testopia::Product->new($cgi->param('product_id'));
     ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $cgi->param('product_id')}) unless $product;
     
-    if ($cgi->param('copy_categories')){
+    if ($cgi->param('copy_category')){
         ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
     }
     
@@ -163,7 +164,7 @@ elsif ($action eq 'clone'){
             my $case_author = $cgi->param('keep_author') ? $case->author->id : Bugzilla->user->id;
             my $case_tester = $cgi->param('keep_tester') ? $case->default_tester->id : Bugzilla->user->id;
             my $category;
-            if ($cgi->param('copy_categories')){
+            if ($cgi->param('copy_category')){
                 my $category_id = check_case_category($case->category->name, $product);
                 if (! $category_id){
                     $category = Bugzilla::Testopia::Category->create({
@@ -175,7 +176,6 @@ elsif ($action eq 'clone'){
                 else {
                    $category = Bugzilla::Testopia::Category->new($category_id); 
                 }
-                
             }
             else {
                 if ($product->id == $case->category->product_id){
@@ -196,7 +196,7 @@ elsif ($action eq 'clone'){
                     }
                 }
             }
-            
+
             my $caseid = $case->copy($case_author, $case_tester, $cgi->param('copy_doc') eq 'on' ? 1 : 0, $category->id);
             my $newcase = Bugzilla::Testopia::TestCase->new($caseid);
             push @newcases,  $newcase->id;

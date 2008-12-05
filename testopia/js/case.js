@@ -1159,6 +1159,7 @@ CaseClonePanel = function(product_id, cases){
             id: 'case_clone_frm',
             border: false,
             frame: true,
+            autoScroll: true,
             bodyStyle: 'padding: 10px',
             labelWidth: 250,
             height: 280,
@@ -1231,11 +1232,11 @@ CaseClonePanel = function(product_id, cases){
                 Ext.getCmp('case_copy_plan_ids').setValue(getSelectedObjects(Ext.getCmp('plan_clone_grid'), 'plan_id'));
                 var form = Ext.getCmp('case_clone_frm').getForm();
                 var params = form.getValues();
-                params.action = 'clone';
-                params.ids = cases;
+                form.baseParams = {};
+                form.baseParams.action = 'clone';
+                form.baseParams.ids = cases;
                 form.submit({
                     url: 'tr_list_cases.cgi',
-                    params: params,
                     success: function(form, data){
                         if (params.copy_cases){
                             if (data.result.tclist.length ==1){
@@ -1269,7 +1270,11 @@ CaseClonePanel = function(product_id, cases){
                             });
                         }
                         Ext.getCmp('case-clone-win').close();
-                        Ext.getCmp('case_plan_grid').store.reload();
+                        try{
+                            Ext.getCmp('case_plan_grid').store.reload();
+                        }
+                        catch (err){};
+                        
                     },
                     failure: testopiaError
                 });
