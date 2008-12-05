@@ -47,6 +47,8 @@ sub get {
     
     $case->text();
     $case->author();
+    $case->dependson_list();
+    $case->blocked_list();
     
     #Result is a test case object hash
     return $case;
