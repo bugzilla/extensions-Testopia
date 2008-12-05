@@ -1412,7 +1412,7 @@ CaseBugsGrid = function(id){
             },[
                 {name: 'product', mapping: 'product'},
                 {name: 'version', mapping: 'version'},
-                {name: 'component', mapping: 'coponent'},
+                {name: 'component', mapping: 'component'},
                 {name: 'comment', mapping: 'comment'},
                 {name: 'case_id', mapping: 'case_id'},
                 {name: 'assigned_to', mapping: 'assigned_to'},
