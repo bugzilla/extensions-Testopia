@@ -108,7 +108,7 @@ CaseRunFilter = function (){
                 ds.baseParams = {};
                 ds.baseParams.run_id = run_id;
                 ds.baseParams.ctype = ctype;
-                ds.baseParams.limit = Ext.getCmp('testopia_pager').pageSize;
+                ds.baseParams.limit = Ext.getCmp('caserun_pager').pageSize;
                 
                 ds.load({
                     callback: function(){
@@ -124,7 +124,7 @@ CaseRunFilter = function (){
             handler: function(){
                 var ds = Ext.getCmp('caserun_grid').store;
                 ds.baseParams = searchform.getValues();
-                ds.baseParams.limit = Ext.getCmp('testopia_pager').pageSize;
+                ds.baseParams.limit = Ext.getCmp('caserun_pager').pageSize;
                 ds.baseParams.distinct = 1;
                 ds.load({
                     callback: function(){

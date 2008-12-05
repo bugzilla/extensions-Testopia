@@ -1107,11 +1107,8 @@ Ext.override(Ext.form.Field, {
     }
 });// End Override
 
-var TestopiaPager = function(type, store, cfg){
-    if (! cfg){
-        cfg = {};
-    }
-     
+var TestopiaPager = function(type, store){
+    this.type = type; 
     function doUpdate(){
         this.updateInfo();
     }
@@ -1128,7 +1125,7 @@ var TestopiaPager = function(type, store, cfg){
             data: [[25,25],[50,50],[100,100],[500,500]],
             autoLoad: true
         }),
-        id: 'page_sizer',
+        id: type + '_page_sizer',
         mode: 'local',
         displayField: 'name',
         valueField: 'value',
@@ -1165,7 +1162,7 @@ var TestopiaPager = function(type, store, cfg){
     },this);
     var filter = new Ext.form.TextField({
         allowBlank: true,
-        id: 'paging_filter',
+        id: type + '_paging_filter',
         selectOnFocus: true
     });
 
@@ -1252,14 +1249,14 @@ var TestopiaPager = function(type, store, cfg){
     });
     sizer.on('render', function(){
         var tt = new Ext.ToolTip({
-            target: 'paging_filter',
+            target: type + '_paging_filter',
             title: 'Quick Search Filter',
             hideDelay: '500',
             html: "Enter column and search term separated by ':'<br> <b>Example:</b> priority: P3" 
         });
     });
     TestopiaPager.superclass.constructor.call(this,{
-        id: cfg.id || 'testopia_pager',
+        id: type + '_pager',
         pageSize: Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25),
         displayInfo: true,
         displayMsg: 'Displaying test ' + type + 's {0} - {1} of {2}',
@@ -1284,7 +1281,7 @@ var TestopiaPager = function(type, store, cfg){
 };
 Ext.extend(TestopiaPager, Ext.PagingToolbar,{
     setPager: function(){
-        Ext.getCmp('page_sizer').setValue(Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25));
+        Ext.getCmp(this.type + '_page_sizer').setValue(Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25));
     }
 });
 
@@ -1384,7 +1381,6 @@ TestopiaUpdateMultiple = function(type, params, grid){
             }
             TestopiaUtil.notify.msg('Test '+ type + 's updated', 'The selected {0}s were updated successfully', type);
             if (grid.selectedRows){
-//                grid.store.baseParams.limit = Ext.getCmp('testopia_pager').pageSize;
                 grid.store.baseParams.addcases = grid.selectedRows.join(',');
                 Ext.getCmp('filtered_txt').show();
             }
@@ -3123,7 +3119,7 @@ CaseGrid = function(params, cfg){
     });
 
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
-    this.bbar = new TestopiaPager('case', this.store, {id: 'case_pager'});
+    this.bbar = new TestopiaPager('case', this.store);
     CaseGrid.superclass.constructor.call(this, {
         title: 'Test Cases',
         id: cfg.id || 'case_grid',
@@ -4093,6 +4089,7 @@ CaseClonePanel = function(product_id, cases){
             id: 'case_clone_frm',
             border: false,
             frame: true,
+            autoScroll: true,
             bodyStyle: 'padding: 10px',
             labelWidth: 250,
             height: 280,
@@ -4165,11 +4162,11 @@ CaseClonePanel = function(product_id, cases){
                 Ext.getCmp('case_copy_plan_ids').setValue(getSelectedObjects(Ext.getCmp('plan_clone_grid'), 'plan_id'));
                 var form = Ext.getCmp('case_clone_frm').getForm();
                 var params = form.getValues();
-                params.action = 'clone';
-                params.ids = cases;
+                form.baseParams = {};
+                form.baseParams.action = 'clone';
+                form.baseParams.ids = cases;
                 form.submit({
                     url: 'tr_list_cases.cgi',
-                    params: params,
                     success: function(form, data){
                         if (params.copy_cases){
                             if (data.result.tclist.length ==1){
@@ -4203,7 +4200,11 @@ CaseClonePanel = function(product_id, cases){
                             });
                         }
                         Ext.getCmp('case-clone-win').close();
-                        Ext.getCmp('case_plan_grid').store.reload();
+                        try{
+                            Ext.getCmp('case_plan_grid').store.reload();
+                        }
+                        catch (err){};
+                        
                     },
                     failure: testopiaError
                 });
@@ -4378,7 +4379,7 @@ CaseRunFilter = function (){
                 ds.baseParams = {};
                 ds.baseParams.run_id = run_id;
                 ds.baseParams.ctype = ctype;
-                ds.baseParams.limit = Ext.getCmp('testopia_pager').pageSize;
+                ds.baseParams.limit = Ext.getCmp('caserun_pager').pageSize;
                 
                 ds.load({
                     callback: function(){
@@ -4394,7 +4395,7 @@ CaseRunFilter = function (){
             handler: function(){
                 var ds = Ext.getCmp('caserun_grid').store;
                 ds.baseParams = searchform.getValues();
-                ds.baseParams.limit = Ext.getCmp('testopia_pager').pageSize;
+                ds.baseParams.limit = Ext.getCmp('caserun_pager').pageSize;
                 ds.baseParams.distinct = 1;
                 ds.load({
                     callback: function(){
@@ -5682,7 +5683,7 @@ CaseBugsGrid = function(id){
             },[
                 {name: 'product', mapping: 'product'},
                 {name: 'version', mapping: 'version'},
-                {name: 'component', mapping: 'coponent'},
+                {name: 'component', mapping: 'component'},
                 {name: 'comment', mapping: 'comment'},
                 {name: 'case_id', mapping: 'case_id'},
                 {name: 'assigned_to', mapping: 'assigned_to'},
@@ -6878,6 +6879,7 @@ var NewRunForm = function(plan){
     });
     this.on('render', function(){
         casegrid.store.load();
+        Ext.getCmp('new_run_manager').setValue(Testopia.user.login);
     });
 };
 Ext.extend(NewRunForm, Ext.Panel);
@@ -6888,25 +6890,26 @@ RunClonePanel = function(product_id, runs, caselist){
         id: 'run_clone_version_chooser',
         mode: 'local',
         hiddenName: 'new_run_prod_version',
-        fieldLabel: '<b>Product Version</b>',
-        params: {product_id: product_id},
-        allowBlank: false
+        fieldLabel: 'Product Version',
+        params: {product_id: product_id}
     });
     var bbox  = new BuildCombo({
-        fieldLabel: '<b>Select a Build</b>',
+        fieldLabel: 'Select a Build',
         id: 'run_clone_build_chooser',
         mode: 'local',
         hiddenName: 'new_run_build',
         params: {product_id: product_id},
-        allowBlank: false
+        validator: function(a){
+            var foo = 1;
+            return false;
+        }
     });
     var ebox = new EnvironmentCombo({
-        fieldLabel: '<b>Select an Environment</b>',
+        fieldLabel: 'Select an Environment',
         id: 'run_clone_environment_chooser',
         mode: 'local',
         hiddenName: 'new_run_env',
-        params: {product_id: product_id},
-        allowBlank: false
+        params: {product_id: product_id}
     });
     
     function doSubmit(){
@@ -6996,9 +6999,8 @@ RunClonePanel = function(product_id, runs, caselist){
                     items: [{
                         id: 'run_clone_name',
                         xtype: 'textfield',
-                        fieldLabel: '<b>New Run Summary</b>',
+                        fieldLabel: 'New Run Summary',
                         name: 'new_run_summary',
-                        allowBlank: false,
                         width: 500
                     }]
                 },{
@@ -7125,6 +7127,16 @@ RunClonePopup = function(product_id, runs, caselist){
         Ext.getCmp('run_clone_build_chooser').store.load();
         Ext.getCmp('run_clone_environment_chooser').store.load();
         
+        if(r.get('id') != product_id){
+            Ext.getCmp('run_clone_build_chooser').allowBlank = false;
+            Ext.getCmp('run_clone_environment_chooser').allowBlank = false;
+            Ext.getCmp('run_clone_version_chooser').allowBlank = false;
+        }
+        else {
+            Ext.getCmp('run_clone_build_chooser').allowBlank = true;
+            Ext.getCmp('run_clone_environment_chooser').allowBlank = true;
+            Ext.getCmp('run_clone_version_chooser').allowBlank = true;            
+        }
 
         Ext.getCmp('run_clone_product_id').setValue(r.get('id'));
         pg.store.load();
