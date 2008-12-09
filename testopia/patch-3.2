@@ -325,3 +325,37 @@ diff -u -r1.99 Schema.pm
      return "fk_${table}_${column}_${to_table}_${to_column}";
  }
  
+Index: editproducts.cgi
+===================================================================
+RCS file: /cvsroot/mozilla/webtools/bugzilla/editproducts.cgi,v
+retrieving revision 1.145
+diff -u -r1.145 editproducts.cgi
+--- editproducts.cgi    21 Oct 2008 21:55:45 -0000  1.145
++++ editproducts.cgi    9 Dec 2008 22:01:44 -0000
+@@ -210,7 +210,9 @@
+     }
+     $vars->{'product'} = $product;
+     $vars->{'token'} = issue_session_token('delete_product');
+-
++    
++    Bugzilla::Hook::process("editproducts-confirm_delete", { vars => $vars });
++    
+     $template->process("admin/products/confirm-delete.html.tmpl", $vars)
+         || ThrowTemplateError($template->error());
+     exit;
+Index: template/en/default/admin/products/confirm-delete.html.tmpl
+===================================================================
+RCS file: /cvsroot/mozilla/webtools/bugzilla/template/en/default/admin/products/confirm-delete.html.tmpl,v
+retrieving revision 1.10
+diff -u -r1.10 confirm-delete.html.tmpl
+--- template/en/default/admin/products/confirm-delete.html.tmpl 30 Jul 2008 21:47:29 -0000  1.10
++++ template/en/default/admin/products/confirm-delete.html.tmpl 9 Dec 2008 22:01:44 -0000
+@@ -241,6 +241,8 @@
+ 
+ [% END %]
+ 
++[% Hook.process("additional-product-values") %]
++
+ [% IF product.bug_count == 0 || Param('allowbugdeletion') %]
+ 
+   <p>Do you really want to delete this product?</p>
