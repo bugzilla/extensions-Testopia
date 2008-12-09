@@ -1493,13 +1493,14 @@ saveSearch = function(type,params){
             else {
                 params.current_tab = type;
             }
-            if (params.report == 1) {
+            if (params.report) {
                 loc = 'tr_' + type + '_reports.cgi?';
+                ntype = 1;
             }
             else {
                 loc = 'tr_list_' + type + 's.cgi?';
+                ntype = 0;
             }
-            ntype = 0;
             loc = loc + jsonToSearch(params, '', ['ctype']);
         }
     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
