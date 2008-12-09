@@ -663,7 +663,8 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                     id: 'search' + r.get('name') + i,
                     closable: true,
                     autoScroll: true,
-                    tools: PortalTools
+                    tools: PortalTools,
+                    url: urls[i]
                 });
                 Ext.getCmp(current_col).add(newPortlet);
                 Ext.getCmp(current_col).doLayout();
