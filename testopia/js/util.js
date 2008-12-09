@@ -1514,6 +1514,7 @@ saveSearch = function(type,params){
                     if (Ext.getCmp('dashboard_grid')){
                         Ext.getCmp('dashboard_grid').store.load();
                     }
+                    TestopiaUtil.notify.msg('Saved', 'Your search or report was saved.');
                 },
                 failure: testopiaError
             });
