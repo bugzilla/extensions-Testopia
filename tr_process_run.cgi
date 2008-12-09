@@ -60,7 +60,7 @@ if ($action eq 'edit'){
     my $timestamp;
     $timestamp = $run->stop_date;
     $timestamp = undef if $cgi->param('status');
-    $timestamp = get_time_stamp() if $cgi->param('status') == 0 && !$run->stop_date;
+    $timestamp = get_time_stamp() if ($cgi->param('status') == 0 || $cgi->param('status') eq 'STOPPED') && !$run->stop_date;
 
     $run->set_summary($cgi->param('summary')) if $cgi->param('summary');
     $run->set_product_version($cgi->param('run_product_version')) if $cgi->param('run_product_version');

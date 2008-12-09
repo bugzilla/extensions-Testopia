@@ -640,7 +640,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                         plain: true,
                         shadow: false,
                         items: [new Ext.form.TextField({
-                            value: encodeURI(l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia.userid),
+                            value: encodeURI(l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia_user.id),
                             width: 287
                         })]
                     });

@@ -848,7 +848,7 @@ var NewRunForm = function(plan){
     });
     this.on('render', function(){
         casegrid.store.load();
-        Ext.getCmp('new_run_manager').setValue(Testopia.user.login);
+        Ext.getCmp('new_run_manager').setValue(Testopia_user.login);
     });
 };
 Ext.extend(NewRunForm, Ext.Panel);
