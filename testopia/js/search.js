@@ -522,6 +522,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             id:'run-ctx-menu',
             items: [{
                 text: 'Open in a new tab', 
+                disabled: d ? false : true,
                 handler: function(){
                     var r = grid.store.getAt(index);
                     if (r.get('type') == 0){
