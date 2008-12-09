@@ -1360,6 +1360,10 @@ TestopiaUpdateMultiple = function(type, params, grid){
                 grid.store.baseParams.addcases = grid.selectedRows.join(',');
                 Ext.getCmp('filtered_txt').show();
             }
+            try {
+                Ext.getCmp('case_details_panel').store.reload();
+            }
+            catch (err){}
             grid.store.reload({
                 callback: function(){
                     if (grid.selectedRows){
