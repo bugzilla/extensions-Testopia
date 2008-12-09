@@ -101,7 +101,7 @@ sub report_columns {
     my %columns;
     # Changes here need to match Report.pm
     $columns{'Build'}           = "build";
-    $columns{'Status'}          = "status";        
+    $columns{'Status'}          = "case_run_status";        
     $columns{'Environment'}     = "environment";
     $columns{'Assignee'}        = "assignee";
     $columns{'Tested By'}       = "testedby";

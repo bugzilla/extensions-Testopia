@@ -168,7 +168,7 @@ sub init {
         $columns{'environment'}     = "map_caserun_environment.name";
         $columns{'assignee'}        = "map_caserun_assignee.login_name";
         $columns{'testedby'}        = "map_caserun_testedby.login_name";
-        $columns{'status'}          = "map_caserun_status.name";
+        $columns{'case_run_status'} = "map_caserun_status.name";
         $columns{'milestone'}       = "map_caserun_milestone.milestone";
         $columns{'case_tags'}       = "map_caserun_case_tags.tag_name";
         $columns{'run_tags'}        = "map_caserun_run_tags.tag_name";
