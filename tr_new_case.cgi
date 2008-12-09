@@ -65,6 +65,7 @@ unless ($plan_id[0]){
   $vars->{'product'} = Bugzilla::Testopia::Product->new({'name' => $cgi->param('product')}) if ($cgi->param('product'));
   $vars->{'bug_id'} = $cgi->param('bug');
   $vars->{'form_action'} = 'tr_new_case.cgi';
+  $vars->{'type'} = "Case";
   $template->process("testopia/plan/choose.html.tmpl", $vars) 
       || ThrowTemplateError($template->error());
   exit;

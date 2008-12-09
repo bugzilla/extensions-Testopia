@@ -60,6 +60,7 @@ my $plan_id = $cgi->param('plan_id');
 
 unless ($plan_id){
   $vars->{'form_action'} = 'tr_new_run.cgi';
+  $vars->{'type'} = "Run";
   $template->process("testopia/plan/choose.html.tmpl", $vars) 
       || ThrowTemplateError($template->error());
   exit;
