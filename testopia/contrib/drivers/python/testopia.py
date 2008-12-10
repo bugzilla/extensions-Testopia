@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 """
 The contents of this file are subject to the Mozilla Public
 License Version 1.1 (the "License"); you may not use this file
@@ -16,23 +15,70 @@ The Original Code is the Bugzilla Testopia Python API Driver.
 The Initial Developer of the Original Code is Airald Hapairai.
 Portions created by Airald Hapairai are Copyright (C) 2008
 Novell. All Rights Reserved.
+Portions created by David Malcolm are Copyright (C) 2008 Red Hat.
+All Rights Reserved.
+Portions created by Will Woods are Copyright (C) 2008 Red Hat.
+All Rights Reserved.
+Portions created by Bill Peck are Copyright (C) 2008 Red Hat.
+All Rights Reserved.
 
 Contributor(s): Airald Hapairai
+  David Malcolm <dmalcolm@redhat.com>
+  Will Woods <wwoods@redhat.com>
+  Bill Peck <bpeck@redhat.com>
 
-Use this class to access Testopia (default Testopia server for now is
-'http://bugzilla.mycompany.com')
+The CookieTransport class is by Will Woods, based on code in
+Python's xmlrpclib.Transport, which has this copyright notice:
+
+# The XML-RPC client interface is
+#
+# Copyright (c) 1999-2002 by Secret Labs AB
+# Copyright (c) 1999-2002 by Fredrik Lundh
+#
+# By obtaining, using, and/or copying this software and/or its
+# associated documentation, you agree that you have read, understood,
+# and will comply with the following terms and conditions:
+#
+# Permission to use, copy, modify, and distribute this software and
+# its associated documentation for any purpose and without fee is
+# hereby granted, provided that the above copyright notice appears in
+# all copies, and that both that copyright notice and this permission
+# notice appear in supporting documentation, and that the name of
+# Secret Labs AB or the author not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+#
+# SECRET LABS AB AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
+# TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANT-
+# ABILITY AND FITNESS.  IN NO EVENT SHALL SECRET LABS AB OR THE AUTHOR
+# BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY
+# DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS
+# ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+# OF THIS SOFTWARE.
+
+Use this class to access Testopia via XML-RPC
 
 Example on how to access this library,
 
 from testopia import Testopia
 
-t = Testopia('jdoe@mycompany.com', 'jdoepassword')
+t = Testopia.from_config('config.cfg')
 t.testplan_get(10)
 
+where config.cfg looks like:
+[testopia]
+username: jdoe@mycompany.com
+password: jdoepassword
+url:      https://myhost.mycompany.com/bugzilla/tr_xmlrpc.cgi
 
-To access a different Testopia server, do
+Or, more directly:
+t = Testopia('jdoe@mycompany.com',
+             'jdoepassword',
+             'https://myhost.mycompany.com/bugzilla/tr_xmlrpc.cgi')             
+t.testplan_get(10)
 
-t = Testopia('jdoe@mycompany.com', 'jdoepassword', host='http://myothertestopiaserver')
+though this means you've embedded your login credentials in the source file.
 
 
 Note: Python coding style guide does not advocate methods with more than 6-7
@@ -42,41 +88,166 @@ arguments. I've done this here with list, create, and update just to help.
 """
 
 __author__="Airald Hapairai"
-__date__="11/29/2007"
-__version__="0.1.0.0"
+__date__="06/23/2008"
+__version__="0.2.0.0"
 
 
-import xmlrpclib
+
+import xmlrpclib, urllib2
 from types import *
 from datetime import datetime, time
 
+from cookielib import CookieJar
+
+class CookieTransport(xmlrpclib.Transport):
+    '''A subclass of xmlrpclib.Transport that supports cookies.'''
+    cookiejar = None
+    scheme = 'http'
+
+    # Cribbed from xmlrpclib.Transport.send_user_agent 
+    def send_cookies(self, connection, cookie_request):
+        if self.cookiejar is None:
+            self.cookiejar = cookielib.CookieJar()
+        elif self.cookiejar:
+            # Let the cookiejar figure out what cookies are appropriate
+            self.cookiejar.add_cookie_header(cookie_request)
+            # Pull the cookie headers out of the request object...
+            cookielist=list()
+            for h,v in cookie_request.header_items():
+                if h.startswith('Cookie'):
+                    cookielist.append([h,v])
+            # ...and put them over the connection
+            for h,v in cookielist:
+                connection.putheader(h,v)
+
+    # This is the same request() method from xmlrpclib.Transport,
+    # with a couple additions noted below
+    def request(self, host, handler, request_body, verbose=0):
+        h = self.make_connection(host)
+        if verbose:
+            h.set_debuglevel(1)
+
+        # ADDED: construct the URL and Request object for proper cookie handling
+        request_url = "%s://%s/" % (self.scheme,host)
+        cookie_request  = urllib2.Request(request_url) 
+
+        self.send_request(h,handler,request_body)
+        self.send_host(h,host) 
+        self.send_cookies(h,cookie_request) # ADDED. creates cookiejar if None.
+        self.send_user_agent(h)
+        self.send_content(h,request_body)
+
+        errcode, errmsg, headers = h.getreply()
+
+        # ADDED: parse headers and get cookies here
+        # fake a response object that we can fill with the headers above
+        class CookieResponse:
+            def __init__(self,headers): self.headers = headers
+            def info(self): return self.headers
+        cookie_response = CookieResponse(headers)
+        # Okay, extract the cookies from the headers
+        self.cookiejar.extract_cookies(cookie_response,cookie_request)
+        # And write back any changes
+        if hasattr(self.cookiejar,'save'):
+            self.cookiejar.save(self.cookiejar.filename)
+
+        if errcode != 200:
+            raise xmlrpclib.ProtocolError(
+                host + handler,
+                errcode, errmsg,
+                headers
+                )
+
+        self.verbose = verbose
+
+        try:
+            sock = h._conn.sock
+        except AttributeError:
+            sock = None
+
+        return self._parse_response(h.getfile(), sock)
+
+class SafeCookieTransport(xmlrpclib.SafeTransport,CookieTransport):
+    '''SafeTransport subclass that supports cookies.'''
+    scheme = 'https'
+    request = CookieTransport.request
 
 VERBOSE=0
 DEBUG=0
 
 class TestopiaError(Exception): pass
 
+class TestopiaXmlrpcError(Exception):
+    def __init__(self, verb, params, wrappedError):
+        self.verb = verb
+        self.params = params
+        self.wrappedError = wrappedError
+
+    def __str__(self):
+        return "Error while executing cmd '%s' --> %s" \
+               % ( self.verb + "(" + self.params + ")", self.wrappedError)
+    
 class Testopia(object):
 
     view_all=True # By default, a list returns at most 25 elements. We force here to see all.
 
-    def __init__(self, username, password, host="bugzilla.mycompany.com",
-                 resource="tr_xmlrpc.cgi", port=80, ssl=False):
+    # (this decorator will require python 2.4 or later)
+    @classmethod
+    def from_config(cls, filename):
+        """
+        Make a Testopia instance from a config file, looking for a
+        [testopia] stanza, containing 'login', 'password' and 'url'
+        fields.
+
+        For example, given config.txt containing:
+          [testopia]
+          login: jdoe@mycompany.com', 
+          password: jdoepassword'
+          url: https://myhost.mycompany.com/bugzilla/tr_xmlrpc.cgi
+
+        we can write scripts that avoid embedding user credentials in the
+        source code:
+          t = Testopia.from_config('config.txt')
+          print t.environment_list()
+        """
+        from ConfigParser import SafeConfigParser
+        cp = SafeConfigParser()
+        cp.read([filename])
+        kwargs = dict([(key, cp.get('testopia', key)) \
+                       for key in ['username', 'password', 'url']])
+        return Testopia(**kwargs)
+    
+    def __init__(self, username, password, url):
         """Initialize the Testopia driver.
 
         'username' -- string, the account to log into Testopia such as jdoe@mycompany.com,
         'password' -- string, the password for the username,
-        'host' -- string, the URL of the host hosting testopia, optional
-        'resource' -- string, the XML rpc door, optional
-        'port' -- integer, the port of the host, optional
-        'ssl' -- boolean, True if the host protocol is SSL, False otherwise, optional
+        'url' -- string, the URL of the XML-RPC interface 
 
-        Example: t = Testopia('jdoe@mycompany.com', 'jdoepassword')
+        Example: t = Testopia('jdoe@mycompany.com', 
+                              'jdoepassword'
+                              'https://myhost.mycompany.com/bugzilla/tr_xmlrpc.cgi')
         """
-        self.server = xmlrpclib.ServerProxy("http" + ("", "s")[ssl] +\
-                    "://%s:%s@%s:%d/%s" % (username, password, host, port, resource),
-                    verbose = VERBOSE)
+        if url.startswith('https://'):
+            self._transport = SafeCookieTransport()
+        elif url.startswith('http://'):
+            self._transport = CookieTransport()
+        else:
+            raise "Unrecognized URL scheme"
+        self._transport.cookiejar = CookieJar()
+        # print "COOKIES:", self._transport.cookiejar._cookies
+        self.server = xmlrpclib.ServerProxy(url,
+                                            transport = self._transport,
+                                            verbose = VERBOSE)
 
+
+        # Login, get a cookie into our cookie jar:
+        loginDict = self.do_command("User.login", [dict(login=username,
+                                                        password=password)])
+        # Record the user ID in case the script wants this
+        self.userId = loginDict['id']
+        # print 'Logged in with cookie for user %i' % self.userId
+        # print "COOKIES:", self._transport.cookiejar._cookies
 
     def _boolean_option(self, option, value):
         """Returns the boolean option when value is True or False, else ''
@@ -103,7 +274,7 @@ class Testopia(object):
         if value:
             if type(value) is not type(datetime(2000,01,01,12,00,00)):
                 raise TestopiaError("The option '%s' is not a valid datetime object." % option)
-            return "\'%s\':\'%s\', " % (option, value.strformat("%Y-%m-%d %H:%M:%S"))
+            return "\'%s\':\'%s\', " % (option, value.strftime("%Y-%m-%d %H:%M:%S"))
         return ''
 
 
@@ -258,12 +429,13 @@ class Testopia(object):
         cmd = "self.server." + verb + "(" + params + ")"
         if DEBUG:
             print cmd
+        #from pprint import pprint
+        #pprint(self.server._ServerProxy__transport.cookiejar._cookies)
         try:
             return eval(cmd)
         except xmlrpclib.Error, e:
-            print "Error while executing cmd \'%s\' --> %s" % ( verb + "(" + params + ")", e)
-
-
+            raise TestopiaXmlrpcError(verb, params, e)
+        
     ############################## Build #######################################
 
 
@@ -274,8 +446,7 @@ class Testopia(object):
 
         Example: build_get(10)
 
-        Result: A dictionary of key/value pairs for the attributes listed above or a
-        dictionary containing values for the keys, "faultcode" and "faultstring".
+        Result: A dictionary of key/value pairs for the attributes listed above
         """
         return self.do_command("Build.get", [self._number_noop(build_id)])
 
@@ -292,8 +463,7 @@ class Testopia(object):
 
         Example: build_create(name='New Build', product_id=1)
 
-        Result: An integer value representing the new build_id or a dictionary containing
-        values for the keys, "faultcode" and "faultstring".
+        Result: An integer value representing the new build_id
         """
         return self.do_command("Build.create", [self._options_dict(
                    self._string_option("name", name),
@@ -319,8 +489,7 @@ class Testopia(object):
         When updating, if the name is the same, build_update() will return an exists error.
         If the name is different, the name will be updated.
 
-        Result: The modified Build on success or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: The modified Build on success
 
         Note: The 'isactive' attribute is not updating yet. Bugzilla #346907
         """
@@ -344,6 +513,9 @@ class Testopia(object):
         """
         return self.do_command("Build.lookup_id_by_name", [self._string_noop(name)])
 
+    def build_check_by_name(self, name, product_id):
+        return self.do_command("Build.check_build", [self._string_noop(name),
+                                                     self._number_noop(product_id)])
 
     def build_lookup_name_by_id(self, id):
         """Lookup A Build Name By Its ID.
@@ -368,7 +540,6 @@ class Testopia(object):
         Example: environment_get(10)
 
         Result: A dictionary of key/value pairs for the attributes listed above
-        or a dictionary containing values for the keys, "faultcode" and "faultstring".
         """
         return self.do_command("Environment.get", [self._number_noop(environment_id)])
 
@@ -383,8 +554,7 @@ class Testopia(object):
 
         Example: environment_list({'product_id': 1, 'is_active': 1})
 
-        Result: A list of Environment dictionaries or a dictionary containing values
-        for the keys, "faultcode" and "faultstring".
+        Result: A list of Environment dictionaries
         """
         return self.do_command("Environment.list", [self._options_ne_dict(
                    self._number_option('environment_id', environment_id),
@@ -398,6 +568,10 @@ class Testopia(object):
                    self._boolean_option('viewall', self.view_all),
                    )])
 
+    def environment_check_by_name(self, name, product_id):
+        return self.do_command("Environment.check_environment", 
+                                              [self._string_noop(name),
+                                               self._number_noop(product_id)])
 
     def environment_create(self, product_id, isactive, name=None):
         """Create A New Environment
@@ -408,8 +582,7 @@ class Testopia(object):
 
         Example: environment_create(1, True)
 
-        Result: An integer value representing the new environment_id or a dictionary containing
-        values for the keys, "faultcode" and "faultstring".
+        Result: An integer value representing the new environment_id
         """
         return self.do_command("Environment.create", [self._options_dict(
                    self._number_option('product_id', product_id),
@@ -428,8 +601,7 @@ class Testopia(object):
 
         Example: environment_update(10, name='Updated Environment Name')
 
-        Result: The modified environment on success or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: The modified environment on success
         """
         return self.do_command("Environment.update", [self._number_noop(environment_id),
                    self._options_dict(
@@ -446,8 +618,7 @@ class Testopia(object):
 
         Example: environment_get_runs(10)
 
-        Result: A list of TestRun objects on success or a dictionary containing
-        values for the keys, "faultcode" and "faultstring".
+        Result: A list of TestRun objects on success
         """
         return self.do_command("Environment.get_runs", [self._number_noop(environment_id)])
 
@@ -458,14 +629,17 @@ class Testopia(object):
     def product_lookup_id_by_name(self, name):
         """Lookup A Product ID By Its Name.
 
-        'name' -- str, Cannot be null of empty string
+        'name' -- str, Cannot be null or empty string
 
         Example: product_lookup_id_by_name('Product Name')
 
-        Result: The product id for the respective name or 0 if an error occurs.
+        Result: The product id for the respective name
         """
-        return self.do_command("Product.lookup_id_by_name", [self._string_noop(name)])
+        prodDict = self.do_command('Product.check_product', [self._string_noop(name)])
+        return prodDict['id']
 
+    def product_check_by_name(self, name):
+        return self.do_command("Product.check_product", [self._string_noop(name)])
 
     def product_lookup_name_by_id(self, id):
         """Lookup A Product Name By Its ID.
@@ -486,8 +660,7 @@ class Testopia(object):
 
         Example: product_get_milestones(10)
 
-        Result: A list of Milestone dictionaries or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: A list of Milestone dictionaries
         """
         return self.do_command("Product.get_milestones", [self._number_noop(product_id)])
 
@@ -532,8 +705,7 @@ class Testopia(object):
 
         Example: testplan_get(10)
 
-        Result: A dictionary of key/value pairs for the attributes listed above or a dictionary
-        containing values for the keys, "faultCode" and "faultString".
+        Result: A dictionary of key/value pairs for the attributes listed above
         """
         return self.do_command("TestPlan.get", [self._number_noop(plan_id)])
 
@@ -567,8 +739,7 @@ class Testopia(object):
 
         Example: testplan_list(plan_id=2, planidtype='lessthan')
 
-        Result: A list of TestPlan dictionaries or a dictionary containing values for the keys,
-        "faultCode" and "faultString".
+        Result: A list of TestPlan dictionaries
         """
         return self.do_command("TestPlan.list", [self._options_ne_dict(
                    self._number_option('plan_id', plan_id),
@@ -601,10 +772,9 @@ class Testopia(object):
         'default_product_version' -- string,
         'isactive' -- boolean, optional
 
-        Example: testplan_create('New Plan", 1, 2, 2, '1.0')
+        Example: testplan_create('New Plan', 1, 2, 2, '1.0')
 
-        Result: An integer value representing the new plan_id or a dictionary containing values for
-        the keys, "faultCode" and "faultString".
+        Result: An integer value representing the new plan_id
         """
         return self.do_command("TestPlan.create", [self._options_dict(
                    self._string_option('name', name),
@@ -630,8 +800,7 @@ class Testopia(object):
 
         Example: testplan_update(796, name = 'Hello', product_id = 1, type_id = 5, product_version = 'BETA', isactive = True)
 
-        Result: A list of Category objects on success or a dictionary containing values for
-        the keys, "faultCode" and "faultString".
+        Result: A list of Category objects on success
         """
         return self.do_command("TestPlan.update", [self._number_noop(plan_id),
                    self._options_dict(
@@ -650,8 +819,7 @@ class Testopia(object):
 
         Example: testplan_get_categories(10)
 
-        Result: A list of Category objects on success or a dictionary containing values
-        for the keys, "faultCode" and "faultString".
+        Result: A list of Category objects on success
         """
         return self.do_command("TestPlan.get_categories", [self._number_noop(plan_id)])
 
@@ -663,8 +831,7 @@ class Testopia(object):
 
         Example: testplan_get_builds(10)
 
-        Result: A list of Build objects on success or a dictionary containing values for
-        the keys, "faultCode" and "faultString".
+        Result: A list of Build objects on success
         """
         return self.do_command("TestPlan.get_builds", [self._number_noop(plan_id)])
 
@@ -676,8 +843,7 @@ class Testopia(object):
 
         Example: testplan_get_components(10)
 
-        Result: A list of Component objects on success or a dictionary containing values for
-        the keys, "faultCode" and "faultString".
+        Result: A list of Component objects on success
         """
         return self.do_command("TestPlan.get_components", [self._number_noop(plan_id)])
 
@@ -689,8 +855,7 @@ class Testopia(object):
 
         Example: testplan_get_test_cases(10)
 
-        Result: A list of TestCase objects on success or a dictionary containing values for
-        the keys, "faultCode" and "faultString".
+        Result: A list of TestCase objects on success
         """
         return self.do_command("TestPlan.get_test_cases", [self._number_noop(plan_id)])
 
@@ -702,8 +867,7 @@ class Testopia(object):
 
         Example: testplan_get_test_runs(10)
 
-        Result: A list of TestRun objects on success or a dictionary containing values for
-        the keys, "faultCode" and "faultString".
+        Result: A list of TestRun objects on success
         """
         return self.do_command("TestPlan.get_test_runs", [self._number_noop(plan_id)])
 
@@ -716,8 +880,7 @@ class Testopia(object):
 
         Example: testplan_get_test_runs(10, 'New Tag')
 
-        Result: The integer , 0, on success or a dictionary containing values for the keys,
-        "faultCode" and "faultString".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestPlan.add_tag", [self._number_noop(plan_id),
                    self._string_noop(tag_name)
@@ -732,8 +895,7 @@ class Testopia(object):
 
         Example: testplan_remove_tag(10, 'New Tag')
 
-        Result: The integer , 0, on success or a dictionary containing values for the keys,
-        "faultCode" and "faultString".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestPlan.remove_tag", [self._number_noop(plan_id),
                    self._string_noop(tag_name)
@@ -747,8 +909,7 @@ class Testopia(object):
 
         Example: testplan_get_tags(10)
 
-        Result: A list of Tag dictionaries or a dictionary containing values for the keys,
-        "faultCode" and "faultString".
+        Result: A list of Tag dictionaries
         """
         return self.do_command("TestPlan.get_tags", [self._number_noop(plan_id)])
 
@@ -787,8 +948,7 @@ class Testopia(object):
 
         Example: testcase_get(1)
 
-        Result: A dictionary of key/value pairs for the attributes listed above or a dictionary
-        containing values for the keys, "faultcode" and "faultstring".
+        Result: A dictionary of key/value pairs for the attributes listed above
         """
         return self.do_command("TestCase.get", [self._number_noop(case_id)])
 
@@ -851,8 +1011,7 @@ class Testopia(object):
 
         Example: testcase_list(case_id=20, case_id_type='lessthan')
 
-        Result: A list of TestCase dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of TestCase dictionaries
         """
         return self.do_command("TestCase.list", [self._options_ne_dict(
                    self._number_option('case_id', case_id),
@@ -916,8 +1075,7 @@ class Testopia(object):
 
         Example: testcase_create('Summary', 1, 1, 0, 1, 2)
 
-        Result: An integer value representing the new case_id or a dictionary containing values
-        for the keys, "faultcode" and "faultstring".
+        Result: An integer value representing the new case_id
         """
         return self.do_command("TestCase.create", [self._options_dict(
                    self._string_option('summary', summary),
@@ -959,8 +1117,7 @@ class Testopia(object):
 
         Example: testcase_update(20, summary="Updated Summary")
 
-        Result: The modified TestCase on success or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: The modified TestCase on success
         """
         return self.do_command("TestCase.update", [self._options_dict(
                    self._number_option('case_id', case_id),
@@ -986,8 +1143,6 @@ class Testopia(object):
         Example: testcase_get_text(1)
 
         Result: A dictionary of key/value pairs for the attributes of a TestCase document
-        or a dictionary containing values for the keys, "faultcode" and "faultstring".
-
         Attributes of a TestCase document are action, author, effect, and version.
         """
         return self.do_command("TestCase.get_text", [self._number_noop(case_id)])
@@ -1008,8 +1163,7 @@ class Testopia(object):
         Example: testcase_store_text(1, 1, 'New Setup', 'New Breakdown', 'New Action', '
         New Expected results')
 
-        Result: The new document version on success or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: The new document version on success
         """
         return self.do_command("TestCase.store_text", [self._number_noop(case_id), # This is the proper order
                    self._number_noop(author_id),
@@ -1027,8 +1181,7 @@ class Testopia(object):
 
         Example: testcase_get_bugs(1)
 
-        Result: A list of Bug dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of Bug dictionaries
         """
         return self.do_command("TestCase.get_bugs", [self._number_noop(case_id)])
 
@@ -1041,8 +1194,7 @@ class Testopia(object):
 
         Example: testcase_add_component(1, 2)
 
-        Result: The integer , 0, on success or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestCase.add_component", [self._number_noop(case_id),
                    self._number_noop(component_id)])
@@ -1056,8 +1208,7 @@ class Testopia(object):
 
         Example: testcase_remove_component(1, 2)
 
-        Result: The integer , 0, on success or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestCase.remove_component", [self._number_noop(case_id),
                    self._number_noop(component_id)])
@@ -1070,8 +1221,7 @@ class Testopia(object):
 
         Example: testcase_get_components(1)
 
-        Result: A list of Component dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of Component dictionaries
         """
         return self.do_command("TestCase.get_components", [self._number_noop(case_id)])
 
@@ -1084,8 +1234,7 @@ class Testopia(object):
 
         Example: testcase_add_tag(10, 'New Tag')
 
-        Result: The integer , 0, on success or a dictionary containing values for the keys,
-        "faultCode" and "faultString".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestCase.add_tag", [self._number_noop(case_id),
                    self._string_noop(tag_name)])
@@ -1099,8 +1248,7 @@ class Testopia(object):
 
         Example: testcase_remove_tag(10, 'Old Tag')
 
-        Result: The integer , 0, on success or a dictionary containing values for the keys,
-        "faultCode" and "faultString".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestCase.remove_tag", [self._number_noop(case_id),
                    self._string_noop(tag_name)])
@@ -1113,8 +1261,7 @@ class Testopia(object):
 
         Example: testcase_get_tags(10)
 
-        Result: A list of Tag dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of Tag dictionaries
         """
         return self.do_command("TestCase.get_tags", [self._number_noop(case_id)])
 
@@ -1126,8 +1273,7 @@ class Testopia(object):
 
         Example: testcase_get_tags(10)
 
-        Result: A list of TestPlan dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of TestPlan dictionaries
         """
         return self.do_command("TestCase.get_plans", [self._number_noop(case_id)])
 
@@ -1215,8 +1361,7 @@ class Testopia(object):
 
         Example: testcase_link_plan(10)
 
-        Result: A list of TestPlan dictionaries or a dictionary containing values
-        for the keys, "faultcode" and "faultstring".
+        Result: A list of TestPlan dictionaries
         """
         return self.do_command("TestCase.link_plan", [self._number_noop(case_id),
                    self._number_noop(plan_id)
@@ -1231,8 +1376,7 @@ class Testopia(object):
 
         Example: testcase_unlink_plan(10)
 
-        Result: A list of TestPlan dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of TestPlan dictionaries
         """
         return self.do_command("TestCase.unlink_plan", [self._number_noop(case_id),
                    self._number_noop(plan_id)])
@@ -1248,8 +1392,7 @@ class Testopia(object):
 
         Example: testrun_get(10)
 
-        Result: A dictionary of key/value pairs for the attributes listed above or a dictionary
-        containing values for the keys, "faultcode" and "faultstring".
+        Result: A dictionary of key/value pairs for the attributes listed above
         """
         return self.do_command("TestRun.get", [self._number_noop(run_id)])
 
@@ -1294,8 +1437,7 @@ class Testopia(object):
 
         Example: testrun_list(run_id=20, run_id_type='lessthan')
 
-        Result: A list of TestCase dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of TestCase dictionaries
         """
         return self.do_command("TestCase.list", [self._options_ne_dict(
                    self._number_option('run_id', run_id),
@@ -1325,9 +1467,9 @@ class Testopia(object):
                    )])
 
 
-    def testrun_create(self, build_id, environment_id, manager_id,
-                   plan_id, plan_text_version, summary,
-                   notes=None, product_version=None):
+    def testrun_create(self, build_id, environment_id,
+                   plan_id, summary, manager_id, plan_text_version=0,
+                   notes=None, product_version='unspecified'):
         """Create A New TestRun.
 
         'build_id' -- integer, optional
@@ -1341,8 +1483,7 @@ class Testopia(object):
 
         Example: testrun_create(1, 1, 1, 1, 'Summary')
 
-        Result: An integer value representing the new run_id or a dictionary containing values
-        for the keys, "faultcode" and "faultstring".
+        Result: An integer value representing the new run_id
         """
         return self.do_command("TestRun.create", [self._options_dict(
                    self._number_option('build_id', build_id),
@@ -1352,13 +1493,14 @@ class Testopia(object):
                    self._number_option('plan_text_version', plan_text_version),
                    self._string_option('summary', summary),
                    self._string_option('notes', notes),
-                   self._number_option('product_version', product_version),
+                   self._string_option('product_version', product_version),
                    )])
 
 
-    def testrun_update(self, run_id, build_id=None, environment_id=None,
+    def testrun_update(self, run_id, status_id,build_id=None, 
+                   environment_id=None,
                    manager_id=None, plan_text_version=None, summary=None,
-                   notes=None, product_version=None):
+                   notes=None, product_version=None, stop_date=None):
         """Update An Existing TestRun.
 
         'run_id' -- integer,
@@ -1372,8 +1514,7 @@ class Testopia(object):
 
         Example: testrun_create(1, 1, 1, 1, 'Summary')
 
-        Result: The modified TestRun on success or a dictionary containing values for
-        the keys, "faultcode" and "faultstring".
+        Result: The modified TestRun on success
         """
         return self.do_command("TestRun.update", [run_id, self._options_dict(
                    self._number_option('build_id', build_id),
@@ -1382,6 +1523,8 @@ class Testopia(object):
                    self._number_option('plan_text_version', plan_text_version),
                    self._string_option('notes', notes),
                    self._number_option('product_version', product_version),
+                   self._number_option('status', status_id),
+                   self._datetime_option('stop_date', stop_date),
                    )])
 
 
@@ -1392,8 +1535,7 @@ class Testopia(object):
 
         Example: testrun_get_test_cases(10)
 
-        Result: A list of TestCase objects on success or a dictionary
-        containing values for the keys, "faultcode" and "faultstring".
+        Result: A list of TestCase objects on success
         """
         return self.do_command("TestRun.get_test_cases", [self._number_noop(run_id)])
 
@@ -1405,8 +1547,7 @@ class Testopia(object):
 
         Example: testrun_get_test_case_runs(10)
 
-        Result: A list of TestCaseRun objects on success or a dictionary
-        containing values for the keys, "faultcode" and "faultstring".
+        Result: A list of TestCaseRun objects on success
         """
         return self.do_command("TestRun.get_test_case_runs", [self._number_noop(run_id)])
 
@@ -1418,8 +1559,7 @@ class Testopia(object):
 
         Example: testrun_get_plan(10)
 
-        Result: A TestPlan object on success or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: A TestPlan object on success
         """
         return self.do_command("TestRun.get_test_plan", [self._number_noop(run_id)])
 
@@ -1432,8 +1572,7 @@ class Testopia(object):
 
         Example: testrun_add_tag(10, "Tag")
 
-        Result: The integer , 0, on success or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestRun.add_tag", [self._number_noop(run_id),
                    self._string_noop(tag_name)
@@ -1448,8 +1587,7 @@ class Testopia(object):
 
         Example: testrun_remove_tag(10, "Tag")
 
-        Result: The integer , 0, on success or a dictionary containing values for the
-        keys, "faultcode" and "faultstring".
+        Result: The integer , 0, on success
         """
         return self.do_command("TestRun.remove_tag", [self._number_noop(run_id),
                    self._string_noop(tag_name)
@@ -1463,8 +1601,7 @@ class Testopia(object):
 
         Example: testrun_get_tags(10)
 
-        Result: A list of Tag dictionaries or a dictionary containing values for the keys,
-        "faultcode" and "faultstring".
+        Result: A list of Tag dictionaries
         """
         return self.do_command("TestRun.get_tags", [self._number_noop(run_id)])
 
@@ -1592,8 +1729,8 @@ class Testopia(object):
                    )])
 
 
-    def testcaserun_create(self, assignee, build_id, case_id, case_text_version,
-                           environment_id, run_id, notes=None):
+    def testcaserun_create(self, assignee, build_id, case_id,
+                           environment_id, run_id, case_text_version=None, notes=None):
         """Create A New TestCaseRun.
 
         'assignee' -- integer,
@@ -1698,3 +1835,296 @@ class Testopia(object):
         Result: The TestCaseRun status name for the respective id or 0 error occurs.
         """
         return self.do_command("TestCaseRun.lookup_status_name_by_id", [self._number_noop(id)])
+
+
+
+# A simple pyunit test suite follows:
+import unittest
+
+class TestopiaUnitTest(unittest.TestCase):
+    def setUp(self):
+        self.testopia = Testopia.from_config('unittest.cfg')
+
+        # these will have to reflect the data on whatever instance you're
+        # running the tests against:
+        self.testProductName = 'Rawhide'
+        self.testEnvironmentName = 'i386'
+        self.testBuildName = 'rawhide-20080624'
+
+    def assert_is_int(self, value):
+        self.assertEquals(type(value), type(42))
+
+    def get_test_product_id(self):
+        return self.testopia.product_check_by_name(self.testProductName)['id']
+
+class LoginUnitTests(TestopiaUnitTest):
+    def test_login(self):
+        # Ensure that we logged in, and that we have our userId recorded:
+        self.assert_(self.testopia is not None)        
+        self.assert_(self.testopia.userId>0)
+
+    def test_bogus_call(self):
+        self.assertRaises(TestopiaXmlrpcError,
+                          self.testopia.do_command,
+                          "ThisIsNotAClass.this_is_not_a_method", [])
+
+class BuildUnitTests(TestopiaUnitTest):
+    def test_build_get(self):
+        buildId = 1
+        buildDict = self.testopia.build_get(buildId)
+        self.assertEquals(buildDict['build_id'], buildId)
+        self.assert_('product_id' in buildDict)
+        # etc
+        
+    """API entry points that aren't yet covered:
+    def build_create(self, name, product_id, description=None, milestone=None,
+                   isactive=None)
+    def build_update(self, build_id, name=None, description=None, milestone=None,
+                     isactive=None)
+    """
+    def test_build_check_by_name(self):
+        productId = self.get_test_product_id()
+        buildDict = self.testopia.build_check_by_name(self.testBuildName, productId)
+        self.assertEquals(buildDict['product_id'], productId)
+
+    """
+    def build_lookup_name_by_id(self, id)
+    """
+        
+class EnvironmentUnitTests(TestopiaUnitTest):
+    def test_environment_get(self):
+        envId = 1
+        envDict = self.testopia.environment_get(envId)
+        self.assertEquals(envDict['environment_id'], envId)
+        self.assert_('product_id' in envDict)
+        self.assert_('isactive' in envDict)
+        self.assert_('name' in envDict)
+
+    def test_environment_list(self):
+        envList = self.testopia.environment_list()
+        self.assertEquals(type(envList), type([]))
+        envDict = envList[0] 
+        self.assert_('environment_id' in envDict)
+        self.assert_('product_id' in envDict)
+        self.assert_('isactive' in envDict)
+        self.assert_('name' in envDict)
+        # etc
+
+
+    """API entry points that aren't yet covered:
+    def environment_get(self, environment_id)
+    def environment_list(self, environment_id=None, environment_id_type=None,
+                   isactive=None, isactive_type=None,
+                   name=None, name_type=None,
+                   product_id=None, product_id_type=None)
+    """
+    def test_environment_check_by_name(self):
+        productId = self.get_test_product_id()
+        envDict = self.testopia.environment_check_by_name(self.testEnvironmentName, productId)
+        self.assertEquals(envDict['product_id'], productId)
+    """
+    def environment_create(self, product_id, isactive, name=None)
+    def environment_update(self, environment_id, name, product_id, isactive)
+    def environment_get_runs(self, environment_id)
+    """
+    def test_environment_get_runs(self):
+        envId = 1
+        runList = self.testopia.environment_get_runs(envId)
+        self.assertEquals(type(runList), type([]))
+        runDict = runList[0]
+        self.assert_('run_id' in runDict)
+        self.assertEquals(runDict['environment_id'], envId)
+        self.assert_('build_id' in runDict)
+        self.assert_('plan_id' in runDict)
+        self.assert_('start_date' in runDict)
+        self.assert_('stop_date' in runDict)
+        self.assert_('product_version' in runDict)
+        self.assert_('summary' in runDict)
+        self.assert_('manager_id' in runDict)
+        self.assert_('plan_text_version' in runDict)
+        self.assert_('notes' in runDict)
+
+
+class ProductUnitTests(TestopiaUnitTest):
+    def test_product_lookup_id_by_name(self):
+        productId = self.testopia.product_lookup_id_by_name(self.testProductName)
+        self.assert_is_int(productId)
+        
+    def test_product_check_by_name(self):
+        productDict = self.testopia.product_check_by_name(self.testProductName)
+        self.assertEquals(productDict['name'], self.testProductName)
+        self.assert_('classification_id' in productDict)
+        self.assert_('defaultmilestone' in productDict)
+        self.assert_('description' in productDict)
+        self.assert_('disallownew' in productDict)
+        self.assert_('id' in productDict)
+        self.assert_('maxvotesperbug' in productDict)
+        self.assert_('milestoneurl' in productDict)
+        self.assert_('votesperuser' in productDict)
+        self.assert_('votestoconfirm' in productDict)
+    """API entry points that aren't yet covered:
+    def product_lookup_name_by_id(self, id)
+
+    def product_get_milestones(self, product_id)
+    """
+
+class TagUnitTests(TestopiaUnitTest):
+    """API entry points that aren't yet covered:
+    (none yet)
+    """
+
+class UserUnitTests(TestopiaUnitTest):
+    """API entry points that aren't yet covered:
+    def user_lookup_id_by_login(self, login)
+    def user_lookup_login_by_id(self, id)
+    """
+
+class TestPlanTests(TestopiaUnitTest):
+    """API entry points that aren't yet covered:
+    def testplan_get(self, plan_id)
+    def testplan_list(self, plan_id=None, plan_id_type=None,
+                   name=None, name_type=None,
+                   type_id=None, type_id_type=None,
+                   creation_date=None, creation_date_type=None,
+                   default_product_version=None, default_product_version_type=None,
+                   author_id=None, author_id_type=None,
+                   isactive=None, isactive_type=None,
+                   product_id=None, product_id_type=None)
+    def testplan_create(self, name, product_id, author_id, type_id, default_product_version, isactive=None)
+    def testplan_update(self, plan_id, name, product_id, type_id, product_version, isactive)
+    def testplan_get_categories(self, plan_id)
+    def testplan_get_builds(self, plan_id)
+    def testplan_get_components(self, plan_id)
+    def testplan_get_test_cases(self, plan_id)
+    def testplan_get_test_runs(self, plan_id)
+    def testplan_add_tag(self, plan_id, tag_name)
+    def testplan_remove_tag(self, plan_id, tag_name)
+    def testplan_get_tags(self, plan_id)
+    def testplan_lookup_type_id_by_name(self, name)
+    def testplan_lookup_type_name_by_id(self, id)
+    """
+
+class TestCaseUnitTests(TestopiaUnitTest):
+    """API entry points that aren't yet covered:
+    def testcase_get(self, case_id)
+    def testcase_list(self, case_id=None, case_id_type=None,
+                   alias=None, alias_type=None,
+                   arguments=None, arguments_type=None,
+                   author_id=None, author_id_type=None,
+                   canview=None, canview_type=None,
+                   case_status_id=None, case_status_id_type=None,
+                   category_id=None, category_id_type=None,
+                   creation_date=None, creation_date_type=None,
+                   default_tester_id=None, default_tester_id_type=None,
+                   isautomated=None, isautomated_type=None,
+                   plans=None,
+                   priority_id=None, priority_id_type=None,
+                   requirement=None, requirement_type=None,
+                   script=None, script_type=None,
+                   sortkey=None, sortkey_type=None,
+                   summary=None, summary_type=None,
+                   estimated_time=None, estimated_time_type=None,
+                   run_id=None, run_id_type=None)
+    def testcase_create(self, summary, plan_id, author_id, isautomated, category_id, case_status_id,
+                        alias=None, arguments=None, default_tester_id=None, priority_id=None,
+                        requirement=None, script=None, sortkey=None, estimated_time=None)
+    def testcase_update(self, case_id, summary=None, isautomated=None,
+                   category_id=None, case_status_id=None,
+                   alias=None, arguments=None, priority_id=None,
+                   requirement=None, script=None,
+                   sortkey=None, estimated_time=None)
+    def testcase_get_text(self, case_id)
+    def testcase_store_text(self, case_id, author_id, setup=None, breakdown=None,
+                   action=None, expected_results=None)
+    def testcase_get_bugs(self, case_id)
+    def testcase_add_component(self, case_id, component_id)
+    def testcase_remove_component(self, case_id, component_id)
+    def testcase_get_components(self, case_id)
+    def testcase_add_tag(self, case_id, tag_name)
+    def testcase_remove_tag(self, case_id, tag_name)
+    def testcase_get_tags(self, case_id)
+    def testcase_get_plans(self, case_id)
+    def testcase_lookup_category_id_by_name(self, name)
+    def testcase_lookup_category_name_by_id(self, id)
+    def testcase_lookup_priority_id_by_name(self, name)
+    def testcase_lookup_priority_name_by_id(self, id)
+
+    def testcase_lookup_status_id_by_name(self, name)
+
+    def testcase_lookup_status_name_by_id(self, id)
+
+    def testcase_link_plan(self, case_id, plan_id)
+    def testcase_unlink_plan(self, case_id, plan_id)
+    """
+
+class TestRunUnitTests(TestopiaUnitTest):
+    """API entry points that aren't yet covered:
+    def testrun_get(self, run_id):
+    def testrun_list(self, run_id=None, run_id_type=None,
+                   build_id=None, build_id_type=None,
+                   environment_id=None, environment_id_type=None,
+                   manager_id=None, manager_id_type=None,
+                   notes=None, notes_type=None,
+                   plan=None, plan_type=None,
+                   plan_id=None, plan_id_type=None,
+                   plan_text_version=None, plan_text_version_type=None,
+                   product_version=None, product_version_type=None,
+                   start_date=None, start_date_type=None,
+                   stop_date=None, stop_date_type=None,
+                   summary=None, summary_type=None)
+    def testrun_create(self, build_id, environment_id, manager_id,
+                   plan_id, plan_text_version, summary,
+                   notes=None, product_version=None):
+    def testrun_update(self, run_id, build_id=None, environment_id=None,
+                   manager_id=None, plan_text_version=None, summary=None,
+                   notes=None, product_version=None):
+    def testrun_get_test_cases(self, run_id):
+    def testrun_get_test_case_runs(self, run_id):
+    def testrun_get_test_plan(self, run_id):
+    def testrun_add_tag(self, run_id, tag_name):
+    def testrun_remove_tag(self, run_id, tag_name):
+    def testrun_get_tags(self, run_id):
+    def testrun_lookup_environment_id_by_name(self, name):
+    def testrun_lookup_environment_name_by_id(self, id):
+        """
+        
+class TestCaseRunUnitTests(TestopiaUnitTest):
+    """API entry points that aren't yet covered:
+    def testcaserun_get(self, case_run_id):
+    def testcaserun_list(self, run_id=None, run_id_type=None,
+                   assignee=None, assignee_type=None,
+                   build_id=None, build_id_type=None,
+                   canview=None, canview_type=None,
+                   case_id=None, case_id_type=None,
+                   case_run_id=None, case_run_id_type=None,
+                   case_run_status_id=None, case_run_status_id_type=None,
+                   case_text_version=None, case_text_version_type=None,
+                   close_date=None, close_date_type=None,
+                   environment_id=None, environment_id_type=None,
+                   iscurrent=None, iscurrent_type=None,
+                   notes=None, notes_type=None,
+                   sortkey=None, sortkey_type=None,
+                   testedby=None, testedby_type=None)
+    def testcaserun_create(self, assignee, build_id, case_id, case_text_version,
+                           environment_id, run_id, notes=None)
+    def testcaserun_update(self, run_id, case_id, build_id, environment_id,
+                    new_build_id=None,
+                    new_environment_id=None,
+                    case_run_status_id=None,
+                    update_bugs=False,
+                    assignee=None,
+                    notes=None)
+    def testcaserun_get_bugs(self, case_run_id):
+    def testcaserun_lookup_status_id_by_name(self, name)
+    def testcaserun_lookup_status_name_by_id(self, id)
+
+    """
+
+# Hook into pyunit's command-line handling, which will invoke the test
+# suite if run directly rather than imported; use -v for more verbose output
+# 
+# You'll have to have a 'unittest.cfg' file containing config for whatever
+# Testopia instance you're talking to
+#
+if __name__ == '__main__':
+    unittest.main()
