@@ -40,7 +40,7 @@ use Bugzilla::Constants;
 Bugzilla->error_mode(ERROR_MODE_DIE);
 
 # Used by the XMLRPC::Lite client to connect to the TEST installation
-use constant API_URL => 'http://localhost/workspace/bnc-3.0/tr_xmlrpc.cgi';
+use constant API_URL => 'http://localhost/workspace/bnc-3.2/tr_xmlrpc.cgi';
 
 our $proxy;
 
