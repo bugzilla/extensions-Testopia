@@ -19,10 +19,7 @@
   #%]
 
 [% IF user.login AND user.settings.view_testopia.value == 'on' %]
-[% IF btn_id == 'find_bottom' %]
-</li>
-<li id="links-special">
-[% END %]
+</ul>
 <div class="label">Testopia: </div>
 <ul class="links testopia_links">
   <li><a href="tr_show_product.cgi">Product Dashboard</a></li>
@@ -57,9 +54,6 @@
   </form>
   </li>
 </ul>
-[% IF btn_id == 'find_bottom' %]
-</li>
-[% END %]
 [% END %]
 <script type="text/javascript">
   DEFAULT_CASE_STATUS = '[% Param('default-test-case-status') %]';

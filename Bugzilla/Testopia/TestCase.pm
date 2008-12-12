@@ -369,18 +369,17 @@ sub _check_components {
     my @components;
     my @comp_ids;
     my $dbh = Bugzilla->dbh;
-    
     ThrowUserError('testopia-missing-parameter', {param => 'components'}) unless $components;
     if (ref $components eq 'HASH'){
                 my $prod = Bugzilla::Product::check_product($components->{'product'});
-                my $comp = Bugzilla::Component::check_component($prod, $components->{'component'});
+                my $comp = Bugzilla::Component->check({product=> $prod, name => $components->{'component'}});
                 push @comp_ids, $comp->id;
     }
     elsif (ref $components eq 'ARRAY'){
         foreach my $c (@$components){
             if (ref $c){
                 my $prod = Bugzilla::Product::check_product($c->{'product'});
-                my $comp = Bugzilla::Component::check_component($prod, $c->{'component'});
+                my $comp = Bugzilla::Component->check({product => $prod, name => $c->{'component'}});
                 push @comp_ids, $comp->id;
             }
             else{

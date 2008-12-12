@@ -164,6 +164,7 @@ sub test_create_by_strings {
         }
     );
     check_fault( $response, $self );
+    
     my $obj = Bugzilla::Testopia::TestCase->new( $response->result->{'case_id'} );
     $obj->type;
     $obj->version;
@@ -180,6 +181,8 @@ sub test_get {
     my $obj = Bugzilla::Testopia::TestCase->new( $rep->{'case_id'} );
     $obj->text;
     $obj->version;
+    $obj->dependson_list;
+    $obj->blocked_list;
 
     my $response = $proxy->call( "TestCase.get", $rep->{'case_id'} );
     
@@ -284,7 +287,7 @@ sub test_add_component {
     my $response = $proxy->call( "TestCase.add_component", $rep->{'case_id'}, 
         {component => $component->{'name'}, 
            product => Bugzilla::Testopia::Product->new($component->{'product_id'})->name} );
-
+    
     check_fault( $response, $self );
     
 #    dump_all($component, $obj->components);

@@ -98,24 +98,26 @@ sub testopiaUpdateDB {
     $dbh->bz_alter_column('test_case_plans', 'plan_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_runs', 'build_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_runs', 'case_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
-    $dbh->bz_alter_column('test_case_runs', 'case_run_status_id', {TYPE => 'INT2', NOTNULL => 1});
+#    $dbh->bz_alter_column('test_case_runs', 'case_run_status_id', {TYPE => 'INT2', NOTNULL => 1});
     $dbh->bz_alter_column('test_case_runs', 'case_run_id', {TYPE => 'INTSERIAL', PRIMARYKEY => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_runs', 'environment_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_runs', 'iscurrent', {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => '0'});
     $dbh->bz_alter_column('test_case_runs', 'run_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_run_status', 'case_run_status_id', {TYPE => 'SMALLSERIAL', PRIMARYKEY => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_cases', 'case_id', {TYPE => 'INTSERIAL', PRIMARYKEY => 1, NOTNULL => 1});
-    $dbh->bz_alter_column('test_cases', 'case_status_id', {TYPE => 'INT2', NOTNULL => 1});
+#    $dbh->bz_alter_column('test_cases', 'case_status_id', {TYPE => 'INT2', NOTNULL => 1});
     $dbh->bz_alter_column('test_case_status', 'case_status_id', {TYPE => 'SMALLSERIAL', PRIMARYKEY => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_tags', 'case_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_texts', 'case_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_case_texts', 'creation_ts', {TYPE => 'DATETIME', NOTNULL => 1});
     $dbh->bz_alter_column('test_environment_map', 'environment_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
+    $dbh->bz_alter_column('test_environment_map', 'property_id', {TYPE => 'INT4', UNSIGNED => 1, DEFAULT => undef});
     $dbh->bz_alter_column('test_environments', 'environment_id', {TYPE => 'INTSERIAL', PRIMARYKEY => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_named_queries', 'isvisible', {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 1});
     $dbh->bz_alter_column('test_plan_activity', 'plan_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_plans', 'plan_id', {TYPE => 'INTSERIAL', PRIMARYKEY => 1, NOTNULL => 1});
-    $dbh->bz_alter_column('test_plans', 'type_id', {TYPE => 'INT2', NOTNULL => 1});
+#    $dbh->bz_alter_column('test_plans', 'type_id', {TYPE => 'INT2', NOTNULL => 1});
+    $dbh->bz_alter_column('test_plan_types', 'type_id', {TYPE => 'SMALLSERIAL', NOTNULL => 1, PRIMARYKEY => 1}, 0);
     $dbh->bz_alter_column('test_plan_tags', 'plan_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_plan_texts', 'creation_ts', {TYPE => 'DATETIME', NOTNULL => 1});
     $dbh->bz_alter_column('test_plan_texts', 'plan_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
@@ -323,7 +325,8 @@ sub populateMiscTables {
     $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) VALUES ('target_completion', 'Target Completion Rate', 'test_runs')") 
       if $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs") 
         && ! $dbh->selectrow_array("SELECT COUNT(*) FROM test_fielddefs WHERE name = ?", undef, 'target_completion');
-
+    $dbh->do("UPDATE test_environment_map SET property_id = ? where property_id = ?",undef, undef, 0);
+    
     if ($dbh->selectrow_array("SELECT COUNT(*) FROM test_case_run_status")){
         $dbh->do("UPDATE test_case_run_status SET name='IDLE', sortkey=1 where case_run_status_id=1");
         $dbh->do("UPDATE test_case_run_status SET name='PASSED', sortkey=4 where case_run_status_id=2");

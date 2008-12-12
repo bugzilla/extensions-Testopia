@@ -156,7 +156,6 @@ sub attach {
     my $self = shift;
     my ($obj) = shift;
     my $dbh = Bugzilla->dbh;
-    
     $dbh->bz_start_transaction();
     my $tagged = $dbh->selectrow_array(
              "SELECT 1 FROM test_". $obj->type ."_tags 

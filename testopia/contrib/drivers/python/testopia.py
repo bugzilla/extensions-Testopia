@@ -633,8 +633,9 @@ class Testopia(object):
 
         Example: product_lookup_id_by_name('Product Name')
 
-        Result: The product id for the respective name
+        Result: The product id for the respective name.
         """
+        # really ought to be using exceptions for error-handling
         prodDict = self.do_command('Product.check_product', [self._string_noop(name)])
         return prodDict['id']
 

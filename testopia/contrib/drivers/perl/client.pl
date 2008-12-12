@@ -208,6 +208,7 @@ if (defined($Bugzilla_login)) {
 ########################
 
 #$soapresult = $proxy->call('TestCase.add_component', [278,304],[2,3,4]);
+#$soapresult = $proxy->call('TestCase.add_component', [278,304],[{product => "Bugzilla", component => "General"}]);
 #$soapresult = $proxy->call('TestCase.add_tag', [278,304], ['Fred','Fish']);
 #$soapresult = $proxy->call('TestCase.add_to_run', [278,306], [1700,1701]);
 #$soapresult = $proxy->call('TestCase.attach_bug', [278,306], [33,44]);
