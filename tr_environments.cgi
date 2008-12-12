@@ -48,7 +48,7 @@ use JSON;
 Bugzilla->error_mode(ERROR_MODE_AJAX);
 Bugzilla->login(LOGIN_REQUIRED);
 
-my $cgi = Bugzilla->cgi;
+our $cgi = Bugzilla->cgi;
 
 local our $vars     = {};
 local our $template = Bugzilla->template;
