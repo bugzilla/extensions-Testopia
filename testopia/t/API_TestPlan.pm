@@ -358,20 +358,21 @@ sub test_lookup_type_name_by_id {
 sub test_remove_tag {
     my $self = shift;
 
-    my $rep = get_rep('test_plans');
+    my $rep = get_rep('test_plan_tags');
 
     my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
-    $obj->add_tag('API TAG');
+    my $tag = Bugzilla::Testopia::TestTag->new( $rep->{'tag_id'} );
+    
     delete $obj->{'tags'};
     my $orig_size = scalar @{ $obj->tags };
     delete $obj->{'tags'};
 
-    my $response = $proxy->call( "TestPlan.remove_tag", $rep->{'plan_id'}, 'API TAG' );
+    my $response = $proxy->call( "TestPlan.remove_tag", $rep->{'plan_id'}, $tag->{tag_name} );
 
     check_fault( $response, $self );
 
     #    dump_all($rep, $obj->tags);
-    ok( scalar @{ $obj->tags } == ( $orig_size - 1 ), "TestPlan - test_remove_tag" );
+    ok( scalar @{ $obj->tags } == ( $orig_size - 1 ), "TestPlan - test_remove_tag using Plan: " . $rep->{'plan_id'} . " Tag: " . $rep->{'tag_id'}  );
 }
 
 sub test_store_text {

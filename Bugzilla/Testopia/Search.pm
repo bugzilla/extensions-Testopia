@@ -1077,11 +1077,6 @@ sub init {
               
              $term = "$ff BETWEEN $1 AND $2";
          },
-         ",between" => sub {
-             $v =~ /(\d+)[\s-]+(\d+)/;
-              
-             $term = "$ff BETWEEN $1 AND $2";
-         },
          ",anywordssubstr" => sub {
              $term = join(" OR ", @{GetByWordListSubstr($ff, $v)});
          },
@@ -1217,9 +1212,6 @@ sub init {
         elsif ($cgi->param('case_id') =~ /-/){
             $type = "between";
         }
-        elsif ($cgi->param('case_id') =~ /-/){
-            $type = "between";
-        }
         if ($obj eq 'run'){
             push(@specialchart, ["run_case_id", $type, join(',', $cgi->param('case_id'))]);
         }
@@ -1244,12 +1236,6 @@ sub init {
             } 
         }
         elsif ($cgi->param('run_id') =~ /-/){
-            $type = "between";
-        }
-        elsif ($cgi->param('run_id') =~ /-/){
-            $type = "between";
-        }
-        elsif ($cgi->param('plan_id') =~ /-/){
             $type = "between";
         }
         if ($obj eq 'case'){
@@ -1300,9 +1286,6 @@ sub init {
         my $type = "anyexact";
         if ($cgi->param('bugidtype') && $cgi->param('bugidtype') eq 'exclude') {
             $type = "nowords";
-        }
-        elsif ($cgi->param('bug_id') =~ /-/){
-            $type = "between";
         }
         elsif ($cgi->param('bug_id') =~ /-/){
             $type = "between";

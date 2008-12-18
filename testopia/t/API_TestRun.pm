@@ -402,15 +402,16 @@ sub test_get_test_plan {
 sub test_remove_tag {
     my $self = shift;
 
-    my $rep = get_rep('test_runs');
+    my $rep = get_rep('test_run_tags');
 
     my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
-    $obj->add_tag('API TAG');
+    my $tag = Bugzilla::Testopia::TestTag->new( $rep->{'tag_id'} );
+    
     delete $obj->{'tags'};
     my $orig_size = scalar @{ $obj->tags };
     delete $obj->{'tags'};
 
-    my $response = $proxy->call( "TestRun.remove_tag", $rep->{'run_id'}, 'API TAG' );
+    my $response = $proxy->call( "TestRun.remove_tag", $rep->{'run_id'}, $tag->name );
 
     check_fault( $response, $self );
 
