@@ -3,7 +3,7 @@
 */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/strings.js
+ * START OF FILE - /testopia-branch/testopia/js/strings.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -34,11 +34,11 @@ RUN_DELETE_WARNING = 'You are about to delete the selected test runs including a
 CASERUN_DELETE_WARNING = 'You are about to remove the selected test cases from this run including all history. This action cannot be undone. Are you sure you want to continue?';
 ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environment including associated test case data. This action cannot be undone. Are you sure you want to continue?';
 /*
- * END OF FILE - /bnc-branch/testopia/js/strings.js
+ * END OF FILE - /testopia-branch/testopia/js/strings.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/util.js
+ * START OF FILE - /testopia-branch/testopia/js/util.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -181,7 +181,7 @@ TestopiaUtil = function(){
             plain: true,
             shadow: false,
             layout: 'fit',
-            items: [new NewPlanForm()]
+            items: [new NewPlanForm(product_id)]
         });
         win.show(this);
     };
@@ -517,9 +517,27 @@ UserLookup = function(cfg){
                 {name: 'name', mapping: 'name'}
             ]
         }),
-        listeners: {'valid': function(f) {
-            f.value = f.getRawValue();
-        }},
+        listeners: {
+            'valid': function(f) {
+                f.value = f.getRawValue();
+            },
+            'beforequery': function(o){
+                if (cfg.multistring){
+                    var term = o.query.match(/(^.*),(.*)/);
+                    if (term){
+                        o.combo.multivalue = term[1];
+                        o.query = term[2];
+                    }
+                }
+            },
+            'select': function(c,r,i){
+                if (cfg.multistring) {
+                    var v = c.multivalue || '';
+                    v = v ? v + ', '+ r.get('login') : r.get('login');
+                    c.setValue(v);
+                }
+            }
+        },
         queryParam: 'search',
         loadingText: 'Looking up users...',
         displayField: 'login',
@@ -1384,6 +1402,10 @@ TestopiaUpdateMultiple = function(type, params, grid){
                 grid.store.baseParams.addcases = grid.selectedRows.join(',');
                 Ext.getCmp('filtered_txt').show();
             }
+            try {
+                Ext.getCmp('case_details_panel').store.reload();
+            }
+            catch (err){}
             grid.store.reload({
                 callback: function(){
                     if (grid.selectedRows){
@@ -1513,13 +1535,14 @@ saveSearch = function(type,params){
             else {
                 params.current_tab = type;
             }
-            if (params.report == 1) {
+            if (params.report) {
                 loc = 'tr_' + type + '_reports.cgi?';
+                ntype = 1;
             }
             else {
                 loc = 'tr_list_' + type + 's.cgi?';
+                ntype = 0;
             }
-            ntype = 0;
             loc = loc + jsonToSearch(params, '', ['ctype']);
         }
     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
@@ -1538,6 +1561,7 @@ saveSearch = function(type,params){
                     if (Ext.getCmp('dashboard_grid')){
                         Ext.getCmp('dashboard_grid').store.load();
                     }
+                    TestopiaUtil.notify.msg('Saved', 'Your search or report was saved.');
                 },
                 failure: testopiaError
             });
@@ -1694,11 +1718,11 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
 Ext.extend(Testopia.Util.PlanSelector, Ext.Panel);
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/util.js
+ * END OF FILE - /testopia-branch/testopia/js/util.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/attachments.js
+ * START OF FILE - /testopia-branch/testopia/js/attachments.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -2055,11 +2079,11 @@ NewAttachmentPopup = function(object){
 };
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/attachments.js
+ * END OF FILE - /testopia-branch/testopia/js/attachments.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/plan.js
+ * START OF FILE - /testopia-branch/testopia/js/plan.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -2517,9 +2541,13 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                         grid.store.reload();
                     } 
                 },{
-                    text: 'View Test Plan in a New Tab',
+                    text: 'View Test Plan(s) in a New Tab',
                     handler: function(){
-                        window.open('tr_show_plan.cgi?plan_id=' + grid.store.getAt(grid.selindex).get('plan_id'));
+                        var plan_ids = getSelectedObjects(grid,'plan_id').split(',');
+                        var i;
+                        for (i=0; i<plan_ids.length; i+=1) {
+                            window.open('tr_show_plan.cgi?plan_id=' + plan_ids[i]);
+                        }
                     }
                 }]
             });
@@ -2939,11 +2967,11 @@ PlanClonePopup = function(plan){
 };
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/plan.js
+ * END OF FILE - /testopia-branch/testopia/js/plan.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/case.js
+ * START OF FILE - /testopia-branch/testopia/js/case.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -3033,6 +3061,7 @@ CaseGrid = function(params, cfg){
             id: 'case_id',
             fields: [
                {name: "case_id", mapping:"case_id"},
+               {name: "sortkey", mapping:"sortkey"},
                {name: "plan_id", mapping: "plan_id"},
                {name: "alias", mapping:"alias"},
                {name: "summary", mapping:"summary"},
@@ -3062,6 +3091,15 @@ CaseGrid = function(params, cfg){
     
     this.columns = [
         {header: "ID", width: 50, dataIndex: 'case_id', sortable: true, groupRenderer: function(v){return v;}, renderer: tutil.caseLink, hideable: false},
+        {header: "Sort Key", width: 50, sortable: true, dataIndex: 'sortkey',
+         editor: new Ext.grid.GridEditor(
+             new Ext.form.NumberField({
+                 allowBlank: true,
+                 allowDecimals: false,
+                 allowNegative: false
+             })),
+         id: "sortkey"
+        },
 		{header: "Summary", 
          width: 220, 
          dataIndex: 'summary', 
@@ -3519,9 +3557,13 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                         grid.store.reload();
                     } 
                 },{
-                    text: 'View Test Case in a New Tab',
+                    text: 'View Test Case(s) in a New Tab',
                     handler: function(){
-                        window.open('tr_show_case.cgi?case_id=' + grid.store.getAt(grid.selindex).get('case_id'));
+                        var case_ids = getSelectedObjects(grid,'case_id').split(',');
+                        var i;
+                        for (i=0; i<case_ids.length; i+=1) {
+                            window.open('tr_show_case.cgi?case_id=' + case_ids[i]);
+                        }
                     }
                 }]
             });
@@ -3537,6 +3579,9 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
         var ds = this.store;
         var display_value = '';
         switch(gevent.field){
+        case 'sortkey':
+            myparams.sortkey = gevent.value; 
+            break;
         case 'summary':
             myparams.summary = gevent.value; 
             break;
@@ -4263,11 +4308,11 @@ caseClonePopup = function(product_id, cases){
 };
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/case.js
+ * END OF FILE - /testopia-branch/testopia/js/case.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/caserun.js
+ * START OF FILE - /testopia-branch/testopia/js/caserun.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -6023,11 +6068,11 @@ BugsUpdate = function(grid){
     win.show();
 };
 /*
- * END OF FILE - /bnc-branch/testopia/js/caserun.js
+ * END OF FILE - /testopia-branch/testopia/js/caserun.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/run.js
+ * START OF FILE - /testopia-branch/testopia/js/run.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -6879,7 +6924,6 @@ var NewRunForm = function(plan){
     });
     this.on('render', function(){
         casegrid.store.load();
-        Ext.getCmp('new_run_manager').setValue(Testopia.user.login);
     });
 };
 Ext.extend(NewRunForm, Ext.Panel);
@@ -7405,11 +7449,11 @@ Testopia.BugReport = function(params){
 };
 Ext.extend(Testopia.BugReport, Ext.grid.GridPanel);
 /*
- * END OF FILE - /bnc-branch/testopia/js/run.js
+ * END OF FILE - /testopia-branch/testopia/js/run.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/build.js
+ * START OF FILE - /testopia-branch/testopia/js/build.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7615,7 +7659,7 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
             params: myparams,
             success: function(f,a){
                 if (a.result.build_id){
-                    e.record.set('build_id', a.result.build_id);
+                    e.record.set('id', a.result.build_id);
                 }
                 ds.commitChanges();
             },
@@ -7641,11 +7685,11 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/build.js
+ * END OF FILE - /testopia-branch/testopia/js/build.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/category.js
+ * START OF FILE - /testopia-branch/testopia/js/category.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7873,11 +7917,11 @@ confirmCaseCategoryDelete = function(){
 
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/category.js
+ * END OF FILE - /testopia-branch/testopia/js/category.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/environment.js
+ * START OF FILE - /testopia-branch/testopia/js/environment.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8200,11 +8244,11 @@ Ext.extend(EnvironmentGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/environment.js
+ * END OF FILE - /testopia-branch/testopia/js/environment.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/search.js
+ * START OF FILE - /testopia-branch/testopia/js/search.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8576,7 +8620,7 @@ CaseRunSearch = function(params){
     this.params = params;
     CaseRunSearch.superclass.constructor.call(this,{
         title: 'Case-Run Search',
-        id: 'case_run_search_panel',
+        id: 'caserun_search_panel',
         layout:'fit',
         buttons:[{
             text: 'Submit',
@@ -8730,6 +8774,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             id:'run-ctx-menu',
             items: [{
                 text: 'Open in a new tab', 
+                disabled: d ? false : true,
                 handler: function(){
                     var r = grid.store.getAt(index);
                     if (r.get('type') == 0){
@@ -8871,7 +8916,8 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                     id: 'search' + r.get('name') + i,
                     closable: true,
                     autoScroll: true,
-                    tools: PortalTools
+                    tools: PortalTools,
+                    url: urls[i]
                 });
                 Ext.getCmp(current_col).add(newPortlet);
                 Ext.getCmp(current_col).doLayout();
@@ -9003,11 +9049,11 @@ PortalTools = [{
 }];
 
 /*
- * END OF FILE - /bnc-branch/testopia/js/search.js
+ * END OF FILE - /testopia-branch/testopia/js/search.js
  */
 
 /*
- * START OF FILE - /bnc-branch/testopia/js/tags.js
+ * START OF FILE - /testopia-branch/testopia/js/tags.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9319,7 +9365,138 @@ TagsUpdate = function(type, grid){
 };
          
 /*
- * END OF FILE - /bnc-branch/testopia/js/tags.js
+ * END OF FILE - /testopia-branch/testopia/js/tags.js
+ */
+
+/*
+ * START OF FILE - /testopia-branch/testopia/js/diff-tabs.js
+ */
+Ext.ux.TabCloseMenu = function(){
+    var tabs, menu, ctxItem;
+    this.init = function(tp){
+        tabs = tp;
+        tabs.on('contextmenu', onContextMenu);
+    }
+
+    function onContextMenu(ts, item, e){
+        if(!menu){ // create context menu on first right click
+            menu = new Ext.menu.Menu([{
+                id: tabs.id + '-close',
+                text: 'Close Tab',
+                handler : function(){
+                    tabs.remove(ctxItem);
+                }
+            },{
+                id: tabs.id + '-close-others',
+                text: 'Close Other Tabs',
+                handler : function(){
+                    tabs.items.each(function(item){
+                        if(item.closable && item != ctxItem){
+                            tabs.remove(item);
+                        }
+                    });
+                }
+            }]);
+        }
+        ctxItem = item;
+        var items = menu.items;
+        items.get(tabs.id + '-close').setDisabled(!item.closable);
+        var disableOthers = true;
+        tabs.items.each(function(){
+            if(this != item && this.closable){
+                disableOthers = false;
+                return false;
+            }
+        });
+        items.get(tabs.id + '-close-others').setDisabled(disableOthers);
+        menu.showAt(e.getPoint());
+    }
+};
+
+diff_tab_panel = function(type, id, doctype){
+	var self = this;
+
+	var doc_store = new Ext.data.JsonStore({
+		url: "tr_history.cgi",
+		baseParams: {action: 'getversions',
+		             type:   type,
+					 id:     id},
+		root: 'versions',
+        fields: [
+            {name: 'name', mapping: 'name',
+			 name: 'id', mapping: 'id'}
+        ]
+	})
+
+	
+	diff_tab_panel.superclass.constructor.call(this, {
+		title:  'Test Panel',
+		height: 500,
+        resizeTabs:true, // turn on tab resizing
+        minTabWidth: 115,
+        tabWidth:135,
+        enableTabScroll:true,
+        defaults: {autoScroll:true},
+        plugins: new Ext.ux.TabCloseMenu(),
+		activeTab: 0,
+		tbar: [  
+		          new Ext.form.ComboBox({
+				  						  displayField: 'name',
+            							  valueField: 'id',
+                                          name: 'product',
+                                          id: 'product_combo',
+                                          fieldLabel: "Product",
+    		                              store: doc_store,
+                                          emptyText: 'Select a version...',
+                                          width: 200
+		                               }),
+		          " Right: ",
+		          new Ext.Toolbar.Spacer(),					   
+		          new Ext.form.ComboBox({
+		          }),
+		          " HTML: ",
+		          new Ext.form.Radio({
+		  	                          id:    'format',
+				                      value: 'html',
+							          checked: true
+		                            }),
+		          " Raw: ",
+		          new Ext.form.Radio({
+		  	                          id:    'format',
+				                      value: 'raw'
+		                             }),								   
+		          new Ext.Button({
+		                          text:    'Diff',
+		                          handler: addTab
+		                        }),
+		          new Ext.Toolbar.Separator(),							 
+		          "Show Version: ",
+		          new Ext.form.ComboBox({
+		                               }),							 
+		          new Ext.Button({
+		                          text:    'Show',
+		                          handler: addTab
+		                        })
+              ]
+    });
+	
+	
+    function addTab() {
+        self.add({
+            title:   'New Tab ',
+            iconCls: 'tabs',
+            html:    'diff_text',
+            closable:true
+        }).show();
+    }								  
+
+}
+
+Ext.extend(diff_tab_panel, Ext.TabPanel);
+
+
+/*
+ * END OF FILE - /testopia-branch/testopia/js/diff-tabs.js
  */
 
 /*

@@ -1,0 +1,131 @@
+
+[WARNING] Found an undeclared symbol: Ext
+;CASERUN_DELETE_WARNING="You are about to remove the selected test cases from this run including all history. This action cannot be undone. Are you sure you want to continue?";ENVIRONMENT_DELETE_WARNING="You are about to delete the selected test environment including associated test case data. This action cannot be undone. Are you sure you want to continue?"; ---> Ext <--- .state.Manager.setProvider(new Ext.
+
+[WARNING] Found an undeclared symbol: f
+r,ri,ci,s){ ---> f <--- =this.getColumnModel().getCellEditor(ci
+
+[WARNING] Found an undeclared symbol: i
+[key]=="object"){for( ---> i <--- =0;i<params[key].
+
+[WARNING] Found an undeclared symbol: win
+grid,"case_id")},grid); ---> win <--- .close();}});}
+
+[WARNING] Found an undeclared symbol: run
+fieldLabel:"Category",params:{product_id: ---> run <--- .product_id}})],buttons:[
+
+[WARNING] Found an undeclared symbol: ids
+("caserun_grid")){type="caserun"; ---> ids <--- =getSelectedObjects(Ext.getCmp("caserun_grid"),
+
+[WARNING] Found an undeclared symbol: j
+new Array(list);}for( ---> j <--- =0;j<list.length;j
+
+[WARNING] Found an undeclared symbol: k
+].type=="select-multiple"){for( ---> k <--- =0;k<f[i].
+
+[WARNING] Found an undeclared symbol: ds
+:"img_button_16x",handler:function (){ ---> ds <--- .reload();}}]})
+
+[WARNING] The symbol tt is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+on("render",function (){var  ---> tt <--- =new Ext.ToolTip({target:type
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+mapping:"datasize"}]});var  ---> ds <--- =this.store;this.columns=[
+
+[WARNING] The symbol sm is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+(grid,index,e){var  ---> sm <--- =this.selectionModel;var object=this.
+
+[WARNING] The symbol object is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+{var sm=this.selectionModel;var  ---> object <--- =this.object;if(!this.
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+store=new TestPlanStore(params);var  ---> ds <--- =this.store;this.columns=[
+
+[WARNING] The symbol p is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+form=this.getForm();var  ---> p <--- =form.getValues();if(form
+
+[WARNING] The symbol win is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+grid,"case_id")},grid); ---> win <--- .close();}});}
+
+[WARNING] The symbol display_value is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+;var ds=this.store;var  ---> display_value <--- ="";switch(gevent.field){
+
+[WARNING] The symbol testopia_form is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+params;this.run=run;var  ---> testopia_form <--- =new Ext.form.BasicForm("testopia_helper_frm",
+
+[WARNING] The symbol r is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+"Copy or Link Selected Test Cases to Plan(s)... ",handler:function (){var  ---> r <--- =grid.getSelectionModel().getSelected()
+
+[WARNING] The symbol t is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+);CaseRun=function (){var  ---> t <--- =new TestopiaUtil();this.caserun_id;
+
+[WARNING] The symbol bug_panel is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+};newbug=function (){var  ---> bug_panel <--- =new Ext.Panel({id:"new_bug_panel"
+
+[WARNING] The symbol r is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+"img_button_16x",handler:function (){var  ---> r <--- =grid.store.getAt(index);
+
+[WARNING] The symbol foo is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+,validator:function (a){var  ---> foo <--- =1;return false;}});
+
+[WARNING] The symbol p is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+=getSelectedObjects(pgrid,"plan_id");var  ---> p <--- =form.getValues();if(form
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+["name","query"]});var  ---> ds <--- =this.store;this.columns=[
+
+[WARNING] The symbol name is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+(sm,index,r){var  ---> name <--- =r.get("name");Ext.
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+CaseCategoryStore({},false);var  ---> ds <--- =this.store;this.columns=[
+
+[WARNING] The symbol productLink is declared but is apparently never used.
+This code can probably be written in a more efficient way.
++'">'+id+"</a>";}function  ---> productLink <--- (id){return '<a href="tr_show_product.cgi?product_id='+id+'">'
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+new EnvironmentStore(params,false);var  ---> ds <--- =this.store;this.columns=[
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+,"author","type"]});var  ---> ds <--- =this.store;var current_col="dashboard_leftcol";
+
+[WARNING] The symbol name is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+.store.getAt(index);var  ---> name <--- =r.get("name");var q
+
+[WARNING] The symbol tag_id is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+(title,type,product_id){var  ---> tag_id <--- ;this.product_id=product_id;this.store
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+mapping:"plan_count"}]});var  ---> ds <--- =this.store;this.columns=[
+
+[WARNING] The symbol filter is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+product_id],true)}];var  ---> filter <--- =new Ext.form.TextField({allowBlank
+
+[WARNING] The symbol ds is declared but is apparently never used.
+This code can probably be written in a more efficient way.
+:"img_button_16x",handler:function (){ ---> ds <--- .reload();}}]})

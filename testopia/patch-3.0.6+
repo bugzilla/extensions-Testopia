@@ -5,8 +5,8 @@ Index: Bugzilla/User.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/User.pm,v
 retrieving revision 1.148.2.6
 diff -u -r1.148.2.6 User.pm
---- Bugzilla/User.pm	28 Nov 2007 19:33:34 -0000	1.148.2.6
-+++ Bugzilla/User.pm	29 Feb 2008 23:19:44 -0000
+--- Bugzilla/User.pm    28 Nov 2007 19:33:34 -0000  1.148.2.6
++++ Bugzilla/User.pm    29 Feb 2008 23:19:44 -0000
 @@ -330,6 +330,16 @@
      return $self->{queries_available};
  }
@@ -103,8 +103,8 @@ Index: Bugzilla/Error.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Error.pm,v
 retrieving revision 1.19.2.3
 diff -u -r1.19.2.3 Error.pm
---- Bugzilla/Error.pm	16 Aug 2007 20:37:43 -0000	1.19.2.3
-+++ Bugzilla/Error.pm	29 Feb 2008 23:19:44 -0000
+--- Bugzilla/Error.pm   16 Aug 2007 20:37:43 -0000  1.19.2.3
++++ Bugzilla/Error.pm   29 Feb 2008 23:19:44 -0000
 @@ -32,6 +32,7 @@
  use Bugzilla::WebService::Constants;
  use Bugzilla::Util;
@@ -135,8 +135,8 @@ Index: Bugzilla/Constants.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Constants.pm,v
 retrieving revision 1.68.2.11
 diff -u -r1.68.2.11 Constants.pm
---- Bugzilla/Constants.pm	9 Jan 2008 07:16:16 -0000	1.68.2.11
-+++ Bugzilla/Constants.pm	29 Feb 2008 23:19:44 -0000
+--- Bugzilla/Constants.pm   9 Jan 2008 07:16:16 -0000   1.68.2.11
++++ Bugzilla/Constants.pm   29 Feb 2008 23:19:44 -0000
 @@ -126,6 +126,7 @@
      ERROR_MODE_WEBPAGE
      ERROR_MODE_DIE
@@ -158,8 +158,8 @@ Index: template/en/default/global/header.html.tmpl
 RCS file: /cvsroot/mozilla/webtools/bugzilla/template/en/default/global/header.html.tmpl,v
 retrieving revision 1.49.2.1
 diff -u -r1.49.2.1 header.html.tmpl
---- template/en/default/global/header.html.tmpl	29 Jul 2007 19:24:04 -0000	1.49.2.1
-+++ template/en/default/global/header.html.tmpl	29 Feb 2008 23:19:45 -0000
+--- template/en/default/global/header.html.tmpl 29 Jul 2007 19:24:04 -0000  1.49.2.1
++++ template/en/default/global/header.html.tmpl 29 Feb 2008 23:19:45 -0000
 @@ -96,6 +96,7 @@
      [% IF user.settings.skin.value != 'standard' %]
        [% user_skin = user.settings.skin.value %]
@@ -168,26 +168,13 @@ diff -u -r1.49.2.1 header.html.tmpl
      [% style_urls.unshift('skins/standard/global.css') %]
  
      [%# CSS cascade, part 1: Standard Bugzilla stylesheet set (persistent).
-Index: template/en/default/global/common-links.html.tmpl
-===================================================================
-RCS file: /cvsroot/mozilla/webtools/bugzilla/template/en/default/global/common-links.html.tmpl,v
-retrieving revision 1.7
-diff -u -r1.7 common-links.html.tmpl
---- template/en/default/global/common-links.html.tmpl	28 Dec 2006 16:48:06 -0000	1.7
-+++ template/en/default/global/common-links.html.tmpl	29 Feb 2008 23:19:45 -0000
-@@ -103,3 +103,4 @@
-     [% END %]
-   [% END %]
- </ul>
-+[% Hook.process("links") %]
-\ No newline at end of file
 Index: editusers.cgi
 ===================================================================
 RCS file: /cvsroot/mozilla/webtools/bugzilla/editusers.cgi,v
 retrieving revision 1.141.2.1
 diff -u -r1.141.2.1 editusers.cgi
---- editusers.cgi	19 Nov 2007 12:45:31 -0000	1.141.2.1
-+++ editusers.cgi	29 Feb 2008 23:19:44 -0000
+--- editusers.cgi   19 Nov 2007 12:45:31 -0000  1.141.2.1
++++ editusers.cgi   29 Feb 2008 23:19:44 -0000
 @@ -229,6 +229,8 @@
      # Lock tables during the check+update session.
      $dbh->bz_lock_tables('profiles WRITE',
@@ -202,8 +189,8 @@ Index: votes.cgi
 RCS file: /cvsroot/mozilla/webtools/bugzilla/votes.cgi,v
 retrieving revision 1.50.2.1
 diff -u -r1.50.2.1 votes.cgi
---- votes.cgi	10 Jun 2007 10:20:52 -0000	1.50.2.1
-+++ votes.cgi	29 Feb 2008 23:19:44 -0000
+--- votes.cgi   10 Jun 2007 10:20:52 -0000  1.50.2.1
++++ votes.cgi   29 Feb 2008 23:19:44 -0000
 @@ -130,8 +130,8 @@
  
      my $canedit = (Bugzilla->params->{'usevotes'} && $userid == $who) ? 1 : 0;
@@ -220,8 +207,8 @@ Index: Bugzilla/WebService/User.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/WebService/User.pm,v
 retrieving revision 1.4.2.1
 diff -u -r1.4.2.1 User.pm
---- Bugzilla/WebService/User.pm	18 Sep 2007 23:30:20 -0000	1.4.2.1
-+++ Bugzilla/WebService/User.pm	24 Jun 2008 22:09:56 -0000
+--- Bugzilla/WebService/User.pm 18 Sep 2007 23:30:20 -0000  1.4.2.1
++++ Bugzilla/WebService/User.pm 24 Jun 2008 22:09:56 -0000
 @@ -110,6 +110,32 @@
      return { id => type('int')->value($user->id) };
  }
@@ -260,8 +247,8 @@ Index: Bugzilla/Install/Filesystem.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Install/Filesystem.pm,v
 retrieving revision 1.18.2.2
 diff -u -r1.18.2.2 Filesystem.pm
---- Bugzilla/Install/Filesystem.pm	17 Aug 2007 21:13:29 -0000	1.18.2.2
-+++ Bugzilla/Install/Filesystem.pm	29 Feb 2008 23:19:45 -0000
+--- Bugzilla/Install/Filesystem.pm  17 Aug 2007 21:13:29 -0000  1.18.2.2
++++ Bugzilla/Install/Filesystem.pm  29 Feb 2008 23:19:45 -0000
 @@ -110,6 +110,8 @@
          'runtests.pl'     => { perms => $owner_executable },
          'testserver.pl'   => { perms => $ws_executable },
@@ -294,8 +281,8 @@ Index: Bugzilla/DB/Mysql.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/DB/Mysql.pm,v
 retrieving revision 1.49
 diff -u -r1.49 Mysql.pm
---- Bugzilla/DB/Mysql.pm	4 Feb 2007 16:59:30 -0000	1.49
-+++ Bugzilla/DB/Mysql.pm	29 Feb 2008 23:19:44 -0000
+--- Bugzilla/DB/Mysql.pm    4 Feb 2007 16:59:30 -0000   1.49
++++ Bugzilla/DB/Mysql.pm    29 Feb 2008 23:19:44 -0000
 @@ -613,6 +613,9 @@
                      if ($table eq 'bugs' && $name eq 'short_desc') {
                          $self->bz_drop_index('bugs', 'bugs_short_desc_idx');
@@ -311,8 +298,8 @@ Index: Bugzilla/Bug.pm
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Bug.pm,v
 retrieving revision 1.171.2.2
 diff -u -r1.171.2.2 Bug.pm
---- Bugzilla/Bug.pm	17 Oct 2007 22:50:22 -0000	1.171.2.2
-+++ Bugzilla/Bug.pm	27 Mar 2008 22:03:25 -0000
+--- Bugzilla/Bug.pm 17 Oct 2007 22:50:22 -0000  1.171.2.2
++++ Bugzilla/Bug.pm 27 Mar 2008 22:03:25 -0000
 @@ -1314,6 +1314,14 @@
          "SELECT bug_id FROM bugs WHERE alias = ?", undef, $alias);
  }
