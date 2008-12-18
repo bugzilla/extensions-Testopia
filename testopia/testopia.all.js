@@ -1402,6 +1402,10 @@ TestopiaUpdateMultiple = function(type, params, grid){
                 grid.store.baseParams.addcases = grid.selectedRows.join(',');
                 Ext.getCmp('filtered_txt').show();
             }
+            try {
+                Ext.getCmp('case_details_panel').store.reload();
+            }
+            catch (err){}
             grid.store.reload({
                 callback: function(){
                     if (grid.selectedRows){
@@ -1531,13 +1535,14 @@ saveSearch = function(type,params){
             else {
                 params.current_tab = type;
             }
-            if (params.report == 1) {
+            if (params.report) {
                 loc = 'tr_' + type + '_reports.cgi?';
+                ntype = 1;
             }
             else {
                 loc = 'tr_list_' + type + 's.cgi?';
+                ntype = 0;
             }
-            ntype = 0;
             loc = loc + jsonToSearch(params, '', ['ctype']);
         }
     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
@@ -1556,6 +1561,7 @@ saveSearch = function(type,params){
                     if (Ext.getCmp('dashboard_grid')){
                         Ext.getCmp('dashboard_grid').store.load();
                     }
+                    TestopiaUtil.notify.msg('Saved', 'Your search or report was saved.');
                 },
                 failure: testopiaError
             });
@@ -6918,7 +6924,7 @@ var NewRunForm = function(plan){
     });
     this.on('render', function(){
         casegrid.store.load();
-        Ext.getCmp('new_run_manager').setValue(Testopia.user.login);
+        Ext.getCmp('new_run_manager').setValue(Testopia_user.login);
     });
 };
 Ext.extend(NewRunForm, Ext.Panel);
@@ -8769,6 +8775,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             id:'run-ctx-menu',
             items: [{
                 text: 'Open in a new tab', 
+                disabled: d ? false : true,
                 handler: function(){
                     var r = grid.store.getAt(index);
                     if (r.get('type') == 0){
@@ -8887,7 +8894,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                         plain: true,
                         shadow: false,
                         items: [new Ext.form.TextField({
-                            value: encodeURI(l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia.userid),
+                            value: encodeURI(l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia_user.id),
                             width: 287
                         })]
                     });
@@ -8910,7 +8917,8 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                     id: 'search' + r.get('name') + i,
                     closable: true,
                     autoScroll: true,
-                    tools: PortalTools
+                    tools: PortalTools,
+                    url: urls[i]
                 });
                 Ext.getCmp(current_col).add(newPortlet);
                 Ext.getCmp(current_col).doLayout();
