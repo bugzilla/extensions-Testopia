@@ -37,7 +37,7 @@ import.
 #************************************************** Uses ****************************************************#
 use strict;
 use CGI;
-use lib ".";
+use lib qw(. lib);
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Config;

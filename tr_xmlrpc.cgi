@@ -24,7 +24,7 @@ sub BEGIN
 }
 
 use strict;
-use lib qw(.);
+use lib qw(. lib);
 
 use XMLRPC::Transport::HTTP;
 use Bugzilla;

@@ -21,7 +21,7 @@
 #                 Tyler Peterson <typeterson@novell.com>
 
 use strict;
-use lib ".";
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
