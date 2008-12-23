@@ -315,10 +315,6 @@ $schema->{test_attachments} = {
         who               => {
             TYPE       => 'INT3',
             NOTNULL    => 1,
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-            }
         },
         creation_ts => { TYPE => 'DATETIME', NOTNULL => 1 },
         action      => { TYPE => 'MEDIUMTEXT' },
@@ -367,11 +363,6 @@ $schema->{test_attachments} = {
         userid => {
             TYPE       => 'INT3',
             NOTNULL    => 1,
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-                DELETE => 'CASCADE'
-            }
         },
     ],
     INDEXES => [
@@ -407,11 +398,6 @@ $schema->{test_attachments} = {
         userid => {
             TYPE       => 'INT3',
             NOTNULL    => 1,
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-                DELETE => 'CASCADE'
-            }
         },
     ],
     INDEXES => [
@@ -446,11 +432,6 @@ $schema->{test_attachments} = {
         userid => {
             TYPE       => 'INT3',
             NOTNULL    => 1,
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-                DELETE => 'CASCADE'
-            }
         },
     ],
     INDEXES => [
@@ -476,10 +457,6 @@ $schema->{test_attachments} = {
         author_id => {
             TYPE       => 'INT3',
             NOTNULL    => 1,
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-            }
         },
         type_id => {
             TYPE       => 'INT2',
@@ -569,11 +546,6 @@ $schema->{test_attachments} = {
         who               => {
             TYPE       => 'INT3',
             NOTNULL    => 1,
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-                DELETE => 'CASCADE'
-            }
         },
         creation_ts => { TYPE => 'DATETIME', NOTNULL => 1 },
         plan_text   => { TYPE => 'MEDIUMTEXT' },
