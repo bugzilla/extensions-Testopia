@@ -133,6 +133,7 @@ PlanGrid = function(params,cfg){
         id: cfg.id || 'plan_grid',
         layout: 'fit',
         region: 'center',
+        stripeRows:true,
         loadMask: {msg:'Loading Test Plans...'},
         autoExpandColumn: "plan_name",
         autoScroll: true,

@@ -404,7 +404,7 @@ CaseRunGrid = function(params, run){
          editor: new Ext.grid.GridEditor(
              new UserLookup({id: 'caserun_assignee'})
          ),renderer: TestopiaComboRenderer.createDelegate(this)},
-        {header: "Tested By", width: 150, sortable: true, dataIndex: 'testedby'},
+        {header: "Tested By", width: 150, sortable: true, dataIndex: 'testedby', hidden: true},
         {header: "Closed", width: 90, sortable: true, dataIndex: 'close_date'},
 		{header: "Status", width: 30, sortable: true, dataIndex: 'status', align: 'center', renderer: t.statusIcon},
         {header: "Priority", width: 60, sortable: true, dataIndex: 'priority',
@@ -437,11 +437,6 @@ CaseRunGrid = function(params, run){
         }
     ];
 
-    var imgButtonTpl = new Ext.Template(
-        '<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>' +
-        '<td><button type="button"><img src="{0}"></button></td>' +
-        '</tr></tbody></table>');
-    
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
     this.bbar = new TestopiaPager('caserun', this.store);
     this.tbar = new Ext.Toolbar({
@@ -563,7 +558,6 @@ CaseRunGrid = function(params, run){
                 icon: 'testopia/img/edit.png',
                 iconCls: 'img_button_16x',
                 tooltip: 'Edit Selected Test Case',
-//                disabled: true,
                 handler: function(){
                     editFirstSelection(Ext.getCmp('caserun_grid'));
                 }
@@ -573,7 +567,6 @@ CaseRunGrid = function(params, run){
                 id: 'caserun_grid_delete_btn',
                 icon: 'testopia/img/delete.png',
                 iconCls: 'img_button_16x',
-//                disabled: true,
                 tooltip: 'Remove Selected Test Cases from This Run',
                 handler: this.deleteList.createDelegate(this)
             },
@@ -618,10 +611,11 @@ CaseRunGrid = function(params, run){
                 }
             },'rowselect': function (sm,n,r){
                 Ext.getCmp('case_details_panel').enable();
-                Ext.getCmp('tb_build').enable();
-                Ext.getCmp('tb_environment').enable();
-                Ext.getCmp('update_bugs').enable();
                 if (Ext.getCmp('run_status_cycle').text == 'RUNNING'){
+                    Ext.getCmp('summary_tb').enable();
+                    Ext.getCmp('tb_build').enable();
+                    Ext.getCmp('tb_environment').enable();
+                    Ext.getCmp('update_bugs').enable();
                     var items = sm.grid.getTopToolbar().items.items;
                     for (var i=0; i < items.length; i++){
                         items[i].enable();
@@ -1068,8 +1062,7 @@ CaseRun = function(){
         Ext.getCmp('effect_editor').setValue(r[0].get('results'));
         Ext.getCmp('setup_editor').setValue(r[0].get('setup'));
         Ext.getCmp('breakdown_editor').setValue(r[0].get('breakdown'));
-        Ext.getCmp('summary_tb').items.items[0].destroy();
-        Ext.getCmp('summary_tb').add(new Ext.Toolbar.TextItem('Case ' + r[0].get('case_id') + ' - ' + r[0].get('summary')));
+        Ext.getCmp('summary_tb').items.items[7].td.innerHTML = '<span class="ytb-text">' +'Case ' + r[0].get('case_id') + ' - ' + r[0].get('summary');
     });
     
     appendNote = function(){
@@ -1104,8 +1097,83 @@ CaseRun = function(){
     }
     var summary_tb = new Ext.Toolbar({
         id: 'summary_tb',
-        items: [new Ext.Toolbar.TextItem('')]
-    })
+        disabled: true,
+        items: [new Ext.Button({
+                template:imgButtonTpl,
+                text: 'testopia/img/IDLE.gif',
+                tooltip: 'Mark as IDLE (Not Run)',
+                handler: function(){
+                    TestopiaUpdateMultiple('caserun', { status_id: 1, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
+                }
+            }),new Ext.Button({
+                template:imgButtonTpl,
+                text: 'testopia/img/PASSED.gif',
+                tooltip: 'Mark as PASSED',
+                handler: function(){
+                    TestopiaUpdateMultiple('caserun', { status_id: 2, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
+                }
+            }),new Ext.Button({
+                template:imgButtonTpl,
+                text: 'testopia/img/FAILED.gif',
+                tooltip: 'Mark as FAILED',
+                handler: function(){
+                    TestopiaUpdateMultiple('caserun', { status_id: 3, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
+                }
+            }),new Ext.Button({
+                template:imgButtonTpl,
+                text: 'testopia/img/RUNNING.gif',
+                tooltip: 'Mark as RUNNING',
+                handler: function(){
+                    var reassign = 0;
+                    var isowner = 1;
+                    var sel = Ext.getCmp('caserun_grid').getSelectionModel().getSelections();
+                    for (var i=0; i < sel.length; i++){
+                        if (sel[i].get('assignee') != user_login){
+                            isowner = 0;
+                            break;
+                        }
+                    }
+                    if (isowner == 0){
+                        Ext.Msg.show({
+                            title: "Reassign Test Case?",
+                            msg: 'Setting this test case to Running will lock it so that only the assignee can update it. Would you like to make yourself the assignee?',
+                            buttons: Ext.MessageBox.YESNO,
+                            icon: Ext.MessageBox.QUESTION,
+                            fn: function(btn){
+                                if (btn == 'yes'){
+                                    reassign = 1;
+                                }
+                                TestopiaUpdateMultiple('caserun', { status_id: 4, reassign: reassign, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
+                            }
+                        });
+                    }
+                    else {
+                        TestopiaUpdateMultiple('caserun', { status_id: 4, reassign: reassign, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
+                    }
+                }
+            }),new Ext.Button({
+                template:imgButtonTpl,
+                text: 'testopia/img/PAUSED.gif',
+                tooltip: 'Mark as PAUSED',
+                handler: function(){
+                    TestopiaUpdateMultiple('caserun', { status_id: 5, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
+                }
+            }),new Ext.Button({
+                template:imgButtonTpl,
+                text: 'testopia/img/BLOCKED.gif',
+                tooltip: 'Mark as BLOCKED',
+                handler: function(){
+                    TestopiaUpdateMultiple('caserun', { status_id: 6, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
+                }
+            }),new Ext.Button({
+                template:imgButtonTpl,
+                text: 'testopia/img/ERROR.gif',
+                tooltip: 'Mark as ERROR',
+                handler: function(){
+                    TestopiaUpdateMultiple('caserun', { status_id: 7, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
+                }
+            }),new Ext.Toolbar.TextItem('')]
+    });
     CaseRun.superclass.constructor.call(this,{
         id: 'case_details_panel',
         layout: 'fit',

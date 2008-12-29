@@ -421,10 +421,12 @@ Ext.onReady(function(){
                         submitEdits('status', item.text);
                         if (item.text == 'STOPPED'){
                             Ext.getCmp('caserun_grid_tb').disable();
+                            Ext.getCmp('summary_tb').disable();
                         }
                         else {
                             if (Ext.getCmp('caserun_grid').getSelectionModel().getCount() > 0){
                                 Ext.getCmp('caserun_grid_tb').enable();
+                                Ext.getCmp('summary_tb').enable();
                             }
                         }
                     }

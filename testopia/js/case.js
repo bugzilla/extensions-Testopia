@@ -135,12 +135,12 @@ CaseGrid = function(params, cfg){
                  allowBlank: false
              }))
         },
-		{header: "Author", width: 150, sortable: true, dataIndex: 'author'},
+		{header: "Author", width: 150, sortable: true, dataIndex: 'author', hidden: true},
         {header: "Default Tester", width: 150, sortable: true, dataIndex: 'tester',
          editor: new Ext.grid.GridEditor(new UserLookup({hiddenName:'tester'})),
          renderer: TestopiaComboRenderer.createDelegate(this)},
-		{header: "Created", width: 110, sortable: true, dataIndex: 'creation_date'},
-        {header: "Last Modified", width: 110, sortable: true, dataIndex: 'modified'},
+		{header: "Created", width: 110, sortable: true, dataIndex: 'creation_date', hidden: true},
+        {header: "Last Modified", width: 110, sortable: true, dataIndex: 'modified', hidden: true},
         {header: "Priority", width: 100, sortable: true, dataIndex: 'priority',
          editor: new Ext.grid.GridEditor(
              new PriorityCombo({
@@ -167,14 +167,14 @@ CaseGrid = function(params, cfg){
         {header: "Status", width: 100, sortable: true, dataIndex: 'status',
          editor: new Ext.grid.GridEditor(new CaseStatusCombo('status')),
          renderer: TestopiaComboRenderer.createDelegate(this)},
-        {header: "Requirement", width: 40, sortable: true, dataIndex: 'requirement',
+        {header: "Requirement", width: 40, sortable: true, dataIndex: 'requirement', hidden: true,
         editor: new Ext.grid.GridEditor(
             new Ext.form.TextField({
                 name: 'requirement'
             }))
         },
-        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', renderer: tutil.plan_link, groupRenderer: function(v){return v;}},
-        {header: "Run Count", width: 40, sortable: false, dataIndex: 'run_count'}
+        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', hidden: true, renderer: tutil.plan_link, groupRenderer: function(v){return v;}},
+        {header: "Run Count", width: 40, sortable: false, dataIndex: 'run_count', hidden: true}
     ];
     this.view = new Ext.grid.GroupingView({
         forceFit: true,
@@ -188,6 +188,7 @@ CaseGrid = function(params, cfg){
         id: cfg.id || 'case_grid',
         loadMask: {msg:'Loading Test Cases...'},
         layout: 'fit',
+        stripeRows:true,
         region: 'center',
         autoExpandColumn: "case_summary",
         autoScroll: true,
