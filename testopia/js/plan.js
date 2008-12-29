@@ -644,7 +644,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
         id: 'plan_clone_build_chooser',
         mode: 'local',
         hiddenName: 'new_run_build',
-        params: {product_id: plan.product_id}
+        params: {product_id: plan.product_id, activeonly: 1}
     });
     var ebox = new EnvironmentCombo({
         fieldLabel: 'Select an Environment',

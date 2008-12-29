@@ -64,7 +64,7 @@ RunGrid = function(params, cfg){
          hiddenName: 'build',
          id: 'run_grid_build',
          mode: 'remote',
-         params: {product_id: params.product_id}
+         params: {product_id: params.product_id, activeonly: 1}
     });
     var ecombo = new EnvironmentCombo({
          hiddenName: 'environment',
@@ -738,7 +738,7 @@ var NewRunForm = function(plan){
                             forceSelection: false,
                             allowBlank: false,
                             typeAhead: true,
-                            params: {product_id: plan.product_id},
+                            params: {product_id: plan.product_id, activeonly: 1},
                             emptyText: 'Select or type a new name'
                         }),
                         new EnvironmentCombo({
@@ -867,7 +867,7 @@ RunClonePanel = function(product_id, runs, caselist){
         id: 'run_clone_build_chooser',
         mode: 'local',
         hiddenName: 'new_run_build',
-        params: {product_id: product_id},
+        params: {product_id: product_id, activeonly: 1},
         validator: function(a){
             var foo = 1;
             return false;
