@@ -81,20 +81,19 @@ RunGrid = function(params, cfg){
 
     this.columns = [
         {header: "Run ID", width: 30,  dataIndex: "run_id", id: "run_id", sortable: true, renderer: tutil.runLink, hideable: false}, 
-        {header: "Plan ID", width: 30, dataIndex: "plan_id", sortable: true, renderer: tutil.planLink},
         {header: "Summary", width: 220, dataIndex: "summary", id: "run_name", sortable: true,
          editor: new Ext.grid.GridEditor(
             new Ext.form.TextField({
                 allowBlank: false
             })
          )}, 
-        {header: "Manager Name", width: 150, dataIndex: "manager", id:"manager_name_col", sortable: true,
+        {header: "Manager Name", width: 150, dataIndex: "manager", id:"manager_name_col", sortable: true, hidden: true,
          editor: new Ext.grid.GridEditor(new UserLookup({hiddenName:'manager'})),
          renderer: TestopiaComboRenderer.createDelegate(this)
         },
-        {header: "Start Date", width: 110, dataIndex: "start_date", sortable: true}, 
-        {header: "Stop Date", width: 110, dataIndex: "stop_date", sortable: true}, 
-        {header: "Build", width: 30, dataIndex: "build", id: "build_col", sortable: true,
+        {header: "Start Date", width: 110, dataIndex: "start_date", sortable: true, hidden: true}, 
+        {header: "Stop Date", width: 110, dataIndex: "stop_date", sortable: true, hidden: true}, 
+        {header: "Build", width: 110, dataIndex: "build", id: "build_col", sortable: true,
          editor: new Ext.grid.GridEditor(
             bcombo, 
             {listeners: {
@@ -123,9 +122,9 @@ RunGrid = function(params, cfg){
 
         ),renderer: TestopiaComboRenderer.createDelegate(this)
         }, 
-        {header: "Status", width: 110, dataIndex:"status",id: "status",sortable: true}, 
-        {header: "Case Count", width: 30, dataIndex: "case_count", sortable: false}, 
-        {header: "Product Version", width: 50, dataIndex: "product_version", id: "product_version",sortable: true,
+        {header: "Status", width: 50, dataIndex:"status",id: "status",sortable: true}, 
+        {header: "Case Count", width: 30, dataIndex: "case_count", sortable: false, hidden: true}, 
+        {header: "Product Version", width: 150, dataIndex: "product_version", id: "product_version",sortable: true, hidden: true,
         editor: new Ext.grid.GridEditor(
             vcombo,
             {listeners: {
@@ -139,6 +138,7 @@ RunGrid = function(params, cfg){
              }}
         ),renderer: TestopiaComboRenderer.createDelegate(this)
         },
+        {header: "Plan ID", width: 30, dataIndex: "plan_id", sortable: true, hidden: true, renderer: tutil.planLink},
         {header: "Complete", width: 110, dataIndex:"complete_pct",sortable: false, hideable: true,
         renderer: function(v,m,r){
             var val = '';
@@ -167,6 +167,7 @@ RunGrid = function(params, cfg){
         loadMask: {msg:'Loading Test Runs...'},
         autoExpandColumn: "run_summary",
         autoScroll: true,
+        stripeRows:true,
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: false,
             listeners: {'rowselect':function(sm,i,r){

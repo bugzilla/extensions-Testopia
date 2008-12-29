@@ -62,7 +62,10 @@ Ext.grid.CheckColumn.prototype = {
         return '<div class="x-grid3-check-col'+(v == '1' ?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';
     }
 };
-
+var imgButtonTpl = new Ext.Template(
+    '<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>' +
+    '<td><button type="button"><img src="{0}"></button></td>' +
+    '</tr></tbody></table>');
 TestopiaUtil = function(){
     this.statusIcon =  function (name){
         return '<img src="testopia/img/' + name + '_small.gif" alt="'+ name +'" title="'+ name +'">';
