@@ -112,7 +112,7 @@ CaseRunFilter = function (){
                 
                 ds.load({
                     callback: function(){
-                        Ext.getCmp('filtered_txt').hide();
+                        Ext.getCmp('caserun_filtered_txt').hide();
                         if (Ext.getCmp('caserun_grid').getSelectionModel().getCount() < 1){
                             Ext.getCmp('caserun-panel').caserun.disable();
                         }
@@ -128,7 +128,7 @@ CaseRunFilter = function (){
                 ds.baseParams.distinct = 1;
                 ds.load({
                     callback: function(){
-                        Ext.getCmp('filtered_txt').show();
+                        Ext.getCmp('caserun_filtered_txt').show();
                         if (Ext.getCmp('caserun_grid').getSelectionModel().getCount() < 1){
                             Ext.getCmp('caserun-panel').caserun.disable();
                         }
@@ -1183,7 +1183,7 @@ CaseRun = function(){
         style: 'padding-bottom: 10px',
         bodyBorder: false,
         collapsible: true,
-        height: 330,
+        height: 340,
         items:[{
             xtype: 'tabpanel',
             bodyBorder: false,

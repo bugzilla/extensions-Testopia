@@ -1087,9 +1087,17 @@ Ext.override(Ext.form.Field, {
 });// End Override
 
 var TestopiaPager = function(type, store){
-    this.type = type; 
+    this.type = type;
+    var baseParams = clone(store.baseParams); 
     function doUpdate(){
         this.updateInfo();
+    }
+    function clone(orig){
+        var clone = {};
+        for (var i in orig){
+            clone[i] = orig[i]; 
+        }
+        return clone;
     }
     function viewallUpdate(){
         this.cursor = 0;
@@ -1149,6 +1157,13 @@ var TestopiaPager = function(type, store){
         var key = e.getKey();
         if(key == e.ENTER){
             var params = {start: 0, limit: sizer.getValue()};
+            if(this.getValue().length === 0){
+                store.baseParams = baseParams;
+                store.load({params: params});
+                Ext.getCmp(type + '_filtered_txt').hide();
+                return;
+            }
+            var params = {start: 0, limit: sizer.getValue()};
             var s = this.getValue();
             var term = s.match(/(^.*?):/);
             if (term) {
@@ -1198,40 +1213,44 @@ var TestopiaPager = function(type, store){
                         break;
                         
                 }
-                params[term] = q;
-                params[term + '_type'] = 'substring';
+                store.baseParams[term] = q;
+                store.baseParams[term + '_type'] = 'substring';
             }
             else {
                 if (type == 'case' || type == 'run') {
-                    params.summary = this.getValue();
-                    params.summary_type = 'allwordssubst';
+                    store.baseParams.summary = this.getValue();
+                    store.baseParams.summary_type = 'allwordssubst';
                 }
                 else 
                     if (type == 'caserun') {
-                        params.case_summary = this.getValue();
-                        params.case_summary_type = 'allwordssubst';
+                        store.baseParams.case_summary = this.getValue();
+                        store.baseParams.case_summary_type = 'allwordssubst';
                     }
                     else {
-                        params.name = this.getValue();
-                        params.name_type = 'allwordssubst';
+                        store.baseParams.name = this.getValue();
+                        store.baseParams.name_type = 'allwordssubst';
                     }
             }
             store.load({ 
               params: params
             });
+            Ext.getCmp(type + '_filtered_txt').show();
         }
         if((key == e.BACKSPACE || key == e.DELETE) && this.getValue().length === 0){
+            store.baseParams = baseParams;
             store.load({ 
                 params: {start: 0, limit: sizer.getValue()}
             });
+            Ext.getCmp(type + '_filtered_txt').hide();
         }
     });
+   
     sizer.on('render', function(){
         var tt = new Ext.ToolTip({
             target: type + '_paging_filter',
             title: 'Quick Search Filter',
             hideDelay: '500',
-            html: "Enter column and search term separated by ':'<br> <b>Example:</b> priority: P3" 
+            html: "Enter column and search term separated by ':'<br> <b>Example:</b> priority: P3<br>Blank field and ENTER to clear" 
         });
     });
     TestopiaPager.superclass.constructor.call(this,{
@@ -1252,7 +1271,7 @@ var TestopiaPager = function(type, store){
             new Ext.Toolbar.Spacer('_'),
             viewall,
             new Ext.Toolbar.Spacer('_'),
-            new ToolbarText({ text: '(FILTERED)', hidden: true, id:'filtered_txt', style: 'font-weight:bold;color:red'})
+            new ToolbarText({ text: '(FILTERED)', hidden: true, id: type + '_filtered_txt', style: 'font-weight:bold;color:red'})
         ]
     });
     this.on('render',this.setPager, this);
@@ -1361,7 +1380,7 @@ TestopiaUpdateMultiple = function(type, params, grid){
             TestopiaUtil.notify.msg('Test '+ type + 's updated', 'The selected {0}s were updated successfully', type);
             if (grid.selectedRows){
                 grid.store.baseParams.addcases = grid.selectedRows.join(',');
-                Ext.getCmp('filtered_txt').show();
+                Ext.getCmp(type + '_filtered_txt').show();
             }
             try {
                 Ext.getCmp('case_details_panel').store.reload();
