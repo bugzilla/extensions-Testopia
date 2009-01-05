@@ -507,7 +507,6 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                         Ext.Msg.prompt('Add to runs', '', function(btn, text){
                             if (btn == 'ok'){
                                 TestopiaUpdateMultiple('case', {addruns: text, ids: getSelectedObjects(grid,'case_id')}, grid);
-                                win.close();
                             }
                         });
                     }
