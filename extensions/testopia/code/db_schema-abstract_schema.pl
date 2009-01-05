@@ -234,18 +234,10 @@ $schema->{test_attachments} = {
             }
         },
         assignee => {
-            TYPE       => 'INT3',
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-            }
+            TYPE       => 'INT3'
         },
         testedby => {
-            TYPE       => 'INT3',
-            REFERENCES => {
-                TABLE  => 'profiles',
-                COLUMN => 'userid',
-            }
+            TYPE       => 'INT3'
         },
         case_run_status_id => {
             TYPE       => 'INT2',
