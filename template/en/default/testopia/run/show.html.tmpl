@@ -27,7 +27,7 @@
 [% PROCESS testopia/blocks.html.tmpl %]
 [% PROCESS testopia/style.none.tmpl %]
 
-[% title = "Test Run $run.id: $run.summary" %]
+[% title = "Test Run $run.id: $run.summary" FILTER html %]
 
 [% PROCESS global/header.html.tmpl %]
 

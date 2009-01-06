@@ -28,7 +28,7 @@
 [% PROCESS testopia/style.none.tmpl %]
 [% PROCESS testopia/blocks.html.tmpl %]
 
-[% title = "Test Case $case.id: $case.summary" %]
+[% title = "Test Case $case.id: $case.summary" FILTER html %]
 [% PROCESS global/header.html.tmpl %]
 
 <script type="text/javascript">

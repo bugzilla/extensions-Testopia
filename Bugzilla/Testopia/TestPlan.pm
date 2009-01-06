@@ -341,11 +341,8 @@ sub toggle_archive {
     my $dbh = Bugzilla->dbh;
     
     my $oldvalue = $self->isactive;
-print STDERR "OLD $oldvalue";
     my $newvalue = $oldvalue == 1 ? 0 : 1;
-print STDERR "NEW $newvalue";
     $self->set_isactive($newvalue);
-print STDERR "UPDATED " . $self->isactive;    
     $self->update;
 }
 
