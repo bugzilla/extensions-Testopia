@@ -64,7 +64,7 @@ sub get_param_list {
    name    => 'new-case-action-template',
    type    => 'l',
    default => qq{<ol>
-  <li></li>
+  <li>&nbsp;</li>
 </ol>},
   },
 
@@ -72,7 +72,7 @@ sub get_param_list {
    name    => 'new-case-results-template',
    type    => 'l',
    default => qq{<ol>
-  <li></li>
+  <li>&nbsp;</li>
 </ol>},
   },
 
