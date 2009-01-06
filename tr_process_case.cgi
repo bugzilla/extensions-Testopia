@@ -55,7 +55,7 @@ if ($action eq 'edit'){
     print $cgi->header;
     ThrowUserError("testopia-read-only", {'object' => $case}) unless $case->canedit;
 
-    $case->set_alias($cgi->param('alias')) if $cgi->param('alias');
+    $case->set_alias($cgi->param('alias')) if exists $cgi->{param}->{'alias'} || exists $cgi->{'alias'};
     $case->set_category($cgi->param('category')) if $cgi->param('category');
     $case->set_case_status($cgi->param('status')) if $cgi->param('status');
     $case->set_priority($cgi->param('priority')) if $cgi->param('priority');
