@@ -33,9 +33,9 @@
 
 
 [% IF NOT plan.isactive %]
-  [% title = "Test Plan $plan.id: $plan.name (ARCHIVED)" %]
+  [% title = "Test Plan $plan.id: $plan.name (ARCHIVED)" FILTER html %]
 [% ELSE %]
-  [% title = "Test Plan $plan.id: $plan.name" %]
+  [% title = "Test Plan $plan.id: $plan.name" FILTER html %]
 [% END %]
 
 [% PROCESS global/header.html.tmpl %]
@@ -88,7 +88,7 @@ Ext.onReady(function(){
         items: [{
             text: "Archived",
             id: 'plan_archive_mnu',
-            checked: plan.isactive ? false : true,
+            checked: [% plan.isactive ? 'false' : 'true' %],
             checkHandler: function(i,c){
                 testopia_form.submit({
                     url: 'tr_process_plan.cgi',
@@ -402,11 +402,11 @@ Ext.onReady(function(){
     </tr>
     <tr class="bz_row_data">
       <td colspan="3">
-        <table style="position: relative">
-          <tr style="width:100%;">
+        <table>
+          <tr>
             <td><div id="plan_name">[% plan.name FILTER html %]</div></td>
             <td><div id="plan_name_edit_btn"></div></td>
-            <td><div id="archive_flag" style="position: absolute; right:0px; top: 0px;" [% 'class="plan_archived"' IF NOT plan.isactive %]></div></td>
+            <td><div id="archive_flag" style="position: absolute; right:50px; top: 0px;" [% 'class="plan_archived"' IF NOT plan.isactive %]></div></td>
           </tr>
         </table>
       </td>
