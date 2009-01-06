@@ -115,22 +115,6 @@ diff -u -r1.23.2.1 Error.pm
      }
      exit;
  }
-Index: Bugzilla/Install.pm
-===================================================================
-RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Install.pm,v
-retrieving revision 1.17
-diff -u -r1.17 Install.pm
---- Bugzilla/Install.pm 28 Nov 2007 16:35:57 -0000  1.17
-+++ Bugzilla/Install.pm 18 Dec 2008 22:33:01 -0000
-@@ -60,6 +60,8 @@
-     # 2006-12-10 LpSolit@gmail.com -- Bug 297186
-     lang               => { subclass => 'Lang',
-                             default => ${Bugzilla->languages}[0] },
-+    view_testopia      => { options => ['on', 'off'],
-+                            default  => 'on' },
-     # 2007-07-02 altlist@gmail.com -- Bug 225731
-     quote_replies      => { options => ['quoted_reply', 'simple_reply', 'off'],
-                             default => "quoted_reply" }
 Index: Bugzilla/User.pm
 ===================================================================
 RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/User.pm,v
