@@ -70,7 +70,7 @@ if ($action eq 'add'){
 ### Edit a Build ###
 ####################
 elsif ($action eq 'edit'){
-	
+    
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
     my $build = Bugzilla::Testopia::Build->new($cgi->param('build_id'));
     

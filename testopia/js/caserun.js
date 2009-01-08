@@ -188,9 +188,9 @@ CaseRunListGrid = function(params, cfg){
          renderer: tutil.runLink },
         {header: "Build", width: 50, dataIndex: 'build', sortable: true, id: 'caserun_list_build_col'},
         {header: "Environment", width: 50, dataIndex: 'environment', sortable: true},
-		{header: "Assignee", width: 150, sortable: true, dataIndex: 'assignee'},
+        {header: "Assignee", width: 150, sortable: true, dataIndex: 'assignee'},
         {header: "Tested By", width: 150, sortable: true, dataIndex: 'testedby'},
-		{header: "Status", width: 30, sortable: true, dataIndex: 'status', groupRenderer: function(v){return v;}, renderer: tutil.statusIcon},		
+        {header: "Status", width: 30, sortable: true, dataIndex: 'status', groupRenderer: function(v){return v;}, renderer: tutil.statusIcon},        
         {header: "Closed", width: 60, sortable: true, dataIndex: 'close_date'},
         {header: "Priority", width: 60, sortable: true, dataIndex: 'priority'},
         {header: "Category", width: 100, sortable: true,dataIndex: 'category'},
@@ -400,13 +400,13 @@ CaseRunGrid = function(params, run){
          editor: new Ext.grid.GridEditor(
              new EnvironmentCombo({params: {product_id: run.plan.product_id, isactive: 1}})
          ),renderer: envRenderer.createDelegate(this)},
-		{header: "Assignee", width: 150, sortable: true, dataIndex: 'assignee',
+        {header: "Assignee", width: 150, sortable: true, dataIndex: 'assignee',
          editor: new Ext.grid.GridEditor(
              new UserLookup({id: 'caserun_assignee'})
          ),renderer: TestopiaComboRenderer.createDelegate(this)},
         {header: "Tested By", width: 150, sortable: true, dataIndex: 'testedby', hidden: true},
         {header: "Closed", width: 90, sortable: true, dataIndex: 'close_date'},
-		{header: "Status", width: 30, sortable: true, dataIndex: 'status', align: 'center', renderer: t.statusIcon},
+        {header: "Status", width: 30, sortable: true, dataIndex: 'status', align: 'center', renderer: t.statusIcon},
         {header: "Priority", width: 60, sortable: true, dataIndex: 'priority',
          editor: new Ext.grid.GridEditor(
              new PriorityCombo({id: 'caserun_priority'})

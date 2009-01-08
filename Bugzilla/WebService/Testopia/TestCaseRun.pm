@@ -205,9 +205,7 @@ sub update {
 
         # Now that we know we are working with the right record, update it.
         if ($new_values->{'assignee'}){
-            print STDERR "THE ASSSIGNEEE IS ". $new_values->{'assignee'};
             $caserun->set_assignee($new_values->{'assignee'});
-            print STDERR "NOW IT IS ". $caserun->assignee->{'login_name'};
         }
     
         if ($new_values->{'case_run_status_id'}){

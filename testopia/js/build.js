@@ -138,7 +138,7 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
-                        		newPortlet.load({
+                                newPortlet.load({
                                     url: newPortlet.url
                                 });
                             }

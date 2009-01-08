@@ -494,7 +494,7 @@ sub to_ext_json {
     $out .= '"totalResultsAvailable":' . $self->list_count .',';
     $out .= '"Result":[';
     foreach my $i (@{$self->list}){
-        $out .= $i->TO_JSON . ',';
+        $out .= $i->TO_JSON . ',' if $i;
     }
     chop($out) if scalar @{$self->list};
     $out .= ']}';

@@ -125,7 +125,7 @@ CaseGrid = function(params, cfg){
              })),
          id: "sortkey"
         },
-		{header: "Summary", 
+        {header: "Summary", 
          width: 220, 
          dataIndex: 'summary', 
          id: "case_summary", 
@@ -135,11 +135,11 @@ CaseGrid = function(params, cfg){
                  allowBlank: false
              }))
         },
-		{header: "Author", width: 150, sortable: true, dataIndex: 'author', hidden: true},
+        {header: "Author", width: 150, sortable: true, dataIndex: 'author', hidden: true},
         {header: "Default Tester", width: 150, sortable: true, dataIndex: 'tester',
          editor: new Ext.grid.GridEditor(new UserLookup({hiddenName:'tester'})),
          renderer: TestopiaComboRenderer.createDelegate(this)},
-		{header: "Created", width: 110, sortable: true, dataIndex: 'creation_date', hidden: true},
+        {header: "Created", width: 110, sortable: true, dataIndex: 'creation_date', hidden: true},
         {header: "Last Modified", width: 110, sortable: true, dataIndex: 'modified', hidden: true},
         {header: "Priority", width: 100, sortable: true, dataIndex: 'priority',
          editor: new Ext.grid.GridEditor(
@@ -149,7 +149,7 @@ CaseGrid = function(params, cfg){
                  mode: 'remote'
              })
          ), renderer: TestopiaComboRenderer.createDelegate(this)
-        },		
+        },        
         {header: "Category", width: 100, sortable: true, dataIndex: 'category',
          editor: new Ext.grid.GridEditor(
                 categoryCombo,{listeners: {
@@ -870,7 +870,7 @@ NewCaseForm = function(plan_ids, product_id, run_id){
                                         },
                                         failure: testopiaError
                                     });
-                                }  	
+                                }      
                             }}
                         }]
                     }]
@@ -887,16 +887,16 @@ NewCaseForm = function(plan_ids, product_id, run_id){
                             listeners:{'initialize':function(h){
                                 if(!h.getValue()){
                                     var httpRequest = new Ext.data.Connection();
-                                	httpRequest.request({
-                                    	url: 'tr_quicksearch.cgi',
-                                    	params:{
-                                    		action: 'get_effect'
-                                    	}, 
-                                    	success:function(d){
-                                    		h.setValue(d.responseText);
-                                    	}, 
-                                    	failure: testopiaError
-                                	});  	
+                                    httpRequest.request({
+                                        url: 'tr_quicksearch.cgi',
+                                        params:{
+                                            action: 'get_effect'
+                                        }, 
+                                        success:function(d){
+                                            h.setValue(d.responseText);
+                                        }, 
+                                        failure: testopiaError
+                                    });      
                                 }
                             }}
                         }]

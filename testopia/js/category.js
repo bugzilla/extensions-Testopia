@@ -83,7 +83,7 @@ CaseCategoryGrid = function(product_id){
                     Ext.MessageBox.alert('Message', 'Please select at least one Category to delete');
                 }
                 else{
-                	confirmCaseCategoryDelete(product_id);	
+                    confirmCaseCategoryDelete(product_id);    
                 }
             }
         }]
