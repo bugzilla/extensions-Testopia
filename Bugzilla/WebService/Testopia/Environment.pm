@@ -116,12 +116,12 @@ sub create {
 }
 
 sub create_full {
-	my $self = shift;
-	my ($env_basename, $product, $environment) = @_;
+    my $self = shift;
+    my ($env_basename, $product, $environment) = @_;
 
-	Bugzilla->login(LOGIN_REQUIRED);
-	
-	if ($product =~ /^\d+$/){
+    Bugzilla->login(LOGIN_REQUIRED);
+    
+    if ($product =~ /^\d+$/){
         $product = Bugzilla::Testopia::Product->new($product);
     }
     else {
@@ -133,8 +133,8 @@ sub create_full {
 
     my $env_id = Bugzilla::Testopia::Environment->create_full($env_basename, $product->id, $environment);
 
-	return $env_id;
-}	
+    return $env_id;
+}    
 
 sub update {
     my $self = shift;
@@ -240,20 +240,20 @@ Provides methods for automated scripts to manipulate Testopia Environments
  of the $basename and a date and time stamp. Else returns id of existing env. 
 
  Params: $basename -  String:   starting name of the environment (remainder
-				        will be a date time conjunction added by this function)
- 	      $product -  Integer/String:  product name or id of the product in the Database
- 	      $envhash -  Hash ref: Multilevel hash following a format: Top level hash 
- 			            keys are assumed to be categories. Bottom level
- 			            values (leaves) and their immediate keys are assumed
- 			            to be the values and properties in the database, 
- 			            respectively. Between the top level and bottom level
- 			            keys are the elements. Everything will be created
- 			            if it does not yet exist in the database except for
- 			            the categories which must exist beforehand. 
+                        will be a date time conjunction added by this function)
+           $product -  Integer/String:  product name or id of the product in the Database
+           $envhash -  Hash ref: Multilevel hash following a format: Top level hash 
+                         keys are assumed to be categories. Bottom level
+                         values (leaves) and their immediate keys are assumed
+                         to be the values and properties in the database, 
+                         respectively. Between the top level and bottom level
+                         keys are the elements. Everything will be created
+                         if it does not yet exist in the database except for
+                         the categories which must exist beforehand. 
 
 Here is an example of an $envhash (quotes removed):
 
-{ 			             
+{                          
 
 Hardware => {
 

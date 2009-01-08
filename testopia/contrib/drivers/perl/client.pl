@@ -68,24 +68,24 @@ my $Bugzilla_password;
 my $soapresult;
 
 sub SOAP::Transport::HTTP::Client::get_basic_credentials { 
-	return $Bugzilla_login => $Bugzilla_password;
+    return $Bugzilla_login => $Bugzilla_password;
 }
 
 sub show_results {
-	my $plan;
-	my $key;
+    my $plan;
+    my $key;
 
-	my ($header, $soapresult) = @_;
+    my ($header, $soapresult) = @_;
 
-	print $header . "\n";
-	
-	if (!defined $soapresult)
-	{
-	  print "No Soap Result - Probably no method call made.\n";
-	  exit(2);
-	}
+    print $header . "\n";
+    
+    if (!defined $soapresult)
+    {
+      print "No Soap Result - Probably no method call made.\n";
+      exit(2);
+    }
 
-	die_on_fault($soapresult);
+    die_on_fault($soapresult);
 
     print Dumper($soapresult->result);
 

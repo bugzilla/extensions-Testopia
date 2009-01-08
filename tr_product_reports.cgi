@@ -38,7 +38,6 @@ my $cgi = Bugzilla->cgi;
 print $cgi->header;
 use Data::Dumper;
 
-#print STDERR Dumper($cgi);
 Bugzilla->login(LOGIN_REQUIRED);
 
 ###############################################################################

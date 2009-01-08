@@ -309,7 +309,7 @@ else{
         my $plan = Bugzilla::Testopia::TestPlan->new({});
         my $prod_id = $cgi->param("product_id");
         my @versions;
-        if ($prod_id == -1){
+        if ($prod_id && $prod_id == -1){
             # For update multiple from tr_list_plans
             push @versions, {'id' => "--Do Not Change--", 'name' => "--Do Not Change--"};
         }

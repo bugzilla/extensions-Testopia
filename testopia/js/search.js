@@ -490,7 +490,7 @@ ReportGrid = function(cfg){
                     Ext.getCmp(current_col).add(newPortlet);
                     Ext.getCmp(current_col).doLayout();
                     Testopia.Search.dashboard_urls.push(r.get('query'));
-            		newPortlet.load({
+                    newPortlet.load({
                         scripts: true,
                         url: r.get('query')
                     });
@@ -537,7 +537,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                         });
                         Ext.getCmp('object_panel').add(newTab);
                         Ext.getCmp('object_panel').activate('search' + r.get('name'));
-                		newTab.load({
+                        newTab.load({
                             url: r.get('query')
                         });
                     }

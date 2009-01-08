@@ -86,7 +86,7 @@ PlanGrid = function(params,cfg){
 
     this.columns = [
         {header: "ID", width: 30, dataIndex: 'plan_id', sortable: true, renderer: tutil.planLink, hideable: false},
-		{header: "Name", 
+        {header: "Name", 
          width: 220, 
          dataIndex: 'name', 
          id: "plan_name", 
@@ -96,9 +96,9 @@ PlanGrid = function(params,cfg){
                  allowBlank: false
              }))
         },
-		{header: "Author", width: 150, sortable: true, dataIndex: 'author'},
-		{header: "Created", width: 110, sortable: true, dataIndex: 'creation_date', hidden: true},
-		{header: "Product", width: 180, sortable: true, dataIndex: 'product', hidden: true},		
+        {header: "Author", width: 150, sortable: true, dataIndex: 'author'},
+        {header: "Created", width: 110, sortable: true, dataIndex: 'creation_date', hidden: true},
+        {header: "Product", width: 180, sortable: true, dataIndex: 'product', hidden: true},        
         {header: "Product Version", width: 60, sortable: true, dataIndex: 'default_product_version',
          editor: new Ext.grid.GridEditor(
              versionbox,{listeners: {
@@ -111,7 +111,7 @@ PlanGrid = function(params,cfg){
                  }
              }}
          ), renderer: TestopiaComboRenderer.createDelegate(this)
-        },		
+        },        
         {header: "Type", width: 60, sortable: true,
          dataIndex: 'plan_type',
          editor: new Ext.grid.GridEditor(
@@ -120,8 +120,8 @@ PlanGrid = function(params,cfg){
                  mode: 'remote'
              })
          ), renderer: TestopiaComboRenderer.createDelegate(this)
-        },		
-        {header: "Cases", width: 20, sortable: false, dataIndex: 'case_count'},		
+        },        
+        {header: "Cases", width: 20, sortable: false, dataIndex: 'case_count'},        
         {header: "Runs", width: 20, sortable: false, dataIndex: 'run_count'}
     ];
 
@@ -319,7 +319,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
-                        		newPortlet.load({
+                                newPortlet.load({
                                     url: newPortlet.url
                                 });
                             }
@@ -338,7 +338,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
-                        		newPortlet.load({
+                                newPortlet.load({
                                     url: newPortlet.url
                                 });
                             }
@@ -387,7 +387,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                                 Ext.getCmp('dashboard_leftcol').doLayout();
-                                        		newPortlet.load({
+                                                newPortlet.load({
                                                     url: newPortlet.url
                                                 });
                                                win.close();
@@ -517,24 +517,24 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
 });
 
 NewPlanForm = function(product_id){
-	var versionsBox = new ProductVersionCombo({
+    var versionsBox = new ProductVersionCombo({
         hiddenName: 'prod_version',
         fieldLabel: "<b>Product Version</b>",
         mode:'local',
         params: {product_id: product_id}
-	});
-	var productsBox = new ProductCombo({
+    });
+    var productsBox = new ProductCombo({
         hiddenName: 'product_id',
         fieldLabel: "<b>Product</b>",
         mode:'local',
         value: product_id
-	});
+    });
     productsBox.on('select', function(c,r,i){
         versionsBox.reset();
         versionsBox.store.baseParams.product_id = r.get('id');
-		versionsBox.store.load();
+        versionsBox.store.load();
         versionsBox.enable();
-	});
+    });
     
     NewPlanForm.superclass.constructor.call(this,{
         url: 'tr_new_plan.cgi',

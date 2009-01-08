@@ -281,7 +281,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                     Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
-                            		newPortlet.load({
+                                    newPortlet.load({
                                         url: newPortlet.url
                                     });
 
@@ -301,7 +301,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                     Testopia.Search.dashboard_urls.push(newPortlet.url);
                                     Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                     Ext.getCmp('dashboard_leftcol').doLayout();
-                            		newPortlet.load({
+                                    newPortlet.load({
                                         url: newPortlet.url
                                     });
 
@@ -354,7 +354,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                                 Ext.getCmp('dashboard_leftcol').doLayout();
-                                        		newPortlet.load({
+                                                newPortlet.load({
                                                     url: newPortlet.url
                                                 });
                                                win.close();
@@ -1287,7 +1287,7 @@ RunFilterGrid = function(run){
                         f[i].value = params[f[i].name];
                     }
                 }
-        		Ext.getCmp('caserun_grid').store.baseParams = params;
+                Ext.getCmp('caserun_grid').store.baseParams = params;
                 Ext.getCmp('caserun_grid').store.load();
             }}
         }),

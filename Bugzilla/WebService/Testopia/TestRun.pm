@@ -103,7 +103,6 @@ sub create {
     ThrowUserError("testopia-create-denied", {'object' => 'Test Run', 'plan' => $plan}) unless ($plan->canedit);
     
     my @cases = Bugzilla::Testopia::Util::process_list($new_values->{'cases'});
-    print STDERR Data::Dumper::Dumper(\@cases);
     delete $new_values->{'cases'};
     
     $new_values->{'manager_id'} ||= $new_values->{'manager'};

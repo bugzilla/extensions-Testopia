@@ -1018,9 +1018,9 @@ HistoryGrid = function(object, id){
     });
     this.columns = [
         {header: "What", width: 150, dataIndex: 'what', sortable: true},
-		{header: "Who", width: 180, sortable: true, dataIndex: 'who'},
-		{header: "When", width: 150, sortable: true, dataIndex: 'when'},
-		{header: "Old", width: 180, sortable: true, dataIndex: 'oldvalue'},		
+        {header: "Who", width: 180, sortable: true, dataIndex: 'who'},
+        {header: "When", width: 150, sortable: true, dataIndex: 'when'},
+        {header: "Old", width: 180, sortable: true, dataIndex: 'oldvalue'},        
         {id: 'new', header: "New", width: 180, sortable: true, dataIndex: 'newvalue'}
     ];
     HistoryGrid.superclass.constructor.call(this,{
@@ -1326,7 +1326,7 @@ DashboardPanel = function(cfg){
                         
                         Ext.getCmp('dashboard_leftcol').add(newPortlet);
                         Ext.getCmp('dashboard_leftcol').doLayout();
-                		newPortlet.load({
+                        newPortlet.load({
                             url: url,
                             scripts: false
                         });
