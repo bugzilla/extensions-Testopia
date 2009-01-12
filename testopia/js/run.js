@@ -868,11 +868,7 @@ RunClonePanel = function(product_id, runs, caselist){
         id: 'run_clone_build_chooser',
         mode: 'local',
         hiddenName: 'new_run_build',
-        params: {product_id: product_id, activeonly: 1},
-        validator: function(a){
-            var foo = 1;
-            return false;
-        }
+        params: {product_id: product_id, activeonly: 1}
     });
     var ebox = new EnvironmentCombo({
         fieldLabel: 'Select an Environment',
