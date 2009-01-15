@@ -4484,7 +4484,7 @@ CaseRunListGrid = function(params, cfg){
     this.params = params;
     this.store = new Ext.data.GroupingStore({
         url: 'tr_list_caseruns.cgi',
-        baseParams: {ctype: 'json'},
+        baseParams: params,
         reader: new Ext.data.JsonReader({
             totalProperty: 'totalResultsAvailable',
             root: 'Result',
@@ -4511,13 +4511,17 @@ CaseRunListGrid = function(params, cfg){
         sortInfo: {field: 'run_id', direction: "ASC"},
         groupField: 'run_id'
     });
+    var ds = this.store;
+    ds.paramNames.sort = "order";
+    ds.on('beforeload',function(store, o){
+        store.baseParams.ctype = 'json';
+    });
     this.summary_sort = function(){
         this.store.sortInfo.field = 'summary';
         this.store.sortInfo.direction == 'DESC' ? this.store.sortInfo.direction = 'ASC' : this.store.sortInfo.direction = 'DESC';
         this.getView().mainHd.select('td').removeClass(this.getView().sortClasses);
         this.store.load();
     };
-    this.store.paramNames.sort = 'order';
     this.bbar = new TestopiaPager('caserun', this.store);
     this.columns = [
         {header: "Case", width: 50, dataIndex: 'case_id', sortable: true,groupRenderer: function(v){return v;},
@@ -4562,9 +4566,29 @@ CaseRunListGrid = function(params, cfg){
             return 'x-grid3-row-expanded';
         }
     });
+    this.tbar = [new Ext.Toolbar.Fill(),
+        {
+            xtype: 'button',
+            id: 'save_caserun_list_btn',
+            icon: 'testopia/img/save.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Save this search',
+            handler: function(b,e){
+                saveSearch('caserun', Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams);
+            }
+        },{
+            xtype: 'button',
+            id: 'link_case_list_btn',
+            icon: 'testopia/img/link.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Create a link to this list',
+            handler: function(b,e){
+                linkPopup(Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams);
+            }
+         }];
 
     CaseRunListGrid.superclass.constructor.call(this,{
-        id: 'caserun_list_grid',
+        id: cfg.id || 'caserun_list_grid',
         title: 'Case Run History',
         loadMask: {msg:'Loading Test Cases...'},
         layout: 'fit',
@@ -4616,7 +4640,7 @@ Ext.extend(CaseRunListGrid, Ext.grid.GridPanel, {
     },
     onActivate: function(event){
         if (!this.store.getCount()){
-            this.store.load({params: this.params});
+            this.store.load();
         }
     }
 });
