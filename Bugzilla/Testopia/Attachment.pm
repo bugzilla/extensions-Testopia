@@ -316,7 +316,7 @@ sub link_case {
     $dbh->do("INSERT INTO test_case_attachments (attachment_id, case_id)
               VALUES (?,?)",
               undef, ($self->id, $case_id));
-    $dbh->bz_bz_commit_transaction();
+    $dbh->bz_commit_transaction();
 }
 
 sub unlink_plan {
