@@ -33,7 +33,7 @@
   [% END %]
   </tr>
 [% FOREACH tag = tags %]
-  <tr class="[% loop.count % 2 == 0 ? "bz_row_odd" : "bz_row_even" %]"> 
+  <tr class="[% loop.count % 2 == 0 ? "tr_row_odd" : "tr_row_even" %]"> 
     <td width="200">[% tag.name FILTER html %]</td>
     <td align="center"><a href="tr_list_cases.cgi?tags_type=anyexact&tags=[% tag.name FILTER url_quote %]">[% tag.case_count FILTER html %]</a></td>
     <td align="center"><a href="tr_list_plans.cgi?tags_type=anyexact&tags=[% tag.name FILTER url_quote %]">[% tag.plan_count FILTER html %]</a></td>
