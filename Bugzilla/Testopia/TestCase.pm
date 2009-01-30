@@ -2055,6 +2055,7 @@ sub bugs {
         my $bug = Bugzilla::Bug->new($row->{'bug_id'}, Bugzilla->user->id);
         if ($row->{'case_run_id'}){
             my $cr = Bugzilla::Testopia::TestCaseRun->new($row->{'case_run_id'});
+            next unless $cr;
             $bug->{'build'} = $cr->build->name;
             $bug->{'env'} = $cr->environment->name;
             $bug->{'run_id'} = $cr->run_id;
