@@ -76,6 +76,7 @@ PlanGrid = function(params,cfg){
     var tutil = new TestopiaUtil();
     this.t = tutil;
     var versionbox = new ProductVersionCombo({
+         id: 'plan_grid_version_chooser',
          hiddenName: 'prod_version',
          mode: 'remote',
          params: {product_id: params.product_id}
@@ -116,6 +117,7 @@ PlanGrid = function(params,cfg){
          dataIndex: 'plan_type',
          editor: new Ext.grid.GridEditor(
              new PlanTypesCombo({
+                 id: 'plan_grid_ types_chooser',
                  hiddenName:'type',
                  mode: 'remote'
              })
@@ -271,6 +273,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                                             labelWidth: '40',
                                             bodyStyle: 'padding: 5px',
                                             items: [new PlanTypesCombo({
+                                                id: 'plan_type_win_types_combo',
                                                 fieldLabel: 'Plan Type'
                                             })]
                                         })
@@ -518,12 +521,14 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
 
 NewPlanForm = function(product_id){
     var versionsBox = new ProductVersionCombo({
+        id: 'new_plan_form_version_chooser',
         hiddenName: 'prod_version',
         fieldLabel: "<b>Product Version</b>",
         mode:'local',
         params: {product_id: product_id}
     });
     var productsBox = new ProductCombo({
+        id: 'new_plan_form_product_chooser',
         hiddenName: 'product_id',
         fieldLabel: "<b>Product</b>",
         mode:'local',
@@ -558,7 +563,7 @@ NewPlanForm = function(product_id){
                     name: 'plan_name',
                     anchor:'95%',
                     allowBlank: false
-                }, new PlanTypesCombo({mode: 'local', hiddenName: 'type', fieldLabel: '<b>Plan Type</b>'})]
+                }, new PlanTypesCombo({id: 'new_plan_form_types_chooser', mode: 'local', hiddenName: 'type', fieldLabel: '<b>Plan Type</b>'})]
             },{
                 columnWidth: 0.5,
                 layout: 'form',
@@ -627,6 +632,7 @@ Ext.extend(NewPlanForm, Ext.form.FormPanel);
 
 Testopia.TestPlan.ClonePanel = function(plan){
     var pbox = new ProductCombo({
+        id: 'plan_clone_product_chooser',
         hiddenName: 'product_id',
         fieldLabel: 'Copy To Product',
         mode: 'local',
@@ -634,7 +640,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
         value: plan.product_id
     });
     var vbox = new ProductVersionCombo({
-        id: 'clone_version',
+        id: 'plan_clone_version_chooser',
         hiddenName: 'prod_version',
         fieldLabel: 'Product Version',
         params: {product_id: plan.product_id},

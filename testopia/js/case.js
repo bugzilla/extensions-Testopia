@@ -72,6 +72,7 @@ CaseGrid = function(params, cfg){
     params.current_tab = 'case';
     this.params = params;
     categoryCombo = new CaseCategoryCombo({
+        id: 'case_grid_cateogy_chooser',
         hiddenName: 'category',
         mode: 'remote',
         params: {}
@@ -145,7 +146,6 @@ CaseGrid = function(params, cfg){
          editor: new Ext.grid.GridEditor(
              new PriorityCombo({
                  hiddenName: 'priority',
-                 id: 'case_grid_priority',
                  mode: 'remote'
              })
          ), renderer: TestopiaComboRenderer.createDelegate(this)
@@ -1314,7 +1314,7 @@ caseClonePopup = function(product_id, cases){
     for (var i=0; i < items.length; i++){
         items[i].destroy();
     }
-    var pchooser = new ProductCombo({mode: 'local', value: product_id});
+    var pchooser = new ProductCombo({id: 'case_clone_win_product_chooser', mode: 'local', value: product_id});
     pchooser.on('select', function(c,r,i){
         pg.store.baseParams = {ctype: 'json', product_id: r.get('id')};
         if (r.get('id') != product_id){
