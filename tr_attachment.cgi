@@ -38,7 +38,7 @@ my $cgi = Bugzilla->cgi;
 my $dbh = Bugzilla->dbh;
 
 Bugzilla->login(LOGIN_REQUIRED);
-Bugzilla->error_mode(ERROR_MODE_AJAX) if $cgi->param('ctype') eq 'json';
+Bugzilla->error_mode(ERROR_MODE_AJAX) if $cgi->param('ctype') && $cgi->param('ctype') eq 'json';
 
 my $action     = $cgi->param('action') || '';
 my $attach_id  = $cgi->param('attach_id');
@@ -209,6 +209,6 @@ else {
     print $cgi->header(-type => $attachment->mime_type . "; name=\"$filename\"",
                        -content_disposition => "inline; filename=\"$filename\"",
                        -content_length      => $attachment->datasize);
-
+    disable_utf8();
     print $attachment->contents;
 }
