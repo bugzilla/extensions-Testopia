@@ -1077,7 +1077,7 @@ RunClonePopup = function(product_id, runs, caselist){
     for (var i=0; i < items.length; i++){
         items[i].destroy();
     }
-    var pchooser = new ProductCombo({mode: 'local', value: product_id});
+    var pchooser = new ProductCombo({id: 'run_clone_win_product_chooser', mode: 'local', value: product_id});
     pchooser.on('select', function(c,r,i){
         pg.store.baseParams = {ctype: 'json', product_id: r.get('id')};
 
