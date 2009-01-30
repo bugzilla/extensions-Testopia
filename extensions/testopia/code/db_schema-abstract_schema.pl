@@ -145,6 +145,9 @@ $schema->{test_attachments} = {
                 COLUMN => 'userid',
             }
         },
+        default_tester_id => {
+            TYPE       => 'INT3',
+        },
         creation_date  => { TYPE => 'DATETIME', NOTNULL => 1 },
         estimated_time => { TYPE => 'TIME' },
         isautomated => { TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => '0' },
