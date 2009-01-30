@@ -103,7 +103,7 @@ rights to that user.)
     <th>Admin</th>
   </tr>
   [% FOREACH row = plan.access_list %]
-  <tr class="[% loop.count % 2 == 0 ? "bz_row_odd" : "bz_row_even" %]">
+  <tr class="[% loop.count % 2 == 0 ? "tr_row_odd" : "tr_row_even" %]">
     <td>[%'*' IF row.user.id == plan.author.id %][% row.user.identity FILTER html %]</td>
     <td align="center"><input type="checkbox" style="border: none" [% 'disabled="disabled"' UNLESS plan.canadmin %] name="r[% row.user.id %]" [% 'checked="checked"' IF row.read %] value="1"></td>
     <td align="center"><input type="checkbox" style="border: none" [% 'disabled="disabled"' UNLESS plan.canadmin %] name="w[% row.user.id %]" [% 'checked="checked"' IF row.write %] value="1"></td>

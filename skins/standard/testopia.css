@@ -216,13 +216,13 @@ dt {
   font-size: medium;
 }
 
-.bz_row_odd
+.tr_row_odd
 {
     background-color: #F7F7F7;
     color: #000000;
 }
 
-.bz_row_even
+.tr_row_even
 {
     background-color: #FFFFFF;
     color: #000000;

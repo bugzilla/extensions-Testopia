@@ -50,7 +50,7 @@
   [% IF case == 'builds' OR case == 'build_ids' %]
     [% NEXT %]
   [% END %]
-  <tr class="[% loop.count % 2 == 0 ? "bz_row_odd" : "bz_row_even" %]">
+  <tr class="[% loop.count % 2 == 0 ? "tr_row_odd" : "tr_row_even" %]">
     <td align="right"><a href="tr_show_case.cgi?case_id=[% case %]">[% report.$case.name %]</a></td>
   [% FOREACH bid = report.builds.keys %]
     <td align="left">
@@ -81,7 +81,7 @@
     [% IF case == 'name' %]
       [% NEXT %]
     [% END %]
-    <tr class="[% loop.count % 2 == 0 ? "bz_row_odd" : "bz_row_even" %]">
+    <tr class="[% loop.count % 2 == 0 ? "tr_row_odd" : "tr_row_even" %]">
       <td align="right"><a href="tr_show_case.cgi?case_id=[% case %]">[% run_reports.$run.$case.name %]</a></td>
     [% FOREACH bid = report.builds.keys %]
       <td align="left">

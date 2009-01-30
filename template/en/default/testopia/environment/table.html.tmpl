@@ -33,7 +33,7 @@
     <th>Actions</th>
   </tr>
   [% FOREACH env = table.list %]
-  <tr class="[% loop.count % 2 == 0 ? "bz_row_odd" : "bz_row_even" %]" onclick="sr([% loop.count %]);">
+  <tr class="[% loop.count % 2 == 0 ? "tr_row_odd" : "tr_row_even" %]" onclick="sr([% loop.count %]);">
     <td align="center"><a href="tr_environments.cgi?env_id=[% env.id FILTER none %]">[% env.id FILTER none %]</a></td>
     <td>[% env.name FILTER none %]</td>
     <td>[% env.product.name FILTER none %]</td>
