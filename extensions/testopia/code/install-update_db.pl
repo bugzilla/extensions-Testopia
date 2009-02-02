@@ -112,6 +112,7 @@ sub testopiaUpdateDB {
     $dbh->bz_alter_column('test_case_texts', 'creation_ts', {TYPE => 'DATETIME', NOTNULL => 1});
     $dbh->bz_alter_column('test_environment_map', 'environment_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_environment_map', 'property_id', {TYPE => 'INT4', UNSIGNED => 1});
+    $dbh->bz_alter_column('test_environment_property', 'property_id', {TYPE => 'INT4', UNSIGNED => 1});
     $dbh->bz_alter_column('test_environments', 'environment_id', {TYPE => 'INTSERIAL', PRIMARYKEY => 1, NOTNULL => 1});
     $dbh->bz_alter_column('test_named_queries', 'isvisible', {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 1});
     $dbh->bz_alter_column('test_plan_activity', 'plan_id', {TYPE => 'INT4', UNSIGNED => 1, NOTNULL => 1});
