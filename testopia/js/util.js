@@ -1107,7 +1107,7 @@ var TestopiaPager = function(type, store){
         this.updateInfo();
     }
     function clone(orig){
-        var clone = {};
+        var clone = new Object();
         for (var i in orig){
             clone[i] = orig[i]; 
         }
@@ -1172,7 +1172,7 @@ var TestopiaPager = function(type, store){
         if(key == e.ENTER){
             var params = {start: 0, limit: sizer.getValue()};
             if(this.getValue().length === 0){
-                store.baseParams = baseParams;
+                store.baseParams = clone(baseParams);
                 store.load({params: params});
                 Ext.getCmp(type + '_filtered_txt').hide();
                 return;
