@@ -4273,7 +4273,7 @@ CaseClonePanel = function(product_id, cases){
                             else {
                                 Ext.Msg.show({
                                     title:'Test Case Copied',
-                                    msg: 'Test cases ' + data.result.tclist.join(',') + ' Copied successfully <a href="tr_list_cases.cgi?case_id=' + data.result.tclist.join(',') +'">View as List</a>',
+                                    msg: data.result.tclist.length + ' Test cases Copied successfully <a href="tr_list_cases.cgi?case_id=' + data.result.tclist.join(',') +'">View List</a>',
                                     buttons: Ext.Msg.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
@@ -7123,10 +7123,10 @@ RunClonePanel = function(product_id, runs, caselist){
                         });
                     }
                     else {
-                        msg = a.result.failures.length > 0 ? 'Test cases ' + a.result.failures.join(',') + ' were not included. They are either DISABLED or PROPOSED. <br>' : '';
+                        msg = a.result.failures.length > 0 ? a.result.failures.join.length + ' Test cases were not included. They are either DISABLED or PROPOSED. <a href="tr_list_cases.cgi?case_id=' + a.result.failures.join(',') +'">View List</a> <br>' : '';
                         Ext.Msg.show({
                             title:'Test Run Copied',
-                            msg: msg + 'Test runs ' + a.result.runlist.join(',') + ' Copied successfully. <a href="tr_list_runs.cgi?run_id=' + a.result.runlist.join(',') +'">View as List</a>',
+                            msg: msg + a.result.runlist.length + ' Test runs Copied successfully. <a href="tr_list_runs.cgi?run_id=' + a.result.runlist.join(',') +'">View List</a>',
                             buttons: Ext.Msg.OK,
                             icon: Ext.MessageBox.INFO
                         });

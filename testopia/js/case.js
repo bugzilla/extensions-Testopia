@@ -1255,7 +1255,7 @@ CaseClonePanel = function(product_id, cases){
                             else {
                                 Ext.Msg.show({
                                     title:'Test Case Copied',
-                                    msg: 'Test cases ' + data.result.tclist.join(',') + ' Copied successfully <a href="tr_list_cases.cgi?case_id=' + data.result.tclist.join(',') +'">View as List</a>',
+                                    msg: data.result.tclist.length + ' Test cases Copied successfully <a href="tr_list_cases.cgi?case_id=' + data.result.tclist.join(',') +'">View List</a>',
                                     buttons: Ext.Msg.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
