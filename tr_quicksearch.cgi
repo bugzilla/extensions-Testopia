@@ -368,6 +368,7 @@ else{
     
     elsif ($action eq 'getproducts'){
         my $products;
+        my $q = $cgi->param('query'); 
         my $json = new JSON;
         
         if ($cgi->param('class_id')){
@@ -379,7 +380,13 @@ else{
         }
         my @prods;
         foreach my $p (@$products){
-            push @prods, {name => $p->name, id => $p->id};
+            if ($cgi->param('query')){
+                push @prods, {name => $p->name, id => $p->id} if ($p->name =~ m/$q/i);
+            }
+            else{
+                push @prods, {name => $p->name, id => $p->id};
+            }
+            
         }
         print "{products:" . $json->encode(\@prods) . "}";
     }
@@ -415,6 +422,7 @@ else{
     elsif ($action eq 'getcomponents'){
         my $plan = Bugzilla::Testopia::TestPlan->new({});
         my $product_id = $cgi->param('product_id');
+        my $q = $cgi->param('query'); 
     
         detaint_natural($product_id);
         my $prod = $plan->lookup_product($product_id);
@@ -426,7 +434,12 @@ else{
         
         my @comps;
         foreach my $c (@{$product->components}){
-            push @comps, {'id' => $c->id, 'name' => $c->name, 'qa_contact' => $c->default_qa_contact->login};
+            if ($cgi->param('query')){
+                push @comps, {'id' => $c->id, 'name' => $c->name, 'qa_contact' => $c->default_qa_contact->login} if ($c->name =~ m/$q/i);
+            }
+            else {
+                push @comps, {'id' => $c->id, 'name' => $c->name, 'qa_contact' => $c->default_qa_contact->login};
+            }
         }
         my $json = new JSON;
         print "{'components':". $json->encode(\@comps) ."}";
