@@ -764,7 +764,7 @@ ComponentCombo = function(cfg){
         loadingText: 'Looking up Components...',
         displayField: 'name',
         valueField: 'id',
-        editable: false,
+        editable: true,
         triggerAction: 'all',
         minListWidth: 300,
         forceSelection: true,
