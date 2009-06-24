@@ -475,6 +475,10 @@ sub init {
     elsif ($order eq 'created') {
         push @orderby, 'test_'. $obj .'s.creation_date';
     }
+    elsif ($order eq 'modified') {
+        push @supptables, "INNER JOIN test_". $obj ."_activity ON test_". $obj ."_activity.". $obj ."_id = test_". $obj ."s.". $obj ."_id";
+        push @orderby, 'test_'. $obj .'_activity.changed';
+    }
     elsif ($order eq 'name') {
         push @orderby, 'test_'. $obj .'s.name';
     }
