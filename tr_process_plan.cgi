@@ -180,6 +180,10 @@ elsif ($action eq 'clone'){
             my $run_id = $run->clone($run->summary, $manager, $newplan->id, $build->id, $env->id);
             
             my $newrun = Bugzilla::Testopia::TestRun->new($run_id);
+            
+            $newrun->set_product_version($cgi->param('prod_version'));
+            $newrun->update();
+            
             if($cgi->param('copy_run_tags')){
                 foreach my $tag (@{$run->tags}){
                     $newrun->add_tag($tag->name);
