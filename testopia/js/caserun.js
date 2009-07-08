@@ -1316,12 +1316,11 @@ CaseRun = function(){
                         '<div class="x-clear"><input id="caserun_append_note_fld" ></div>'
                     )
                 }],
-                bbar:[{
+                bbar:[new Ext.menu.TextItem('Add a Note: '),{
                     xtype: 'textfield',
                     id: 'caserun_append_note_fld',
                     width: 1000
-                }],
-                buttons:[{
+                },{
                     xtype: 'button',
                     text: 'Append Note',
                     handler: appendNote.createDelegate(this)
