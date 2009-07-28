@@ -563,6 +563,19 @@ sub get_history {
          LEFT JOIN profiles p ON tcr.testedby = p.userid 
               WHERE case_id = ? AND run_id = ?", {'Slice' =>{}},
              ($self->{'case_id'}, $self->{'run_id'}));
+    foreach my $r (@$ref){
+        my @bugs;
+        my $bugids = $dbh->selectcol_arrayref("SELECT bug_id 
+                                         FROM test_case_bugs 
+                                         WHERE case_run_id=?", 
+                                         undef, $r->{'case_run_id'});
+        foreach my $bugid (@{$bugids}){
+            my $b = Bugzilla::Bug->new($bugid, Bugzilla->user->id);
+            push @bugs, { bug_id => $b->bug_id, closed => Bugzilla::Bug::is_open_state($b->{'bug_status'}) ? JSON::false : JSON::true} if Bugzilla->user->can_see_bug($bugid);
+        }
+        my $bugs = { bugs => \@bugs };
+        $r->{'bug_list'} = $bugs;
+    }
 
     return $ref;    
     
