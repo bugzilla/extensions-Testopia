@@ -1,0 +1,45 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Testopia System.
+  #
+  # The Initial Developer of the Original Code is Greg Hendricks.
+  # Portions created by Greg Hendricks are Copyright (C) 2001
+  # Novell. All Rights Reserved.
+  #
+  # Contributor(s): Greg Hendricks <ghendricks@novell.com>
+  #%]
+
+[%# INTERFACE:
+  # ...
+  #%]
+  
+[% PROCESS testopia/style.none.tmpl %]
+[% UNLESS stripheader %]
+[% PROCESS global/header.html.tmpl %]
+[% END %]
+<h1>[% qname FILTER html %]</h1>
+
+<div id="bug_count_report[% uid FILTER html IF qname %]"></div>
+<script type="text/javascript">
+    
+    var bug_list = new Testopia.BugReport({
+            run_ids: '[% runs || 0 FILTER js %]',
+            plan_ids: '[% plans || 0 FILTER js %]'
+        });
+    bug_list.render('bug_count_report[% uid FILTER js IF qname %]');
+    bug_list.store.load();
+
+</script>
+
+[% UNLESS stripheader %]
+[% PROCESS global/footer.html.tmpl %]
+[% END %]
