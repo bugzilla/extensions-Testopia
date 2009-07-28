@@ -633,6 +633,7 @@ sub history {
             $row->{'oldvalue'} = lookup_type($row->{'oldvalue'});
             $row->{'newvalue'} = lookup_type($row->{'newvalue'});
         }
+        $row->{'changed'} = format_time($row->{'changed'}, TIME_FORMAT);
     }        
     return $ref;
 }
@@ -979,6 +980,7 @@ sub TO_JSON {
     $obj->{'link_url'}     = 'tr_show_plan.cgi?plan_id=' . $self->id;
     $obj->{'type'}         = $self->type;
     $obj->{'id'}           = $self->id;
+    $obj->{'creation_date'} = format_time($self->{'creation_date'}, TIME_FORMAT);
     
     return $json->encode($obj); 
 }

@@ -54,6 +54,7 @@ SAVED_REPORT
 SAVED_FILTER
 SAVED_DASHBORD
 
+TIME_FORMAT
 );
 
 #
@@ -124,5 +125,7 @@ use constant REL_TESTER             => 102;
 use constant REL_TEST_CC            => 103;
 
 use constant RELATIONSHIPS => REL_AUTHOR, REL_EDITOR, REL_TESTER, REL_TEST_CC;
+
+use constant TIME_FORMAT => '%b %e %Y %T %Z';
 
 1;

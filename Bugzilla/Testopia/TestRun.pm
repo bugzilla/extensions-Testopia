@@ -499,6 +499,7 @@ sub history {
             $row->{'oldvalue'} = $self->lookup_manager($row->{'oldvalue'});
             $row->{'newvalue'} = $self->lookup_manager($row->{'newvalue'});
         }
+        $row->{'changed'} = format_time($row->{'changed'}, TIME_FORMAT);
     }        
     return $ref;
 }
@@ -589,6 +590,8 @@ sub TO_JSON {
     $obj->{'blocked_pct'}   = $self->case_run_count(BLOCKED) / $rc if $rc;
     $obj->{'complete_pct'}  = $self->percent_complete() . '%';
     $obj->{'bug_list'}      = $self->{'bug_list'};
+    $obj->{'start_date'} = format_time($self->{'start_date'}, TIME_FORMAT);
+    $obj->{'stop_date'} = format_time($self->{'stop_date'}, TIME_FORMAT);
     
     return $json->encode($obj); 
 }

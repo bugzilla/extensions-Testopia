@@ -335,6 +335,8 @@ sub TO_JSON {
     $obj->{'id'}           = $self->id;
     $obj->{'sortkey'}      = $self->sortkey;
     $obj->{'bug_list'}     = $bugs;
+    $obj->{'close_date'}   = format_time($self->{close_date}, TIME_FORMAT);
+    $obj->{'running_date'} = format_time($self->{running_date}, TIME_FORMAT);
     
     return $json->encode($obj); 
 }

@@ -29,6 +29,7 @@ use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Error;
 
+use Bugzilla::Testopia::Constants;
 use Bugzilla::Testopia::Util;
 
 use base qw(Exporter Bugzilla::Object);
@@ -219,6 +220,7 @@ sub TO_JSON {
     $obj->{'canedit'}    = $self->canedit;
     $obj->{'candelete'}  = $self->candelete;
     $obj->{'caserun_id'}   = $self->{'caserun_id'} if $self->{'caserun_id'}; 
+    $obj->{'creation_ts'} = format_time($self->{'creation_ts'}, TIME_FORMAT);
 
     return $json->encode($obj); 
 }

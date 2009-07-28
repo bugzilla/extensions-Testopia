@@ -1418,6 +1418,7 @@ sub history {
             $row->{'oldvalue'} = lookup_default_tester($row->{'oldvalue'});
             $row->{'newvalue'} = lookup_default_tester($row->{'newvalue'});
         }
+        $row->{'changed'} = format_time($row->{'changed'}, TIME_FORMAT);
     }
     
     return $ref;
@@ -1690,7 +1691,9 @@ sub TO_JSON {
     $obj->{'blocked'}      = $self->blocked_list;
     $obj->{'dependson'}    = $self->dependson_list;
     $obj->{'component'}    = $self->components->[0]->name if scalar @{$self->components};
-    $obj->{'modified'}     = $self->last_changed;
+    $obj->{'modified'}     = format_time($self->last_changed, TIME_FORMAT);
+    $obj->{'creation_date'} = format_time($self->{'creation_date'}, TIME_FORMAT);
+    
 
     return $json->encode($obj); 
 }
