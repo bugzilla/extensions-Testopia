@@ -3036,6 +3036,7 @@ PlanClonePopup = function(plan){
  * Contributor(s): Greg Hendricks <ghendricks@novell.com>
  *                 Ryan Hamilton <rhamilton@novell.com>
  *                 Daniel Parker <dparker1@novell.com>
+ *                 M-A Parent<maparent@miranda.com>
  */
 
 CasePanel = function(params,cfg){
@@ -3120,8 +3121,8 @@ CaseGrid = function(params, cfg){
                {name: "product_id", mapping:"product_id"},
                {name: "component", mapping:"component"},
                {name: "modified", mapping:"modified"},
-               {name: "isautomated", mapping:"isautomated"}
-
+               {name: "isautomated", mapping:"isautomated"},
+               {name: "plan_name", mapping:"plan_name"}
         ]}),
         remoteSort: true,
         sortInfo: {field: 'case_id', direction: "ASC"},
@@ -3191,7 +3192,8 @@ CaseGrid = function(params, cfg){
                 name: 'requirement'
             }))
         },
-        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', hidden: true, renderer: tutil.plan_link, groupRenderer: function(v){return v;}},
+        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', hidden: true, renderer: tutil.plan_link, 
+            groupRenderer: function(v, u, r){return v + ': "' + r.get('plan_name') + '"';}},
         {header: "Run Count", width: 40, sortable: false, dataIndex: 'run_count', hidden: true}
     ];
     this.view = new Ext.grid.GroupingView({
