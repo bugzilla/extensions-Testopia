@@ -28,6 +28,7 @@
 #
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 #                 Jeff Dayley <jedayley@novell.com>
+#                 M-A Parent <maparent@miranda.com>
 
 package Bugzilla::Testopia::TestCase;
 
@@ -1674,6 +1675,7 @@ sub TO_JSON {
         $obj->{$field} = $self->{$field};
     }
 
+    $obj->{'plan_name'}    = ${$self->plans}[0]->name;
     $obj->{'run_count'}    = $self->run_count;
     $obj->{'author_name'}  = $self->author->name if $self->author;
     $obj->{'default_tester'}  = $self->default_tester->name if $self->default_tester;
