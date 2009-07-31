@@ -3,7 +3,7 @@
 */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/strings.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/strings.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -34,11 +34,11 @@ RUN_DELETE_WARNING = 'You are about to delete the selected test runs including a
 CASERUN_DELETE_WARNING = 'You are about to remove the selected test cases from this run including all history. This action cannot be undone. Are you sure you want to continue?';
 ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environment including associated test case data. This action cannot be undone. Are you sure you want to continue?';
 /*
- * END OF FILE - /testopia-branch/testopia/js/strings.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/strings.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/util.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/util.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -1754,11 +1754,11 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
 Ext.extend(Testopia.Util.PlanSelector, Ext.Panel);
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/util.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/util.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/attachments.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/attachments.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -2115,11 +2115,11 @@ NewAttachmentPopup = function(object){
 };
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/attachments.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/attachments.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/plan.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/plan.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -3010,11 +3010,11 @@ PlanClonePopup = function(plan){
 };
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/plan.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/plan.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/case.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/case.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -4351,11 +4351,11 @@ caseClonePopup = function(product_id, cases){
 };
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/case.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/case.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/caserun.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/caserun.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -6203,11 +6203,11 @@ BugsUpdate = function(grid){
     win.show();
 };
 /*
- * END OF FILE - /testopia-branch/testopia/js/caserun.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/caserun.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/run.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/run.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7582,11 +7582,11 @@ Testopia.BugReport = function(params){
 Ext.extend(Testopia.BugReport, Ext.grid.GridPanel);
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/run.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/run.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/build.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/build.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7818,11 +7818,11 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/build.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/build.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/category.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/category.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8050,11 +8050,11 @@ confirmCaseCategoryDelete = function(){
 
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/category.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/category.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/environment.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/environment.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8377,11 +8377,11 @@ Ext.extend(EnvironmentGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/environment.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/environment.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/search.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/search.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9182,11 +9182,11 @@ PortalTools = [{
 }];
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/search.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/search.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/tags.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/tags.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9498,11 +9498,11 @@ TagsUpdate = function(type, grid){
 };
          
 /*
- * END OF FILE - /testopia-branch/testopia/js/tags.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/tags.js
  */
 
 /*
- * START OF FILE - /testopia-branch/testopia/js/diff-tabs.js
+ * START OF FILE - /testopia-3.0-branch/testopia/js/diff-tabs.js
  */
 Ext.ux.TabCloseMenu = function(){
     var tabs, menu, ctxItem;
@@ -9629,7 +9629,7 @@ Ext.extend(diff_tab_panel, Ext.TabPanel);
 
 
 /*
- * END OF FILE - /testopia-branch/testopia/js/diff-tabs.js
+ * END OF FILE - /testopia-3.0-branch/testopia/js/diff-tabs.js
  */
 
 /*
