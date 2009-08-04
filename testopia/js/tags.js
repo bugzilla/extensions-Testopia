@@ -148,6 +148,7 @@ Ext.extend(TestopiaObjectTags, Ext.grid.GridPanel, {
                          text: 'Remove Selected Tags', 
                          icon: 'testopia/img/delete.png',
                          iconCls: 'img_button_16x',
+                         obj_id: this.obj_id,
                          handler: this.remove
                     },{
                         text: 'Refresh List', 
