@@ -166,6 +166,7 @@ sub create {
 
     $field_values->{contents} = _validate_data($field_values->{contents});
     $field_values->{creation_ts} = Bugzilla::Testopia::Util::get_time_stamp();
+    $field_values->{mime_type} ||= 'application/octet-stream';
 
     my $contents   = $field_values->{contents};
     my $case_id    = $field_values->{case_id};
