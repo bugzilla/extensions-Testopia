@@ -1,0 +1,158 @@
+Testrunner to Testopia installation guide by sneharaj.rajendran <sneharajr@gmail.com> 
+
+1, Upgrade the Bugzilla first before start the migration.
+
+2, Make sure that all the table related to test runner is dropped.
+
+Drop table test_case_attachments ; drop table test_case_groups; drop table test_case_tags; drop table test_cases; drop table test_cases_bugs; drop table test_cases_log; drop table test_cases_log_testers; drop table test_cases_texts; drop table test_plan_attachments; drop table test_plan_cases_tags; drop table test_plan_types; drop table test_plans; drop table test_plans_texts; drop table test_plans_watchers; drop table test_runs; drop table test_runs_testers; drop table testers; drop table testers_components;
+
+3, Apply the corresponding patch before the installation.
+
+Patch -p0 -i Testopia/ patch-3.0
+
+4, To install the Testopia run the following command.
+
+Perl checksetup.pl
+
+The above command will create the table structure for the Testopia .
+
+Test Runner to Testopia migration
+
+1, Let start the database porting from test runner to testopia.
+
+Create two database base
+
+Eg: create database bugdump ; create database newdb;
+
+Note: newdb will be used for port the data from bugsdump database both will be temporary database used for migration.
+
+Note: restore the old bugzilla data in to one database
+
+2, Login to mysql.
+
+Mysql -u root -p bugsdump < "<dumpfile.sql>"
+
+3, login to new bugzilla database and ran the following commands.
+
+Use bugs;
+
+insert into test_case_status (case_status_id,name) values (3,'Disabled');
+
+insert into test_case_status (case_status_id,name) values (1,'proposed');
+
+insert into test_case_status (case_status_id,name) values (2,'Confirmed');
+
+    
+
+insert into test_builds (build_id,product_id,name) values (1,1,'Dummy data build');
+
+   insert into test_environments (environment_id,product_id,name) values (1,1,'Dummy data environment');
+
+insert into test_case_run_status values (1,'idle');
+
+insert into test_case_run_status values (2,'passed');
+
+insert into test_case_run_status values (3,'failed'); 
+
+4, Following sqlquerys will dump the data into newdb database
+
+use bugsdump;
+
+create table newdb.new_test_case_categories   select distinct g.group_id as category_id, test_plans.product_id, concat(g.name, "_",g.group_id),g.description from test_cases, test_case_groups as g , test_plans where test_cases.group_id = g.group_id and test_plans.plan_id = test_cases.plan_id; 
+
+create table newdb.new_test_case_tags select test_case_tags.tag_id,test_case_tags.case_id, test_cases.userid from test_case_tags, test_cases where test_cases.case_id = test_case_tags.case_id; 
+ 
+
+   create table newdb.new_test_case_plans select plan_id, case_id from test_cases; 
+
+   create table newdb.new_test_case_components select case_id, component_id from test_cases; 
+
+   create table newdb.new_test_case_bugs select bug_id,case_log_id as case_run_id, case_id from test_cases_bugs; 
+
+  create table newdb.new_test_case_runs select id as case_run_id ,test_run_id as run_id, case_id,runningby as assignee,testedby,if(status=1,1,if(status=2,2,3)) as case_run_status_id, test_case_version,'1' as build_id, runningon as running_date, close_date as close_date, notes,isprivate as iscurrent, seq as sortkey, NULL as environment_id from test_cases_log; 
+
+   create table newdb.new_test_case_texts  select case_id, case_version as case_text_version, '1' as who , creation_ts, action,effect,summary as setup, req_id as breakdown from test_cases_texts; 
+
+   create table newdb.new_test_plan_types select type_id,name, '' as description from test_plan_types; 
+
+   create table newdb.new_test_plan_tags  select tag_id,plan_id, '1' as userid from test_plan_cases_tags; 
+
+   create table newdb.new_test_plans select t.plan_id,t.product_id,t.editor as author_id,t.type as type_id ,t.product_version as default_product_version,t.name,t.creation_date,if((t.active= 'T'), 1, 0) as isactive from test_plans t, products p where p.id= t.product_id; 
+ 
+
+   create table newdb.new_test_plan_texts select plan_id, plan_version as plan_text_version, '1' as who, creation_ts, plan_text from test_plans_texts; 
+
+   create table newdb.new_test_runs select test_run_id as run_id, plan_id, NULL as environment_id , product_version, NULL as build_id, plan_version as plan_text_version, manager as manager_id, NULL as default_tester_id, start_date, stop_date, summary, notes from test_runs;
+
+create table newdb.new_test_cases select test_cases.case_id, if(status=1,1,if(status=2,2,3)) as case_status_id, group_id as category_id, 0 as priority_id,userid as author_id, 0 as default_tester_id, creation_date, 0 as estimated_time, if(strcmp(run_mode,'manual'),1,0) as isautomated,seq as sortkey, script, arguments, test_cases_texts.summary ,'' as requirement, '' as alias from test_cases left join test_cases_texts on (test_cases.case_id=test_cases_texts.case_id) group by test_cases_texts.case_id;
+
+5, Take the dump of each table by table from newdb
+6, logout from bugzilla database
+
+7, create a folder name dump inside buzilla installation folder and execute the following command one by one to take the back of table created under newdb database
+
+mysqldump -u root -p newdb new_test_case_categories -t > new_test_case_categories
+
+mysqldump -u root -p newdb new_test_case_components -t > new_test_case_components
+
+mysqldump -u root -p newdb new_test_case_plans -t > new_test_case_plans
+
+mysqldump -u root -p newdb new_test_case_runs -t > new_test_case_runs
+
+mysqldump -u root -p newdb new_test_case_tags -t > new_test_case_tags
+
+mysqldump -u root -p newdb new_test_case_texts -t > new_test_case_texts
+
+mysqldump -u root -p newdb new_test_cases -t > new_test_cases
+
+mysqldump -u root -p newdb new_test_plan_tags -t > new_test_plan_tags
+
+mysqldump -u root -p newdb new_test_plan_texts -t > new_test_plan_texts
+
+mysqldump -u root -p newdb new_test_plan_types -t > new_test_plan_types
+
+mysqldump -u root -p newdb new_test_plans -t > new_test_plans
+
+mysqldump -u root -p newdb new_test_runs -t > new_test_runs
+
+mysqldump -u root -p newdb new_test_case_bugs -t > new_test_case_bugs
+
+8, Open each file and replace the word
+
+:1,$s/new_//g
+
+9, Restore the data into bugs one by one
+
+Mysql -u root -p bugs < new_test_case_components
+
+Mysql -u root -p bugs < new_test_case_plans
+
+Mysql -u root -p bugs < new_test_case_runs
+
+Mysql -u root -p bugs < new_test_case_tags
+
+Mysql -u root -p bugs < new_test_case_texts
+
+Mysql -u root -p bugs < new_test_cases
+
+Mysql -u root -p bugs < new_test_plan_tags
+
+Mysql -u root -p bugs < new_test_plan_texts
+
+Mysql -u root -p bugs < new_test_plan_types
+
+Mysql -u root -p bugs < new_test_plans
+
+Mysql -u root -p bugs < new_test_runs
+
+Mysql -u root -p bugs < new_test_case_categories
+
+10, Login to mysql database
+
+Mysql -u root -p
+
+Use bugs;
+
+update test_case_runs set iscurrent =1;
+
+11, Bugzilla and testopia is ready to test.
