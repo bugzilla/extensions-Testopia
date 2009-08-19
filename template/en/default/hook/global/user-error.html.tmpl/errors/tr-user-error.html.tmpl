@@ -166,6 +166,10 @@
     <p>
     The id's of those that failed are: [% list FILTER none %]
     </p>
+  [% ELSIF error == "testopia-delete-failed" %]
+    [% title = "One or more of your test $object failed to be deleted" %]
+    Deleting one or more of your [% object %]s failed. The most likely cause is that you don't have permissions
+    to delete them. Your administrator must also have the "allow-test-deletion" set to "On".  
   [% ELSIF error == "testopia-unknown-tag" %]
     The tag "[% name FILTER html %]" does not exist.
   [% ELSIF error == "testopia-regexp-too-inclusive" %]
