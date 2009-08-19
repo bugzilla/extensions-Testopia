@@ -459,7 +459,7 @@ sub init {
         if ($obj eq 'case_run'){
             push @supptables, "INNER JOIN test_cases ON test_cases.case_id = test_case_runs.case_id";
         }
-        push @supptables, "INNER JOIN test_case_components ON test_cases.case_id = test_case_components.case_id";
+        push @supptables, "LEFT JOIN test_case_components ON test_cases.case_id = test_case_components.case_id";
         push @supptables, "LEFT JOIN components AS comp_sort ON comp_sort.id = test_case_components.component_id";
         push @orderby, 'comp_sort.name';
     }
