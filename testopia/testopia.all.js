@@ -8443,6 +8443,10 @@ Testopia.Search.fillInForm = function(type, params, name){
 };
 
 SearchPopup = function(tab, params){
+    if (Ext.getCmp('search_win')){
+        Ext.getCmp('search_win').show();
+        return;
+    }
     var win = new Ext.Window({
         id: 'search_win',
         closable: true,
