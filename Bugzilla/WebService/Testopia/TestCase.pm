@@ -587,6 +587,10 @@ sub add_to_run {
             push @results, {ERROR => "You do not have rights to edit this test case"};
             next;
         }
+        unless ($case->status eq 'CONFIRMED'){
+            push @results, {ERROR => "Only CONFIRMED test cases can be added to runs"};
+            next;
+        }
         eval {
             $case->add_to_run($run_ids);
         };

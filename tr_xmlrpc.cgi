@@ -1,5 +1,4 @@
 #!/usr/bin/perl -wT
-####!/usr/bin/perl -d:ptkdb -wT
 # -*- Mode: perl; indent-tabs-mode: nil -*-
 #
 # The contents of this file are subject to the Mozilla Public
@@ -15,39 +14,34 @@
 # The Original Code is the Bugzilla Bug Tracking System.
 #
 # Contributor(s): Marc Schumann <wurblzap@gmail.com>
-#                 Dallas Harken <dharken@novell.com>
-
-sub BEGIN
-{
-    # For use with ptkdb.
-    $ENV{DISPLAY}=":0.0";
-}
 
 use strict;
 use lib qw(. lib);
 
-use XMLRPC::Transport::HTTP;
 use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::WebService;
+use Bugzilla::Error;
+use Bugzilla::WebService::Constants;
+
+# Use an eval here so that runtests.pl accepts this script even if SOAP-Lite
+# is not installed.
+eval { require Bugzilla::WebService::Server::XMLRPC; };
+$@ && ThrowCodeError('soap_not_installed');
 
 Bugzilla->usage_mode(USAGE_MODE_WEBSERVICE);
 
-die 'Content-Type must be "text/xml" when using API' unless
-    $ENV{'CONTENT_TYPE'} eq 'text/xml';
+# Fix the error code that SOAP::Lite uses for Perl errors.
+local $SOAP::Constants::FAULT_SERVER;
+$SOAP::Constants::FAULT_SERVER = ERROR_UNKNOWN_FATAL;
+# The line above is used, this one is ignored, but SOAP::Lite
+# might start using this constant (the correct one) for XML-RPC someday.
+local $XMLRPC::Constants::FAULT_SERVER;
+$XMLRPC::Constants::FAULT_SERVER = ERROR_UNKNOWN_FATAL;
 
-my $dispatch = { 'TestPlan'    => 'Bugzilla::WebService::Testopia::TestPlan',
-                 'TestCase'    => 'Bugzilla::WebService::Testopia::TestCase',
-                 'TestRun'     => 'Bugzilla::WebService::Testopia::TestRun',
-                 'TestCaseRun' => 'Bugzilla::WebService::Testopia::TestCaseRun',
-                 'Product'     => 'Bugzilla::WebService::Testopia::Product',
-                 'Environment' => 'Bugzilla::WebService::Testopia::Environment',
-                 'Build'       => 'Bugzilla::WebService::Testopia::Build',
-                 'Testopia'    => 'Bugzilla::WebService::Testopia::Testopia',
-                 'User'        => 'Bugzilla::WebService::User',
-               };
-my $response = Bugzilla::WebService::XMLRPC::Transport::HTTP::CGI
-    ->dispatch_with($dispatch)
-    ->on_action(sub { Bugzilla::WebService::handle_login($dispatch, @_) } )
-    ->handle;
-    
+local @INC = (bz_locations()->{extensionsdir}, @INC);
+my $server = new Bugzilla::WebService::Server::XMLRPC;
+# We use a sub for on_action because that gets us the info about what 
+# class is being called. Note that this is a hack--this is technically 
+# for setting SOAPAction, which isn't used by XML-RPC.
+$server->on_action(sub { $server->handle_login(WS_DISPATCH, @_) })
+       ->handle();
