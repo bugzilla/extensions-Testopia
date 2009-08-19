@@ -1268,24 +1268,24 @@ sub unlink_plan {
     my $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
 
     if (scalar @{$self->plans} == 1){
-        return 0; #Return failure
+        $self->obliterate;
     }
-
-    $dbh->bz_start_transaction();
-    
-    foreach my $run (@{$plan->test_runs}){
-        $dbh->do("DELETE FROM test_case_runs 
-                   WHERE case_id = ? 
-                     AND run_id = ?", undef, $self->id, $run->id);
+    else {
+        $dbh->bz_start_transaction();
+        
+        foreach my $run (@{$plan->test_runs}){
+            $dbh->do("DELETE FROM test_case_runs 
+                       WHERE case_id = ? 
+                         AND run_id = ?", undef, $self->id, $run->id);
+        }
+        
+        $dbh->do("DELETE FROM test_case_plans 
+                   WHERE plan_id = ? 
+                     AND case_id = ?", 
+                     undef, $plan_id, $self->{'case_id'});
+        
+        $dbh->bz_commit_transaction();   
     }
-    
-    $dbh->do("DELETE FROM test_case_plans 
-               WHERE plan_id = ? 
-                 AND case_id = ?", 
-                 undef, $plan_id, $self->{'case_id'});
-    
-    $dbh->bz_commit_transaction();   
-
     # Update the plans array.
     delete $self->{'plans'}; 
 

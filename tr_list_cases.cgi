@@ -264,7 +264,7 @@ elsif ($action eq 'unlink'){
         }
         else {
             ThrowUserError("testopia-read-only", {'object' => 'case'}) unless ($case->can_unlink_plan($plan_id));
-            ThrowUserError('testopia-case-unlink-failure') unless $case->unlink_plan($plan_id);
+            $case->unlink_plan($plan_id);
         }
     }
     print "{'success': true}";
