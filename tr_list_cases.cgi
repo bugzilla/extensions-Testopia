@@ -247,7 +247,7 @@ elsif ($action eq 'delete'){
         $case->obliterate;
     }
 
-    ThrowUserError('testopia-update-failed', {'object' => 'case', 'list' => join(',',@uneditable)}) if (scalar @uneditable);
+    ThrowUserError('testopia-delete-failed', {'object' => 'case', 'list' => join(',',@uneditable)}) if (scalar @uneditable);
     print "{'success': true}";
 }
 
