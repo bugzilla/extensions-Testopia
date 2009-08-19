@@ -130,7 +130,7 @@ $schema->{test_attachments} = {
             REFERENCES => {
                 TABLE  => 'priority',
                 COLUMN => 'id',
-                DELETE => 'CASCADE'
+                DELETE => 'RESTRICT'
             }
         },
         author_id => {

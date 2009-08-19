@@ -128,7 +128,7 @@ elsif ($action eq 'detachbug'){
     ThrowUserError("testopia-read-only", {'object' => $case}) unless $case->canedit;
     my @buglist;
     foreach my $bug (split(/[\s,]+/, $cgi->param('bug_id'))){
-        ValidateBugID($bug);
+        Bugzilla::Bug->check($bug);
         push @buglist, $bug;
     }
     foreach my $bug (@buglist){

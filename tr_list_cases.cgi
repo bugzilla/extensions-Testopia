@@ -75,7 +75,7 @@ if ($action eq 'update'){
     }
 
     foreach my $bugid (split(/[\s,]+/, $cgi->param('bugs'))){
-        ValidateBugID($bugid);
+        Bugzilla::Bug->check($bugid);
         push @bugs, $bugid;
     }
     
