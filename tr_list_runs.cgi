@@ -183,7 +183,7 @@ elsif ($action eq 'delete'){
         $run->obliterate;
     }
 
-    ThrowUserError('testopia-update-failed', {'object' => 'run', 'list' => join(',',@uneditable)}) if (scalar @uneditable);
+    ThrowUserError('testopia-delete-failed', {'object' => 'run', 'list' => join(',',@uneditable)}) if (scalar @uneditable);
     print "{'success': true}";
 }
 
