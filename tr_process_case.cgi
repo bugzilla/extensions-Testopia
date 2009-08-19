@@ -118,7 +118,7 @@ elsif ($action eq 'unlink'){
     my $plan_id = $cgi->param('plan_id');
     validate_test_id($plan_id, 'plan');
     ThrowUserError("testopia-read-only", {'object' => 'case'}) unless ($case->can_unlink_plan($plan_id));
-    ThrowUserError('testopia-case-unlink-failure') unless $case->unlink_plan($plan_id);
+    $case->unlink_plan($plan_id);
     
     print "{'success': true}";
 }
