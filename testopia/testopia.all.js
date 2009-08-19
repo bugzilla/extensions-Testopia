@@ -5354,7 +5354,7 @@ Ext.extend(CaseRunGrid, Ext.grid.EditorGridPanel, {
             myparams.priority = gevent.value;
             break;
         case 'category':
-            myparams.action = 'update_scategory';
+            myparams.action = 'update_category';
             myparams.category = gevent.value;
             break;
         }
