@@ -61,6 +61,8 @@ sub testopiaUpdateDB {
     $dbh->bz_drop_table('test_plan_testers');
     $dbh->bz_drop_table('test_plan_group_map');
     $dbh->bz_drop_column('test_plans', 'editor_id');
+    
+    $dbh->bz_drop_fk('test_cases', 'priority_id') if $dbh->bz_column_info('test_cases','priority_id')->{REFERENCES}->{DELETE} eq 'CASCADE';
 
     $dbh->bz_add_column('test_case_bugs', 'case_id', {TYPE => 'INT4'});
     $dbh->bz_add_column('test_case_runs', 'environment_id', {TYPE => 'INT4', NOTNULL => 1}, 0);
