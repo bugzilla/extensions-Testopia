@@ -303,3 +303,23 @@ diff -u -r1.14 setting-descs.none.tmpl
     "quote_replies"                    => "Quote the associated comment when you click on its reply link",
     "quoted_reply"                     => "Quote the full comment",
     "simple_reply"                     => "Reference the comment number only",
+Index: Bugzilla/Search.pm
+===================================================================
+RCS file: /cvsroot/mozilla/webtools/bugzilla/Bugzilla/Search.pm,v
+retrieving revision 1.173.2.1
+diff -u -r1.173.2.1 Search.pm
+--- Bugzilla/Search.pm  7 Jul 2009 18:20:08 -0000   1.173.2.1
++++ Bugzilla/Search.pm  21 Aug 2009 21:11:51 -0000
+@@ -269,6 +269,12 @@
+         push(@supptables, "LEFT JOIN longdescs AS ldtime " .
+                           "ON ldtime.bug_id = bugs.bug_id");
+     }
++    ### Testopia ###
++    if (grep($_ eq 'test_cases', @fields)){
++        push(@supptables, "LEFT JOIN test_case_bugs AS tcb " . 
++                           "ON bugs.bug_id = tcb.bug_id ");
++    }
++    ### end Testopia ###    
+ 
+     my $minvotes;
+     if (defined $params->param('votes')) {
