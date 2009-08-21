@@ -972,11 +972,6 @@ $schema->{test_attachments} = {
         property_id => {
             TYPE       => 'INT4',
             NOTNULL    => 1,
-            REFERENCES => {
-                TABLE  => 'test_environment_property',
-                COLUMN => 'property_id',
-                DELETE => 'CASCADE'
-            }
         },
         element_id => {
             TYPE       => 'INT4',
