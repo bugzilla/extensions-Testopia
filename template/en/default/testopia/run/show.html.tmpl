@@ -135,14 +135,12 @@ Ext.onReady(function(){
     });
 
     var runControls = new Ext.Toolbar();
-    runControls.render('run-tb-div');
     runControls.add({
         text: 'File',
         menu: fileMenu
     },new Ext.Toolbar.Fill()
     ,{
         xtype: 'button',
-        template: button_16x_tmpl,
         id:'run-clone-ibtn',
         icon: 'testopia/img/copy.png',
         iconCls: 'img_button_16x',
@@ -155,7 +153,6 @@ Ext.onReady(function(){
     ,{
         xtype: 'button',
         id: 'run_delete_btn',
-        template: button_16x_tmpl,
         icon: 'testopia/img/delete.png',
         iconCls: 'img_button_16x',
         tooltip: 'Delete this Run',
@@ -240,7 +237,6 @@ Ext.onReady(function(){
 // Manager Editing
     var manager_edit_btn = new Ext.Button({
         applyTo: 'manager_edit_btn_div',
-        template: button_16x_tmpl,
         id:'manager_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',
@@ -268,7 +264,6 @@ Ext.onReady(function(){
 // Target Complete edit    
     var tcomp_edit_btn = new Ext.Button({
         applyTo: 'run_tcomp_edit_btn_div',
-        template: button_16x_tmpl,
         id:'run_tcomp_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',
@@ -300,7 +295,6 @@ Ext.onReady(function(){
 // Target Pass edit    
     var tpass_edit_btn = new Ext.Button({
         applyTo: 'run_tpass_edit_btn_div',
-        template: button_16x_tmpl,
         id:'run_tpass_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',
@@ -331,11 +325,10 @@ Ext.onReady(function(){
     });
 
   [% END %]
-
+    runControls.render('run-tb-div');
 // Summary Editing    
     var summary_edit_btn = new Ext.Button({
         applyTo: 'run_summary_edit_btn_div',
-        template: button_16x_tmpl,
         id:'run_summary_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',
@@ -445,6 +438,11 @@ Ext.onReady(function(){
         runpanel.setHeight(h);
         runpanel.doLayout();
         Ext.state.Manager.set('run_height', h);
+    });
+    Ext.QuickTips.register({
+        target: 'update_bugs',
+        title: 'Update Attached Bugs Status',
+        text: 'Update Status of Attached Bugs.<p><b>FAILED = REOPENED<br>PASSED = VERIFIED</b></p>'
     });
     Ext.getCmp('case_details_panel').on('resize', function(c,aw,ah,rw,rh){
         Ext.getCmp('cr_action_panel').setHeight(ah - 100);

@@ -80,7 +80,6 @@ EnvironmentGrid = function(params, cfg){
         new Ext.Toolbar.Fill(),{
             xtype: 'button',
             id : 'add_env_list_btn',
-            template: button_16x_tmpl,
             icon: 'testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add an Environment',
@@ -88,7 +87,6 @@ EnvironmentGrid = function(params, cfg){
          },{
             xtype: 'button',
             id : 'clone_env_list_btn',
-            template: button_16x_tmpl,
             disabled: true,
             icon: 'testopia/img/copy.png',
             iconCls: 'img_button_16x',
@@ -97,7 +95,6 @@ EnvironmentGrid = function(params, cfg){
          },{
             xtype: 'button',
             id : 'delete_env_list_btn',
-            template: button_16x_tmpl,
             disabled: true,
             icon: 'testopia/img/delete.png',
             iconCls: 'img_button_16x',

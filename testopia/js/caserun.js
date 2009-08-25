@@ -466,7 +466,8 @@ CaseRunGrid = function(params, run){
     this.tbar = new Ext.Toolbar({
         id: 'caserun_grid_tb',
         items: [
-            new Ext.Button({
+            {
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/IDLE.gif',
                 tooltip: 'Mark as IDLE (Not Run)',
@@ -474,7 +475,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 1, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/PASSED.gif',
                 tooltip: 'Mark as PASSED',
@@ -482,7 +484,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 2, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/FAILED.gif',
                 tooltip: 'Mark as FAILED',
@@ -490,7 +493,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 3, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/RUNNING.gif',
                 tooltip: 'Mark as RUNNING',
@@ -523,7 +527,8 @@ CaseRunGrid = function(params, run){
                         TestopiaUpdateMultiple('caserun', { status_id: 4, reassign: reassign, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                     }
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/PAUSED.gif',
                 tooltip: 'Mark as PAUSED',
@@ -531,7 +536,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 5, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/BLOCKED.gif',
                 tooltip: 'Mark as BLOCKED',
@@ -539,7 +545,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 6, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/ERROR.gif',
                 tooltip: 'Mark as ERROR',
@@ -547,15 +554,12 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 7, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.menu.TextItem('Update Bugs: '),
+            },' ','-','Update Bugs: ',
              new Ext.form.Checkbox({
                  id: 'update_bugs',
-                 disabled: true,
-                 tooltip: 'Update Status of Attached Bugs.<p><b>FAILED = REOPENED<br>PASSED = VERIFIED</b></p>'
+                 disabled: true
              }),
-            new Ext.Toolbar.Spacer(),new Ext.Toolbar.Separator(),new Ext.Toolbar.Spacer(),
-             buildCombo,new Ext.Toolbar.Spacer(),
-             envCombo,new Ext.Toolbar.Spacer(),new Ext.Toolbar.Separator(),new Ext.Toolbar.Spacer(),
+            ' ','-',' ',buildCombo,' ',envCombo,
             new Ext.Toolbar.Fill(),
             {
                 xtype: 'button',
@@ -577,7 +581,6 @@ CaseRunGrid = function(params, run){
                 }
             },{
                 xtype: 'button',
-                template: button_16x_tmpl,
                 id: 'caserun_grid_edit_btn',
                 icon: 'testopia/img/edit.png',
                 iconCls: 'img_button_16x',
@@ -587,7 +590,6 @@ CaseRunGrid = function(params, run){
                 }
             },{
                 xtype: 'button',
-                template: button_16x_tmpl,
                 id: 'caserun_grid_delete_btn',
                 icon: 'testopia/img/delete.png',
                 iconCls: 'img_button_16x',

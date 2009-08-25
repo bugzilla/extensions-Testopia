@@ -174,7 +174,7 @@ CaseGrid = function(params, cfg){
                 name: 'requirement'
             }))
         },
-        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', hidden: true, renderer: tutil.plan_link, 
+        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', hidden: true, renderer: tutil.planLink, 
             groupRenderer: function(v, u, r){return v + ': "' + r.get('plan_name') + '"';}},
         {header: "Run Count", width: 40, sortable: false, dataIndex: 'run_count', hidden: true}
     ];
@@ -260,7 +260,6 @@ CaseGrid = function(params, cfg){
             }
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             id: 'delete_case_list_btn',
             disabled: true,
             icon: 'testopia/img/delete.png',

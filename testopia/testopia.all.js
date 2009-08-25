@@ -3,7 +3,7 @@
 */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/strings.js
+ * START OF FILE - /bnc/testopia/js/strings.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -34,11 +34,11 @@ RUN_DELETE_WARNING = 'You are about to delete the selected test runs including a
 CASERUN_DELETE_WARNING = 'You are about to remove the selected test cases from this run including all history. This action cannot be undone. Are you sure you want to continue?';
 ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environment including associated test case data. This action cannot be undone. Are you sure you want to continue?';
 /*
- * END OF FILE - /bnc-3.2/testopia/js/strings.js
+ * END OF FILE - /bnc/testopia/js/strings.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/util.js
+ * START OF FILE - /bnc/testopia/js/util.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -507,14 +507,6 @@ TestCaseStore = function(params, auto){
         
 };
 Ext.extend(TestCaseStore, Ext.data.JsonStore);
-
-/*
- * button_16x_tmpl - template for all Testopia toolbar buttons.
- * This Template is for a 16x16 px icon.
- */
-button_16x_tmpl = new Ext.Template('<table border="0" cellpadding="0" cellspacing="0" class="x-btn-wrap" style="width: 20px;"><tbody><tr>',
-                                   '<td class="x-btn-left"><i>&#160;</i></td><td class="x-btn-center"><em unselectable="on"><button class="x-btn-text" type="{1}">{0}</button></em></td><td class="x-btn-right"><i>&#160;</i></td>',
-                                   '</tr></tbody></table>');
 
 /*
  * UserLookup - This generates a typeahead lookup for usernames.
@@ -1319,14 +1311,14 @@ var TestopiaPager = function(type, store){
         items: [
             new Ext.menu.TextItem('Filter: '),
             filter,
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             new Ext.Toolbar.Separator(),
             new Ext.menu.TextItem('View '),
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             sizer,
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             viewall,
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             new ToolbarText({ text: '(FILTERED)', hidden: true, id: type + '_filtered_txt', style: 'font-weight:bold;color:red'})
         ]
     });
@@ -1754,11 +1746,11 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
 Ext.extend(Testopia.Util.PlanSelector, Ext.Panel);
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/util.js
+ * END OF FILE - /bnc/testopia/js/util.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/attachments.js
+ * START OF FILE - /bnc/testopia/js/attachments.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -2115,11 +2107,11 @@ NewAttachmentPopup = function(object){
 };
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/attachments.js
+ * END OF FILE - /bnc/testopia/js/attachments.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/plan.js
+ * START OF FILE - /bnc/testopia/js/plan.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -3010,11 +3002,11 @@ PlanClonePopup = function(plan){
 };
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/plan.js
+ * END OF FILE - /bnc/testopia/js/plan.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/case.js
+ * START OF FILE - /bnc/testopia/js/case.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -3192,7 +3184,7 @@ CaseGrid = function(params, cfg){
                 name: 'requirement'
             }))
         },
-        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', hidden: true, renderer: tutil.plan_link, 
+        {header: "Plan", width: 40, sortable: true, dataIndex: 'plan_id', hidden: true, renderer: tutil.planLink, 
             groupRenderer: function(v, u, r){return v + ': "' + r.get('plan_name') + '"';}},
         {header: "Run Count", width: 40, sortable: false, dataIndex: 'run_count', hidden: true}
     ];
@@ -3278,7 +3270,6 @@ CaseGrid = function(params, cfg){
             }
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             id: 'delete_case_list_btn',
             disabled: true,
             icon: 'testopia/img/delete.png',
@@ -4353,11 +4344,11 @@ caseClonePopup = function(product_id, cases){
 };
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/case.js
+ * END OF FILE - /bnc/testopia/js/case.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/caserun.js
+ * START OF FILE - /bnc/testopia/js/caserun.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -4827,7 +4818,8 @@ CaseRunGrid = function(params, run){
     this.tbar = new Ext.Toolbar({
         id: 'caserun_grid_tb',
         items: [
-            new Ext.Button({
+            {
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/IDLE.gif',
                 tooltip: 'Mark as IDLE (Not Run)',
@@ -4835,7 +4827,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 1, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/PASSED.gif',
                 tooltip: 'Mark as PASSED',
@@ -4843,7 +4836,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 2, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/FAILED.gif',
                 tooltip: 'Mark as FAILED',
@@ -4851,7 +4845,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 3, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/RUNNING.gif',
                 tooltip: 'Mark as RUNNING',
@@ -4884,7 +4879,8 @@ CaseRunGrid = function(params, run){
                         TestopiaUpdateMultiple('caserun', { status_id: 4, reassign: reassign, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                     }
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/PAUSED.gif',
                 tooltip: 'Mark as PAUSED',
@@ -4892,7 +4888,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 5, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/BLOCKED.gif',
                 tooltip: 'Mark as BLOCKED',
@@ -4900,7 +4897,8 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 6, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.Button({
+            },{
+                xtype: 'button',
                 template:imgButtonTpl,
                 text: 'testopia/img/ERROR.gif',
                 tooltip: 'Mark as ERROR',
@@ -4908,15 +4906,12 @@ CaseRunGrid = function(params, run){
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 7, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
-            }),new Ext.menu.TextItem('Update Bugs: '),
+            },' ','-','Update Bugs: ',
              new Ext.form.Checkbox({
                  id: 'update_bugs',
-                 disabled: true,
-                 tooltip: 'Update Status of Attached Bugs.<p><b>FAILED = REOPENED<br>PASSED = VERIFIED</b></p>'
+                 disabled: true
              }),
-            new Ext.Toolbar.Spacer(),new Ext.Toolbar.Separator(),new Ext.Toolbar.Spacer(),
-             buildCombo,new Ext.Toolbar.Spacer(),
-             envCombo,new Ext.Toolbar.Spacer(),new Ext.Toolbar.Separator(),new Ext.Toolbar.Spacer(),
+            ' ','-',' ',buildCombo,' ',envCombo,
             new Ext.Toolbar.Fill(),
             {
                 xtype: 'button',
@@ -4938,7 +4933,6 @@ CaseRunGrid = function(params, run){
                 }
             },{
                 xtype: 'button',
-                template: button_16x_tmpl,
                 id: 'caserun_grid_edit_btn',
                 icon: 'testopia/img/edit.png',
                 iconCls: 'img_button_16x',
@@ -4948,7 +4942,6 @@ CaseRunGrid = function(params, run){
                 }
             },{
                 xtype: 'button',
-                template: button_16x_tmpl,
                 id: 'caserun_grid_delete_btn',
                 icon: 'testopia/img/delete.png',
                 iconCls: 'img_button_16x',
@@ -6204,11 +6197,11 @@ BugsUpdate = function(grid){
     win.show();
 };
 /*
- * END OF FILE - /bnc-3.2/testopia/js/caserun.js
+ * END OF FILE - /bnc/testopia/js/caserun.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/run.js
+ * START OF FILE - /bnc/testopia/js/run.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7584,11 +7577,11 @@ Testopia.BugReport = function(params){
 Ext.extend(Testopia.BugReport, Ext.grid.GridPanel);
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/run.js
+ * END OF FILE - /bnc/testopia/js/run.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/build.js
+ * START OF FILE - /bnc/testopia/js/build.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7677,7 +7670,6 @@ BuildGrid = function(product_id){
             }
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             id: 'add_build_btn',
             icon: 'testopia/img/add.png',
             iconCls: 'img_button_16x',
@@ -7820,11 +7812,11 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/build.js
+ * END OF FILE - /bnc/testopia/js/build.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/category.js
+ * START OF FILE - /bnc/testopia/js/category.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7893,7 +7885,6 @@ CaseCategoryGrid = function(product_id){
             }
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             id: 'add_category_btn',
             icon: 'testopia/img/add.png',
             iconCls: 'img_button_16x',
@@ -7901,7 +7892,6 @@ CaseCategoryGrid = function(product_id){
             handler: this.newRecord
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             icon: 'testopia/img/delete.png',
             iconCls: 'img_button_16x',
             tooltip: 'Delete this Category',
@@ -8052,11 +8042,11 @@ confirmCaseCategoryDelete = function(){
 
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/category.js
+ * END OF FILE - /bnc/testopia/js/category.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/environment.js
+ * START OF FILE - /bnc/testopia/js/environment.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8140,7 +8130,6 @@ EnvironmentGrid = function(params, cfg){
         new Ext.Toolbar.Fill(),{
             xtype: 'button',
             id : 'add_env_list_btn',
-            template: button_16x_tmpl,
             icon: 'testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add an Environment',
@@ -8148,7 +8137,6 @@ EnvironmentGrid = function(params, cfg){
          },{
             xtype: 'button',
             id : 'clone_env_list_btn',
-            template: button_16x_tmpl,
             disabled: true,
             icon: 'testopia/img/copy.png',
             iconCls: 'img_button_16x',
@@ -8157,7 +8145,6 @@ EnvironmentGrid = function(params, cfg){
          },{
             xtype: 'button',
             id : 'delete_env_list_btn',
-            template: button_16x_tmpl,
             disabled: true,
             icon: 'testopia/img/delete.png',
             iconCls: 'img_button_16x',
@@ -8379,11 +8366,11 @@ Ext.extend(EnvironmentGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/environment.js
+ * END OF FILE - /bnc/testopia/js/environment.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/search.js
+ * START OF FILE - /bnc/testopia/js/search.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9188,11 +9175,11 @@ PortalTools = [{
 }];
 
 /*
- * END OF FILE - /bnc-3.2/testopia/js/search.js
+ * END OF FILE - /bnc/testopia/js/search.js
  */
 
 /*
- * START OF FILE - /bnc-3.2/testopia/js/tags.js
+ * START OF FILE - /bnc/testopia/js/tags.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9505,7 +9492,7 @@ TagsUpdate = function(type, grid){
 };
          
 /*
- * END OF FILE - /bnc-3.2/testopia/js/tags.js
+ * END OF FILE - /bnc/testopia/js/tags.js
  */
 
 /*

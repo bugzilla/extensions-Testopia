@@ -27,9 +27,9 @@
 [% PROCESS testopia/blocks.html.tmpl %]
 [% PROCESS testopia/style.none.tmpl %]
 
-[% javascript_urls.push("testopia/extjs/examples/portal/Portal.js") %]
-[% javascript_urls.push("testopia/extjs/examples/portal/PortalColumn.js") %]
-[% javascript_urls.push("testopia/extjs/examples/portal/Portlet.js") %]
+[% javascript_urls.push("testopia/extjs/examples/ux/Portal.js") %]
+[% javascript_urls.push("testopia/extjs/examples/ux/PortalColumn.js") %]
+[% javascript_urls.push("testopia/extjs/examples/ux/Portlet.js") %]
 
 
 [% IF NOT plan.isactive %]
@@ -181,7 +181,6 @@ Ext.onReady(function(){
     });
 
     var planControls = new Ext.Toolbar();
-    planControls.render('plan-tb-div');
     planControls.add({
         text: 'File',
         menu: fileMenu
@@ -197,7 +196,6 @@ Ext.onReady(function(){
     ,{
         xtype: 'button',
         id: 'plan-copy-button',
-        template: button_16x_tmpl,
         icon: 'testopia/img/copy.png',
         iconCls: 'img_button_16x',
         tooltip: 'Clone this Test Plan',
@@ -209,7 +207,6 @@ Ext.onReady(function(){
 [% IF plan.candelete %]
     ,{
         xtype: 'button',
-        template: button_16x_tmpl,
         id: 'plan-delete-btn',
         icon: 'testopia/img/delete.png',
         iconCls: 'img_button_16x',
@@ -218,7 +215,7 @@ Ext.onReady(function(){
     }
 [% END %]    
     );
-    
+    planControls.render('plan-tb-div');
     var planpanel = new Ext.Panel({
         layout: 'border',
         applyTo: 'plan-body-div',
@@ -338,7 +335,6 @@ Ext.onReady(function(){
 
     var edit_summary_btn = new Ext.Button({
         applyTo: 'plan_name_edit_btn',
-        template: button_16x_tmpl,
         id:'edit_plan_summary_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',

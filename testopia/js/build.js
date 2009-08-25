@@ -85,7 +85,6 @@ BuildGrid = function(product_id){
             }
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             id: 'add_build_btn',
             icon: 'testopia/img/add.png',
             iconCls: 'img_button_16x',

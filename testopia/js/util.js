@@ -467,14 +467,6 @@ TestCaseStore = function(params, auto){
 Ext.extend(TestCaseStore, Ext.data.JsonStore);
 
 /*
- * button_16x_tmpl - template for all Testopia toolbar buttons.
- * This Template is for a 16x16 px icon.
- */
-button_16x_tmpl = new Ext.Template('<table border="0" cellpadding="0" cellspacing="0" class="x-btn-wrap" style="width: 20px;"><tbody><tr>',
-                                   '<td class="x-btn-left"><i>&#160;</i></td><td class="x-btn-center"><em unselectable="on"><button class="x-btn-text" type="{1}">{0}</button></em></td><td class="x-btn-right"><i>&#160;</i></td>',
-                                   '</tr></tbody></table>');
-
-/*
  * UserLookup - This generates a typeahead lookup for usernames.
  * It can be used anywhere in Testopia. Extends Ext ComboBox
  */
@@ -1277,14 +1269,14 @@ var TestopiaPager = function(type, store){
         items: [
             new Ext.menu.TextItem('Filter: '),
             filter,
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             new Ext.Toolbar.Separator(),
             new Ext.menu.TextItem('View '),
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             sizer,
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             viewall,
-            new Ext.Toolbar.Spacer('_'),
+            new Ext.Toolbar.Spacer(),
             new ToolbarText({ text: '(FILTERED)', hidden: true, id: type + '_filtered_txt', style: 'font-weight:bold;color:red'})
         ]
     });

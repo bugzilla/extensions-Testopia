@@ -164,7 +164,6 @@ Ext.onReady(function(){
     });
 
     var caseControls = new Ext.Toolbar();
-    caseControls.render('case-tb-div');
     caseControls.add({
         text: 'File',
         menu: fileMenu
@@ -173,7 +172,6 @@ Ext.onReady(function(){
     {
         xtype: 'button',
         id: 'plan-copy-button',
-        template: button_16x_tmpl,
         icon: 'testopia/img/copy.png',
         iconCls: 'img_button_16x',
         tooltip: 'Clone this Test Case',
@@ -184,7 +182,6 @@ Ext.onReady(function(){
 [% IF case.candelete %]
     ,{
         xtype: 'button',
-        template: button_16x_tmpl,
         id: 'plan-delete-btn',
         icon: 'testopia/img/delete.png',
         iconCls: 'img_button_16x',
@@ -193,6 +190,7 @@ Ext.onReady(function(){
     }
 [% END %]    
 );
+    caseControls.render('case-tb-div');
     var cases = new Ext.grid.GridPanel({
         
     });
@@ -471,7 +469,6 @@ Ext.onReady(function(){
 // Summary Editing    
     var summary_edit_btn = new Ext.Button({
         applyTo: 'case_summary_edit_btn_div',
-        template: button_16x_tmpl,
         id:'case_summary_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',
@@ -500,7 +497,6 @@ Ext.onReady(function(){
 // Tester Editing
     var tester_edit_btn = new Ext.Button({
         applyTo: 'tester_edit_btn_div',
-        template: button_16x_tmpl,
         id:'tester_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',
@@ -529,7 +525,6 @@ Ext.onReady(function(){
 // Requirement Editing
     var requirement_edit_btn = new Ext.Button({
         applyTo: 'requirement_edit_btn_div',
-        template: button_16x_tmpl,
         id:'requirment_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',
@@ -560,7 +555,6 @@ Ext.onReady(function(){
 // Time Editing
     var time_edit_btn = new Ext.Button({
         applyTo: 'time_edit_btn_div',
-        template: button_16x_tmpl,
         id:'time_edit_btn',
         icon: 'testopia/img/edit.png',
         iconCls: 'img_button_16x',

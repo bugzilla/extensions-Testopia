@@ -65,7 +65,6 @@ CaseCategoryGrid = function(product_id){
             }
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             id: 'add_category_btn',
             icon: 'testopia/img/add.png',
             iconCls: 'img_button_16x',
@@ -73,7 +72,6 @@ CaseCategoryGrid = function(product_id){
             handler: this.newRecord
         },{
             xtype: 'button',
-            template: button_16x_tmpl,
             icon: 'testopia/img/delete.png',
             iconCls: 'img_button_16x',
             tooltip: 'Delete this Category',
