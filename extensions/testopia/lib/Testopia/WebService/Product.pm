@@ -19,7 +19,7 @@
 # Contributor(s): Dallas Harken <dharken@novell.com>
 #                 Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::WebService::Testopia::Product;
+package extensions::testopia::lib::Testopia::WebService::Product;
 
 use strict;
 
@@ -27,18 +27,18 @@ use base qw(Bugzilla::WebService);
 
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Product;
+use extensions::testopia::lib::Testopia::Product;
 
 sub _validate {
     my ($product) = @_;
     Bugzilla->login(LOGIN_REQUIRED);
     
     if ($product =~ /^\d+$/){
-        $product = Bugzilla::Testopia::Product->new($product);
+        $product = extensions::testopia::lib::Testopia::Product->new($product);
     }
     else {
         $product = Bugzilla::Product::check_product($product);
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = extensions::testopia::lib::Testopia::Product->new($product->id);
     }
     
     ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $product}) unless $product;
@@ -54,7 +54,7 @@ sub get {
     Bugzilla->login(LOGIN_REQUIRED);
     
     # Result is a product object hash
-    my $product = new Bugzilla::Testopia::Product($id);
+    my $product = new extensions::testopia::lib::Testopia::Product($id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $id}) unless $product;
     ThrowUserError('testopia-permission-denied', {'object' => $product}) unless $product->canedit;
@@ -80,8 +80,8 @@ sub check_category {
     $product = _validate($product);
     
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
-    require Bugzilla::Testopia::Category;
-    return Bugzilla::Testopia::Category->new(Bugzilla::Testopia::Category::check_case_category($name, $product));
+    require extensions::testopia::lib::Testopia::Category;
+    return extensions::testopia::lib::Testopia::Category->new(extensions::testopia::lib::Testopia::Category::check_case_category($name, $product));
 }
 
 sub check_component {
@@ -113,9 +113,9 @@ sub get_category {
     
     Bugzilla->login(LOGIN_REQUIRED);
     
-    require Bugzilla::Testopia::Category;
+    require extensions::testopia::lib::Testopia::Category;
     
-    my $category = Bugzilla::Testopia::Category->new($id); 
+    my $category = extensions::testopia::lib::Testopia::Category->new($id); 
     
     ThrowUserError('invalid-test-id-non-existent', {type => 'Category', id => $id}) unless $category;
     ThrowUserError('testopia-permission-denied', {'object' => $category->product}) unless $category->product->canedit;
@@ -136,7 +136,7 @@ sub get_component {
     
     ThrowUserError('invalid-test-id-non-existent', {type => 'Component', id => $id}) unless $component;
     
-    my $product = Bugzilla::Testopia::Product->new($component->product_id);
+    my $product = extensions::testopia::lib::Testopia::Product->new($component->product_id);
     
     ThrowUserError('testopia-permission-denied', {'object' => $product}) unless $product->canedit;
     
@@ -238,7 +238,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Webservice::Product
+extensions::testopia::lib::Testopia::Webservice::Product
 
 =head1 EXTENDS
 
@@ -288,7 +288,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Params:      $id - An integer representing the ID in the database
 
- Returns:     A blessed Bugzilla::Testopia::Product object hash
+ Returns:     A blessed extensions::testopia::lib::Testopia::Product object hash
 
 =item C<get_builds($product, $active)>
 
@@ -415,7 +415,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
 =head1 SEE ALSO
 
-L<Bugzilla::Testopia::Product>
+L<extensions::testopia::lib::Testopia::Product>
 L<Bugzilla::Webservice> 
 
 =head1 AUTHOR

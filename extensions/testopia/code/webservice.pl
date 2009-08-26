@@ -24,12 +24,12 @@ use Bugzilla;
 
 my $dispatch = Bugzilla->hook_args->{dispatch};
 
-$dispatch->{TestPlan}    = "Bugzilla::WebService::Testopia::TestPlan";
-$dispatch->{TestCase}    = "Bugzilla::WebService::Testopia::TestCase";
-$dispatch->{TestRun}     = "Bugzilla::WebService::Testopia::TestRun";
-$dispatch->{TestCaseRun} = "Bugzilla::WebService::Testopia::TestCaseRun";
-$dispatch->{Product}     = "Bugzilla::WebService::Testopia::Product";
-$dispatch->{Environment} = "Bugzilla::WebService::Testopia::Environment";
-$dispatch->{Build}       = "Bugzilla::WebService::Testopia::Build";
-$dispatch->{Testopia}    = "Bugzilla::WebService::Testopia::Testopia";
+$dispatch->{TestPlan}    = "extensions::testopia::lib::Testopia::WebService::TestPlan";
+$dispatch->{TestCase}    = "extensions::testopia::lib::Testopia::WebService::TestCase";
+$dispatch->{TestRun}     = "extensions::testopia::lib::Testopia::WebService::TestRun";
+$dispatch->{TestCaseRun} = "extensions::testopia::lib::Testopia::WebService::TestCaseRun";
+$dispatch->{Product}     = "extensions::testopia::lib::Testopia::WebService::Product";
+$dispatch->{Environment} = "extensions::testopia::lib::Testopia::WebService::Environment";
+$dispatch->{Build}       = "extensions::testopia::lib::Testopia::WebService::Build";
+$dispatch->{Testopia}    = "extensions::testopia::lib::Testopia::WebService::Testopia";
 

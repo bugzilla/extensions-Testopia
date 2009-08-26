@@ -19,7 +19,7 @@
 # Contributor(s): Dallas Harken <dharken@novell.com>
 #                 Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::WebService::Testopia::Build;
+package extensions::testopia::lib::Testopia::WebService::Build;
 
 use strict;
 
@@ -27,8 +27,8 @@ use base qw(Bugzilla::WebService);
 
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Build;
-use Bugzilla::Testopia::Product;
+use extensions::testopia::lib::Testopia::Build;
+use extensions::testopia::lib::Testopia::Product;
 
 sub get {
     my $self = shift;
@@ -37,7 +37,7 @@ sub get {
     Bugzilla->login(LOGIN_REQUIRED);
     
     # Result is a build object hash
-    my $build = new Bugzilla::Testopia::Build($build_id);
+    my $build = new extensions::testopia::lib::Testopia::Build($build_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $build_id}) unless $build;
     ThrowUserError('testopia-read-only', {'object' => $build->product}) unless $build->product->canedit;
@@ -54,16 +54,16 @@ sub check_build {
     Bugzilla->login(LOGIN_REQUIRED);
     
     if ($product =~ /^\d+$/){
-        $product = Bugzilla::Testopia::Product->new($product);
+        $product = extensions::testopia::lib::Testopia::Product->new($product);
     }
     else {
         $product = Bugzilla::Product::check_product($product);
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = extensions::testopia::lib::Testopia::Product->new($product->id);
     }
     
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
     
-    return Bugzilla::Testopia::Build::check_build($name, $product, "THROWERROR");
+    return extensions::testopia::lib::Testopia::Build::check_build($name, $product, "THROWERROR");
 }
 
 sub create{
@@ -77,11 +77,11 @@ sub create{
     
     my $product;
     if ($new_values->{'product_id'} =~ /^\d+$/){
-        $product = Bugzilla::Testopia::Product->new($new_values->{'product_id'});
+        $product = extensions::testopia::lib::Testopia::Product->new($new_values->{'product_id'});
     }
     else {
         $product = Bugzilla::Product::check_product($new_values->{'product_id'});
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = extensions::testopia::lib::Testopia::Product->new($product->id);
     }
     
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
@@ -91,7 +91,7 @@ sub create{
          $new_values->{'isactive'} = 1;
     }
     
-    my $build = Bugzilla::Testopia::Build->create($new_values);
+    my $build = extensions::testopia::lib::Testopia::Build->create($new_values);
     
     # Result is new build
     return $build;
@@ -103,7 +103,7 @@ sub update{
     
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $build = new Bugzilla::Testopia::Build($id);
+    my $build = new extensions::testopia::lib::Testopia::Build($id);
     ThrowUserError("invalid-test-id-non-existent", {'id' => $id, 'type' => 'Build'}) unless $build;
     ThrowUserError('testopia-read-only', {'object' => $build->product}) unless $build->product->canedit;
 
@@ -127,7 +127,7 @@ sub lookup_name_by_id {
   die "Invalid Build ID" 
       unless defined $build_id && length($build_id) > 0 && $build_id > 0;
       
-  my $build = new Bugzilla::Testopia::Build($build_id);
+  my $build = new extensions::testopia::lib::Testopia::Build($build_id);
   ThrowUserError('testopia-read-only', {'object' => $build->product}) unless $build->product->canedit;
   
   my $result = defined $build ? $build->name : '';
@@ -147,7 +147,7 @@ sub get_runs {
 
     Bugzilla->login(LOGIN_REQUIRED);    
 
-    my $build = new Bugzilla::Testopia::Build($build_id);
+    my $build = new extensions::testopia::lib::Testopia::Build($build_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $build_id}) unless $build;
     ThrowUserError('testopia-read-only', {'object' => $build}) unless $build->product->canview;
@@ -162,7 +162,7 @@ sub get_caseruns {
 
     Bugzilla->login(LOGIN_REQUIRED);    
 
-    my $build = new Bugzilla::Testopia::Build($build_id);
+    my $build = new extensions::testopia::lib::Testopia::Build($build_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $build_id}) unless $build;
     ThrowUserError('testopia-read-only', {'object' => $build}) unless $build->product->canview;
@@ -177,7 +177,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Webservice::Build
+extensions::testopia::lib::Testopia::Webservice::Build
 
 =head1 EXTENDS
 
@@ -226,7 +226,7 @@ Provides methods for automated scripts to manipulate Testopia Builds
 
  Params:      $id - An integer representing the ID in the database
 
- Returns:     A blessed Bugzilla::Testopia::Build object hash
+ Returns:     A blessed extensions::testopia::lib::Testopia::Build object hash
 
 =item C<get_caseruns($id)>
 
@@ -271,7 +271,7 @@ Provides methods for automated scripts to manipulate Testopia Builds
 
 =head1 SEE ALSO
 
-L<Bugzilla::Testopia::Build>
+L<extensions::testopia::lib::Testopia::Build>
 L<Bugzilla::Webservice> 
 
 =head1 AUTHOR

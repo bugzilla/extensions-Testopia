@@ -19,7 +19,7 @@
 # Contributor(s): Dallas Harken <dharken@novell.com>
 #                 Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::WebService::Testopia::TestCaseRun;
+package extensions::testopia::lib::Testopia::WebService::TestCaseRun;
 
 use strict;
 
@@ -29,11 +29,11 @@ use Bugzilla::User;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Bugzilla::Testopia::Constants;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::Util;
+use extensions::testopia::lib::Testopia::Constants;
+use extensions::testopia::lib::Testopia::Search;
+use extensions::testopia::lib::Testopia::Table;
+use extensions::testopia::lib::Testopia::TestCaseRun;
+use extensions::testopia::lib::Testopia::Util;
 
 sub get {
     my $self = shift;
@@ -42,19 +42,19 @@ sub get {
     Bugzilla->login(LOGIN_REQUIRED);
     
     if ($build_id && $build_id !~ /^\d+$/){ 
-        my $run = Bugzilla::Testopia::TestRun->new($run_id);
+        my $run = extensions::testopia::lib::Testopia::TestRun->new($run_id);
         ThrowUserError('invalid-test-id-non-existent') unless $run;
-        my $build = Bugzilla::Testopia::Build::check_build($build_id, $run->product, "THROW");
+        my $build = extensions::testopia::lib::Testopia::Build::check_build($build_id, $run->product, "THROW");
         $build_id = $build->id;
     }
     if ($env_id && $env_id !~ /^\d+$/){ 
-        my $run = Bugzilla::Testopia::TestRun->new($run_id);
+        my $run = extensions::testopia::lib::Testopia::TestRun->new($run_id);
         ThrowUserError('invalid-test-id-non-existent') unless $run;
-        my $environment = Bugzilla::Testopia::Build::check_environment($env_id, $run->product, "THROW");
+        my $environment = extensions::testopia::lib::Testopia::Build::check_environment($env_id, $run->product, "THROW");
         $env_id = $environment->id;
     }
     #Result is a test case run hash map
-    my $caserun = new Bugzilla::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
+    my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case Run', id => $run_id}) unless $caserun;
     ThrowUserError('testopia-permission-denied', {'object' => $caserun}) unless $caserun->canview;
@@ -77,9 +77,9 @@ sub list {
     }
     $cgi->param('distinct', 1);
         
-    my $search = Bugzilla::Testopia::Search->new($cgi);
+    my $search = extensions::testopia::lib::Testopia::Search->new($cgi);
 
-    return Bugzilla::Testopia::Table->new('case_run','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list();
+    return extensions::testopia::lib::Testopia::Table->new('case_run','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list();
 }
 
 sub list_count {
@@ -97,8 +97,8 @@ sub list_count {
     }
     $cgi->param('distinct', 1);
     
-    my $search = Bugzilla::Testopia::Search->new($cgi);
-    return Bugzilla::Testopia::Table->new('case_run','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list_count();
+    my $search = extensions::testopia::lib::Testopia::Search->new($cgi);
+    return extensions::testopia::lib::Testopia::Table->new('case_run','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list_count();
 }
 
 sub create {
@@ -107,7 +107,7 @@ sub create {
     
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $run = Bugzilla::Testopia::TestRun->new($new_values->{'run_id'});
+    my $run = extensions::testopia::lib::Testopia::TestRun->new($new_values->{'run_id'});
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $new_values->{'run_id'}}) unless $run;
     ThrowUserError('testopia-read-only', {'object' => $run}) unless $run->canedit;
     
@@ -118,11 +118,11 @@ sub create {
     delete $new_values->{'environment'};
     
     if (trim($new_values->{'build_id'}) !~ /^\d+$/ ){
-        my $build = Bugzilla::Testopia::Build::check_build($new_values->{'build_id'}, $run->plan->product, "THROWERROR");
+        my $build = extensions::testopia::lib::Testopia::Build::check_build($new_values->{'build_id'}, $run->plan->product, "THROWERROR");
         $new_values->{'build_id'} = $build->id;
     }
     if (trim($new_values->{'environment_id'}) !~ /^\d+$/ ){
-        my $environment = Bugzilla::Testopia::Environment::check_environment($new_values->{'environment_id'}, $run->plan->product, "THROWERROR");
+        my $environment = extensions::testopia::lib::Testopia::Environment::check_environment($new_values->{'environment_id'}, $run->plan->product, "THROWERROR");
         $new_values->{'environment_id'} = $environment->id;
     }
     
@@ -131,7 +131,7 @@ sub create {
     
     delete $new_values->{'status'};
     
-    my $caserun = Bugzilla::Testopia::TestCaseRun->create($new_values);
+    my $caserun = extensions::testopia::lib::Testopia::TestCaseRun->create($new_values);
     
     # Result is new test case run object hash
     return $caserun;
@@ -144,11 +144,11 @@ sub update {
     Bugzilla->login(LOGIN_REQUIRED);
     
     my @caseruns;
-    my @ids = Bugzilla::Testopia::Util::process_list($run_id);
+    my @ids = extensions::testopia::lib::Testopia::Util::process_list($run_id);
     if (ref $case_id eq 'HASH' && !$build_id){
         $new_values = $case_id;
         foreach my $id (@ids){
-            my $caserun = new Bugzilla::Testopia::TestCaseRun($id);
+            my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($id);
             if ($caserun){
                 push @caseruns, $caserun;
             }
@@ -159,7 +159,7 @@ sub update {
     }
     else {
         foreach my $id (@ids){
-            my $caserun = new Bugzilla::Testopia::TestCaseRun($run_id,$case_id,$build_id,$env_id);
+            my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($run_id,$case_id,$build_id,$env_id);
             if ($caserun){
                 push @caseruns, $caserun;
             }
@@ -239,7 +239,7 @@ sub lookup_status_id_by_name {
     Bugzilla->login(LOGIN_REQUIRED);
 
     # Result is test case run status id for the given test case run status name
-    return Bugzilla::Testopia::TestCaseRun::lookup_status_by_name($name);
+    return extensions::testopia::lib::Testopia::TestCaseRun::lookup_status_by_name($name);
 }
 
 sub lookup_status_name_by_id {
@@ -249,7 +249,7 @@ sub lookup_status_name_by_id {
     Bugzilla->login(LOGIN_REQUIRED);
 
     # Result is test case run status name for the given test case run status id
-    return Bugzilla::Testopia::TestCaseRun::lookup_status($id);
+    return extensions::testopia::lib::Testopia::TestCaseRun::lookup_status($id);
 }
 
 sub get_history {
@@ -259,7 +259,7 @@ sub get_history {
     Bugzilla->login(LOGIN_REQUIRED);
 
     #Result is a test case run hash map
-    my $caserun = new Bugzilla::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
+    my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case Run', id => $run_id}) unless $caserun;
     ThrowUserError('testopia-permission-denied', {'object' => $caserun}) unless $caserun->canview;
@@ -275,7 +275,7 @@ sub attach_bug {
     Bugzilla->login(LOGIN_REQUIRED);
 
     #Result is a test case run hash map
-    my $caserun = new Bugzilla::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
+    my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
 
     # If we have just the id, the third arg will not be set.
     $bug_ids = $case_id unless $build_id;
@@ -295,7 +295,7 @@ sub detach_bug {
     Bugzilla->login(LOGIN_REQUIRED);
 
     #Result is a test case run hash map
-    my $caserun = new Bugzilla::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
+    my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
     
     # If we have just the id, the third arg will not be set.
     $bug_id = $case_id unless $build_id;
@@ -316,7 +316,7 @@ sub get_bugs {
     Bugzilla->login(LOGIN_REQUIRED);
 
     #Result is a test case run hash map
-    my $caserun = new Bugzilla::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
+    my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case Run', id => $run_id}) unless $caserun;
     ThrowUserError('testopia-permission-denied', {'object' => $caserun}) unless $caserun->canview;
@@ -331,7 +331,7 @@ sub get_completion_time {
     Bugzilla->login(LOGIN_REQUIRED);
 
     #Result is a test case run hash map
-    my $caserun = new Bugzilla::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
+    my $caserun = new extensions::testopia::lib::Testopia::TestCaseRun($run_id, $case_id, $build_id, $env_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case Run', id => $run_id}) unless $caserun;
     ThrowUserError('testopia-permission-denied', {'object' => $caserun}) unless $caserun->canview;
@@ -345,7 +345,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Webservice::TestCaseRun
+extensions::testopia::lib::Testopia::Webservice::TestCaseRun
 
 =head1 EXTENDS
 
@@ -456,7 +456,7 @@ TestCaseRun->get($run_id, $case_id, $build_id, $environment_id)
  Params:      $caserun_id - Integer: An integer representing the ID in
                   the database for this case-run.
 
- Returns:     A blessed Bugzilla::Testopia::TestCaseRun object hash
+ Returns:     A blessed extensions::testopia::lib::Testopia::TestCaseRun object hash
 
 =item C<get($run_id, $case_id, $build_id, $environment_id)>
 
@@ -467,7 +467,7 @@ TestCaseRun->get($run_id, $case_id, $build_id, $environment_id)
               $build_id - Integer: An integer representing the ID of the test build in the database.
               $environment_id - Integer: An integer representing the ID of the environment in the database.
 
- Returns:     A blessed Bugzilla::Testopia::TestCaseRun object hash
+ Returns:     A blessed extensions::testopia::lib::Testopia::TestCaseRun object hash
 
 =item C<get_bugs($caserun_id)>
 
@@ -706,7 +706,7 @@ TestCaseRun->get($run_id, $case_id, $build_id, $environment_id)
 
 =head1 SEE ALSO
 
-L<Bugzilla::Testopia::TestCaseRun>
+L<extensions::testopia::lib::Testopia::TestCaseRun>
 L<Bugzilla::Webservice> 
 
 =head1 AUTHOR

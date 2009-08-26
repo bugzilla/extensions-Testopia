@@ -19,7 +19,7 @@
 # Contributor(s): Dallas Harken <dharken@novell.com>
 #                 Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::WebService::Testopia::Environment;
+package extensions::testopia::lib::Testopia::WebService::Environment;
 
 use strict;
 
@@ -27,9 +27,9 @@ use base qw(Bugzilla::WebService);
 
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
+use extensions::testopia::lib::Testopia::Environment;
+use extensions::testopia::lib::Testopia::Search;
+use extensions::testopia::lib::Testopia::Table;
 
 sub get {
     my $self = shift;
@@ -37,7 +37,7 @@ sub get {
 
     Bugzilla->login(LOGIN_REQUIRED);    
 
-    my $environment = new Bugzilla::Testopia::Environment($environment_id);
+    my $environment = new extensions::testopia::lib::Testopia::Environment($environment_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Environment', id => $environment_id}) unless $environment;
     ThrowUserError('testopia-read-only', {'object' => $environment}) unless $environment->canview;
@@ -53,16 +53,16 @@ sub check_environment {
     Bugzilla->login(LOGIN_REQUIRED);
     
     if ($product =~ /^\d+$/){
-        $product = Bugzilla::Testopia::Product->new($product);
+        $product = extensions::testopia::lib::Testopia::Product->new($product);
     }
     else {
         $product = Bugzilla::Product::check_product($product);
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = extensions::testopia::lib::Testopia::Product->new($product->id);
     }
 
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
     
-    return Bugzilla::Testopia::Environment::check_environment($name, $product, 'THROWERROR');
+    return extensions::testopia::lib::Testopia::Environment::check_environment($name, $product, 'THROWERROR');
 }
 
 sub list {
@@ -77,10 +77,10 @@ sub list {
         $cgi->param($_, $query->{$_});
     }
         
-    my $search = Bugzilla::Testopia::Search->new($cgi);
+    my $search = extensions::testopia::lib::Testopia::Search->new($cgi);
 
     # Result is an array of environment hash maps 
-    return Bugzilla::Testopia::Table->new('environment', 'tr_xmlrpc.cgi',$cgi,undef, $search->query())->list();
+    return extensions::testopia::lib::Testopia::Table->new('environment', 'tr_xmlrpc.cgi',$cgi,undef, $search->query())->list();
     
 }
 
@@ -96,11 +96,11 @@ sub create {
 
     my $product;
     if ($new_values->{'product_id'} =~ /^\d+$/){
-        $product = Bugzilla::Testopia::Product->new($new_values->{'product_id'});
+        $product = extensions::testopia::lib::Testopia::Product->new($new_values->{'product_id'});
     }
     else {
         $product = Bugzilla::Product::check_product($new_values->{'product_id'});
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = extensions::testopia::lib::Testopia::Product->new($product->id);
     }
 
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
@@ -109,7 +109,7 @@ sub create {
          $new_values->{'isactive'} = 1;
     }
     
-    my $environment = Bugzilla::Testopia::Environment->create($new_values);
+    my $environment = extensions::testopia::lib::Testopia::Environment->create($new_values);
     
     # Result is new environment
     return $environment;
@@ -122,16 +122,16 @@ sub create_full {
     Bugzilla->login(LOGIN_REQUIRED);
     
     if ($product =~ /^\d+$/){
-        $product = Bugzilla::Testopia::Product->new($product);
+        $product = extensions::testopia::lib::Testopia::Product->new($product);
     }
     else {
         $product = Bugzilla::Product::check_product($product);
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = extensions::testopia::lib::Testopia::Product->new($product->id);
     }
 
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
 
-    my $env_id = Bugzilla::Testopia::Environment->create_full($env_basename, $product->id, $environment);
+    my $env_id = extensions::testopia::lib::Testopia::Environment->create_full($env_basename, $product->id, $environment);
 
     return $env_id;
 }    
@@ -141,7 +141,7 @@ sub update {
     my ($environment_id, $new_values) = @_;
 
     Bugzilla->login(LOGIN_REQUIRED);
-    my $environment = new Bugzilla::Testopia::Environment($environment_id);
+    my $environment = new extensions::testopia::lib::Testopia::Environment($environment_id);
     
     ThrowUserError('invalid-test-id-non-existent', {type => 'Environment', id => $environment_id}) unless $environment;
     ThrowUserError('testopia-read-only', {'object' => $environment}) unless $environment->canedit;
@@ -161,7 +161,7 @@ sub get_runs {
 
     Bugzilla->login(LOGIN_REQUIRED);    
 
-    my $environment = new Bugzilla::Testopia::Environment($environment_id);
+    my $environment = new extensions::testopia::lib::Testopia::Environment($environment_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Environment', id => $environment_id}) unless $environment;
     ThrowUserError('testopia-read-only', {'object' => $environment}) unless $environment->canview;
@@ -176,7 +176,7 @@ sub get_caseruns {
 
     Bugzilla->login(LOGIN_REQUIRED);    
 
-    my $environment = new Bugzilla::Testopia::Environment($environment_id);
+    my $environment = new extensions::testopia::lib::Testopia::Environment($environment_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Environment', id => $environment_id}) unless $environment;
     ThrowUserError('testopia-read-only', {'object' => $environment}) unless $environment->canview;
@@ -190,7 +190,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Webservice::Environment
+extensions::testopia::lib::Testopia::Webservice::Environment
 
 =head1 EXTENDS
 
@@ -320,7 +320,7 @@ Harddrives => {
 
  Params:      $id - An integer representing the ID in the database
 
- Returns:     A blessed Bugzilla::Testopia::Environment object hash
+ Returns:     A blessed extensions::testopia::lib::Testopia::Environment object hash
 
 =item C<get_caseruns($id)>
 
@@ -378,7 +378,7 @@ Harddrives => {
 
 =head1 SEE ALSO
 
-L<Bugzilla::Testopia::Environment>
+L<extensions::testopia::lib::Testopia::Environment>
 L<Bugzilla::Webservice> 
 
 =head1 AUTHOR

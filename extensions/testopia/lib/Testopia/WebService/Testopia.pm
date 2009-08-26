@@ -19,7 +19,7 @@
 # Contributor(s): Dallas Harken <dharken@novell.com>
 #                 Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::WebService::Testopia::Testopia;
+package extensions::testopia::lib::Testopia::WebService::Testopia;
 
 use strict;
 
@@ -44,7 +44,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Webservice::Testopia
+extensions::testopia::lib::Testopia::Webservice::Testopia
 
 =head1 EXTENDS
 
