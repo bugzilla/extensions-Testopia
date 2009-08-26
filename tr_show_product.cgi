@@ -20,16 +20,16 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Search;
+use Testopia::Table;
+use Testopia::Constants;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -52,7 +52,7 @@ print $cgi->header;
 my $product;
 my $pid = $cgi->param('product_id') || $cgi->cookie('TESTOPIA_PRODUCT_ID') || 0;
 if ($pid){
-    $product = Bugzilla::Testopia::Product->new($pid);
+    $product = Testopia::Product->new($pid);
     if ($product){
         ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canview;
     }
@@ -67,13 +67,13 @@ if (exists $cgi->{'start'} || exists $cgi->{param}->{'start'}){
     $cgi->param('page', $cgi->param('start') == 0 ? 0 : $cgi->param('start')/$cgi->param('limit'));    
 }
 
-my $search = Bugzilla::Testopia::Search->new($cgi);
-my $table = Bugzilla::Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
+my $search = Testopia::Search->new($cgi);
+my $table = Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
 my $action = $cgi->param('action') || '';
 
 $vars->{'table'} = $table;
 $vars->{'search'} = $cgi->param('search');
-$vars->{'case'} = Bugzilla::Testopia::TestCase->new({});
+$vars->{'case'} = Testopia::TestCase->new({});
 
 $vars->{'dashboard'} = $cgi->param('dashboard');
 $vars->{'userid'} = $cgi->param('userid');

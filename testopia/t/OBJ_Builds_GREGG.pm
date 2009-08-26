@@ -31,7 +31,7 @@ use base qw(Test::Unit::TestCase);
 use Bugzilla;
 use Bugzilla::Constants;
 
-use Bugzilla::Testopia::Build;
+use Testopia::Build;
 
 use Data::Dumper;
 
@@ -66,7 +66,7 @@ sub tear_down {
 #Simply tests if the initialization of an object is
 #just like what we have in the database 
 sub test_init{
-	$obj = testopia::t::Test->test_init(DB_TABLE, ID_FIELD, 'Bugzilla::Testopia::Build');
+	$obj = testopia::t::Test->test_init(DB_TABLE, ID_FIELD, 'Testopia::Build');
 }
 
 sub test_check_product{
@@ -132,11 +132,11 @@ sub test_create{
 		testopia::t::Test->set_user($login->{'id'}, $login->{'login_name'}, $login->{'password'});
 	
 		unless(Bugzilla->user->in_group('Testers') ){
-			dies_ok( sub {Bugzilla::Testopia::Build->create}, "User " . Bugzilla->user->{'login_name'} ." does not have sufficient rights to create new builds");	
+			dies_ok( sub {Testopia::Build->create}, "User " . Bugzilla->user->{'login_name'} ." does not have sufficient rights to create new builds");	
 		}
 		else{	
 
-	my $created_obj = Bugzilla::Testopia::Build->create($obj_hash);
+	my $created_obj = Testopia::Build->create($obj_hash);
 	# Must remove this entry now because we add it multiple times,
 	#  and the DB does not like that
 	$dbh->do("DELETE FROM test_builds WHERE build_id = ?", undef, $created_obj->id);
@@ -148,18 +148,18 @@ sub _bad_creates{
 	my $obj_hash = shift;
 	
 	delete $obj_hash->{'product_id'};
-	dies_ok(sub{Bugzilla::Testopia::Build->create($obj_hash)}, 'Missing product_id');
+	dies_ok(sub{Testopia::Build->create($obj_hash)}, 'Missing product_id');
 	$obj_hash->{'product_id'} = 1;
 	delete $obj_hash->{'name'};
-	dies_ok(sub{Bugzilla::Testopia::Build->create($obj_hash)}, 'Missing name');
+	dies_ok(sub{Testopia::Build->create($obj_hash)}, 'Missing name');
 	$obj_hash->{'name'} = 'Unique Name';
 	delete $obj_hash->{'mileston'};
-	dies_ok(sub{Bugzilla::Testopia::Build->create($obj_hash)}, 'Missing milestone');
+	dies_ok(sub{Testopia::Build->create($obj_hash)}, 'Missing milestone');
 	$obj_hash->{'milestone'} = 'PUBLIC M1';
 	delete $obj_hash->{'isactive'};
-	dies_ok(sub{Bugzilla::Testopia::Build->create($obj_hash)}, 'Missing isactive');
+	dies_ok(sub{Testopia::Build->create($obj_hash)}, 'Missing isactive');
 	$obj_hash->{'isactive'} = 'INVALID';
-	dies_ok(sub{Bugzilla::Testopia::Build->create($obj_hash)}, 'Invalid isactive Value');
+	dies_ok(sub{Testopia::Build->create($obj_hash)}, 'Invalid isactive Value');
 	$obj_hash->{'isactive'} = 1;
 	
 }

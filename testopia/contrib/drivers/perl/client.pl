@@ -59,7 +59,7 @@ use Carp;
 use Data::Dumper;
 
 use lib '../../../..';
-use Bugzilla::Testopia::Product;
+use Testopia::Product;
 
 my $help;
 my $Bugzilla_uri;
@@ -153,7 +153,7 @@ if (defined($Bugzilla_login)) {
 
 #$soapresult = $proxy->call('Build.check_build', 'Linux', 2);
 #$soapresult = $proxy->call('Build.check_build', 'Linux', 'Bugzilla');
-#$soapresult = $proxy->call('Build.check_build', 'Linux', Bugzilla::Testopia::Product->new(2));
+#$soapresult = $proxy->call('Build.check_build', 'Linux', Testopia::Product->new(2));
 #$soapresult = $proxy->call('Build.create', {name=>'Build '. time(), product_id=>2, isactive=>0, description=> 'API Test Build - IGNORE'});
 #$soapresult = $proxy->call('Build.get', 1140);
 #$soapresult = $proxy->call('Build.update', 1140, { description=>'This is a description', milestone=>'3.0', isactive=>0});
@@ -163,7 +163,7 @@ if (defined($Bugzilla_login)) {
 ###########################
 #$soapresult = $proxy->call('Environment.check_environment', 'Linux', 2);
 #$soapresult = $proxy->call('Environment.check_environment', 'Linux', 'Bugzilla');
-#$soapresult = $proxy->call('Environment.check_environment', 'Linux', Bugzilla::Testopia::Product->new(2));
+#$soapresult = $proxy->call('Environment.check_environment', 'Linux', Testopia::Product->new(2));
 #$soapresult = $proxy->call('Environment.create', {product_id=>2, name=>'Environment '.time() , isactive=>1});
 #$soapresult = $proxy->call('Environment.get', 1018);
 #$soapresult = $proxy->call('Environment.list', {environment_id=>330});

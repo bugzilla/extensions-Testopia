@@ -32,8 +32,8 @@ use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Constants;
 
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::Environment;
+use Testopia::Product;
+use Testopia::Environment;
 
 use Testopia::Test::Util;
 use Testopia::Test::Constants;
@@ -89,7 +89,7 @@ sub test_add {
     my $rep = get_rep('products');
 
     # Add new environment - supposed to error because missing name
-    my $product = new Bugzilla::Testopia::Product($rep->{'id'});
+    my $product = new Testopia::Product($rep->{'id'});
     my $test    = {
         url    => "tr_environments.cgi",
         action => "add",
@@ -165,7 +165,7 @@ sub test_edit {
     ok( $se->is_text_present("'success': true"), "action=toggle" );
 
     #check edit succeded and values updated
-    my $environment = new Bugzilla::Testopia::Environment($rep->{'environment_id'});
+    my $environment = new Testopia::Environment($rep->{'environment_id'});
     diag(dump_all($environment, $test)) if DEBUG;
     
     ok ($environment->name eq $test->{params}->{name}, "Names match");

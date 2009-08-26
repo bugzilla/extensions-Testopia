@@ -370,7 +370,6 @@ sub _check_components {
     my @components;
     my @comp_ids;
     my $dbh = Bugzilla->dbh;
-    
     ThrowUserError('testopia-missing-parameter', {param => 'components'}) unless $components;
     if (ref $components eq 'HASH'){
                 my $prod = Bugzilla::Product::check_product($components->{'product'});

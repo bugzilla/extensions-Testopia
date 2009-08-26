@@ -37,15 +37,15 @@ import.
 #************************************************** Uses ****************************************************#
 use strict;
 use CGI;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Environment::Xml;
+use Testopia::Util;
+use Testopia::Environment;
+use Testopia::Environment::Xml;
 use Data::Dumper;
 
 
@@ -60,7 +60,7 @@ local our $env_fh = $cgi->upload('env_file');
 local our $action = $cgi->param('action') || '';
 local our $xml = $cgi->param('xml');
 local our $submit = $cgi->param('submit');
-local our $environment = Bugzilla::Testopia::Environment->new({'environment_id' => 0});
+local our $environment = Testopia::Environment->new({'environment_id' => 0});
 local our $user_can_edit = $environment->canedit;
 #my $user_can_edit = 0;                                                     # Remove on production <- used to toggle user's rights.
 our $message = '';
@@ -103,7 +103,7 @@ elsif ($action eq 'admin' && $xml) {
         # If the admin clicked the 'Add Now' and not the 'Cancel' button
         if ($submit eq 'Add Now') {
             if (read_env_file($file)) {
-                import("admin");              # Creates Bugzilla::Testopia::Environment::Xml object and store's it to the database.
+                import("admin");              # Creates Testopia::Environment::Xml object and store's it to the database.
             }
         }
         else {
@@ -135,7 +135,7 @@ Creates the Environment XML Document and node lists.
 sub import {
     # If the user is an admin and has approved to add the values pass 1 to parse().
     my $admin = @_;
-    $environment = Bugzilla::Testopia::Environment::Xml->new($xml, $admin);
+    $environment = Testopia::Environment::Xml->new($xml, $admin);
     if ($environment->{'error'}) {
         $vars->{'tr_error'} .= $environment->{'error'};
         return 0;
@@ -245,7 +245,7 @@ Writes the environment XML File to the $upload_dir directory where it will be re
 sub write_env_file {
     # If a writable $upload_dir exists, log error details there.
     if (-w "$upload_dir") {
-        my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+        my $timestamp = Testopia::Util::get_time_stamp();
         my $filename = $env_filename;
         $filename =~ s/(.xml)//;
         $filename .= "_" . $timestamp;

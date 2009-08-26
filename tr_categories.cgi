@@ -20,15 +20,15 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Category;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Constants;
+use Testopia::Category;
+use Testopia::Util;
+use Testopia::Constants;
 use JSON;
 
 Bugzilla->error_mode(ERROR_MODE_AJAX);
@@ -45,7 +45,7 @@ print $cgi->header;
 
 ThrowUserError("testopia-missing-parameter", {param => "product_id"}) unless $product_id;
 
-my $product = Bugzilla::Testopia::Product->new($product_id);
+my $product = Testopia::Product->new($product_id);
 
 #########################
 ### Create a Category ###
@@ -53,7 +53,7 @@ my $product = Bugzilla::Testopia::Product->new($product_id);
 
 if ($action eq 'add'){
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
-    my $category = Bugzilla::Testopia::Category->create({
+    my $category = Testopia::Category->create({
                           product_id  => $product->id,
                           name        => $cgi->param('name'),
                           description => $cgi->param('desc'),
@@ -67,7 +67,7 @@ if ($action eq 'add'){
 #######################
 elsif ($action eq 'edit'){
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
-    my $category = Bugzilla::Testopia::Category->new($cgi->param('category_id'));
+    my $category = Testopia::Category->new($cgi->param('category_id'));
     
     $category->set_name($cgi->param('name')) if $cgi->param('name');
     $category->set_description($cgi->param('description')) if $cgi->param('description');
@@ -81,7 +81,7 @@ elsif ($action eq 'edit'){
 #########################
 elsif ($action eq 'delete'){
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
-    my $category = Bugzilla::Testopia::Category->new($cgi->param('category_id'));
+    my $category = Testopia::Category->new($cgi->param('category_id'));
     ThrowUserError("testopia-non-zero-case-count") unless $category->candelete;
     
     $category->remove;

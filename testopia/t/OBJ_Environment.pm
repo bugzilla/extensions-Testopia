@@ -29,8 +29,8 @@ use base qw(Exporter Test::Unit::TestCase);
 
 use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Environment::Element;
+use Testopia::Environment;
+use Testopia::Environment::Element;
 
 use Test;
 use Testopia::Test::Constants;
@@ -49,7 +49,7 @@ our $obj;
 #Simply tests if the initialization of an object is
 #just like what we have in the database 
 sub test_init{
-	$obj = Test::test_init(DB_TABLE, ID_FIELD, 'Bugzilla::Testopia::Environment');
+	$obj = Test::test_init(DB_TABLE, ID_FIELD, 'Testopia::Environment');
 }
 
 sub test_set_isactive{
@@ -70,9 +70,9 @@ sub test_set_name{
 sub test_create{
 	my $dbh = Bugzilla->dbh;
 	my $created_obj;
-	dies_ok(sub{Bugzilla::Testopia::Environment->create}, 'Missing Required Fields');
-	dies_ok(sub{Bugzilla::Testopia::Environment->create({product_id => 999})}, 'Missing Required Field "name"');
-	dies_ok(sub{Bugzilla::Testopia::Environment->create({name => 'NAME'})}, 'Missing Required "product_id"');
+	dies_ok(sub{Testopia::Environment->create}, 'Missing Required Fields');
+	dies_ok(sub{Testopia::Environment->create({product_id => 999})}, 'Missing Required Field "name"');
+	dies_ok(sub{Testopia::Environment->create({name => 'NAME'})}, 'Missing Required "product_id"');
 		
 		# _check_product  validator
 		# error if user can't edit
@@ -83,10 +83,10 @@ sub test_create{
 	
 	# If the user does not have rights to create a Category, this should die
 		unless(Bugzilla->user->in_group('Testers') ){
-			dies_ok( sub {Bugzilla::Testopia::Environment->create({name => 'NAME', product_id => 999})}, "User " . Bugzilla->user->{'login_name'} ." does not have rights to create a Category");	
+			dies_ok( sub {Testopia::Environment->create({name => 'NAME', product_id => 999})}, "User " . Bugzilla->user->{'login_name'} ." does not have rights to create a Category");	
 		}
 		else{
-			$created_obj = Bugzilla::Testopia::Environment->create({name => 'NAME', product_id => 999});
+			$created_obj = Testopia::Environment->create({name => 'NAME', product_id => 999});
 			my $obj_hash = ({product_id => '999', name => 'NAME', isactive =>1, environment_id => $created_obj->id});
 			cmp_deeply($obj_hash, noclass($created_obj), "Created Object Match");
 			# We must delete this here because we add it more than once and the 
@@ -104,7 +104,7 @@ sub test_get_environment_elements{
                    'env_category_id' => '1',
                    'properties' => [],
                    'parent_id' => '0'
-                 }, 'Bugzilla::Testopia::Environment::Element' )];    
+                 }, 'Testopia::Environment::Element' )];    
     cmp_deeply($obj->get_environment_elements, @obj_hash, "Get Environment Elements");
 }
 

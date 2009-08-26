@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -29,10 +29,10 @@ use Bugzilla::Error;
 use Bugzilla::Util;
 use JSON;
 
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::TestPlan;
+use Testopia::Product;
+use Testopia::Constants;
 
 ###############################################################################
 # tr_new_plan.cgi
@@ -70,7 +70,7 @@ if ($action eq 'add'){
     Bugzilla->error_mode(ERROR_MODE_AJAX);
     ThrowUserError("testopia-create-denied", {'object' => 'Test Plan'}) unless Bugzilla->user->in_group('Testers');
     
-    my $plan = Bugzilla::Testopia::TestPlan->create({
+    my $plan = Testopia::TestPlan->create({
             'product_id' => $cgi->param('product_id'),
             'author_id'  => Bugzilla->user->id,
             'type_id'    => $cgi->param('type'),
@@ -92,7 +92,7 @@ if ($action eq 'add'){
 
         Bugzilla->error_mode(ERROR_MODE_DIE);
         eval {
-            my $attachment = Bugzilla::Testopia::Attachment->create({
+            my $attachment = Testopia::Attachment->create({
                                 plan_id      => $plan->id,
                                 submitter_id => Bugzilla->user->id,
                                 description  => $cgi->param("file_desc$i") || 'Attachment',
@@ -116,13 +116,13 @@ if ($action eq 'add'){
 else {
     my $product;
     if ($cgi->param('product_id')){
-        $product = Bugzilla::Testopia::Product->new($cgi->param('product_id'));
+        $product = Testopia::Product->new($cgi->param('product_id'));
         ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
         $vars->{'product'} = $product;
     }
     
     ThrowUserError("testopia-create-denied", {'object' => 'Test Plan'}) unless Bugzilla->user->in_group('Testers');
-    $vars->{'plan'} = Bugzilla::Testopia::TestPlan->new({});
+    $vars->{'plan'} = Testopia::TestPlan->new({});
     $template->process("testopia/plan/add.html.tmpl", $vars) ||
         ThrowTemplateError($template->error());
 }

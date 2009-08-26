@@ -20,21 +20,21 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Environment::Element;
-use Bugzilla::Testopia::Environment::Category;
-use Bugzilla::Testopia::Environment::Property;
-use Bugzilla::Testopia::Constants;
+use Testopia::Search;
+use Testopia::Table;
+use Testopia::Util;
+use Testopia::TestRun;
+use Testopia::Environment;
+use Testopia::Environment::Element;
+use Testopia::Environment::Category;
+use Testopia::Environment::Property;
+use Testopia::Constants;
 
 Bugzilla->login(LOGIN_REQUIRED);
 
@@ -50,8 +50,8 @@ $vars->{'qname'} = $cgi->param('qname') if $cgi->param('qname');
 
 $cgi->param('current_tab', 'environment');
 $cgi->param('distinct', '1');
-my $search = Bugzilla::Testopia::Search->new($cgi);
-my $table = Bugzilla::Testopia::Table->new('environment', 'tr_list_environments.cgi', $cgi, undef, $search->query);
+my $search = Testopia::Search->new($cgi);
+my $table = Testopia::Table->new('environment', 'tr_list_environments.cgi', $cgi, undef, $search->query);
 
 if ($cgi->param('ctype') eq 'json'){
     print $cgi->header;

@@ -22,7 +22,7 @@ use strict;
 use warnings;
 use Bugzilla;
 use Bugzilla::Status;
-use Bugzilla::Testopia::TestCase;
+use Testopia::TestCase;
 
 my $args = Bugzilla->hook_args;
 my $bug = $args->{'bug'};
@@ -43,13 +43,13 @@ if (my $status_change = $changes->{'bug_status'}) {
     my $new_status = new Bugzilla::Status({ name => $status_change->[1] });
     if ($new_status->is_open && !$old_status->is_open) {
         for my $tcr(@$tcrs) {
-            my $tc = Bugzilla::Testopia::TestCase->new($tcr);
+            my $tc = Testopia::TestCase->new($tcr);
             $tc->remove_tag('BUGFIXED');
         }
     }
     if (!$new_status->is_open && $old_status->is_open) {
         for my $tcr(@$tcrs) {
-            my $tc = Bugzilla::Testopia::TestCase->new($tcr);
+            my $tc = Testopia::TestCase->new($tcr);
             $tc->add_tag('BUGFIXED');
         }        
     }

@@ -29,9 +29,9 @@ use lib ".";
 use lib "../..";
 
 use Bugzilla;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
+use Testopia::TestRun;
+use Testopia::Search;
+use Testopia::Table;
 
 use Testopia::Test::Constants;
 use Testopia::Test::API::Util;
@@ -60,12 +60,12 @@ sub tear_down {
 sub test_create_by_id {
     my $self = shift;
 
-    my $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+    my $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     while (scalar @{ $plan->test_cases } == 0
         || scalar @{ $plan->product->environments } == 0
         || scalar @{ $plan->product->builds } == 0 )
     {
-        $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+        $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     }
 
     my @cases  = @{ $plan->test_cases };
@@ -96,7 +96,7 @@ sub test_create_by_id {
 
     check_fault( $response, $self );
 
-    my $obj = Bugzilla::Testopia::TestRun->new( $response->result->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $response->result->{'run_id'} );
     $obj->build;
 
     convert_undef($obj);
@@ -108,12 +108,12 @@ sub test_create_by_id {
 sub test_create_by_string {
     my $self = shift;
 
-    my $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+    my $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     while (scalar @{ $plan->test_cases } == 0
         || scalar @{ $plan->product->environments } == 0
         || scalar @{ $plan->product->builds } == 0 )
     {
-        $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+        $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     }
 
     my @cases  = @{ $plan->test_cases };
@@ -137,7 +137,7 @@ sub test_create_by_string {
 
     check_fault( $response, $self );
 
-    my $obj = Bugzilla::Testopia::TestRun->new( $response->result->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $response->result->{'run_id'} );
 
     convert_undef($obj);
 
@@ -149,7 +149,7 @@ sub test_get {
     my $self = shift;
 
     my $rep = get_rep('test_runs');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
     $obj->{'case_count'} = $obj->case_count();
 
     convert_undef($obj);
@@ -181,12 +181,12 @@ sub test_add_cases {
 sub test_update {
     my $self = shift;
 
-    my $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+    my $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     while (scalar @{ $plan->test_cases } == 0
         || scalar @{ $plan->product->environments } == 0
         || scalar @{ $plan->product->builds } == 0 )
     {
-        $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+        $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     }
 
     my @cases    = @{ $plan->test_cases };
@@ -200,7 +200,7 @@ sub test_update {
     my $version = $versions[ int( rand( scalar @versions ) ) ];
 
     my $rep = get_rep('test_runs');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     my $response = $proxy->call(
         "TestRun.update",
@@ -221,7 +221,7 @@ sub test_update {
     );
 
     # Get the newly updated object to compare with
-    $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     convert_undef($obj);
 
@@ -242,9 +242,9 @@ sub test_list {
 
     Bugzilla->login();
 
-    my $search = Bugzilla::Testopia::Search->new($cgi);
+    my $search = Testopia::Search->new($cgi);
     my $table =
-      Bugzilla::Testopia::Table->new( 'run', 'tr_xmlrpc.cgi', $cgi, undef, $search->query() );
+      Testopia::Table->new( 'run', 'tr_xmlrpc.cgi', $cgi, undef, $search->query() );
 
     convert_undef( $table->list );
 
@@ -261,7 +261,7 @@ sub test_add_tag {
     my $self = shift;
 
     my $rep       = get_rep('test_runs');
-    my $obj       = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj       = Testopia::TestRun->new( $rep->{'run_id'} );
     my $orig_size = scalar @{ $obj->tags };
     delete $obj->{'tags'};
 
@@ -283,8 +283,8 @@ sub test_get_bugs {
     while ( !$rep->{'case_run_id'} ) {
         $rep = get_rep('test_case_bugs');
     }
-    my $cr  = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
-    my $obj = Bugzilla::Testopia::TestRun->new( $cr->run_id );
+    my $cr  = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestRun->new( $cr->run_id );
 
     my $response = $proxy->call( "TestRun.get_bugs", $cr->run_id );
 
@@ -301,7 +301,7 @@ sub test_get_change_history {
     my $self = shift;
 
     my $rep = get_rep('test_run_activity');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     my $response = $proxy->call( "TestRun.get_change_history", $rep->{'run_id'} );
 
@@ -318,7 +318,7 @@ sub test_get_completion_report {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     my $response = $proxy->call( "TestRun.get_completion_report", $rep->{'run_id'} );
 
@@ -332,7 +332,7 @@ sub test_get_tags {
     my $self = shift;
 
     my $rep = get_rep('test_run_tags');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     my $response = $proxy->call( "TestRun.get_tags", $rep->{'run_id'} );
 
@@ -352,7 +352,7 @@ sub test_get_test_case_runs {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     my $response = $proxy->call( "TestRun.get_test_case_runs", $rep->{'run_id'} );
 
@@ -370,7 +370,7 @@ sub test_get_test_cases {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     my $response = $proxy->call( "TestRun.get_test_cases", $rep->{'run_id'} );
 
@@ -388,7 +388,7 @@ sub test_get_test_plan {
     my $self = shift;
 
     my $rep = get_rep('test_runs');
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
 
     my $response = $proxy->call( "TestRun.get_test_plan", $rep->{'run_id'} );
 
@@ -404,8 +404,8 @@ sub test_remove_tag {
 
     my $rep = get_rep('test_run_tags');
 
-    my $obj = Bugzilla::Testopia::TestRun->new( $rep->{'run_id'} );
-    my $tag = Bugzilla::Testopia::TestTag->new( $rep->{'tag_id'} );
+    my $obj = Testopia::TestRun->new( $rep->{'run_id'} );
+    my $tag = Testopia::TestTag->new( $rep->{'tag_id'} );
     
     delete $obj->{'tags'};
     my $orig_size = scalar @{ $obj->tags };

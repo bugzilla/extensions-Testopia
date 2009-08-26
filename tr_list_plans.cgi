@@ -21,17 +21,17 @@
 #                 Jeff Dayley <jedayley@novell.com>
  
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Config;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 use Bugzilla::Util;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Search;
+use Testopia::Table;
+use Testopia::Constants;
 
 my $vars = {};
 
@@ -58,7 +58,7 @@ if ($action eq 'update'){
     my $total = scalar @plan_ids;
     my @uneditable;
     foreach my $p (@plan_ids){
-        my $plan = Bugzilla::Testopia::TestPlan->new($p);
+        my $plan = Testopia::TestPlan->new($p);
         next unless $plan;
         
         unless ($plan->canedit){
@@ -78,8 +78,8 @@ else {
     $vars->{'qname'} = $cgi->param('qname') if $cgi->param('qname');
     $cgi->param('current_tab', 'plan');
     $cgi->param('distinct', '1');
-    my $search = Bugzilla::Testopia::Search->new($cgi);
-    my $table = Bugzilla::Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
+    my $search = Testopia::Search->new($cgi);
+    my $table = Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
     
     print $cgi->header;
     $vars->{'json'} = $table->to_ext_json;

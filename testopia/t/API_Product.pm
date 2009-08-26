@@ -29,9 +29,9 @@ use lib ".";
 use lib "../..";
 
 use Bugzilla;
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
+use Testopia::Product;
+use Testopia::Search;
+use Testopia::Table;
 
 
 use Testopia::Test::Constants;
@@ -62,7 +62,7 @@ sub test_check_category {
     my $self = shift;
 
     my $rep = get_rep('test_case_categories');
-    my $obj = Bugzilla::Testopia::Category->new($rep->{'category_id'});
+    my $obj = Testopia::Category->new($rep->{'category_id'});
     
     my $response = $proxy->call( "Product.check_category", $rep->{'name'}, $rep->{'product_id'} );
     
@@ -93,7 +93,7 @@ sub test_check_product {
     my $self = shift;
 
     my $rep = get_rep('products');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'id'});
+    my $obj = Testopia::Product->new($rep->{'id'});
     
     my $response = $proxy->call( "Product.check_product", $rep->{'name'} );
     
@@ -108,7 +108,7 @@ sub test_get {
     my $self = shift;
     
     my $rep = get_rep('products');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'id'});
+    my $obj = Testopia::Product->new($rep->{'id'});
     
     my $response = $proxy->call( "Product.get", $rep->{'id'} );
     
@@ -124,7 +124,7 @@ sub test_get_builds {
     my $self = shift;
     
     my $rep = get_rep('test_builds');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'product_id'});
+    my $obj = Testopia::Product->new($rep->{'product_id'});
     
     my $response = $proxy->call( "Product.get_builds", $rep->{'product_id'} );
     
@@ -141,7 +141,7 @@ sub test_get_cases {
     my $self = shift;
     
     my $rep = get_rep('test_case_plans');
-    my $plan = Bugzilla::Testopia::TestPlan->new($rep->{'plan_id'});
+    my $plan = Testopia::TestPlan->new($rep->{'plan_id'});
     my $obj = $plan->product;
     
     my $response = $proxy->call( "Product.get_cases", $obj->id );
@@ -156,7 +156,7 @@ sub test_get_categories {
     my $self = shift;
     
     my $rep = get_rep('test_case_categories');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'product_id'});
+    my $obj = Testopia::Product->new($rep->{'product_id'});
     
     my $response = $proxy->call( "Product.get_categories", $rep->{'product_id'} );
     
@@ -174,7 +174,7 @@ sub test_get_category {
     my $self = shift;
     
     my $rep = get_rep('test_case_categories');
-    my $obj = Bugzilla::Testopia::Category->new($rep->{'category_id'});
+    my $obj = Testopia::Category->new($rep->{'category_id'});
     
     my $response = $proxy->call( "Product.get_category", $rep->{'category_id'} );
     
@@ -206,7 +206,7 @@ sub test_get_components {
     my $self = shift;
     
     my $rep = get_rep('products');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'id'});
+    my $obj = Testopia::Product->new($rep->{'id'});
     
     my $response = $proxy->call( "Product.get_components", $rep->{'id'} );
     
@@ -224,7 +224,7 @@ sub test_get_enviroments {
     my $self = shift;
     
     my $rep = get_rep('test_environments');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'product_id'});
+    my $obj = Testopia::Product->new($rep->{'product_id'});
     
     my $response = $proxy->call( "Product.get_environments", $rep->{'product_id'} );
     
@@ -242,7 +242,7 @@ sub test_get_milestones {
     my $self = shift;
     
     my $rep = get_rep('products');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'id'});
+    my $obj = Testopia::Product->new($rep->{'id'});
     
     my $response = $proxy->call( "Product.get_milestones", $rep->{'id'} );
     
@@ -260,7 +260,7 @@ sub test_get_plans {
     my $self = shift;
     
     my $rep = get_rep('test_plans');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'product_id'});
+    my $obj = Testopia::Product->new($rep->{'product_id'});
     
     my $response = $proxy->call( "Product.get_plans", $rep->{'product_id'} );
     
@@ -278,7 +278,7 @@ sub test_get_runs {
     my $self = shift;
     
     my $rep = get_rep('test_runs');
-    my $run = Bugzilla::Testopia::TestRun->new($rep->{'run_id'});
+    my $run = Testopia::TestRun->new($rep->{'run_id'});
     my $obj = $run->plan->product;
     
     my $response = $proxy->call( "Product.get_runs", $obj->id );
@@ -297,7 +297,7 @@ sub test_get_tags {
     my $self = shift;
     
     my $rep = get_rep('test_run_tags');
-    my $run = Bugzilla::Testopia::TestRun->new($rep->{'run_id'});
+    my $run = Testopia::TestRun->new($rep->{'run_id'});
     my $obj = $run->plan->product;
     
     my $response = $proxy->call( "Product.get_tags", $obj->id );
@@ -313,7 +313,7 @@ sub test_get_versions {
     my $self = shift;
     
     my $rep = get_rep('products');
-    my $obj = Bugzilla::Testopia::Product->new($rep->{'id'});
+    my $obj = Testopia::Product->new($rep->{'id'});
     
     my $response = $proxy->call( "Product.get_versions", $rep->{'id'} );
     

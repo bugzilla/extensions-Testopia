@@ -30,10 +30,10 @@ use base qw(Test::Unit::TestCase);
 
 use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::TestTag;
-use Bugzilla::Testopia::TestCaseRun;
+use Testopia::TestCase;
+use Testopia::TestPlan;
+use Testopia::TestTag;
+use Testopia::TestCaseRun;
 
 use Test;
 use Testopia::Test::Util;
@@ -49,10 +49,10 @@ use constant DB_TABLE => 'test_cases';
 use constant ID_FIELD => 'case_id';
 
 our $dbh = Bugzilla->dbh;
-our $obj = Test::test_init(DB_TABLE, ID_FIELD, 'Bugzilla::Testopia::TestCase');
+our $obj = Test::test_init(DB_TABLE, ID_FIELD, 'Testopia::TestCase');
 
 sub test_init{
-	#$obj = Test::test_init(DB_TABLE, ID_FIELD, 'Bugzilla::Testopia::TestCase');
+	#$obj = Test::test_init(DB_TABLE, ID_FIELD, 'Testopia::TestCase');
 }
 
 sub check_alias{
@@ -131,9 +131,9 @@ sub check_sortkey{
 
 
 sub check_plans{
-	my $plan = new Bugzilla::Testopia::TestPlan(1);
+	my $plan = new Testopia::TestPlan(1);
 	# NOTE: The real method checks if the array is greater than 0,
-	#Not if it actually holds Bugzilla::Testopia::TestPlan objects
+	#Not if it actually holds Testopia::TestPlan objects
 	dies_ok(sub{$obj->_check_plans}, 'Plans Array Must Not Be Empty');
 	dies_ok(sub{$obj->_check_plans(2)}, 'Plans Array Must Be An Array');
 	ok($obj->_check_plans([$plan]), 'Plans Array Not Undef');
@@ -157,8 +157,8 @@ sub check_summary{
 }
 
 sub check_category{
-	my $plan = new Bugzilla::Testopia::TestPlan(1);
-	Bugzilla::Testopia::TestCase->_check_category(1, $plan);
+	my $plan = new Testopia::TestPlan(1);
+	Testopia::TestCase->_check_category(1, $plan);
 }
 
 sub test_create{
@@ -180,7 +180,7 @@ sub test_create{
 
 	Test::set_user('1', 'admin@testopia.com', 'admin@testopia.com');
 	
-	my $plan = new Bugzilla::Testopia::TestPlan(999);
+	my $plan = new Testopia::TestPlan(999);
 	my $hash = {
 	'case_status_id' 	=> 1,
 	'priority_id' 		=> 999,
@@ -210,14 +210,14 @@ sub test_create{
 	
 	# If the user does not have rights to create a Test Case, this should die
 		unless(Bugzilla->user->can_see_bug(999)){
-			dies_ok( sub {Bugzilla::Testopia::TestCase->create($hash)}, "User " . Bugzilla->user->{'login_name'} ." does not have rights to create a Test Case");	
+			dies_ok( sub {Testopia::TestCase->create($hash)}, "User " . Bugzilla->user->{'login_name'} ." does not have rights to create a Test Case");	
 		}
 		else{
-			my $created_obj = Bugzilla::Testopiaj::TestCase->create($hash);
+			my $created_obj = Testopiaj::TestCase->create($hash);
 			foreach my $field ($created_obj){
 				delete $created_obj->{$field} unless( defined $hash->{$field});
 			}
-			my $db_obj = new Bugzilla::Testopia::TestCase($created_obj->id);
+			my $db_obj = new Testopia::TestCase($created_obj->id);
 			$db_obj->{'plans'} = $db_obj->plans;
 			$db_obj->{'version'} = 1;
 			cmp_deeply($created_obj, $db_obj, 'Created Object Matched in DB');
@@ -233,7 +233,7 @@ sub test_update{
 	delete $obj->{'version'};
 	delete $obj->{'type'};
 	$obj->update;
-	my $db_obj = new Bugzilla::Testopia::TestCase($obj->id);
+	my $db_obj = new Testopia::TestCase($obj->id);
 	cmp_deeply($obj, $db_obj, 'Update TestCase');
 }
 
@@ -256,7 +256,7 @@ sub test_get_category_list{
 	my @categories;
 	my $cat_ids = $dbh->selectrow_arrayref("SELECT category_id FROM test_case_categories WHERE product_id IN (?)", undef, join(",", @{$obj->get_product_ids}));
     foreach my $id (@$cat_ids){
-        push @categories, Bugzilla::Testopia::Category->new($id);
+        push @categories, Testopia::Category->new($id);
     }
 	ok($obj->get_category_list, 'Category List Match');
 }
@@ -288,7 +288,7 @@ sub test_add_tag{
 	my $query = "SELECT tag_id FROM test_case_tags WHERE case_id = ?";
 	my $test_tags = $dbh->selectcol_arrayref($query, undef, $obj->id);
 	for(@$test_tags){
-		my $tag = new Bugzilla::Testopia::TestTag($_);
+		my $tag = new Testopia::TestTag($_);
 		ok(defined $tag, $tag->{'tag_name'} . " Tag Added Correctly");
 	}
 }
@@ -364,7 +364,7 @@ sub test_add_to_run{
 	my $before_adding = $dbh->selectrow_hashref("SELECT case_run_id, run_id, case_id, case_run_status_id, case_text_version, build_id, iscurrent, environment_id FROM test_case_runs WHERE run_id = $run");
 	$obj->add_to_run($run);
 	my $db_obj = $dbh->selectrow_hashref("SELECT * FROM test_case_runs WHERE run_id = $run");
-	my $object = new Bugzilla::Testopia::TestCaseRun($db_obj->{'case_run_id'});
+	my $object = new Testopia::TestCaseRun($db_obj->{'case_run_id'});
 	cmp_deeply($db_obj, noclass($object), 'Test Case Added to Run');
 }
 
@@ -497,7 +497,7 @@ sub test_history{
 
 sub test_obliterate{
 	my $id = $dbh->selectrow_array("SELECT MAX(case_id) FROM test_cases WHERE case_id <> ?", undef, $obj->id);
-	my $dead_obj = new Bugzilla::Testopia::TestCase($id);
+	my $dead_obj = new Testopia::TestCase($id);
 	$dead_obj->obliterate;use base qw(Exporter Test::Unit::TestCase);
 	
 	my $db_dead = $dbh->selectrow_arrayref("SELECT * FROM test_cases WHERE case_id = ?", undef, $id);

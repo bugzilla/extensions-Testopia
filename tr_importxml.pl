@@ -44,17 +44,17 @@ BEGIN {
 }
 
 chdir $::path;
-use lib ($::path);
+use lib ($::path, "extensions/testopia/lib");
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Xml;
+use Testopia::Util;
+use Testopia::TestRun;
+use Testopia::Environment;
+use Testopia::Xml;
 
 use XML::Twig;
 use Getopt::Long;
@@ -121,7 +121,7 @@ if (defined $login)
                         
 Debug("Parsing tree", DEBUG_LEVEL);
 
-my $testopiaXml = Bugzilla::Testopia::Xml->new();
+my $testopiaXml = Testopia::Xml->new();
 $testopiaXml->parse($xml,$filename);
 
 exit 0;

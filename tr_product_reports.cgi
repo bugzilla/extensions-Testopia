@@ -20,16 +20,16 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Search;
+use Testopia::Table;
+use Testopia::Constants;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -54,7 +54,7 @@ Bugzilla->login(LOGIN_REQUIRED);
 my $product;
 
 if ($cgi->param('product_id')){
-    $product = Bugzilla::Testopia::Product->new($cgi->param('product_id'));
+    $product = Testopia::Product->new($cgi->param('product_id'));
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
     $vars->{'product'} = $product;
 }
@@ -65,8 +65,8 @@ if ($action eq 'draw'){
         exit unless $product;
         
         my @data;
-        my $caserun = Bugzilla::Testopia::TestCaseRun->new({});
-        my $run = Bugzilla::Testopia::TestRun->new({});
+        my $caserun = Testopia::TestCaseRun->new({});
+        my $run = Testopia::TestRun->new({});
         
         my @names;
         my @values;

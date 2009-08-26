@@ -21,18 +21,18 @@
 #                 Jeff Dayley <jedayley@novell.com>   
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Config;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 use Bugzilla::Util;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Search;
+use Testopia::Table;
+use Testopia::TestRun;
+use Testopia::Constants;
 
 my $vars = {};
 
@@ -60,7 +60,7 @@ if ($action eq 'update'){
 
     my @uneditable;
     foreach my $p (@run_ids){
-        my $run = Bugzilla::Testopia::TestRun->new($p);
+        my $run = Testopia::TestRun->new($p);
         next unless $run;
         
         unless ($run->canedit){
@@ -92,7 +92,7 @@ elsif ($action eq 'clone'){
     my %planseen;
     foreach my $planid (split(",", $cgi->param('plan_ids'))){
         validate_test_id($planid, 'plan');
-        my $plan = Bugzilla::Testopia::TestPlan->new($planid);
+        my $plan = Testopia::TestPlan->new($planid);
         ThrowUserError("testopia-read-only", {'object' => $plan}) unless $plan->canedit;
         $planseen{$planid} = 1;
     }
@@ -113,7 +113,7 @@ elsif ($action eq 'clone'){
     my @newruns;
     my @failures;
     foreach my $run_id (@run_ids){
-        my $run = Bugzilla::Testopia::TestRun->new($run_id);
+        my $run = Testopia::TestRun->new($run_id);
         next unless $run->canview;
         
         my $manager = $cgi->param('keep_run_manager') ? $run->manager->id : Bugzilla->user->id;
@@ -126,7 +126,7 @@ elsif ($action eq 'clone'){
         if ($cgi->param('copy_cases')){
             if ($cgi->param('case_list')){
                 foreach my $id (split(",", $cgi->param('case_list'))){
-                    my $caserun = Bugzilla::Testopia::TestCaseRun->new($id);
+                    my $caserun = Testopia::TestCaseRun->new($id);
                     ThrowUserError('testopia-permission-denied', {'object' => $caserun}) unless ($caserun->canview);
                     push @caseruns, $caserun;
                 }
@@ -139,14 +139,14 @@ elsif ($action eq 'clone'){
                 $cgi->delete('product_id');
                 $cgi->delete('plan_ids');
                 
-                my $search = Bugzilla::Testopia::Search->new($cgi);
-                my $table = Bugzilla::Testopia::Table->new('case_run', 'tr_list_caseruns.cgi', $cgi, undef, $search->query);
+                my $search = Testopia::Search->new($cgi);
+                my $table = Testopia::Table->new('case_run', 'tr_list_caseruns.cgi', $cgi, undef, $search->query);
                 @caseruns = @{$table->list};
             }
         }
         
         foreach my $plan_id (keys %planseen){
-            my $newrun = Bugzilla::Testopia::TestRun->new($run->clone($summary, $manager, $plan_id, $build, $env));
+            my $newrun = Testopia::TestRun->new($run->clone($summary, $manager, $plan_id, $build, $env));
         
             if($cgi->param('copy_tags')){
                 foreach my $tag (@{$run->tags}){
@@ -174,7 +174,7 @@ elsif ($action eq 'delete'){
     my @run_ids = split(",", $cgi->param('run_ids'));
     my @uneditable;
     foreach my $id (@run_ids){
-        my $run = Bugzilla::Testopia::TestRun->new($id);
+        my $run = Testopia::TestRun->new($id);
         unless ($run->candelete){
             push @uneditable, $run;
             next;
@@ -192,8 +192,8 @@ else {
     $vars->{'qname'} = $cgi->param('qname') if $cgi->param('qname');
     $cgi->param('current_tab', 'run');
     $cgi->param('distinct', '1');
-    my $search = Bugzilla::Testopia::Search->new($cgi);
-    my $table = Bugzilla::Testopia::Table->new('run', 'tr_list_runs.cgi', $cgi, undef, $search->query);
+    my $search = Testopia::Search->new($cgi);
+    my $table = Testopia::Table->new('run', 'tr_list_runs.cgi', $cgi, undef, $search->query);
 
     $vars->{'json'} = $table->to_ext_json;
     $template->process($format->{'template'}, $vars)

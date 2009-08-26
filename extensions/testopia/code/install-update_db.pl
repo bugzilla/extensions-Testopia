@@ -503,11 +503,11 @@ sub fixTables {
     # Fix test_case_bugs table so that all case_id fields are not null.
     my ($count) = $dbh->selectrow_array("SELECT COUNT(*) FROM test_case_bugs WHERE case_id IS NULL");
     if ($count){
-        require Bugzilla::Testopia::TestCaseRun;
+        require Testopia::TestCaseRun;
         my $caseruns = $dbh->selectcol_arrayref("SELECT case_run_id FROM test_case_bugs WHERE case_id IS NULL");
         my $sth = $dbh->prepare_cached("UPDATE test_case_bugs SET case_id = ? WHERE case_run_id = ?");
         foreach my $cr (@$caseruns){
-            my $caserun = Bugzilla::Testopia::TestCaseRun->new($cr);
+            my $caserun = Testopia::TestCaseRun->new($cr);
             $sth->execute($caserun->case->id, $cr);
         }
     }

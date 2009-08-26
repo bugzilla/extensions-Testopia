@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Bug;
@@ -28,13 +28,13 @@ use Bugzilla::Util;
 use Bugzilla::User;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::Category;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::TestTag;
-use Bugzilla::Testopia::Attachment;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::TestCase;
+use Testopia::Category;
+use Testopia::TestCaseRun;
+use Testopia::TestTag;
+use Testopia::Attachment;
+use Testopia::Constants;
 use JSON;
 
 Bugzilla->error_mode(ERROR_MODE_AJAX);
@@ -44,7 +44,7 @@ my $cgi = Bugzilla->cgi;
 
 my $action = $cgi->param('action') || '';
 
-my $case = Bugzilla::Testopia::TestCase->new($cgi->param('case_id'));
+my $case = Testopia::TestCase->new($cgi->param('case_id'));
 
 unless ($case){
     print $cgi->header;
@@ -94,23 +94,23 @@ elsif ($action eq 'update_doc'){
     }
 }
 
-elsif ($action eq 'link') { 	 
-    print $cgi->header; 	 
-    my @plans; 	 
-    foreach my $id (split(',', $cgi->param('plan_ids'))){ 	 
-        my $plan = Bugzilla::Testopia::TestPlan->new($id); 	 
-        ThrowUserError("testopia-read-only", {'object' => $plan}) unless $plan->canedit; 	 
-        push @plans, $plan; 	 
-    } 	 
-    ThrowUserError('missing-plans-list') unless scalar @plans; 	 
- 	
-    foreach my $plan (@plans){ 	 
-        $case->link_plan($plan->id); 	 
-    } 	 
- 	
-    delete $case->{'plans'}; 	 
- 	
-    print "{'success': true}"; 	 
+elsif ($action eq 'link') {      
+    print $cgi->header;      
+    my @plans;      
+    foreach my $id (split(',', $cgi->param('plan_ids'))){      
+        my $plan = Testopia::TestPlan->new($id);      
+        ThrowUserError("testopia-read-only", {'object' => $plan}) unless $plan->canedit;      
+        push @plans, $plan;      
+    }      
+    ThrowUserError('missing-plans-list') unless scalar @plans;      
+     
+    foreach my $plan (@plans){      
+        $case->link_plan($plan->id);      
+    }      
+     
+    delete $case->{'plans'};      
+     
+    print "{'success': true}";      
 }
 
 elsif ($action eq 'unlink'){
@@ -216,7 +216,7 @@ elsif ($action eq 'case_to_bug'){
     $case->{text}->{action} =~ s/(<br[\s\/>]+|<p.*?>|<li.*?>)/\n\n/g;
     $case->{text}->{action} =~ s/<.*?>//g;
     my $vars;
-    $vars->{'caserun'} = Bugzilla::Testopia::TestCaseRun->new($cgi->param('caserun_id')) if $cgi->param('caserun_id');
+    $vars->{'caserun'} = Testopia::TestCaseRun->new($cgi->param('caserun_id')) if $cgi->param('caserun_id');
     $vars->{'case'} = $case;
 
     print $cgi->header(-type => 'text/xml');

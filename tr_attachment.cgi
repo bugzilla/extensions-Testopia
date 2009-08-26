@@ -20,17 +20,17 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Attachment;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Attachment;
+use Testopia::Search;
+use Testopia::Table;
+use Testopia::Constants;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -57,7 +57,7 @@ if (!$attach_id and $cgi->param('ctype') ne 'json'){
 if ($action eq 'edit') {
     print $cgi->header;
     validate_test_id($attach_id,'attachment');
-    my $attachment = Bugzilla::Testopia::Attachment->new($attach_id);
+    my $attachment = Testopia::Attachment->new($attach_id);
     
     ThrowUserError('testopia-permission-denied', {'object' => $attachment}) unless $attachment->canedit;
 
@@ -80,13 +80,13 @@ elsif ($action eq 'remove') {
     my $obj;
  
     if ($item eq 'case'){
-          $obj = Bugzilla::Testopia::TestCase->new($item_id);
+          $obj = Testopia::TestCase->new($item_id);
     }
     elsif ($item eq 'plan'){
-        $obj = Bugzilla::Testopia::TestPlan->new($item_id);
+        $obj = Testopia::TestPlan->new($item_id);
     }
     elsif ($item eq 'caserun'){
-        $obj = Bugzilla::Testopia::TestCaseRun->new($item_id);
+        $obj = Testopia::TestCaseRun->new($item_id);
         $obj = $obj->case;
     }
 
@@ -94,7 +94,7 @@ elsif ($action eq 'remove') {
 
     foreach my $attach_id (split(',', $cgi->param('attach_ids'))){
         validate_test_id($attach_id,'attachment');
-        my $attachment = Bugzilla::Testopia::Attachment->new($attach_id);
+        my $attachment = Testopia::Attachment->new($attach_id);
         
         ThrowUserError('testopia-no-delete', {'object' => $attachment}) unless $attachment->candelete;
                 
@@ -117,15 +117,15 @@ elsif ($action eq 'add'){
     my $obj;
     my $att;      
     if ($item eq 'case'){
-          $obj = Bugzilla::Testopia::TestCase->new($item_id);
+          $obj = Testopia::TestCase->new($item_id);
           $att->{'case_id'} = $obj->id;
     }
     elsif ($item eq 'plan'){
-        $obj = Bugzilla::Testopia::TestPlan->new($item_id);
+        $obj = Testopia::TestPlan->new($item_id);
         $att->{'plan_id'} = $obj->id;
     }
     elsif ($item eq 'caserun'){
-        $obj = Bugzilla::Testopia::TestCaseRun->new($item_id);
+        $obj = Testopia::TestCaseRun->new($item_id);
         $att->{'caserun_id'} = $obj->id;
         $att->{'case_id'} = $obj->case_id;
     }
@@ -149,7 +149,7 @@ elsif ($action eq 'add'){
     $att->{'mime_type'}    = $cgi->uploadInfo($cgi->param("data"))->{'Content-Type'};
     $att->{'contents'}     = $data;
 
-    my $attachment = Bugzilla::Testopia::Attachment->create($att);
+    my $attachment = Testopia::Attachment->create($att);
 
     print "{success: true}";
 }
@@ -166,13 +166,13 @@ elsif ($action eq 'list') {
     my $obj;
  
     if ($item eq 'case'){
-          $obj = Bugzilla::Testopia::TestCase->new($item_id);
+          $obj = Testopia::TestCase->new($item_id);
     }
     elsif ($item eq 'plan'){
-        $obj = Bugzilla::Testopia::TestPlan->new($item_id);
+        $obj = Testopia::TestPlan->new($item_id);
     }
     elsif ($item eq 'caserun'){
-        $obj = Bugzilla::Testopia::TestCaseRun->new($item_id);
+        $obj = Testopia::TestCaseRun->new($item_id);
     }
     
     my @attachments = @{$obj->attachments};
@@ -198,7 +198,7 @@ elsif ($action eq 'list') {
 ################
 else {
     validate_test_id($attach_id,'attachment');
-    my $attachment = Bugzilla::Testopia::Attachment->new($attach_id);
+    my $attachment = Testopia::Attachment->new($attach_id);
     
     ThrowUserError("attachment_removed") if $attachment->datasize == 0;
     

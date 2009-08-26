@@ -2,15 +2,15 @@
 
 use strict;
 
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::Constants;
+use Testopia::TestPlan;
+use Testopia::TestCase;
+use Testopia::Constants;
 use JSON;
 
 local our $vars = {};
@@ -28,13 +28,13 @@ print $cgi->header;
 
 my $obj;
 if ($cgi->param('object') eq 'plan'){
-    $obj = Bugzilla::Testopia::TestPlan->new($cgi->param('object_id'));
+    $obj = Testopia::TestPlan->new($cgi->param('object_id'));
 }
 elsif ($cgi->param('object') eq 'case'){
-    $obj = Bugzilla::Testopia::TestCase->new($cgi->param('object_id'));
+    $obj = Testopia::TestCase->new($cgi->param('object_id'));
 }
 elsif ($cgi->param('object') eq 'run'){
-    $obj = Bugzilla::Testopia::TestRun->new($cgi->param('object_id'));
+    $obj = Testopia::TestRun->new($cgi->param('object_id'));
 }
 else{
     ThrowUserError("testopia-unknown-type", {'object' => $obj});
@@ -50,7 +50,7 @@ if ($action eq 'diff')
     {
         print $cgi->header;
         
-        my $plan = Bugzilla::Testopia::TestPlan->new($id);
+        my $plan = Testopia::TestPlan->new($id);
         
         ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
         

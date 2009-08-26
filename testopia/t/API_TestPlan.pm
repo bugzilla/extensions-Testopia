@@ -29,9 +29,9 @@ use lib ".";
 use lib "../..";
 
 use Bugzilla;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
+use Testopia::TestPlan;
+use Testopia::Search;
+use Testopia::Table;
 
 use Testopia::Test::Constants;
 use Testopia::Test::API::Util;
@@ -60,7 +60,7 @@ sub tear_down {
 sub test_create_by_id {
     my $self = shift;
 
-    my $product  = Bugzilla::Testopia::Product->new( get_rep('products')->{'id'} );
+    my $product  = Testopia::Product->new( get_rep('products')->{'id'} );
     my @versions = @{ $product->versions };
     my $version  = $versions[ int( rand( scalar @versions ) ) ];
 
@@ -77,7 +77,7 @@ sub test_create_by_id {
 
     check_fault( $response, $self );
 
-    my $obj = Bugzilla::Testopia::TestPlan->new( $response->result->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $response->result->{'plan_id'} );
     $obj->version;
 
     convert_undef($obj);
@@ -89,7 +89,7 @@ sub test_create_by_id {
 sub test_create_by_string {
     my $self = shift;
 
-    my $product  = Bugzilla::Testopia::Product->new( get_rep('products')->{'id'} );
+    my $product  = Testopia::Product->new( get_rep('products')->{'id'} );
     my @versions = @{ $product->versions };
     my $version  = $versions[ int( rand( scalar @versions ) ) ];
 
@@ -105,7 +105,7 @@ sub test_create_by_string {
 
     check_fault( $response, $self );
 
-    my $obj = Bugzilla::Testopia::TestPlan->new( $response->result->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $response->result->{'plan_id'} );
     $obj->version;
 
     convert_undef($obj);
@@ -118,7 +118,7 @@ sub test_get {
     my $self = shift;
 
     my $rep = get_rep('test_plans');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
     $obj->product;
 
     my $response = $proxy->call( "TestPlan.get", $rep->{'plan_id'} );
@@ -140,7 +140,7 @@ sub test_update {
     my $self = shift;
 
     my $rep = get_rep('test_plans');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
 
     my @versions = @{ $obj->product->versions };
     my $version  = $versions[ int( rand( scalar @versions ) ) ];
@@ -157,7 +157,7 @@ sub test_update {
     );
 
     # Get the newly updated object to compare with
-    $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
     $obj->product;
 
     check_fault( $response, $self );
@@ -173,7 +173,7 @@ sub test_get_test_cases {
     my $self = shift;
 
     my $rep = get_rep('test_case_plans');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
     $obj->product;
 
     my $response = $proxy->call( "TestPlan.get_test_cases", $rep->{'plan_id'} );
@@ -192,7 +192,7 @@ sub test_get_test_runs {
     my $self = shift;
 
     my $rep = get_rep('test_runs');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
     $obj->product;
 
     my $response = $proxy->call( "TestPlan.get_test_runs", $rep->{'plan_id'} );
@@ -219,8 +219,8 @@ sub test_list {
 
     Bugzilla->login();
 
-    my $search = Bugzilla::Testopia::Search->new($cgi);
-    my $table = Bugzilla::Testopia::Table->new( 'plan', 'tr_xmlrpc.cgi', $cgi, undef, $search->query() );
+    my $search = Testopia::Search->new($cgi);
+    my $table = Testopia::Table->new( 'plan', 'tr_xmlrpc.cgi', $cgi, undef, $search->query() );
 
     my $response = $proxy->call( "TestPlan.list", { pagesize => 25, } );
 
@@ -239,7 +239,7 @@ sub test_add_tag {
     my $self = shift;
 
     my $rep       = get_rep('test_plans');
-    my $obj       = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj       = Testopia::TestPlan->new( $rep->{'plan_id'} );
     my $orig_size = scalar @{ $obj->tags };
     delete $obj->{'tags'};
 
@@ -258,7 +258,7 @@ sub test_get_change_history {
     my $self = shift;
 
     my $rep = get_rep('test_plan_activity');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
 
     my $response = $proxy->call( "TestPlan.get_change_history", $rep->{'plan_id'} );
 
@@ -276,7 +276,7 @@ sub test_get_product {
     my $self = shift;
 
     my $rep = get_rep('test_plans');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
 
     my $response = $proxy->call( "TestPlan.get_product", $rep->{'plan_id'} );
 
@@ -294,7 +294,7 @@ sub test_get_tags {
     my $self = shift;
 
     my $rep = get_rep('test_plan_tags');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
 
     my $response = $proxy->call( "TestPlan.get_tags", $rep->{'plan_id'} );
 
@@ -314,7 +314,7 @@ sub test_get_text {
     my $self = shift;
 
     my $rep = get_rep('test_plan_texts');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
 
     my $response = $proxy->call( "TestPlan.get_text", $rep->{'plan_id'} );
 
@@ -360,8 +360,8 @@ sub test_remove_tag {
 
     my $rep = get_rep('test_plan_tags');
 
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
-    my $tag = Bugzilla::Testopia::TestTag->new( $rep->{'tag_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $tag = Testopia::TestTag->new( $rep->{'tag_id'} );
     
     delete $obj->{'tags'};
     my $orig_size = scalar @{ $obj->tags };
@@ -379,7 +379,7 @@ sub test_store_text {
     my $self = shift;
 
     my $rep = get_rep('test_plans');
-    my $obj = Bugzilla::Testopia::TestPlan->new( $rep->{'plan_id'} );
+    my $obj = Testopia::TestPlan->new( $rep->{'plan_id'} );
 
     my $response = $proxy->call( "TestPlan.store_text", $rep->{'plan_id'}, "API DOCUMENT UPDATE TEST" );
 

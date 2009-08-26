@@ -29,9 +29,9 @@ use lib ".";
 use lib "../..";
 
 use Bugzilla;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
+use Testopia::TestCaseRun;
+use Testopia::Search;
+use Testopia::Table;
 
 use Testopia::Test::Constants;
 use Testopia::Test::API::Util;
@@ -60,13 +60,13 @@ sub tear_down {
 sub test_create_by_integer {
     my $self = shift;
 
-    my $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+    my $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     while (scalar @{ $plan->test_runs } == 0
         || scalar @{ $plan->test_cases } == 0
         || scalar @{ $plan->product->environments } == 0
         || scalar @{ $plan->product->builds } == 0 )
     {
-        $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+        $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     }
 
     my @runs   = @{ $plan->test_runs };
@@ -96,7 +96,7 @@ sub test_create_by_integer {
 
     check_fault( $response, $self );
 
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $response->result->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $response->result->{'case_run_id'} );
 
     convert_undef($obj);
 
@@ -106,13 +106,13 @@ sub test_create_by_integer {
 sub test_create_by_string {
     my $self = shift;
 
-    my $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+    my $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     while (scalar @{ $plan->test_runs } == 0
         || scalar @{ $plan->test_cases } == 0
         || scalar @{ $plan->product->environments } == 0
         || scalar @{ $plan->product->builds } == 0 )
     {
-        $plan = Bugzilla::Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
+        $plan = Testopia::TestPlan->new( get_rep('test_plans')->{'plan_id'} );
     }
     my @runs   = @{ $plan->test_runs };
     my @cases  = @{ $plan->test_cases };
@@ -137,7 +137,7 @@ sub test_create_by_string {
 
     check_fault( $response, $self );
 
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $response->result->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $response->result->{'case_run_id'} );
 
     convert_undef($obj);
 
@@ -148,7 +148,7 @@ sub test_get_by_id {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
 
     convert_undef($obj);
 
@@ -165,7 +165,7 @@ sub test_get_by_values {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
 
     my $response =
       $proxy->call( "TestCaseRun.get", $rep->{'run_id'}, $rep->{'case_id'}, $rep->{'build_id'},
@@ -184,7 +184,7 @@ sub test_update {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
 
     my @builds = @{ $obj->run->plan->product->builds };
     my @envs   = @{ $obj->run->plan->product->environments };
@@ -207,7 +207,7 @@ sub test_update {
     check_fault( $response, $self );
 
     # Get the newly updated object to compare with
-    $obj = Bugzilla::Testopia::TestCaseRun->new( $response->result->{'case_run_id'} );
+    $obj = Testopia::TestCaseRun->new( $response->result->{'case_run_id'} );
     $obj->build;
     $obj->environment;
 
@@ -228,8 +228,8 @@ sub test_list {
     $cgi->param( "current_tab", "case_run" );
     $cgi->param( "pagesize",    25 );
 
-    my $search = Bugzilla::Testopia::Search->new($cgi);
-    my $table = Bugzilla::Testopia::Table->new( 'case_run', 'tr_xmlrpc.cgi', $cgi, undef, $search->query() );
+    my $search = Testopia::Search->new($cgi);
+    my $table = Testopia::Table->new( 'case_run', 'tr_xmlrpc.cgi', $cgi, undef, $search->query() );
 
     my $response = $proxy->call( "TestCaseRun.list", { pagesize => 25, } );
 
@@ -252,7 +252,7 @@ sub test_attach_bug {
     Bugzilla->login();
 
     my $rep       = get_rep('test_case_runs');
-    my $obj       = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj       = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
     my $orig_size = scalar @{ $obj->bugs };
 
     my $bug = get_rep('bugs');
@@ -278,7 +278,7 @@ sub test_detach_bug {
     my $rep = get_rep('test_case_runs');
     my $bug = get_rep('bugs');
 
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
     $obj->attach_bug( $bug->{'bug_id'} );
     delete $obj->{'bugs'};
     my $orig_size = scalar @{ $obj->bugs };
@@ -308,7 +308,7 @@ sub test_get_bugs {
     my $rep = $dbh->selectrow_hashref(
         "SELECT bug_id, case_run_id FROM test_case_bugs WHERE case_run_id IS NOT NULL LIMIT 1 OFFSET $offset");
 
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
 
     my $response = $proxy->call( "TestCaseRun.get_bugs", $rep->{'case_run_id'} );
 
@@ -326,7 +326,7 @@ sub test_get_completion_time {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
 
     my $response = $proxy->call( "TestCaseRun.get_completion_time", $rep->{'case_run_id'} );
 
@@ -339,7 +339,7 @@ sub test_get_history {
     my $self = shift;
 
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
+    my $obj = Testopia::TestCaseRun->new( $rep->{'case_run_id'} );
 
     my $response = $proxy->call( "TestCaseRun.get_history", $rep->{'case_run_id'} );
 
@@ -362,7 +362,7 @@ sub test_lookup_status_id_by_name {
     check_fault( $response, $self );
 
     #    dump_all(lookup_status_by_name($rep->{'name'}), $response->result);
-    cmp_deeply( $response->result, Bugzilla::Testopia::TestCaseRun::lookup_status_by_name( $rep->{'name'} ),
+    cmp_deeply( $response->result, Testopia::TestCaseRun::lookup_status_by_name( $rep->{'name'} ),
         "TestCaseRun - lookup_status_id_by_name" );
 
 }
@@ -377,7 +377,7 @@ sub test_lookup_status_name_by_id {
     check_fault( $response, $self );
 
     #    dump_all($rep, $response->result);
-    cmp_deeply( $response->result, Bugzilla::Testopia::TestCaseRun::lookup_status( $rep->{'case_run_status_id'} ),
+    cmp_deeply( $response->result, Testopia::TestCaseRun::lookup_status( $rep->{'case_run_status_id'} ),
         "TestCaseRun - lookup_status_name_by_id" );
 }
 

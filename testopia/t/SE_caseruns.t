@@ -32,8 +32,8 @@ use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Constants;
 
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::Environment;
+use Testopia::Product;
+use Testopia::Environment;
 
 use Testopia::Test::Util;
 use Testopia::Test::Constants;

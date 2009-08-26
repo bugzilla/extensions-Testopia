@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -28,10 +28,10 @@ use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::User;
 
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::TestRun;
+use Testopia::Search;
+use Testopia::Constants;
 
 ###############################################################################
 # tr_new_run.cgi
@@ -67,7 +67,7 @@ unless ($plan_id){
 }
 
 validate_test_id($plan_id, 'plan');
-my $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
+my $plan = Testopia::TestPlan->new($plan_id);
 # Users need write permission on the plan in order to create a test run for
 # that plan. See tr_plan_access.cgi
 ThrowUserError("testopia-create-denied", {'object' => 'Test Run', 'plan' => $plan}) unless ($plan->canedit);
@@ -79,7 +79,7 @@ if ($action eq 'add'){
     my $env      = trim($cgi->param('environment'));
     
     if ($cgi->param('new_build')){
-        my $b = Bugzilla::Testopia::Build->create({
+        my $b = Testopia::Build->create({
                 'name'        => $cgi->param('new_build'),
                 'milestone'   => '---',
                 'product_id'  => $plan->product_id,
@@ -90,7 +90,7 @@ if ($action eq 'add'){
     }
 
     if ($cgi->param('new_env')){
-        my $e = Bugzilla::Testopia::Environment->create({
+        my $e = Testopia::Environment->create({
                 'name'        => $cgi->param('new_env'),
                 'product_id'  => $plan->product_id,
                 'isactive'    => 1,
@@ -98,7 +98,7 @@ if ($action eq 'add'){
         $env = $e->id;
     }
     
-    my $run = Bugzilla::Testopia::TestRun->create({
+    my $run = Testopia::TestRun->create({
             'plan_id'           => $plan->id,
             'environment_id'    => $env,
             'build_id'          => $build,
@@ -118,7 +118,7 @@ if ($action eq 'add'){
         $cgi->param('current_tab', 'case');
         $cgi->param('case_status', 'CONFIRMED');
         $cgi->param('viewall', 1);
-        my $search = Bugzilla::Testopia::Search->new($cgi);
+        my $search = Testopia::Search->new($cgi);
         my $ref = Bugzilla->dbh->selectcol_arrayref($search->query);
         foreach my $case_id (@$ref){
             $run->add_case_run($case_id);
@@ -137,7 +137,7 @@ if ($action eq 'add'){
 ####################
 else {
     $vars->{'plan'} = $plan;
-    $vars->{'case'} = Bugzilla::Testopia::TestCase->new({});
+    $vars->{'case'} = Testopia::TestCase->new({});
     $template->process("testopia/run/add.html.tmpl", $vars) ||
         ThrowTemplateError($template->error());
 }

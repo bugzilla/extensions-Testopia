@@ -21,19 +21,19 @@
 #                 Joel Smith <jsmith@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Constants;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
+use Testopia::Constants;
+use Testopia::Util;
+use Testopia::TestRun;
+use Testopia::TestCaseRun;
+use Testopia::TestCase;
+use Testopia::Search;
+use Testopia::Table;
 
 use JSON;
 
@@ -44,7 +44,7 @@ my $cgi = Bugzilla->cgi;
 print $cgi->header;
 
 my $action = $cgi->param('action') || '';
-my $run = Bugzilla::Testopia::TestRun->new($cgi->param('run_id'));
+my $run = Testopia::TestRun->new($cgi->param('run_id'));
 unless ($run){
     print $cgi->header;
     ThrowUserError('testopia-missing-object',{object => 'run'});

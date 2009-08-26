@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Bug;
@@ -28,11 +28,11 @@ use Bugzilla::Util;
 use Bugzilla::User;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::Constants;
+use Testopia::Search;
+use Testopia::Util;
+use Testopia::TestCaseRun;
+use Testopia::Table;
+use Testopia::Constants;
 use JSON;
 
 my $vars = {};
@@ -63,14 +63,14 @@ if ($action eq 'update'){
     trick_taint($note) if $note;
     
     if ($cgi->param('applyall') eq 'true'){
-        my $run = Bugzilla::Testopia::TestRun->new($cgi->param('run_id'));
+        my $run = Testopia::TestRun->new($cgi->param('run_id'));
         exit if $run->stop_date;
         @caseruns = @{$run->current_caseruns()} if $run->canedit; 
         
     }
     else{
         foreach my $id (split(',', $cgi->param('ids'))){
-            my $caserun = Bugzilla::Testopia::TestCaseRun->new($id);
+            my $caserun = Testopia::TestCaseRun->new($id);
             if ($caserun->canedit){
                 push @caseruns, $caserun;
             }
@@ -119,7 +119,7 @@ elsif ($action eq 'delete'){
     }
     my @uneditable;
     foreach my $id (@case_ids){
-        my $case = Bugzilla::Testopia::TestCaseRun->new($id);
+        my $case = Testopia::TestCaseRun->new($id);
         unless ($case->candelete){
             push @uneditable, $case->id;
             next;
@@ -138,8 +138,8 @@ else {
     # Take the search from the URL params and convert it to SQL
     $cgi->param('current_tab', 'case_run');
     $cgi->param('distinct', '1');
-    my $search = Bugzilla::Testopia::Search->new($cgi);
-    my $table = Bugzilla::Testopia::Table->new('case_run', 'tr_list_caseruns.cgi', $cgi, undef, $search->query);
+    my $search = Testopia::Search->new($cgi);
+    my $table = Testopia::Table->new('case_run', 'tr_list_caseruns.cgi', $cgi, undef, $search->query);
     
     print $cgi->header;
     $vars->{'json'} = $table->to_ext_json;

@@ -27,7 +27,7 @@ use Class::CSV;
 use Getopt::Long;
 use File::Temp "tempfile";
 use Pod::Usage;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 =head1 NAME
 

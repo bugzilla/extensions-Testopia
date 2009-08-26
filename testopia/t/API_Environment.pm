@@ -29,9 +29,9 @@ use lib "..";
 use lib "../..";
 
 use Bugzilla;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Search;
-use Bugzilla::Testopia::Table;
+use Testopia::Environment;
+use Testopia::Search;
+use Testopia::Table;
 
 
 use Testopia::Test::Constants;
@@ -62,7 +62,7 @@ sub test_check_environment_by_product_id {
     my $self = shift;
 
     my $rep = Testopia::Test::Util::get_rep('test_environments');
-    my $obj = Bugzilla::Testopia::Environment->new($rep->{'environment_id'});
+    my $obj = Testopia::Environment->new($rep->{'environment_id'});
     
     my $response = $proxy->call( "Environment.check_environment", $rep->{'name'}, $rep->{'product_id'} );
     
@@ -77,7 +77,7 @@ sub test_check_environment_by_product_name {
     my $self = shift;
 
     my $rep = get_rep('test_environments');
-    my $obj = Bugzilla::Testopia::Environment->new($rep->{'environment_id'});
+    my $obj = Testopia::Environment->new($rep->{'environment_id'});
     
     my $response = $proxy->call( "Environment.check_environment", $rep->{'name'}, $obj->product->name );
     
@@ -104,7 +104,7 @@ sub test_create_by_product_id {
     });
     
     check_fault($response, $self);
-    my $obj = Bugzilla::Testopia::Environment->new($response->result->{'environment_id'});
+    my $obj = Testopia::Environment->new($response->result->{'environment_id'});
     
     convert_undef($obj);
     
@@ -121,7 +121,7 @@ sub test_create_by_product_name {
     });
     
     check_fault($response, $self);
-    my $obj = Bugzilla::Testopia::Environment->new($response->result->{'environment_id'});
+    my $obj = Testopia::Environment->new($response->result->{'environment_id'});
     
     convert_undef($obj);
     
@@ -132,7 +132,7 @@ sub test_get {
     my $self = shift;
     
     my $rep = get_rep('test_environments');
-    my $obj = Bugzilla::Testopia::Environment->new($rep->{'environment_id'});
+    my $obj = Testopia::Environment->new($rep->{'environment_id'});
     $obj->product;
     
     my $response = $proxy->call( "Environment.get", $rep->{'environment_id'} );
@@ -149,7 +149,7 @@ sub test_update {
     my $self = shift;
     
     my $rep = get_rep('test_environments');
-    my $obj = Bugzilla::Testopia::Environment->new($rep->{'environment_id'});
+    my $obj = Testopia::Environment->new($rep->{'environment_id'});
     
     my $newname      = 'API UPDATE TEST '. time();
     my $newisactive  = $obj->isactive ? 0 : 1;
@@ -163,7 +163,7 @@ sub test_update {
     } );
     
     # Get the newly updated object to compare with
-    $obj = Bugzilla::Testopia::Environment->new($rep->{'environment_id'});
+    $obj = Testopia::Environment->new($rep->{'environment_id'});
     $obj->product;
     
     check_fault($response, $self);
@@ -178,7 +178,7 @@ sub test_get_caseruns {
     my $self = shift;
     
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::Environment->new($rep->{'environment_id'});
+    my $obj = Testopia::Environment->new($rep->{'environment_id'});
     $obj->product;
     
     my $response = $proxy->call( "Environment.get_caseruns", $rep->{'environment_id'} );
@@ -195,7 +195,7 @@ sub test_get_runs {
     my $self = shift;
     
     my $rep = get_rep('test_runs');
-    my $obj = Bugzilla::Testopia::Environment->new($rep->{'environment_id'});
+    my $obj = Testopia::Environment->new($rep->{'environment_id'});
     $obj->product;
     
     my $response = $proxy->call( "Environment.get_runs", $rep->{'environment_id'} );
@@ -215,8 +215,8 @@ sub test_list {
     $cgi->param("current_tab", "environment");
     $cgi->param("pagesize", 25);
     
-    my $search = Bugzilla::Testopia::Search->new($cgi);
-    my $table = Bugzilla::Testopia::Table->new('environment', 'tr_xmlrpc.cgi',$cgi,undef, $search->query());
+    my $search = Testopia::Search->new($cgi);
+    my $table = Testopia::Table->new('environment', 'tr_xmlrpc.cgi',$cgi,undef, $search->query());
     
     my $response = $proxy->call( "Environment.list", {
         pagesize    => 25,

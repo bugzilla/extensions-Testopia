@@ -28,7 +28,7 @@ use base qw(Test::Unit::TestCase);
 use lib "..";
 use lib "../..";
 
-use Bugzilla::Testopia::Build;
+use Testopia::Build;
 
 use Testopia::Test::Constants;
 use Testopia::Test::API::Util;
@@ -58,7 +58,7 @@ sub test_check_build_by_product_id {
     my $self = shift;
 
     my $rep = Testopia::Test::Util::get_rep('test_builds');
-    my $obj = Bugzilla::Testopia::Build->new($rep->{'build_id'});
+    my $obj = Testopia::Build->new($rep->{'build_id'});
     
     my $response = $proxy->call( "Build.check_build", $rep->{'name'}, $rep->{'product_id'} );
     
@@ -73,7 +73,7 @@ sub test_check_build_by_product_name {
     my $self = shift;
 
     my $rep = get_rep('test_builds');
-    my $obj = Bugzilla::Testopia::Build->new($rep->{'build_id'});
+    my $obj = Testopia::Build->new($rep->{'build_id'});
     
     my $response = $proxy->call( "Build.check_build", $rep->{'name'}, $obj->product->name );
     
@@ -102,7 +102,7 @@ sub test_create_by_product_id {
     });
     
     check_fault($response, $self);
-    my $obj = Bugzilla::Testopia::Build->new($response->result->{'build_id'});
+    my $obj = Testopia::Build->new($response->result->{'build_id'});
     
     convert_undef($obj);
     
@@ -122,7 +122,7 @@ sub test_create_by_product_name {
     });
     
     check_fault($response, $self);
-    my $obj = Bugzilla::Testopia::Build->new($response->result->{'build_id'});
+    my $obj = Testopia::Build->new($response->result->{'build_id'});
     
     convert_undef($obj);
     
@@ -133,7 +133,7 @@ sub test_get {
     my $self = shift;
     
     my $rep = get_rep('test_builds');
-    my $obj = Bugzilla::Testopia::Build->new($rep->{'build_id'});
+    my $obj = Testopia::Build->new($rep->{'build_id'});
     $obj->product;
     $obj->run_count;
     
@@ -151,7 +151,7 @@ sub test_get_caseruns {
     my $self = shift;
     
     my $rep = get_rep('test_case_runs');
-    my $obj = Bugzilla::Testopia::Build->new($rep->{'build_id'});
+    my $obj = Testopia::Build->new($rep->{'build_id'});
     $obj->product;
     
     my $response = $proxy->call( "Build.get_caseruns", $rep->{'build_id'} );
@@ -168,7 +168,7 @@ sub test_get_runs {
     my $self = shift;
     
     my $rep = get_rep('test_runs');
-    my $obj = Bugzilla::Testopia::Build->new($rep->{'build_id'});
+    my $obj = Testopia::Build->new($rep->{'build_id'});
     $obj->product;
     
     my $response = $proxy->call( "Build.get_runs", $rep->{'build_id'} );
@@ -185,7 +185,7 @@ sub test_update {
     my $self = shift;
     
     my $rep = get_rep('test_builds');
-    my $obj = Bugzilla::Testopia::Build->new($rep->{'build_id'});
+    my $obj = Testopia::Build->new($rep->{'build_id'});
     
     my $newname      = 'API UPDATE TEST '. time();
     my $newmilestone = $obj->product->milestones->[1]->{'name'};
@@ -205,7 +205,7 @@ sub test_update {
     } );
     
     # Get the newly updated object to compare with
-    $obj = Bugzilla::Testopia::Build->new($rep->{'build_id'});
+    $obj = Testopia::Build->new($rep->{'build_id'});
     $obj->product;
     
     check_fault($response, $self);

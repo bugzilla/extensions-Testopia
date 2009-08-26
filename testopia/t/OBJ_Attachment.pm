@@ -31,8 +31,8 @@ use base qw(Test::Unit::TestCase);
 
 use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Attachment;
-use Bugzilla::Testopia::TestPlan;
+use Testopia::Attachment;
+use Testopia::TestPlan;
 
 use Test;
 use Testopia::Test::Constants;
@@ -47,7 +47,7 @@ Bugzilla->error_mode(ERROR_MODE_DIE);
 use constant DB_TABLE => 'test_attachments';
 use constant ID_FIELD => 'attachment_id';
 
-our $obj = Test::test_init_from_value(DB_TABLE, ID_FIELD, '3', 'Bugzilla::Testopia::Attachment');
+our $obj = Test::test_init_from_value(DB_TABLE, ID_FIELD, '3', 'Testopia::Attachment');
 
 our $dbh = Bugzilla->dbh;
 
@@ -67,7 +67,7 @@ sub test_create{
 
 sub case_id_create{
 	my $obj_hash = shift;
-	my $created_obj = Bugzilla::Testopia::Attachment->create($obj_hash);
+	my $created_obj = Testopia::Attachment->create($obj_hash);
 	#Compare data against 3 database tables
 	delete $obj_hash->{'case_id'};
 	delete $obj_hash->{'contents'};
@@ -103,7 +103,7 @@ sub plan_id_create{
 	$obj_hash->{'plan_id'} = 1;
 	delete $obj_hash->{'case_id'};
 
-	my $created_obj = Bugzilla::Testopia::Attachment->create($obj_hash);
+	my $created_obj = Testopia::Attachment->create($obj_hash);
 	delete $obj_hash->{'plan_id'};
 	delete $obj_hash->{'contents'};
 	my $id = $created_obj->{'attachment_id'};
@@ -131,31 +131,31 @@ sub plan_id_create{
 
 sub _bad_creates{
 	my $obj_hash = shift;
-		dies_ok(sub{Bugzilla::Testopia::Attachment->create}, 
+		dies_ok(sub{Testopia::Attachment->create}, 
 				"Can't create Attachment with No Parameters");
 
 	delete $obj_hash->{'submitter_id'};
-	dies_ok(sub{Bugzilla::Testopia::Attachment->create($obj_hash)}, 
+	dies_ok(sub{Testopia::Attachment->create($obj_hash)}, 
 			"Can't create Attachment without submitter_id");
 			
 	$obj_hash->{'submitter_id'} = 1;
 	delete $obj_hash->{'description'};
-	dies_ok(sub{Bugzilla::Testopia::Attachment->create($obj_hash)},
+	dies_ok(sub{Testopia::Attachment->create($obj_hash)},
 				"Can't create Attachment without description");
 				
 	$obj_hash->{'description'} = "It's New";
 	delete $obj_hash->{'filename'};
-	dies_ok(sub{Bugzilla::Testopia::Attachment->create($obj_hash)},
+	dies_ok(sub{Testopia::Attachment->create($obj_hash)},
 				"Can't create Attachment without filename");
 				
 	$obj_hash->{'filename'} = 'MyFile.txt';
 	delete $obj_hash->{'mime_type'};
-	dies_ok(sub{Bugzilla::Testopia::Attachment->create($obj_hash)},
+	dies_ok(sub{Testopia::Attachment->create($obj_hash)},
 				"Can't create Attachment without mime_type");
 				
 	$obj_hash->{'mime_type'} = 'text/plan';
 	delete $obj_hash->{'case_id'};
-	dies_ok(sub{Bugzilla::Testopia::Attachment->create($obj_hash)},
+	dies_ok(sub{Testopia::Attachment->create($obj_hash)},
 			"Can't create Attachment without case_id or plan_id");
 			
 	$obj_hash->{'case_id'} = 1;
@@ -174,7 +174,7 @@ sub _link_plan{
 	Test::set_user(1, 'admin@testopia.com', 'admin@testopia.com');
 	my $id = $dbh->selectrow_array("SELECT MAX(id) FROM products WHERE id <> ?", undef, $obj->id);
 
-	my $plan = new Bugzilla::Testopia::TestPlan($id);
+	my $plan = new Testopia::TestPlan($id);
 	$obj->link_plan($plan->id);
 	my $db_obj = $dbh->selectrow_hashref("SELECT * FROM test_plan_attachments WHERE attachment_id = ? AND plan_id = ?", undef, $obj->id, $plan->id);
 	ok( ($db_obj->{'plan_id'} eq $plan->id) && ($db_obj->{'attachment_id'} eq $obj->id), 'Plan Linked to Attachment');
@@ -187,11 +187,11 @@ sub _link_case{
 	my $id = $dbh->selectrow_array("SELECT MAX(id) FROM products WHERE id <> ?", undef, $obj->id);
 
 	for(my $i=0; $i < 2; $i++){
-		my $plan = Bugzilla::Testopia::TestPlan->new($id);
+		my $plan = Testopia::TestPlan->new($id);
 		$id--;
 		push @plans, $plan;
 	}
-	my $case = Bugzilla::Testopia::TestCase->create({'case_status_id' => 1,
+	my $case = Testopia::TestCase->create({'case_status_id' => 1,
 													 'category_id'  => 1,
 													 'priority_id'     => 1,
 													 'author_id'     => $obj->id,
@@ -278,11 +278,11 @@ sub test_cases{
 	
 	my @plans;
 	for(my $i=0; $i < 2; $i++){
-		my $plan = Bugzilla::Testopia::TestPlan->new($id);
+		my $plan = Testopia::TestPlan->new($id);
 		$id--;
 		push @plans, $plan;
 	}
-	my $case = Bugzilla::Testopia::TestCase->create({'case_status_id' 	 => 1,
+	my $case = Testopia::TestCase->create({'case_status_id' 	 => 1,
 													 'category_id'  	 => 1,
 													 'priority_id'     	 => 1,
 													 'author_id'     	 => 1,
@@ -296,7 +296,7 @@ sub test_cases{
 sub test_plans{
 	Test::set_user(1, 'admin@testopia.com', 'admin@testopia.com');
 	my $id = $dbh->selectrow_array("SELECT MAX(id) FROM products WHERE id <> ?", undef, $obj->id);
-	my $plan = Bugzilla::Testopia::TestPlan->new($id);
+	my $plan = Testopia::TestPlan->new($id);
 	$obj->link_plan($plan->id);
 	delete $plan->{'version'};
 	ok( defined $obj->plans, 'TestPlans Linked' );

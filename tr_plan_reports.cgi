@@ -20,15 +20,15 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Report;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Report;
+use Testopia::Constants;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -51,7 +51,7 @@ if ($type eq 'build_coverage'){
     }
     validate_test_id($plan_id, 'plan');
     my $action = $cgi->param('action') || '';
-    my $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
+    my $plan = Testopia::TestPlan->new($plan_id);
     ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
     my $report = {};
     my %buildseen;
@@ -100,7 +100,7 @@ elsif ($type eq 'bugcounts'){
       exit;
     }
     validate_test_id($plan_id, 'plan');
-    my $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
+    my $plan = Testopia::TestPlan->new($plan_id);
     ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
     
     my $dbh = Bugzilla->dbh;
@@ -131,7 +131,7 @@ elsif ($type eq 'untested'){
       exit;
     }
     validate_test_id($plan_id, 'plan');
-    my $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
+    my $plan = Testopia::TestPlan->new($plan_id);
     ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
     
     my $dbh = Bugzilla->dbh;
@@ -157,7 +157,7 @@ elsif ($type eq 'untested'){
 else{
     $cgi->param('current_tab', 'plan');
     $cgi->param('viewall', 1);
-    my $report = Bugzilla::Testopia::Report->new('plan', 'tr_list_plans.cgi', $cgi);
+    my $report = Testopia::Report->new('plan', 'tr_list_plans.cgi', $cgi);
     $vars->{'report'} = $report;
     $vars->{'qname'} = $cgi->param('qname');
     

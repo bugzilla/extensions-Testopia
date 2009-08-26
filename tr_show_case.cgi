@@ -21,16 +21,16 @@
 #                 Tyler Peterson <typeterson@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Table;
+use Testopia::TestCase;
+use Testopia::Constants;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -47,7 +47,7 @@ unless ($case_id){
   exit;
 }
 
-my $case = Bugzilla::Testopia::TestCase->new($case_id);
+my $case = Testopia::TestCase->new($case_id);
 ThrowUserError("invalid-test-id-non-existent", {'type' => 'case', id => $case_id}) unless $case;
 ThrowUserError("testopia-permission-denied", {'object' => $case}) unless $case->canview;
 
@@ -57,10 +57,10 @@ my $disp = "inline";
 # into other programs.
 if ( $format->{'extension'} eq "csv" || $format->{'extension'} eq "xml" ){
     $disp = "attachment";
-    $vars->{'displaycolumns'} = \@Bugzilla::Testopia::Constants::TESTCASE_EXPORT;
+    $vars->{'displaycolumns'} = \@Testopia::Constants::TESTCASE_EXPORT;
 }
 
-$vars->{'table'} = Bugzilla::Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi);
+$vars->{'table'} = Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi);
 
 # Suggest a name for the file if the user wants to save it as a file.
 my @time = localtime(time());

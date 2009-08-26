@@ -9,20 +9,20 @@ use Test::Deep;
 use Bugzilla;
 use Bugzilla::Constants;
 
-use Bugzilla::Testopia::Attachment;
-use Bugzilla::Testopia::Build;
-use Bugzilla::Testopia::Category;
-use Bugzilla::Testopia::Classification;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Environment::Category;
-use Bugzilla::Testopia::Environment::Element;
-use Bugzilla::Testopia::Environment::Property;
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::TestTag;
+use Testopia::Attachment;
+use Testopia::Build;
+use Testopia::Category;
+use Testopia::Classification;
+use Testopia::Environment;
+use Testopia::Environment::Category;
+use Testopia::Environment::Element;
+use Testopia::Environment::Property;
+use Testopia::Product;
+use Testopia::TestCase;
+use Testopia::TestCaseRun;
+use Testopia::TestPlan;
+use Testopia::TestRun;
+use Testopia::TestTag;
 
 use Testopia::Test::Util;
 
@@ -47,50 +47,50 @@ foreach my $table (@tables) {
 if (defined $db_obj){
   SWITCH: for ($table) {
         /attachments/ && do {    
-            my $obj = new Bugzilla::Testopia::Attachment( $db_obj->{'attachment_id'} );
+            my $obj = new Testopia::Attachment( $db_obj->{'attachment_id'} );
 
             ok( defined $obj, "Testing Attachment Instantiation" );
-            isa_ok( $obj, 'BugzillaBugzilla::Testopia::Attachment' );
+            isa_ok( $obj, 'BugzillaTestopia::Attachment' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );
             last SWITCH;
         };
         /builds/ && do {
-            my $obj = new Bugzilla::Testopia::Build( $db_obj->{'build_id'} );
+            my $obj = new Testopia::Build( $db_obj->{'build_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Build' );
+            isa_ok( $obj, 'Testopia::Build' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );
             last SWITCH;
         };
         /case_categories/ && do{
-            my $obj = new Bugzilla::Testopia::Category( $db_obj->{'category_id'} );
+            my $obj = new Testopia::Category( $db_obj->{'category_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Category' );
+            isa_ok( $obj, 'Testopia::Category' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;
         };
         /environments/ && do{
-            my $obj = new Bugzilla::Testopia::Environment( $db_obj->{'environment_id'} );
+            my $obj = new Testopia::Environment( $db_obj->{'environment_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Environment' );
+            isa_ok( $obj, 'Testopia::Environment' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };
         /environment_category/ && do{
-            my $obj = new Bugzilla::Testopia::Environment::Category( $db_obj->{'env_category_id'} );
+            my $obj = new Testopia::Environment::Category( $db_obj->{'env_category_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Environment::Category' );
+            isa_ok( $obj, 'Testopia::Environment::Category' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };
          /environment_element/ && do{
-            my $obj = new Bugzilla::Testopia::Environment::Element( $db_obj->{'element_id'} );
+            my $obj = new Testopia::Environment::Element( $db_obj->{'element_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Environment::Element' );
+            isa_ok( $obj, 'Testopia::Environment::Element' );
 			
 			# We need to delete this because it is not in the database
 			# We check the get_properties subroutine somewhere else though
@@ -99,68 +99,68 @@ if (defined $db_obj){
         	last SWITCH;
         };
         /environment_property/ && do{
-            my $obj = new Bugzilla::Testopia::Environment::Property( $db_obj->{'property_id'} );
+            my $obj = new Testopia::Environment::Property( $db_obj->{'property_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Environment::Property' );
+            isa_ok( $obj, 'Testopia::Environment::Property' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };
         /cases/ && do{
-            my $obj = new Bugzilla::Testopia::TestCase( $db_obj->{'case_id'} );
+            my $obj = new Testopia::TestCase( $db_obj->{'case_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::TestCase' );
+            isa_ok( $obj, 'Testopia::TestCase' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };
         /case_runs/ && do{    
-        	my $obj = new Bugzilla::Testopia::TestCaseRun( $db_obj->{'case_run_id'} );
+        	my $obj = new Testopia::TestCaseRun( $db_obj->{'case_run_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::TestCaseRun' );
+            isa_ok( $obj, 'Testopia::TestCaseRun' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };
         /plans/ && do{
-        	my $obj = new Bugzilla::Testopia::TestPlan( $db_obj->{'plan_id'} );
+        	my $obj = new Testopia::TestPlan( $db_obj->{'plan_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::TestPlan' ); 
+            isa_ok( $obj, 'Testopia::TestPlan' ); 
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };
         /runs/ && do{
-        	my $obj = new Bugzilla::Testopia::TestRun( $db_obj->{'run_id'} );
+        	my $obj = new Testopia::TestRun( $db_obj->{'run_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::TestRun' );
+            isa_ok( $obj, 'Testopia::TestRun' );
 
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       		
         };
         /tags/ && do{
-        	my $obj = new Bugzilla::Testopia::TestTag( $db_obj->{'tag_id'} );
+        	my $obj = new Testopia::TestTag( $db_obj->{'tag_id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::TestTag' );
+            isa_ok( $obj, 'Testopia::TestTag' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };
         /products/ && do{
-        	my $obj = new Bugzilla::Testopia::Product( $db_obj->{'id'} );
+        	my $obj = new Testopia::Product( $db_obj->{'id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Product' );
+            isa_ok( $obj, 'Testopia::Product' );
 
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         }; 
         /classifications/ && do{
-			my $obj = new Bugzilla::Testopia::Classification( $db_obj->{'id'} );
+			my $obj = new Testopia::Classification( $db_obj->{'id'} );
 
             ok( defined $obj, "Testing Build Instantiation" );
-            isa_ok( $obj, 'Bugzilla::Testopia::Classification' );
+            isa_ok( $obj, 'Testopia::Classification' );
             cmp_deeply( $db_obj, noclass($obj), "DB and Object fields match" );        	
         	last SWITCH;       	
         };

@@ -22,19 +22,19 @@
 #                 Garrett Braden <gbraden@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Environment::Element;
-use Bugzilla::Testopia::Environment::Category;
-use Bugzilla::Testopia::Environment::Property;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Environment;
+use Testopia::Environment::Element;
+use Testopia::Environment::Category;
+use Testopia::Environment::Property;
+use Testopia::Constants;
 
 Bugzilla->login(LOGIN_REQUIRED);
 
@@ -53,14 +53,14 @@ if ($action eq 'Add'){
     my $name = $cgi->param('name');
     my $product = $cgi->param('product') || $cgi->param('product_id');
     
-    my $env = Bugzilla::Testopia::Environment->create({
+    my $env = Testopia::Environment->create({
         name => $name,
         product_id => $product,
     });
     
     $vars->{'tr_message'} = "The environment '$name' was successfully added.";
     
-    my $category = Bugzilla::Testopia::Environment::Category->new({});
+    my $category = Testopia::Environment::Category->new({});
     if (Bugzilla->params->{'useclassification'}){
         $vars->{'allhaschild'} = $category->get_all_child_count;
         $vars->{'toplevel'} = Bugzilla->user->get_selectable_classifications;
@@ -79,7 +79,7 @@ if ($action eq 'Add'){
 }
 
 else {
-    $vars->{'environment'} = Bugzilla::Testopia::Environment->new({});
+    $vars->{'environment'} = Testopia::Environment->new({});
     $vars->{'backlink'} = $vars->{'environment'};
     $vars->{'products'} = Bugzilla->user->get_selectable_products;
     

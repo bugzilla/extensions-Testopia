@@ -30,10 +30,10 @@ use base qw(Test::Unit::TestCase);
 
 use Bugzilla;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Category;
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::TestPlan;
+use Testopia::Category;
+use Testopia::Product;
+use Testopia::TestCase;
+use Testopia::TestPlan;
 
 use Test;
 use Testopia::Test::Constants;
@@ -48,7 +48,7 @@ Bugzilla->error_mode(ERROR_MODE_DIE);
 use constant DB_TABLE => 'test_case_categories';
 use constant ID_FIELD => 'category_id';
 
-our $obj = Test::test_init(DB_TABLE, ID_FIELD, 'Bugzilla::Testopia::Category');
+our $obj = Test::test_init(DB_TABLE, ID_FIELD, 'Testopia::Category');
 our $dbh = Bugzilla->dbh;
 
 sub test_set_description{
@@ -61,7 +61,7 @@ sub test_set_name{
 	dies_ok(sub{$obj->set_name('')}, "Can't change to empty name");
 	my $nonunique_name = $dbh->selectrow_array("SELECT name from test_case_categories WHERE category_id <> ? AND product_id = ?", undef, $obj->id, $obj->{'product_id'});
 	dies_ok(sub{$obj->set_name($nonunique_name)}, 'New Name Not Unique');
-	my $product = new Bugzilla::Testopia::Product(1);
+	my $product = new Testopia::Product(1);
 	ok($obj->set_name('New Name', $product) eq 'New Name', 'Name Set');
 }
 
@@ -73,10 +73,10 @@ sub test_create{
 		Test::set_user($login->{'id'}, $login->{'login_name'}, $login->{'password'});
 	
 		unless(Bugzilla->user->in_group('Testers') ){
-			dies_ok( sub {Bugzilla::Testopia::Category->create($hash_obj)}, "User " . Bugzilla->user->{'login_name'} ." does not have rights to create new builds");	
+			dies_ok( sub {Testopia::Category->create($hash_obj)}, "User " . Bugzilla->user->{'login_name'} ." does not have rights to create new builds");	
 		}
 		else{	
-			my $created_obj = Bugzilla::Testopia::Category->create($hash_obj);
+			my $created_obj = Testopia::Category->create($hash_obj);
 			ok($created_obj->{'product_id'} eq $hash_obj->{'product_id'}, "Object Created with ProductId");
 			ok($created_obj->{'name'} eq $hash_obj->{'name'}, "Object Created with a Name");
 			Bugzilla->dbh->do('DELETE FROM test_case_categories WHERE category_id = ?', undef, $created_obj->id);
@@ -98,7 +98,7 @@ sub test_remove{
 sub test_candelete{
 	my $id = $obj->id + 1;
 	my $creds =  Testopia::Test::Constants->LOGIN_CREDENTIALS;
-				my $plan = new Bugzilla::Testopia::TestPlan(1);
+				my $plan = new Testopia::TestPlan(1);
 			my $case_hash = {
 					'case_status_id' 	=> 1,
 					'priority_id' 		=> 1,
@@ -130,7 +130,7 @@ sub test_candelete{
 		}
 		else{
 			delete $obj->{'case_count'};
-			Bugzilla::Testopia::TestCase->create($case_hash);			
+			Testopia::TestCase->create($case_hash);			
 			ok($obj->candelete eq 0, "Category Can be Deleted");
 			delete $obj->{'case_count'};
 			$dbh->do("DELETE FROM test_cases WHERE category_id = ?", undef, $id);

@@ -20,17 +20,17 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib);
+use lib qw(. lib extensions/testopia/lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Table;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::Constants;
+use Testopia::Util;
+use Testopia::Table;
+use Testopia::TestRun;
+use Testopia::TestCaseRun;
+use Testopia::Constants;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -46,13 +46,13 @@ unless ($run_id){
       || ThrowTemplateError($template->error());
   exit;
 }
-my $run = Bugzilla::Testopia::TestRun->new($run_id);
+my $run = Testopia::TestRun->new($run_id);
 ThrowUserError("invalid-test-id-non-existent", {'type' => 'run', id => $run_id}) unless $run;
 ThrowUserError("testopia-permission-denied", {'object' => $run}) unless $run->canview;
 
-$vars->{'table'} = Bugzilla::Testopia::Table->new('run', 'tr_list_runs.cgi', $cgi);
-$vars->{'caserun'} = Bugzilla::Testopia::TestCaseRun->new({});
-$vars->{'case'} = Bugzilla::Testopia::TestCase->new({});
+$vars->{'table'} = Testopia::Table->new('run', 'tr_list_runs.cgi', $cgi);
+$vars->{'caserun'} = Testopia::TestCaseRun->new({});
+$vars->{'case'} = Testopia::TestCase->new({});
 $vars->{'run'} = $run;
 
 $template->process("testopia/run/show.html.tmpl", $vars) ||
