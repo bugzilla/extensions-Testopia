@@ -20,7 +20,7 @@
 #                 Ed Fuentetaja <efuentetaja@acm.org>
 #                 Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Config::Testopia;
+package extensions::testopia::lib::Testopia::Config;
 
 use strict;
 
