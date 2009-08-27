@@ -19,8 +19,9 @@
  *                 Ryan Hamilton <rhamilton@novell.com>
  *                 Daniel Parker <dparker1@novell.com>
  */
+Testopia.Attachment = {};
 
-AttachGrid = function(object){
+Testopia.Attachment.Grid = function(object){
     function attachlink(id){
         return '<a href="tr_attachment.cgi?attach_id='+ id +'">' + id + '</a>';
     }
@@ -66,7 +67,7 @@ AttachGrid = function(object){
     ];
     
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
-    AttachGrid.superclass.constructor.call(this, {
+    Testopia.Attachment.Grid.superclass.constructor.call(this, {
         title: 'Attachments',
         id: 'attachments_panel',
         loadMask: {msg:'Loading attachments...'},
@@ -125,7 +126,7 @@ AttachGrid = function(object){
     this.on('afteredit', this.onGridEdit, this);
 };
 
-Ext.extend(AttachGrid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.Attachment.Grid, Ext.grid.EditorGridPanel, {
     onContextClick: function(grid, index, e){
         var sm = this.selectionModel;
         var object = this.object;
@@ -187,7 +188,7 @@ Ext.extend(AttachGrid, Ext.grid.EditorGridPanel, {
         });
     },
     newAttachment: function(){
-        var form = new NewAttachmentPopup(this.object);
+        var form = new Testopia.Attachment.NewAttachmentPopup(this.object);
         form.window.show();
     },
     deleteAttachment: function(){
@@ -224,9 +225,9 @@ Ext.extend(AttachGrid, Ext.grid.EditorGridPanel, {
     }
 });
 
-AttachForm = function(){
+Testopia.Attachment.Form = function(){
     var filecount = 1;
-    AttachForm.superclass.constructor.call(this,{
+    Testopia.Attachment.Form.superclass.constructor.call(this,{
         title: "Attachments",
         id: 'attachments_form',
         autoScroll: true,
@@ -289,13 +290,13 @@ AttachForm = function(){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(AttachForm, Ext.Panel, {
+Ext.extend(Testopia.Attachment.Form, Ext.Panel, {
     onActivate: function(){
         Ext.getCmp('attachments_form').doLayout();
     }
 });
 
-NewAttachmentPopup = function(object){
+Testopia.Attachment.NewAttachmentPopup = function(object){
     if (!this.window){
         var win = new Ext.Window({
             id: 'new_attachment_win',

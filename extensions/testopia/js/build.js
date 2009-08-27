@@ -20,7 +20,9 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-BuildGrid = function(product_id){
+Testopia.Build = {};
+
+Testopia.Build.Grid = function(product_id){
     this.product_id = product_id;
     this.store = new BuildStore({}, false);
     var mbox = new MilestoneCombo({
@@ -63,7 +65,7 @@ BuildGrid = function(product_id){
     
     this.form = new Ext.form.BasicForm('testopia_helper_frm');
     
-    BuildGrid.superclass.constructor.call(this, {
+    Testopia.Build.Grid.superclass.constructor.call(this, {
         title: 'Builds',
         id: 'build_grid',
         loadMask: {msg:'Loading Builds...'},
@@ -96,7 +98,7 @@ BuildGrid = function(product_id){
     this.on('activate', this.onActivate, this); 
     this.on('afteredit', this.onGridEdit, this); 
 };
-Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.Build.Grid, Ext.grid.EditorGridPanel, {
     newRecord: function(){
         NewBuild = Ext.data.Record.create([
                {name: 'name', type: 'string'},

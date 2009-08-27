@@ -22,9 +22,9 @@
 
 Testopia.TestPlan = {};
 
-Testopia.TestPlan.ImportWin = function(plan_id){
+Testopia.TestPlan.Import = function(plan_id){
     var win = new Ext.Window({
-        id: 'import-win',
+        id: 'plan_import_win',
         closable: true,
         width: 450,
         height: 150,
@@ -42,7 +42,7 @@ Testopia.TestPlan.ImportWin = function(plan_id){
                 height: 50,
                 style: "padding: 5px",
                 border: false,
-                html: 'Accepts CSV and XML files under 1 MB in size. <br> See <a href="testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="testopia.dtd" target="_blank">testopia.dtd</a> for proper format.'
+                html: 'Accepts CSV and XML files under 1 MB in size. <br> See <a href="extensions/testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="testopia.dtd" target="_blank">testopia.dtd</a> for proper format.'
             },{
                 xtype: 'field',
                 fieldLabel: 'Upload File',
@@ -58,7 +58,7 @@ Testopia.TestPlan.ImportWin = function(plan_id){
                         success: function(){
                             Ext.getCmp('object_panel').activate('plan_case_grid');
                             Ext.getCmp('plan_case_grid').store.load();
-                            Ext.getCmp('import-win').close();
+                            Ext.getCmp('plan_import_win').close();
                         },
                         failure: testopiaError
                     });
@@ -69,7 +69,7 @@ Testopia.TestPlan.ImportWin = function(plan_id){
     win.show(this);
 }
 
-PlanGrid = function(params,cfg){
+Testopia.TestPlan.Grid = function(params,cfg){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
     params.current_tab = 'plan';
     this.params = params;
@@ -130,7 +130,7 @@ PlanGrid = function(params,cfg){
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
     this.bbar = new TestopiaPager('plan', this.store);
 
-    PlanGrid.superclass.constructor.call(this, {
+    Testopia.TestPlan.Grid.superclass.constructor.call(this, {
         title: 'Test Plans',
         id: cfg.id || 'plan_grid',
         layout: 'fit',
@@ -232,7 +232,7 @@ PlanGrid = function(params,cfg){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
     onContextClick: function(grid, index, e){
         grid.selindex = index;
         if(!this.menu){ // create context menu on first right click
@@ -519,7 +519,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
     }
 });
 
-NewPlanForm = function(product_id){
+Testopia.TestPlan.NewPlanForm = function(product_id){
     var versionsBox = new ProductVersionCombo({
         id: 'new_plan_form_version_chooser',
         hiddenName: 'prod_version',
@@ -541,9 +541,9 @@ NewPlanForm = function(product_id){
         versionsBox.enable();
     });
     
-    NewPlanForm.superclass.constructor.call(this,{
+    Testopia.TestPlan.NewPlanForm.superclass.constructor.call(this,{
         url: 'tr_new_plan.cgi',
-        id: 'newplanform',
+        id: 'new_plan_form',
         baseParams: {action: 'add'},
         fileUpload: true,
         labelAlign: 'top',
@@ -582,15 +582,15 @@ NewPlanForm = function(product_id){
                     name: 'plandoc'
                 }]
                 
-            },new AttachForm()]
+            },new Testopia.Attachment.Form()]
         }],
         buttons: [{
             text: 'Submit',
             handler: function(){
-                if (!Ext.getCmp('newplanform').getForm().isValid()){
+                if (!Ext.getCmp('new_plan_form').getForm().isValid()){
                     return;
                 }
-                Ext.getCmp('newplanform').getForm().submit({
+                Ext.getCmp('new_plan_form').getForm().submit({
                     success: function(form, data){
                         if (data.result.err){
                             alert('One or more attachments were either too large or were empty. These have been ignored.');
@@ -628,7 +628,7 @@ NewPlanForm = function(product_id){
     });
 };
 
-Ext.extend(NewPlanForm, Ext.form.FormPanel);
+Ext.extend(Testopia.TestPlan.NewPlanForm, Ext.form.FormPanel);
 
 Testopia.TestPlan.ClonePanel = function(plan){
     var pbox = new ProductCombo({
@@ -869,7 +869,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
 };
 Ext.extend(Testopia.TestPlan.ClonePanel, Ext.form.FormPanel);
 
-PlanClonePopup = function(plan){
+Testopia.TestPlan.ClonePopup = function(plan){
     
     var win = new Ext.Window({
         id: 'plan-clone-win',

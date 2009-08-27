@@ -624,7 +624,7 @@ var NewRunForm = function(plan){
     if (plan.data){
         plan = plan.data;
     }
-    var casegrid = new CaseGrid({plan_id: plan.plan_id, case_status: 'CONFIRMED'},{
+    var casegrid = new Testopia.TestCase.Grid({plan_id: plan.plan_id, case_status: 'CONFIRMED'},{
         title: 'Select From Existing Cases',
         region: 'center',
         id: 'newrun_casegrid',
@@ -855,7 +855,7 @@ var NewRunForm = function(plan){
 Ext.extend(NewRunForm, Ext.Panel);
 
 RunClonePanel = function(product_id, runs, caselist){
-    var pgrid = new PlanGrid({product_id: product_id},{id: 'run_clone_plan_grid'});
+    var pgrid = new Testopia.TestPlan.Grid({product_id: product_id},{id: 'run_clone_plan_grid'});
     var vbox = new ProductVersionCombo({
         id: 'run_clone_version_chooser',
         mode: 'local',
@@ -1117,7 +1117,7 @@ AddCaseToRunForm = function(run){
     if (run.data){
         run = run.data;
     }
-    var casegrid = new CaseGrid({plan_id: run.plan_id, case_status: 'CONFIRMED', exclude: run.run_id},{
+    var casegrid = new Testopia.TestCase.Grid({plan_id: run.plan_id, case_status: 'CONFIRMED', exclude: run.run_id},{
         title: 'Select From Existing Cases',
         region: 'center',
         id: 'newrun_casegrid',

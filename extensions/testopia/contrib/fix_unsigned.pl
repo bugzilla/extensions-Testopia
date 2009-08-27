@@ -2,7 +2,7 @@
 print "Starting...\n";
 use strict;
 
-use lib qw(. lib ../..);
+use lib qw(. lib ../../..);
 
 use Bugzilla;
 use Bugzilla::Constants;

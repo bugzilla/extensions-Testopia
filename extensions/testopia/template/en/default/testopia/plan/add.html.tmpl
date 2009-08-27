@@ -30,7 +30,7 @@
 
 Ext.onReady(function(){
     Ext.QuickTips.init();
-    var newplan = new NewPlanForm([% product.id FILTER none %]);
+    var newplan = new Testopia.TestPlan.NewPlanForm([% product.id FILTER none %]);
     newplan.render('plan-form-div');
 });
 

@@ -61,8 +61,8 @@ Ext.onReady(function(){
     
     Ext.QuickTips.init();
     
-    var pgrid = new PlanGrid({product_id: product_id},{id: 'product_plan_grid'});
-    var cgrid = new CaseGrid({product_id: product_id},{id: 'product_case_grid'});
+    var pgrid = new Testopia.TestPlan.Grid({product_id: product_id},{id: 'product_plan_grid'});
+    var cgrid = new Testopia.TestCase.Grid({product_id: product_id},{id: 'product_case_grid'});
     var rgrid = new RunGrid({product_id: product_id},{id: 'product_run_grid'});
     var egrid = new EnvironmentGrid({product_id: product_id});
     var utag = new TestopiaProductTags("User Tags", "user");
@@ -278,8 +278,8 @@ Ext.onReady(function(){
                 pgrid, 
                 cgrid, 
                 rgrid, 
-                new BuildGrid(product_id),
-                new CaseCategoryGrid(product_id), 
+                new Testopia.Build.Grid(product_id),
+                new Testopia.Category.Grid(product_id), 
                 egrid
             ]
     

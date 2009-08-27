@@ -20,16 +20,18 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-CaseRunPanel = function(params, run){
-    var cgrid = new CaseRunGrid(params, run);
-    var filter = new CaseRunFilter();
-    var cr = new CaseRun();
+Testopia.TestCaseRun = {};
+
+Testopia.TestCaseRun.Panel = function(params, run){
+    var cgrid = new Testopia.TestCaseRun.Grid(params, run);
+    var filter = new Testopia.TestCaseRun.Filter();
+    var cr = new Testopia.TestCaseRun.Info();
     this.cgrid = cgrid;
     this.store = cgrid.store;
     this.params = params;
     this.caserun = cr;
     
-    CaseRunPanel.superclass.constructor.call(this, {
+    Testopia.TestCaseRun.Panel.superclass.constructor.call(this, {
         layout: 'border',
         title: 'Test Cases',
         id: 'caserun-panel',
@@ -40,16 +42,16 @@ CaseRunPanel = function(params, run){
     cr.disable();
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(CaseRunPanel, Ext.Panel, {
+Ext.extend(Testopia.TestCaseRun.Panel, Ext.Panel, {
     onActivate: function(event){
         this.store.load();
     }
 });
 
-CaseRunFilter = function (){
+Testopia.TestCaseRun.Filter = function (){
     this.form = new Ext.form.BasicForm('caserun_filter_form', {});
     var searchform = this.form;
-    CaseRunFilter.superclass.constructor.call(this, {
+    Testopia.TestCaseRun.Filter.superclass.constructor.call(this, {
         title: 'Search for Test Results',
         id: 'caserun_search',
         region: 'north',
@@ -138,9 +140,9 @@ CaseRunFilter = function (){
         }]
     });
 };
-Ext.extend(CaseRunFilter, Ext.Panel);
+Ext.extend(Testopia.TestCaseRun.Filter, Ext.Panel);
 
-CaseRunListGrid = function(params, cfg){
+Testopia.TestCaseRun.List = function(params, cfg){
     var tutil = new TestopiaUtil();
     this.params = params;
     this.store = new Ext.data.GroupingStore({
@@ -248,7 +250,7 @@ CaseRunListGrid = function(params, cfg){
             }
          }];
 
-    CaseRunListGrid.superclass.constructor.call(this,{
+    Testopia.TestCaseRun.List.superclass.constructor.call(this,{
         id: cfg.id || 'caserun_list_grid',
         title: 'Case Run History',
         loadMask: {msg:'Loading Test Cases...'},
@@ -267,7 +269,7 @@ CaseRunListGrid = function(params, cfg){
     Ext.apply(this,cfg);
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(CaseRunListGrid, Ext.grid.GridPanel, {
+Ext.extend(Testopia.TestCaseRun.List, Ext.grid.GridPanel, {
     deleteList: function(){
         var grid = this;
         Ext.Msg.show({
@@ -306,7 +308,7 @@ Ext.extend(CaseRunListGrid, Ext.grid.GridPanel, {
     }
 });
 
-CaseRunGrid = function(params, run){
+Testopia.TestCaseRun.Grid = function(params, run){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
     var t = new TestopiaUtil();
     this.params = params;
@@ -602,7 +604,7 @@ CaseRunGrid = function(params, run){
                 width: 100
             })]
     });
-    CaseRunGrid.superclass.constructor.call(this, {
+    Testopia.TestCaseRun.Grid.superclass.constructor.call(this, {
         region: 'center',
         id: 'caserun_grid',
         border: false,
@@ -699,7 +701,7 @@ CaseRunGrid = function(params, run){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(CaseRunGrid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
     onContextClick: function(grid, index, e){
         grid.selindex = index;
         if(!this.menu){ // create context menu on first right click
@@ -928,7 +930,7 @@ Ext.extend(CaseRunGrid, Ext.grid.EditorGridPanel, {
                     text: 'Copy or Link Selected Test Cases to Plan(s)... ',
                     handler: function(){
                         var r = grid.getSelectionModel().getSelected();
-                        caseClonePopup(grid.run.product_id, getSelectedObjects(grid,'case_id'));
+                        Testopia.TestCase.clonePopup(grid.run.product_id, getSelectedObjects(grid,'case_id'));
                     }
                 },{
                     text: 'Add Selected Test Cases to Run... ',
@@ -1063,7 +1065,7 @@ Ext.extend(CaseRunGrid, Ext.grid.EditorGridPanel, {
     }
 });
 
-CaseRun = function(){
+Testopia.TestCaseRun.Info = function(){
     var t = new TestopiaUtil();
     this.caserun_id;
     this.store =  new Ext.data.Store({
@@ -1200,7 +1202,7 @@ CaseRun = function(){
                 }
             }),new Ext.Toolbar.TextItem('')]
     });
-    CaseRun.superclass.constructor.call(this,{
+    Testopia.TestCaseRun.Info.superclass.constructor.call(this,{
         id: 'case_details_panel',
         layout: 'fit',
         region: 'south',
@@ -1328,17 +1330,17 @@ CaseRun = function(){
                     handler: appendNote.createDelegate(this)
                 }]
             },
-            new CaseRunHistory(), 
-            new AttachGrid({id: 0, type: 'caserun'}),
-            new CaseBugsGrid(),
-            new CaseComponentsGrid(),
+            new Testopia.TestCaseRun.History(), 
+            new Testopia.Attachment.Grid({id: 0, type: 'caserun'}),
+            new Testopia.TestCase.Bugs.Grid(),
+            new Testopia.TestCase.Components(),
             new TestopiaObjectTags('case', 0)]
         }]
     });
 };
-Ext.extend(CaseRun, Ext.Panel, this);
+Ext.extend(Testopia.TestCaseRun.Info, Ext.Panel, this);
 
-CaseRunHistory = function(){
+Testopia.TestCaseRun.History = function(){
     var t = new TestopiaUtil();
     
     this.store = new Ext.data.JsonStore({
@@ -1384,7 +1386,7 @@ CaseRunHistory = function(){
             }
         }
     ];
-    CaseRunHistory.superclass.constructor.call(this,{
+    Testopia.TestCaseRun.History.superclass.constructor.call(this,{
         border: false,
         title: 'History',
         id: 'caserun_history_panel',
@@ -1398,7 +1400,7 @@ CaseRunHistory = function(){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(CaseRunHistory, Ext.grid.GridPanel, {
+Ext.extend(Testopia.TestCaseRun.History, Ext.grid.GridPanel, {
     onActivate: function(event){
         this.store.load({
             params: {
@@ -1410,7 +1412,9 @@ Ext.extend(CaseRunHistory, Ext.grid.GridPanel, {
     }
 });
 
-CaseBugsGrid = function(id){
+Testopia.TestCase.Bugs = {};
+
+Testopia.TestCase.Bugs.Grid = function(id){
     var tutil = new TestopiaUtil();
     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm',{});
     function bug_link(id){
@@ -1536,7 +1540,7 @@ CaseBugsGrid = function(id){
         {header: "Asignee", width: 150, dataIndex: 'assignee', sortable: true},
         {header: "Priority", width: 50, dataIndex: 'priority', sortable: true}
     ];
-    CaseBugsGrid.superclass.constructor.call(this,{
+    Testopia.TestCase.Bugs.Grid.superclass.constructor.call(this,{
         tbar: [new Ext.form.TextField({
             width: 50,
             id: 'attachbug'
@@ -1575,7 +1579,7 @@ CaseBugsGrid = function(id){
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(CaseBugsGrid, Ext.grid.GridPanel, {
+Ext.extend(Testopia.TestCase.Bugs.Grid, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
         this.menu = new Ext.menu.Menu({
             id:'tags-ctx-menu',
@@ -1623,7 +1627,7 @@ Ext.extend(CaseBugsGrid, Ext.grid.GridPanel, {
     }
 });
 
-CaseComponentsGrid = function(id){
+Testopia.TestCase.Components = function(id){
     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm',{});
     var tcid;
     var product_id;
@@ -1726,7 +1730,7 @@ CaseComponentsGrid = function(id){
             failure: testopiaError
         });
     };
-    CaseComponentsGrid.superclass.constructor.call(this,{
+    Testopia.TestCase.Components.superclass.constructor.call(this,{
         tbar: [pchooser,compchooser,
         {
             xtype: 'button',
@@ -1756,7 +1760,7 @@ CaseComponentsGrid = function(id){
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(CaseComponentsGrid, Ext.grid.GridPanel, {
+Ext.extend(Testopia.TestCase.Components, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
         if(!this.menu){ // create context menu on first right click
             this.menu = new Ext.menu.Menu({
@@ -1792,7 +1796,7 @@ Ext.extend(CaseComponentsGrid, Ext.grid.GridPanel, {
     }
 });
 
-BugsUpdate = function(grid){
+Testopia.TestCase.Bugs.update = function(grid){
     function commitBug(action, value, grid){
         var form = new Ext.form.BasicForm('testopia_helper_frm',{});
         form.submit({

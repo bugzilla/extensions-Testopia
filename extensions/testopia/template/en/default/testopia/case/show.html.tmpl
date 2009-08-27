@@ -133,7 +133,7 @@ Ext.onReady(function(){
             icon: 'extensions/testopia/img/copy.png',
             iconCls: 'img_button_16x',
             handler: function(){
-                caseClonePopup(tcase.product_id, tcase.case_id);
+                Testopia.TestCase.clonePopup(tcase.product_id, tcase.case_id);
             }
         },{
             text: "Print",
@@ -176,7 +176,7 @@ Ext.onReady(function(){
         iconCls: 'img_button_16x',
         tooltip: 'Clone this Test Case',
         handler: function(){
-            caseClonePopup(tcase.product_id, tcase.case_id);
+            Testopia.TestCase.clonePopup(tcase.product_id, tcase.case_id);
         }
     }
 [% IF case.candelete %]
@@ -289,10 +289,10 @@ Ext.onReady(function(){
                 }]
             },
             new HistoryGrid('case', [% case.id FILTER none %]),
-            new CaseRunListGrid({case_id: tcase.case_id, viewall: 1 },{id: 'case_history_grid'}),
-            new AttachGrid(tcase),
-            new CaseBugsGrid([% case.id FILTER none %]), 
-            new CaseComponentsGrid(tcase.case_id),
+            new Testopia.TestCaseRun.List({case_id: tcase.case_id, viewall: 1 },{id: 'case_history_grid'}),
+            new Testopia.Attachment.Grid(tcase),
+            new Testopia.TestCase.Bugs.Grid([% case.id FILTER none %]), 
+            new Testopia.TestCase.Components(tcase.case_id),
             {
                 title: 'Dependencies',
                 listeners: {'activate': function(){ this.doLayout(); }},
@@ -461,7 +461,7 @@ Ext.onReady(function(){
             activeTab: 0,
             items:[
                 new TestopiaObjectTags('case', [% case.id FILTER none %]),
-                new CasePlans([% case.id FILTER none %], [% case.plans.0.product_id FILTER none %])
+                new Testopia.TestCase.PlanList([% case.id FILTER none %], [% case.plans.0.product_id FILTER none %])
             ]
         }]
     });

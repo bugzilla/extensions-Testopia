@@ -40,10 +40,10 @@ Testopia.Tags.list = function(type, product, tag){
     
     var newTab
     if (type == 'case'){
-        newTab = new CaseGrid(search, cfg); 
+        newTab = new Testopia.TestCase.Grid(search, cfg); 
     }
     else if (type == 'plan'){
-        newTab = new PlanGrid(search, cfg); 
+        newTab = new Testopia.TestPlan.Grid(search, cfg); 
     }
     else if (type == 'run'){
         newTab = new RunGrid(search, cfg); 

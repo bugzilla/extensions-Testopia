@@ -182,7 +182,7 @@ Ext.onReady(function(){
             xtype: 'tabpanel',
             activeTab: 0,
             id: 'object_panel',
-            items: [new CaseRunPanel(searchToJson(window.location.search), run),
+            items: [new Testopia.TestCaseRun.Panel(searchToJson(window.location.search), run),
             {
                 title: 'Notes',
                 layout: 'fit',

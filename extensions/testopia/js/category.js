@@ -20,7 +20,9 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-CaseCategoryGrid = function(product_id){
+Testopia.Category = {};
+
+Testopia.Category.Grid = function(product_id){
     this.product_id = product_id;
     this.store = new CaseCategoryStore({}, false);
     var ds = this.store;
@@ -40,7 +42,7 @@ CaseCategoryGrid = function(product_id){
 
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
    
-    CaseCategoryGrid.superclass.constructor.call(this, {
+    Testopia.Category.Grid.superclass.constructor.call(this, {
         title: 'Categories',
         id: 'category_grid',
         loadMask: {msg:'Loading Categories...'},
@@ -81,7 +83,7 @@ CaseCategoryGrid = function(product_id){
                     Ext.MessageBox.alert('Message', 'Please select at least one Category to delete');
                 }
                 else{
-                    confirmCaseCategoryDelete(product_id);    
+                    Testopia.Category.remove(product_id);    
                 }
             }
         }]
@@ -91,7 +93,7 @@ CaseCategoryGrid = function(product_id){
     this.on('afteredit', this.onGridEdit, this);
     
 };
-Ext.extend(CaseCategoryGrid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.Category.Grid, Ext.grid.EditorGridPanel, {
     newRecord: function(){
         NewCategory = Ext.data.Record.create([
                {name: 'name', type: 'string'},
@@ -188,7 +190,7 @@ Ext.extend(CaseCategoryGrid, Ext.grid.EditorGridPanel, {
     }
 });
 
-confirmCaseCategoryDelete = function(){
+Testopia.Category.remove = function(){
     if (!Ext.getCmp('category_grid').getSelectionModel().getSelected().get('category_id')){
         Ext.getCmp('category_grid').store.reload();
         return;

@@ -21,14 +21,16 @@
  *                 M-A Parent<maparent@miranda.com>
  */
 
-CasePanel = function(params,cfg){
-    var cgrid = new CaseGrid(params,cfg);
-    var filter = new CaseFilter();
+Testopia.TestCase = {};
+
+Testopia.TestCase.Panel = function(params,cfg){
+    var cgrid = new Testopia.TestCase.Grid(params,cfg);
+    var filter = new Testopia.TestCase.Filter();
     this.cgrid = cgrid;
     this.store = cgrid.store;
     this.params = params;
     
-    CasePanel.superclass.constructor.call(this, {
+    Testopia.TestCase.Panel.superclass.constructor.call(this, {
         title: 'Test Cases',
         layout: 'border',
         id: 'case-panel',
@@ -38,7 +40,7 @@ CasePanel = function(params,cfg){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(CasePanel, Ext.Panel, {
+Ext.extend(Testopia.TestCase.Panel, Ext.Panel, {
     onActivate: function(event){
         if (!this.store.getCount()){
             this.store.load({params: this.params});
@@ -46,9 +48,9 @@ Ext.extend(CasePanel, Ext.Panel, {
     }
 });
 
-CaseFilter = function (){
+Testopia.TestCase.Filter = function (){
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
-    CaseFilter.superclass.constructor.call(this, {
+    Testopia.TestCase.Filter.superclass.constructor.call(this, {
         title: 'Search for Test Cases',
         region: 'north',
         layout: 'fit',
@@ -65,9 +67,9 @@ CaseFilter = function (){
         }]
     });
 };
-Ext.extend(CaseFilter, Ext.Panel);
+Ext.extend(Testopia.TestCase.Filter, Ext.Panel);
 
-CaseGrid = function(params, cfg){
+Testopia.TestCase.Grid = function(params, cfg){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
     var tutil = new TestopiaUtil();
     params.current_tab = 'case';
@@ -185,7 +187,7 @@ CaseGrid = function(params, cfg){
 
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
     this.bbar = new TestopiaPager('case', this.store);
-    CaseGrid.superclass.constructor.call(this, {
+    Testopia.TestCase.Grid.superclass.constructor.call(this, {
         title: 'Test Cases',
         id: cfg.id || 'case_grid',
         loadMask: {msg:'Loading Test Cases...'},
@@ -275,7 +277,7 @@ CaseGrid = function(params, cfg){
     this.on('afteredit', this.onGridEdit, this);
 };
 
-Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.TestCase.Grid, Ext.grid.EditorGridPanel, {
     onContextClick: function(grid, index, e){
         grid.selindex = index;
         if(!this.menu){ // create context menu on first right click
@@ -515,7 +517,7 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                     text: 'Copy or Link Selected Test Cases to Plan(s)... ',
                     handler: function(){
                         var r = grid.getSelectionModel().getSelected();
-                        caseClonePopup(r.get('product_id'), getSelectedObjects(grid,'case_id'));
+                        Testopia.TestCase.clonePopup(r.get('product_id'), getSelectedObjects(grid,'case_id'));
                     }
                 },{
                     text: 'Unlink from Plan',
@@ -557,7 +559,7 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                 },{
                     text: 'Add or Remove Bugs from Selected Cases...',
                     handler: function(){
-                        BugsUpdate(grid);
+                        Testopia.TestCase.Bugs.update(grid);
                     }
                 },{
                     text: 'Add or Remove Components from Selected Cases...',
@@ -571,7 +573,7 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                             shadow: false,
                             width: 550,
                             height: 85,
-                            items: [new CaseComponentsGrid(grid)]
+                            items: [new Testopia.TestCase.Components(grid)]
                          });
                          win.show();
                     }
@@ -678,8 +680,8 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
     }
 });
 
-NewCaseForm = function(plan_ids, product_id, run_id){
-    NewCaseForm.superclass.constructor.call(this,{
+Testopia.TestCase.Form = function(plan_ids, product_id, run_id){
+    Testopia.TestCase.Form.superclass.constructor.call(this,{
         id: 'newcaseform',
         url: 'tr_new_case.cgi',
         baseParams: {action: 'add'},
@@ -905,7 +907,7 @@ NewCaseForm = function(plan_ids, product_id, run_id){
                 }]
                 
             },
-            new AttachForm(),
+            new Testopia.Attachment.Form(),
             {
                 title: 'Components',
                 id: 'component_picker',
@@ -996,9 +998,9 @@ NewCaseForm = function(plan_ids, product_id, run_id){
         p.doLayout();
     });
 };
-Ext.extend(NewCaseForm, Ext.form.FormPanel);
+Ext.extend(Testopia.TestCase.Form, Ext.form.FormPanel);
 
-CasePlans = function(tcid, product_id){
+Testopia.TestCase.PlanList = function(tcid, product_id){
     var t = new TestopiaUtil();
     this.remove = function(){
         var form = new Ext.form.BasicForm('testopia_helper_frm',{});
@@ -1065,7 +1067,7 @@ CasePlans = function(tcid, product_id){
         handler: this.remove
     });
         
-    CasePlans.superclass.constructor.call(this, {
+    Testopia.TestCase.PlanList.superclass.constructor.call(this, {
         title: 'Plans',
         split: true,
         layout: 'fit',
@@ -1096,7 +1098,7 @@ CasePlans = function(tcid, product_id){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(CasePlans, Ext.grid.GridPanel, {
+Ext.extend(Testopia.TestCase.PlanList, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
         grid.getSelectionModel().selectRow(index);
         if(!this.menu){ // create context menu on first right click
@@ -1142,9 +1144,9 @@ Ext.extend(CasePlans, Ext.grid.GridPanel, {
     }
 });
 
-CaseClonePanel = function(product_id, cases){
-    var pgrid = new PlanGrid({product_id: product_id},{id: 'plan_clone_grid'});
-    CaseClonePanel.superclass.constructor.call(this,{
+Testopia.TestCase.Clone = function(product_id, cases){
+    var pgrid = new Testopia.TestPlan.Grid({product_id: product_id},{id: 'plan_clone_grid'});
+    Testopia.TestCase.Clone.superclass.constructor.call(this,{
         id: 'case-clone-panel',
         layout: 'border',
         items:[{
@@ -1294,9 +1296,9 @@ CaseClonePanel = function(product_id, cases){
         }]
     });
 };
-Ext.extend(CaseClonePanel, Ext.Panel);
+Ext.extend(Testopia.TestCase.Clone, Ext.Panel);
 
-caseClonePopup = function(product_id, cases){
+Testopia.TestCase.clonePopup = function(product_id, cases){
     var win = new Ext.Window({
         id: 'case-clone-win',
         closable:true,
@@ -1305,7 +1307,7 @@ caseClonePopup = function(product_id, cases){
         plain: true,
         shadow: false,
         layout: 'fit',
-        items: [new CaseClonePanel(product_id, cases)]
+        items: [new Testopia.TestCase.Clone(product_id, cases)]
     });
     var pg = Ext.getCmp('plan_clone_grid');
     Ext.apply(pg,{title: 'Select plans to clone cases to'});

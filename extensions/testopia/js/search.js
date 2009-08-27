@@ -150,7 +150,7 @@ PlanSearch = function(params){
                     Ext.getCmp('object_panel').activate('plan_search' + searchnum);
                 }
                 else{
-                    Ext.getCmp('object_panel').add(new PlanGrid(values,{
+                    Ext.getCmp('object_panel').add(new Testopia.TestPlan.Grid(values,{
                         id: 'plan_search' + searchnum, 
                         closable: true,
                         title: 'Plan Search'
@@ -240,7 +240,7 @@ CaseSearch = function(params){
                     Ext.getCmp('object_panel').activate('plan_search' + searchnum);
                 }
                 else{
-                    Ext.getCmp('object_panel').add(new CaseGrid(values,{
+                    Ext.getCmp('object_panel').add(new Testopia.TestCase.Grid(values,{
                         id: 'case_search' + searchnum, 
                         closable: true,
                         title: 'Case Search'
@@ -422,7 +422,7 @@ CaseRunSearch = function(params){
                     Ext.getCmp('object_panel').activate('case_run_search' + searchnum);
                 }
                 else{
-                    Ext.getCmp('object_panel').add(new CaseRunListGrid(values,{
+                    Ext.getCmp('object_panel').add(new Testopia.TestCaseRun.List(values,{
                         id: 'case_run_search' + searchnum, 
                         closable: true,
                         title: 'Case-Run Search'
@@ -686,13 +686,13 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             var tab = params.current_tab;
             switch(tab){
                 case 'plan':
-                    Ext.getCmp('object_panel').add(new PlanGrid(params,cfg));
+                    Ext.getCmp('object_panel').add(new Testopia.TestPlan.Grid(params,cfg));
                     break;
                 case 'run':
                     Ext.getCmp('object_panel').add(new RunGrid(params,cfg));
                     break;
                 case 'case':
-                    Ext.getCmp('object_panel').add(new CaseGrid(params,cfg));
+                    Ext.getCmp('object_panel').add(new Testopia.TestCase.Grid(params,cfg));
                     break;
                 default:
                     Ext.Msg.show({

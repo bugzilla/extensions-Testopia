@@ -37,7 +37,7 @@
 Ext.onReady(function(){
     Ext.QuickTips.init();
     var params = searchToJson(window.location.search);
-    var list_grid = new CaseRunListGrid(params, {});
+    var list_grid = new Testopia.TestCaseRun.List(params, {});
     var objPanel = new Ext.Panel({
         layout: 'border',
         height: 650,

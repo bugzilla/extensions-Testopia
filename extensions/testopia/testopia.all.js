@@ -3,7 +3,7 @@
 */
 
 /*
- * START OF FILE - /bnc/testopia/js/strings.js
+ * START OF FILE - /bnc/extensions/testopia/js/strings.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -34,11 +34,11 @@ RUN_DELETE_WARNING = 'You are about to delete the selected test runs including a
 CASERUN_DELETE_WARNING = 'You are about to remove the selected test cases from this run including all history. This action cannot be undone. Are you sure you want to continue?';
 ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environment including associated test case data. This action cannot be undone. Are you sure you want to continue?';
 /*
- * END OF FILE - /bnc/testopia/js/strings.js
+ * END OF FILE - /bnc/extensions/testopia/js/strings.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/util.js
+ * START OF FILE - /bnc/extensions/testopia/js/util.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -1746,11 +1746,11 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
 Ext.extend(Testopia.Util.PlanSelector, Ext.Panel);
 
 /*
- * END OF FILE - /bnc/testopia/js/util.js
+ * END OF FILE - /bnc/extensions/testopia/js/util.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/attachments.js
+ * START OF FILE - /bnc/extensions/testopia/js/attachments.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -2107,11 +2107,11 @@ NewAttachmentPopup = function(object){
 };
 
 /*
- * END OF FILE - /bnc/testopia/js/attachments.js
+ * END OF FILE - /bnc/extensions/testopia/js/attachments.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/plan.js
+ * START OF FILE - /bnc/extensions/testopia/js/plan.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -2157,7 +2157,7 @@ Testopia.TestPlan.ImportWin = function(plan_id){
                 height: 50,
                 style: "padding: 5px",
                 border: false,
-                html: 'Accepts CSV and XML files under 1 MB in size. <br> See <a href="testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="testopia.dtd" target="_blank">testopia.dtd</a> for proper format.'
+                html: 'Accepts CSV and XML files under 1 MB in size. <br> See <a href="extensions/testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="testopia.dtd" target="_blank">testopia.dtd</a> for proper format.'
             },{
                 xtype: 'field',
                 fieldLabel: 'Upload File',
@@ -3002,11 +3002,11 @@ PlanClonePopup = function(plan){
 };
 
 /*
- * END OF FILE - /bnc/testopia/js/plan.js
+ * END OF FILE - /bnc/extensions/testopia/js/plan.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/case.js
+ * START OF FILE - /bnc/extensions/testopia/js/case.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -4344,11 +4344,11 @@ caseClonePopup = function(product_id, cases){
 };
 
 /*
- * END OF FILE - /bnc/testopia/js/case.js
+ * END OF FILE - /bnc/extensions/testopia/js/case.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/caserun.js
+ * START OF FILE - /bnc/extensions/testopia/js/caserun.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -6197,11 +6197,11 @@ BugsUpdate = function(grid){
     win.show();
 };
 /*
- * END OF FILE - /bnc/testopia/js/caserun.js
+ * END OF FILE - /bnc/extensions/testopia/js/caserun.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/run.js
+ * START OF FILE - /bnc/extensions/testopia/js/run.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7577,11 +7577,11 @@ Testopia.BugReport = function(params){
 Ext.extend(Testopia.BugReport, Ext.grid.GridPanel);
 
 /*
- * END OF FILE - /bnc/testopia/js/run.js
+ * END OF FILE - /bnc/extensions/testopia/js/run.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/build.js
+ * START OF FILE - /bnc/extensions/testopia/js/build.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -7812,11 +7812,11 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /bnc/testopia/js/build.js
+ * END OF FILE - /bnc/extensions/testopia/js/build.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/category.js
+ * START OF FILE - /bnc/extensions/testopia/js/category.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8042,11 +8042,11 @@ confirmCaseCategoryDelete = function(){
 
 
 /*
- * END OF FILE - /bnc/testopia/js/category.js
+ * END OF FILE - /bnc/extensions/testopia/js/category.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/environment.js
+ * START OF FILE - /bnc/extensions/testopia/js/environment.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8366,11 +8366,11 @@ Ext.extend(EnvironmentGrid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /bnc/testopia/js/environment.js
+ * END OF FILE - /bnc/extensions/testopia/js/environment.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/search.js
+ * START OF FILE - /bnc/extensions/testopia/js/search.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9175,11 +9175,11 @@ PortalTools = [{
 }];
 
 /*
- * END OF FILE - /bnc/testopia/js/search.js
+ * END OF FILE - /bnc/extensions/testopia/js/search.js
  */
 
 /*
- * START OF FILE - /bnc/testopia/js/tags.js
+ * START OF FILE - /bnc/extensions/testopia/js/tags.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9492,7 +9492,7 @@ TagsUpdate = function(type, grid){
 };
          
 /*
- * END OF FILE - /bnc/testopia/js/tags.js
+ * END OF FILE - /bnc/extensions/testopia/js/tags.js
  */
 
 /*

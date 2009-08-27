@@ -20,20 +20,6 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-// FIX for Extjs bug in IE. Remove when upgrading to Extjs 2.3
-// See https://bugzilla.mozilla.org/show_bug.cgi?id=466605
-Ext.form.TriggerField.override({
-    afterRender : function(){
-        Ext.form.TriggerField.superclass.afterRender.call(this);
-        var y;
-        if(Ext.isIE && !this.hideTrigger && this.el.getY() != (y = this.trigger.getY())){
-            this.el.position();
-            this.el.setY(y);
-        }
-    }
-});
-// END FIX
-
 Ext.state.Manager.setProvider(new Ext.state.CookieProvider({expires: new Date(new Date().getTime()+(1000*60*60*24*30))}));
 Ext.data.Connection.timeout = 120000;
 Ext.Updater.defaults.timeout = 120000;
@@ -128,7 +114,7 @@ TestopiaUtil = function(){
             plain: true,
             shadow: false,
             layout: 'fit',
-            items: [new NewCaseForm(plans, product_id, run_id)]
+            items: [new Testopia.TestCase.Form(plans, product_id, run_id)]
         });
         win.show(this);
     };
@@ -156,7 +142,7 @@ TestopiaUtil = function(){
             plain: true,
             shadow: false,
             layout: 'fit',
-            items: [new NewPlanForm(product_id)]
+            items: [new Testopia.TestPlan.NewPlanForm(product_id)]
         });
         win.show(this);
     };
@@ -1668,7 +1654,7 @@ Testopia.Util.trim = function(input){
 
 Testopia.Util.PlanSelector = function(product_id, cfg){
     var single = cfg.action.match('case') ? false : true;
-    var pg = new PlanGrid({product_id: product_id},{id: 'plan_selector_grid', height:300, single: single});    
+    var pg = new Testopia.TestPlan.Grid({product_id: product_id},{id: 'plan_selector_grid', height:300, single: single});    
     
     var pchooser = new ProductCombo({mode: 'local', value: product_id});
     pchooser.on('select', function(c,r,i){
