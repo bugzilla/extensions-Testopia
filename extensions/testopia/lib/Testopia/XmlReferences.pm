@@ -18,7 +18,7 @@
 #
 # Contributor(s): David Koenig <dkoenig@novell.com>
 
-package Bugzilla::Testopia::XmlReferences;
+package Testopia::XmlReferences;
 
 use constant IGNORECASE => "ignorecase";
 
@@ -78,7 +78,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::XmlReferences - Testopia XmlReferences object
+Testopia::XmlReferences - Testopia XmlReferences object
 
 =head1 DESCRIPTION
 
@@ -89,11 +89,11 @@ are stored here and processed as needed.
 
 =head1 SYNOPSIS
 
- use Bugzilla::Testopia::XmlReferences;
+ use Testopia::XmlReferences;
 
- $xml_testcase->blocks(Bugzilla::Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
- $xml_testcase->dependson(Bugzilla::Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
- $xml_testcase->testplan(Bugzilla::Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
+ $xml_testcase->blocks(Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
+ $xml_testcase->dependson(Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
+ $xml_testcase->testplan(Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
  
 =head1 METHODS
 

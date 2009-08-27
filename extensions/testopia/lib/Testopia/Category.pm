@@ -18,18 +18,18 @@
 #
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Testopia::Category;
+package Testopia::Category;
 
 use strict;
 
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Product;
+use Testopia::Product;
 
 use JSON;
 
 use base qw(Exporter Bugzilla::Object);
-@Bugzilla::Testopia::Category::EXPORT = qw(check_case_category);
+@Testopia::Category::EXPORT = qw(check_case_category);
 
 ###############################
 ####    Initialization     ####
@@ -63,10 +63,10 @@ sub _check_product {
     my $product;
     if (trim($product_id) !~ /^\d+$/ ){
         $product = Bugzilla::Product::check_product($product_id);
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = Testopia::Product->new($product->id);
     }
     else {
-        $product = Bugzilla::Testopia::Product->new($product_id);
+        $product = Testopia::Product->new($product_id);
     }
 
     
@@ -227,7 +227,7 @@ sub product {
     
     return $self->{'product'} if exists $self->{'product'};
 
-    $self->{'product'} = Bugzilla::Testopia::Product->new($self->product_id);
+    $self->{'product'} = Testopia::Product->new($self->product_id);
     return $self->{'product'};
 }
 
@@ -266,7 +266,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Category - An object representing a test case category
+Testopia::Category - An object representing a test case category
 
 =head1 EXTENDS
 
@@ -282,10 +282,10 @@ Every plan in a product will have access to that product's categories.
 
 =head2 Creating
  
- $category = Bugzilla::Testopia::Category->new($category_id);
- $category = Bugzilla::Testopia::Category->new({name => $name});
+ $category = Testopia::Category->new($category_id);
+ $category = Testopia::Category->new({name => $name});
   
- $new_category = Bugzilla::Testopia::Category->create({name => $name, 
+ $new_category = Testopia::Category->create({name => $name, 
                                                        description => $desc});
 
 =head2 Updating
@@ -364,7 +364,7 @@ A detailed description for this category.
                        or a hash with the "name" key representing the named
                        category in the database.
                        
- Returns:     A blessed Bugzilla::Testopia::Category object
+ Returns:     A blessed Testopia::Category object
  
 =back
 
@@ -506,9 +506,9 @@ A detailed description for this category.
 
 =head1 SEE ALSO
 
-L<Bugzilla::Testopia::TestCase> 
+L<Testopia::TestCase> 
 
-L<Bugzilla::Testopia::Product>
+L<Testopia::Product>
 
 L<Bugzilla::Object> 
 

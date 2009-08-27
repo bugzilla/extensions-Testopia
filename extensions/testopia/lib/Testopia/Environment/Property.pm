@@ -22,7 +22,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Environment::Property - A test environment element property
+Testopia::Environment::Property - A test environment element property
 
 =head1 DESCRIPTION
 
@@ -33,19 +33,19 @@ for each property.
 
 =head1 SYNOPSIS
 
- $prop = Bugzilla::Testopia::Environment::Property->new($prop_id);
- $prop = Bugzilla::Testopia::Environment::Property->new(\%prop_hash);
+ $prop = Testopia::Environment::Property->new($prop_id);
+ $prop = Testopia::Environment::Property->new(\%prop_hash);
 
 =cut
 
-package Bugzilla::Testopia::Environment::Property;
+package Testopia::Environment::Property;
 
 use strict;
 
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::User;
-use Bugzilla::Testopia::Environment::Element;
+use Testopia::Environment::Element;
 
 ###############################
 ####    Initialization     ####
@@ -225,7 +225,7 @@ sub store {
 
     # Exclude the auto-incremented field from the column list.
     my $columns = join( ", ", grep { $_ ne 'property_id' } DB_COLUMNS );
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     # Verify name is available
     return undef
@@ -247,7 +247,7 @@ Updates the property name in the database
 
 sub set_name {
     my $self      = shift;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     my ($name) = (@_);
 
@@ -268,7 +268,7 @@ Updates the elmnt_id in the database
 
 sub set_element {
     my $self      = shift;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     my ($id) = (@_);
 
@@ -288,7 +288,7 @@ Updates the property valid expression in the database
 =cut
 
 sub update_property_validexp {
-    my $timestamp  = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp  = Testopia::Util::get_time_stamp();
     my $self       = shift;
     my ($validexp) = (@_);
 
@@ -305,7 +305,7 @@ sub value_to_json {
     my $self = shift;
     my ($env_id) = @_;
 
-    my $env = Bugzilla::Testopia::Environment->new($env_id) if $env_id;
+    my $env = Testopia::Environment->new($env_id) if $env_id;
     my @values = split( /\|/, $self->get_validexp );
 
     my @json;
@@ -377,7 +377,7 @@ sub is_mapped {
 sub canview {
     my $self = shift;
     my $element =
-      Bugzilla::Testopia::Environment::Element->new( $self->element_id );
+      Testopia::Environment::Element->new( $self->element_id );
     return 1 if $element->canview;
     return 0;
 }
@@ -385,7 +385,7 @@ sub canview {
 sub canedit {
     my $self = shift;
     my $element =
-      Bugzilla::Testopia::Environment::Element->new( $self->element_id );
+      Testopia::Environment::Element->new( $self->element_id );
     return 1 if $element->canedit;
     return 0;
 }

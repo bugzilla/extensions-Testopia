@@ -22,7 +22,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Xml - Testopia Xml object
+Testopia::Xml - Testopia Xml object
 
 =head1 DESCRIPTION
 
@@ -32,11 +32,11 @@ are detected.
 
 =head1 SYNOPSIS
 
-use Bugzilla::Testopia::Xml;
+use Testopia::Xml;
 
 =cut
 
-package Bugzilla::Testopia::Xml;
+package Testopia::Xml;
 #use fields qw(testplans testcases tags categories builds);
 
 use strict;
@@ -44,15 +44,15 @@ use strict;
 
 use Bugzilla::Config;
 use Bugzilla::Product;
-use Bugzilla::Testopia::Attachment;
-use Bugzilla::Testopia::Build;
-use Bugzilla::Testopia::Category;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::TestTag;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::XmlTestCase;
+use Testopia::Attachment;
+use Testopia::Build;
+use Testopia::Category;
+use Testopia::TestCase;
+use Testopia::TestPlan;
+use Testopia::TestRun;
+use Testopia::TestTag;
+use Testopia::Util;
+use Testopia::XmlTestCase;
 use Bugzilla::User;
 use Bugzilla::Util;
 
@@ -99,7 +99,7 @@ our $XML_LT = "&[Ll][Tt];";
 our $XML_QUOT = "&[Qq][Uu][Oo][Tt];";
 
 use constant XMLREFERENCES_FIELDS => "Database_description Database_id Xml_description";
-@Bugzilla::Testopia::Xml::EXPORT = qw($DATABASE_DESCRIPTION $DATABASE_ID $XML_DESCRIPTION);
+@Testopia::Xml::EXPORT = qw($DATABASE_DESCRIPTION $DATABASE_ID $XML_DESCRIPTION);
 
 use Class::Struct;
 #
@@ -107,7 +107,7 @@ use Class::Struct;
 #
 struct
 (
-    'Bugzilla::Testopia::Xml',
+    'Testopia::Xml',
     {
         # Array of attachments read for xml source.
         attachments         => '@',
@@ -228,7 +228,7 @@ sub parse()
     }
     else
     {
-        $self->error("Bugzilla::Testopia::Xml::parse has no XML input source")
+        $self->error("Testopia::Xml::parse has no XML input source")
     }
     
     my $root = $twig->root;
@@ -270,7 +270,7 @@ sub parse()
             next;
         }
         
-        my $category = new Bugzilla::Testopia::Category
+        my $category = new Testopia::Category
         ({
             name => $category_name,
             product_id => $product->id(),
@@ -281,7 +281,7 @@ sub parse()
         push @{$self->categories}, $category if ( ! $category->check_name($category_name) );
     }
     
-    my $testplan = Bugzilla::Testopia::TestPlan->new({});
+    my $testplan = Testopia::TestPlan->new({});
     my %plantype_ids;
     my @temparray = @{$testplan->get_plan_types()};
     foreach my $arrayelement (@temparray)
@@ -308,7 +308,7 @@ sub parse()
             $author_id = $author_user->id();
         }
 
-        my $product_id = Bugzilla::Testopia::TestPlan::lookup_product_by_name($twig_testplan->field('product'));
+        my $product_id = Testopia::TestPlan::lookup_product_by_name($twig_testplan->field('product'));
         if ( ! defined($product_id) )
         {
             $self->error("Cannot find product '" . $twig_testplan->field('product') . "' in test plan '" . $twig_testplan->field('name') . "'.");
@@ -316,9 +316,9 @@ sub parse()
         
         my $name = entity_replace_xml($twig_testplan->field('name'),STRIP_BOTH) || undef;
         $self->error("Found empty Test Plan name.") if ( ! defined($name) );
-        $self->error("Length of Test Plan name '" . $name . "' must be " . Bugzilla::Testopia::TestPlan->NAME_MAX_LENGTH . " characters or less.") if ( defined($name) && ( length($name) > Bugzilla::Testopia::TestPlan->NAME_MAX_LENGTH ) );
+        $self->error("Length of Test Plan name '" . $name . "' must be " . Testopia::TestPlan->NAME_MAX_LENGTH . " characters or less.") if ( defined($name) && ( length($name) > Testopia::TestPlan->NAME_MAX_LENGTH ) );
         
-        $testplan = Bugzilla::Testopia::TestPlan->create({
+        $testplan = Testopia::TestPlan->create({
             'name'                        => $name,
             'product_id'                => $product_id,
             'default_product_version'    => entity_replace_xml($twig_testplan->field('productversion'),STRIP_BOTH),
@@ -354,7 +354,7 @@ sub parse()
                 bless($submitter_user,"Bugzilla::User");
                 $submitter_id = $submitter_user->id();
             }
-            my $attachment = Bugzilla::Testopia::Attachment->new({
+            my $attachment = Testopia::Attachment->new({
                 'description'  => entity_replace_xml($twig_attachments->field('description'),STRIP_BOTH),
                 'filename'     => entity_replace_xml($twig_attachments->field('filename'),STRIP_BOTH),
                 'submitter_id' => $submitter_id,
@@ -365,7 +365,7 @@ sub parse()
         }
     }
     
-    my $testcase = Bugzilla::Testopia::TestCase->new({ 'name' => 'dummy' });
+    my $testcase = Testopia::TestCase->new({ 'name' => 'dummy' });
     my %priority_ids;
     @temparray = @{$testcase->get_priority_list()};
     foreach my $arrayelement (@temparray)
@@ -383,7 +383,7 @@ sub parse()
     {
         my $summary = entity_replace_xml($twig_testcase->field('summary'),STRIP_BOTH) || undef;
         $self->error("Found empty Test Case summary.") if ( ! defined($summary) );
-        $self->error("Length of summary '" . $summary . "' must be " . Bugzilla::Testopia::TestCase->SUMMARY_MAX_LENGTH . " characters or less.") if ( defined($summary) && ( length($summary) > Bugzilla::Testopia::TestCase->SUMMARY_MAX_LENGTH ) );
+        $self->error("Length of summary '" . $summary . "' must be " . Testopia::TestCase->SUMMARY_MAX_LENGTH . " characters or less.") if ( defined($summary) && ( length($summary) > Testopia::TestCase->SUMMARY_MAX_LENGTH ) );
         my $author = $twig_testcase->att('author');
         # Bugzilla::User::match returns a array with a user hash.  Fields of the hash needed
         # are 'id' and 'login'.
@@ -414,20 +414,20 @@ sub parse()
             bless($tester_user,"Bugzilla::User");
             $tester_id = $tester_user->id();
         }
-        my $status_id = Bugzilla::Testopia::TestCase::lookup_status_by_name($twig_testcase->att('status'));
+        my $status_id = Testopia::TestCase::lookup_status_by_name($twig_testcase->att('status'));
         $self->error("Cannot find status '" . $twig_testcase->att('status') . "' in test case '" . $summary . "'.") if ( ! defined($status_id) );
             
-        my $xml_testcase = new Bugzilla::Testopia::XmlTestCase;
-        $xml_testcase->blocks(Bugzilla::Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
-        $xml_testcase->dependson(Bugzilla::Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
-        $xml_testcase->testplan(Bugzilla::Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
+        my $xml_testcase = new Testopia::XmlTestCase;
+        $xml_testcase->blocks(Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
+        $xml_testcase->dependson(Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
+        $xml_testcase->testplan(Testopia::XmlReferences->new(IGNORECASE, XMLREFERENCES_FIELDS));
         push @{$self->testcases}, $xml_testcase;
         my $alias = entity_replace_xml($twig_testcase->field('alias'),STRIP_BOTH) || undef;
-        $self->error("Length of alias '" . $alias . "' in test case '" . $summary . "' must be " . Bugzilla::Testopia::TestCase->ALIAS_MAX_LENGTH . " characters or less.") if ( defined($alias) && ( length($alias) > Bugzilla::Testopia::TestCase->ALIAS_MAX_LENGTH ) );
+        $self->error("Length of alias '" . $alias . "' in test case '" . $summary . "' must be " . Testopia::TestCase->ALIAS_MAX_LENGTH . " characters or less.") if ( defined($alias) && ( length($alias) > Testopia::TestCase->ALIAS_MAX_LENGTH ) );
         my $requirement = entity_replace_xml($twig_testcase->field('requirement'),STRIP_BOTH) || undef;
-        $self->error("Length of requirement '" . $requirement . "' in test case '" . $summary . "' must be " . Bugzilla::Testopia::TestCase->REQUIREMENT_MAX_LENGTH . " characters or less.") if ( defined($requirement) && ( length($requirement) > Bugzilla::Testopia::TestCase->REQUIREMENT_MAX_LENGTH ) );
+        $self->error("Length of requirement '" . $requirement . "' in test case '" . $summary . "' must be " . Testopia::TestCase->REQUIREMENT_MAX_LENGTH . " characters or less.") if ( defined($requirement) && ( length($requirement) > Testopia::TestCase->REQUIREMENT_MAX_LENGTH ) );
 
-        $xml_testcase->testcase(Bugzilla::Testopia::TestCase->new({
+        $xml_testcase->testcase(Testopia::TestCase->new({
             'action'            => entity_replace_testopia($twig_testcase->field('action')),
             'alias'              => $alias,
             'arguments'          => entity_replace_xml($twig_testcase->field('arguments'),STRIP_NONE),
@@ -457,9 +457,9 @@ sub parse()
                              . $twig_testplan_reference->att('type') 
                              . "' in test case '" . $twig_testcase->field('summary') . "'." );
             }
-            elsif ( length($testplan_reference) > Bugzilla::Testopia::TestPlan->NAME_MAX_LENGTH )
+            elsif ( length($testplan_reference) > Testopia::TestPlan->NAME_MAX_LENGTH )
             {
-                $self->error("Length of Test Plan name '" . $testplan_reference . "' for test case '" . $summary . "' must be " . Bugzilla::Testopia::TestCase->REQUIREMENT_MAX_LENGTH . " characters or less.");
+                $self->error("Length of Test Plan name '" . $testplan_reference . "' for test case '" . $summary . "' must be " . Testopia::TestCase->REQUIREMENT_MAX_LENGTH . " characters or less.");
             }
                elsif ( ! $xml_testcase->testplan->add($twig_testplan_reference->att('type'),entity_replace_xml($testplan_reference,STRIP_BOTH)) )
             {
@@ -516,7 +516,7 @@ sub parse()
         foreach my $twig_tag ( @tags )
         {
             my $tag = entity_replace_xml($twig_tag->text(),STRIP_BOTH);
-            $self->error("Length of tag '" . $tag . "' in test case '" . $summary . "' must be " . Bugzilla::Testopia::TestCase->TAG_MAX_LENGTH . " characters or less.") if ( defined($tag) && ( length($tag) > Bugzilla::Testopia::TestCase->TAG_MAX_LENGTH ) );
+            $self->error("Length of tag '" . $tag . "' in test case '" . $summary . "' must be " . Testopia::TestCase->TAG_MAX_LENGTH . " characters or less.") if ( defined($tag) && ( length($tag) > Testopia::TestCase->TAG_MAX_LENGTH ) );
             $xml_testcase->add_tag($tag);
         }
     
@@ -558,7 +558,7 @@ sub parse()
         my $alias = $self->testcase_aliases($summary);
         # Is the alias used by a testcase in the database already?  If so add it to the duplicate list
         # and move onto next testcase.
-        my $alias_testcase_id = Bugzilla::Testopia::TestCase::class_check_alias($alias);
+        my $alias_testcase_id = Testopia::TestCase::class_check_alias($alias);
         if ( $alias_testcase_id )
         {
             $duplicate_alias{$alias} = $alias_testcase_id;
@@ -614,7 +614,7 @@ sub parse()
             if ( ! $category->check_name($category->name()) )
             {
                 $category->store();
-                my $product_name = Bugzilla::Testopia::Product->new($category->product_id())->name();
+                my $product_name = Testopia::Product->new($category->product_id())->name();
                 print "Created category '" . $category->name() . "': " . $category->description() . " for product " . $product_name . ".\n";
             }
         }
@@ -624,7 +624,7 @@ sub parse()
         {
             foreach my $asciitag ( @{$self->tags} )
             {
-                my $classtag = Bugzilla::Testopia::TestTag->new({'tag_name' => $asciitag});
+                my $classtag = Testopia::TestTag->new({'tag_name' => $asciitag});
                 my $tagid = $classtag->store;
                 $testplan->{'tag_id'} = $tagid;
                 $testplan->add_tag($tagid);
@@ -632,7 +632,7 @@ sub parse()
             foreach my $attachment ( @{$self->attachments} )
             {
                 $attachment->{'plan_id'} = $testplan->id;
-                Bugzilla::Testopia::Attachment->create($attachment);
+                Testopia::Attachment->create($attachment);
             }
             print "Created Test Plan ". $testplan->id . ": " . $testplan->name() . "\n";
         }
@@ -640,7 +640,7 @@ sub parse()
         # Store new testcases.
         foreach my $testcase ( @{$self->testcases} )
         {
-            bless($testcase,"Bugzilla::Testopia::XmlTestCase");
+            bless($testcase,"Testopia::XmlTestCase");
             my $result = $testcase->store(@{$self->testplans});
             if ( $result ne "" )
             {

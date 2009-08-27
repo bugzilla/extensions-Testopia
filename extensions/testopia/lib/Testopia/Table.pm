@@ -20,7 +20,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Table - Produces display tables for Testopia lists
+Testopia::Table - Produces display tables for Testopia lists
 
 =head1 DESCRIPTION
 
@@ -45,22 +45,22 @@ arguments:
 
 =head1 SYNOPSIS
 
- $table = Bugzilla::Testopia::Table->new($type, $url, $cgi, $list, $query);
+ $table = Testopia::Table->new($type, $url, $cgi, $list, $query);
 
 =cut
 
-package Bugzilla::Testopia::Table;
+package Testopia::Table;
 
 use strict;
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::TestCaseRun;
+use Testopia::Util;
+use Testopia::TestCase;
+use Testopia::TestPlan;
+use Testopia::TestRun;
+use Testopia::TestCaseRun;
 
 ###############################
 ####    Initialization     ####
@@ -128,19 +128,19 @@ sub init {
         foreach my $id (@$list){
             my $o;
             if ($type eq 'case'){
-                $o = Bugzilla::Testopia::TestCase->new($id);
+                $o = Testopia::TestCase->new($id);
             }
             elsif ($type eq 'plan'){
-                $o = Bugzilla::Testopia::TestPlan->new($id);
+                $o = Testopia::TestPlan->new($id);
             }
             elsif ($type eq 'run'){
-                $o = Bugzilla::Testopia::TestRun->new($id);
+                $o = Testopia::TestRun->new($id);
             }
             elsif ($type eq 'case_run'){
-                $o = Bugzilla::Testopia::TestCaseRun->new($id);
+                $o = Testopia::TestCaseRun->new($id);
             }
             elsif ($type eq 'environment'){
-                $o = Bugzilla::Testopia::Environment->new($id);
+                $o = Testopia::Environment->new($id);
             }
             push (@ids, $id);
             push (@list, $o);
@@ -160,34 +160,34 @@ sub init {
 #        my @list;
 #        foreach my $id (split(",", $self->get_saved_list())){
 #            if ($self->{'type'} eq 'case'){
-#                my $o = Bugzilla::Testopia::TestCase->new($id);
+#                my $o = Testopia::TestCase->new($id);
 #                push @list, $o;
 #                $o->category;
 #                $o->status;
 #                $o->priority;
 #            }
 #            elsif ($self->{'type'} eq 'plan'){
-#                my $o = Bugzilla::Testopia::TestPlan->new($id);
+#                my $o = Testopia::TestPlan->new($id);
 #                push @list, $o;
 #                $o->test_case_count;
 #                $o->test_run_count;
 #            }
 #            elsif ($self->{'type'} eq 'run'){
-#                my $o = Bugzilla::Testopia::TestCase->new($id);
+#                my $o = Testopia::TestCase->new($id);
 #                push @list, $o;
 ##                $o->category;
 ##                $o->status;
 ##                $o->priority;                
 #            }
 #            elsif ($self->{'type'} eq 'caserun'){
-#                my $o = Bugzilla::Testopia::TestCase->new($id);
+#                my $o = Testopia::TestCase->new($id);
 #                push @list, $o;
 ##                $o->category;
 ##                $o->status;
 ##                $o->priority;
 #            }
 #            elsif ($self->{'type'} eq 'attachment'){
-#                my $o = Bugzilla::Testopia::TestCase->new($id);
+#                my $o = Testopia::TestCase->new($id);
 #                push @list, $o;
 ##                $o->category;
 ##                $o->status;

@@ -23,7 +23,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Environment - A test environment
+Testopia::Environment - A test environment
 
 =head1 DESCRIPTION
 
@@ -38,12 +38,12 @@ of the possible values.
 
 =head1 SYNOPSIS
 
- $env = Bugzilla::Testopia::Environment->new($env_id);
- $env = Bugzilla::Testopia::Environment->new(\%env_hash);
+ $env = Testopia::Environment->new($env_id);
+ $env = Testopia::Environment->new(\%env_hash);
 
 =cut
 
-package Bugzilla::Testopia::Environment;
+package Testopia::Environment;
 
 use strict;
 
@@ -52,9 +52,9 @@ use Bugzilla::Error;
 use Bugzilla::User;
 use Bugzilla::Config;
 
-use Bugzilla::Testopia::Environment::Category;
-use Bugzilla::Testopia::Environment::Element;
-use Bugzilla::Testopia::Environment::Property;
+use Testopia::Environment::Category;
+use Testopia::Environment::Element;
+use Testopia::Environment::Property;
 
 use JSON;
 
@@ -100,15 +100,15 @@ sub _check_product {
 
     $product_id = trim($product_id);
     
-    require Bugzilla::Testopia::Product;
+    require Testopia::Product;
     
     my $product;
     if (trim($product_id) !~ /^\d+$/ ){
         $product = Bugzilla::Product::check_product($product_id);
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = Testopia::Product->new($product->id);
     }
     else {
-        $product = Bugzilla::Testopia::Product->new($product_id);
+        $product = Testopia::Product->new($product_id);
     }
 
     ThrowUserError("testopia-create-denied", {'object' => 'environment'}) unless $product->canedit;
@@ -221,8 +221,8 @@ sub create_full {
     # first, get ALL rows to add to test_environment_map table
     # and store them in @environment_map array
     foreach my $key (keys(%{$environment})){
-        require Bugzilla::Testopia::Environment::Category;
-        my $cat = Bugzilla::Testopia::Environment::Category->new({'product_id' => $prod_id});
+        require Testopia::Environment::Category;
+        my $cat = Testopia::Environment::Category->new({'product_id' => $prod_id});
         my $cat_id = $cat->check_category($key);
         if (!$cat_id) { warn "category: $key for id: $cat did not exist"; return 0; }
         _parseElementsRecursively($environment->{$key}, $cat_id, 'category');
@@ -295,8 +295,8 @@ sub _parseElementsRecursively {
 
     foreach my $key (keys(%{$hash})) {
         if(ref($hash->{$key})){ # must be element, since property contains value instead of another hash
-            require Bugzilla::Testopia::Environment::Element;
-            my $elem = Bugzilla::Testopia::Environment::Element->new({});
+            require Testopia::Environment::Element;
+            my $elem = Testopia::Environment::Element->new({});
             # get exising element OR create new one
             my ($elem_id) = $elem->check_element($key, $callerid);
             if(!$elem_id){
@@ -310,8 +310,8 @@ sub _parseElementsRecursively {
             }
             _parseElementsRecursively($hash->{$key}, $elem_id, 'element', $categoryid);
         } else {
-            require Bugzilla::Testopia::Environment::Property;
-            my $prop = Bugzilla::Testopia::Environment::Property->new({});
+            require Testopia::Environment::Property;
+            my $prop = Testopia::Environment::Property->new({});
             my ($prop_id) = $prop->check_property($key, $callerid);
             # get existing property OR create new one
             if(!$prop_id){
@@ -323,7 +323,7 @@ sub _parseElementsRecursively {
                 $modified_environment_structure = 1;
             } else {
                 # if property exists, still update validexp if needed
-                $prop = Bugzilla::Testopia::Environment::Property->new($prop_id);
+                $prop = Testopia::Environment::Property->new($prop_id);
                 my $validexp = $prop->validexp;
                 if ($validexp !~ m/\Q$hash->{$key}/){
                     my $newexp = $validexp . ((!length($validexp)) ? "" : "|") . $hash->{$key}; 
@@ -367,7 +367,7 @@ sub get_environment_elements{
     my @elements;
 
     foreach my $val  (@$ref){
-        push @elements, Bugzilla::Testopia::Environment::Element->new($val);
+        push @elements, Testopia::Environment::Element->new($val);
     }   
     $self->{'elements'} = \@elements;
      
@@ -393,7 +393,7 @@ sub element_categories {
     
     my @elements;
     foreach my $val  (@$ref){
-        push @elements, Bugzilla::Testopia::Environment::Category->new($val);
+        push @elements, Testopia::Environment::Category->new($val);
     }   
     $self->{'categories'} = \@elements;
      
@@ -440,7 +440,7 @@ sub mapped_category_elements_to_json {
     
     my @elements;
     foreach my $id (@$ref){
-        my $element = Bugzilla::Testopia::Environment::Element->new($id);
+        my $element = Testopia::Environment::Element->new($id);
         push @elements, {
             text => $element->{'name'}, 
             id   => $element->id, 
@@ -565,7 +565,7 @@ sub get_all_elements{
     my @elements;
 
     foreach my $val  (@$ref){
-        push @elements, Bugzilla::Testopia::Environment::Element->new($val);
+        push @elements, Testopia::Environment::Element->new($val);
     }   
              
        return \@elements;             
@@ -583,7 +583,7 @@ sub check_environment{
           undef, ($name, $pid));
     if ($throw){
         ThrowUserError('invalid-test-id-non-existent', {type => 'Environment', id => $name}) unless $used;
-        return Bugzilla::Testopia::Environment->new($used);
+        return Testopia::Environment->new($used);
     }
     
     return $used;             
@@ -908,7 +908,7 @@ sub product {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
     return $self->{'product'} if exists $self->{'product'};
-    require Bugzilla::Testopia::Product;
+    require Testopia::Product;
     $self->{'product'} = Bugzilla::Product->new($self->{'product_id'});
     return $self->{'product'};
 }
@@ -924,14 +924,14 @@ sub runs {
     my $dbh = Bugzilla->dbh;
     return $self->{'runs'} if exists $self->{'runs'};
     
-    require Bugzilla::Testopia::TestRun;
+    require Testopia::TestRun;
     
     my $runids = $dbh->selectcol_arrayref("SELECT run_id FROM test_runs
                                           WHERE environment_id = ?", 
                                           undef, $self->id);
     my @runs;
     foreach my $id (@{$runids}){
-        push @runs, Bugzilla::Testopia::TestRun->new($id);
+        push @runs, Testopia::TestRun->new($id);
     }
     
     $self->{'runs'} = \@runs;
@@ -949,14 +949,14 @@ sub caseruns {
     my $dbh = Bugzilla->dbh;
     return $self->{'caseruns'} if exists $self->{'caseruns'};
     
-    require Bugzilla::Testopia::TestCaseRun;
+    require Testopia::TestCaseRun;
 
     my $ids = $dbh->selectcol_arrayref("SELECT case_run_id FROM test_case_runs
                                           WHERE environment_id = ?", 
                                           undef, $self->id);
     my @caseruns;
     foreach my $id (@{$ids}){
-        push @caseruns, Bugzilla::Testopia::TestCaseRun->new($id);
+        push @caseruns, Testopia::TestCaseRun->new($id);
     }
     
     $self->{'caseruns'} = \@caseruns;

@@ -21,7 +21,7 @@
 #
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Testopia::Attachment;
+package Testopia::Attachment;
 
 use strict;
 
@@ -29,8 +29,8 @@ use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Error;
 
-use Bugzilla::Testopia::Constants;
-use Bugzilla::Testopia::Util;
+use Testopia::Constants;
+use Testopia::Util;
 
 use base qw(Exporter Bugzilla::Object);
 
@@ -78,14 +78,14 @@ sub _validate_data {
 
 sub _check_plan {
     my ($invocant, $plan_id) = @_;
-    Bugzilla::Testopia::Util::validate_test_id($plan_id, 'plan');
+    Testopia::Util::validate_test_id($plan_id, 'plan');
     trick_taint($plan_id);
     return $plan_id;
 }
 
 sub _check_case {
     my ($invocant, $case_id) = @_;
-    Bugzilla::Testopia::Util::validate_test_id($case_id, 'case');
+    Testopia::Util::validate_test_id($case_id, 'case');
     trick_taint($case_id);
     return $case_id;
 }
@@ -166,7 +166,7 @@ sub create {
     }
 
     $field_values->{contents} = _validate_data($field_values->{contents});
-    $field_values->{creation_ts} = Bugzilla::Testopia::Util::get_time_stamp();
+    $field_values->{creation_ts} = Testopia::Util::get_time_stamp();
     $field_values->{mime_type} ||= 'application/octet-stream';
 
     my $contents   = $field_values->{contents};
@@ -438,7 +438,7 @@ sub cases {
     my ($self) = @_;
     my $dbh = Bugzilla->dbh;
     
-    require Bugzilla::Testopia::TestCase;
+    require Testopia::TestCase;
     
     return $self->{'cases'} if exists $self->{'cases'};
     my $caseids = $dbh->selectcol_arrayref(
@@ -447,7 +447,7 @@ sub cases {
              undef, $self->id);
     my @cases;
     foreach my $id (@{$caseids}){
-        push @cases, Bugzilla::Testopia::TestCase->new($id);
+        push @cases, Testopia::TestCase->new($id);
     }
 
     $self->{'cases'} = \@cases;
@@ -458,7 +458,7 @@ sub plans {
     my ($self) = @_;
     my $dbh = Bugzilla->dbh;
     
-    require Bugzilla::Testopia::TestPlan;
+    require Testopia::TestPlan;
     
     return $self->{'plans'} if exists $self->{'plans'};
     my $planids = $dbh->selectcol_arrayref(
@@ -467,7 +467,7 @@ sub plans {
              undef, $self->id);
     my @plans;
     foreach my $id (@{$planids}){
-        push @plans, Bugzilla::Testopia::TestPlan->new($id);
+        push @plans, Testopia::TestPlan->new($id);
     }
 
     $self->{'plans'} = \@plans;
@@ -486,7 +486,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Attachment - Attachment object for Testopia
+Testopia::Attachment - Attachment object for Testopia
 
 =head1 EXTENDS
 
@@ -503,10 +503,10 @@ an optional id for the case_run in which it was linked.
 
 =head2 Creating
 
- $attachment = Bugzilla::Testopia::Attachment->new($attachment_id);
- $attachment = Bugzilla::Testopia::Attachment->new({name => $name});
+ $attachment = Testopia::Attachment->new($attachment_id);
+ $attachment = Testopia::Attachment->new({name => $name});
 
- $new_attachment = Bugzilla::Testopia::Attachment->create({name => $name, 
+ $new_attachment = Testopia::Attachment->create({name => $name, 
                                                  description => $desc
                                                  ... });
 
@@ -595,7 +595,7 @@ The ID of the person that uploaded the attachment.
                        or a hash with the "name" key representing the named
                        attachment in the database.
 
- Returns:     A blessed Bugzilla::Testopia::Attachment object
+ Returns:     A blessed Testopia::Attachment object
 
 =item C<candelete()>
 
@@ -787,8 +787,8 @@ The ID of the person that uploaded the attachment.
 
 =over
 
-L<Bugzilla::Testopia::TestCase>
-L<Bugzilla::Testopia::TestPlan> 
+L<Testopia::TestCase>
+L<Testopia::TestPlan> 
 L<Bugzilla::Object> 
 
 =back

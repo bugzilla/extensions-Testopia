@@ -20,7 +20,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::TestTag - A Testopia tag
+Testopia::TestTag - A Testopia tag
 
 =head1 DESCRIPTION
 
@@ -31,14 +31,14 @@ not require administrator privileges to create.
 
 =head1 SYNOPSIS
 
-use Bugzilla::Testopia::TestTag;
+use Testopia::TestTag;
 
- $tag = Bugzilla::Testopia::TestTag->new($tag_id);
- $tag = Bugzilla::Testopia::TestTag->new($tag_hash);
+ $tag = Testopia::TestTag->new($tag_id);
+ $tag = Testopia::TestTag->new($tag_hash);
 
 =cut
 
-package Bugzilla::Testopia::TestTag;
+package Testopia::TestTag;
 
 use strict;
 
@@ -145,7 +145,7 @@ sub check_tag {
               WHERE tag_name = ?",
               undef, lc($name));
     if ($id){
-        return Bugzilla::Testopia::TestTag->new($id);
+        return Testopia::TestTag->new($id);
     }
     else{
         return undef;

@@ -19,7 +19,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 #                 Andrew Nelson <anelson@novell.com>
 
-package Bugzilla::Testopia::Classification;
+package Testopia::Classification;
 
 use strict;
 
@@ -55,7 +55,7 @@ sub user_visible_products {
  
         my @products;
         foreach my $product_id (@$product_ids) {
-            push (@products, new Bugzilla::Testopia::Product($product_id));
+            push (@products, new Testopia::Product($product_id));
         }
         $self->{'user_visible_products'} = \@products;
     }

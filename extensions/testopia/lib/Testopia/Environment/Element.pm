@@ -23,7 +23,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Environment::Element - A test environment element
+Testopia::Environment::Element - A test environment element
 
 =head1 DESCRIPTION
 
@@ -34,19 +34,19 @@ Elements can have child elements.
 
 =head1 SYNOPSIS
 
- $elem = Bugzilla::Testopia::Environment::Element->new($elem_id);
- $elem = Bugzilla::Testopia::Environment::Element->new(\%elem_hash);
+ $elem = Testopia::Environment::Element->new($elem_id);
+ $elem = Testopia::Environment::Element->new(\%elem_hash);
 
 =cut
 
-package Bugzilla::Testopia::Environment::Element;
+package Testopia::Environment::Element;
 
 use strict;
 
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::User;
-use Bugzilla::Testopia::Product;
+use Testopia::Product;
 use JSON;
 
 ###############################
@@ -180,7 +180,7 @@ sub get_child_elements {
     my @children;
 
     foreach my $val (@$ref) {
-        my $child = Bugzilla::Testopia::Environment::Element->new($val);
+        my $child = Testopia::Environment::Element->new($val);
         $child->get_child_elements( 'depth' => $depth );
         push( @children, $child );
     }
@@ -209,7 +209,7 @@ sub get_properties {
     my @properties;
 
     foreach my $val (@$ref) {
-        my $property = Bugzilla::Testopia::Environment::Property->new($val);
+        my $property = Testopia::Environment::Property->new($val);
         push( @properties, $property );
     }
 
@@ -371,7 +371,7 @@ sub store {
 
     # Exclude the auto-incremented field from the column list.
     my $columns = join( ", ", grep { $_ ne 'element_id' } DB_COLUMNS );
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     # Verify name is available
     return undef
@@ -398,7 +398,7 @@ Updates the element in the database
 
 sub set_name {
     my $self      = shift;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     my ($name) = (@_);
 
@@ -421,7 +421,7 @@ Updates the category of the element in the database
 
 sub update_element_category {
     my $self      = shift;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     my ($catid) = (@_);
 
@@ -442,7 +442,7 @@ Updates the parent_id of the element in the database
 
 sub update_element_parent {
     my $self      = shift;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     my ($parent_id) = (@_);
 
@@ -539,7 +539,7 @@ sub get_parent {
         return $self->new( $self->{'parent_id'} );
     }
     else {
-        return Bugzilla::Testopia::Environment::Category->new(
+        return Testopia::Environment::Category->new(
             $self->{'env_category_id'} );
     }
 }
@@ -555,7 +555,7 @@ sub is_parent_a_category {
 sub product {
     my $self = shift;
     return $self->{'product'} if exists $self->{'product'};
-    $self->{'product'} = Bugzilla::Testopia::Product->new( $self->product_id );
+    $self->{'product'} = Testopia::Product->new( $self->product_id );
     return $self->{'product'};
 }
 

@@ -18,11 +18,11 @@
 #
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Testopia::Constants;
+package Testopia::Constants;
 use strict;
 use base qw(Exporter);
 
-@Bugzilla::Testopia::Constants::EXPORT = qw(
+@Testopia::Constants::EXPORT = qw(
 PROPOSED
 CONFIRMED
 DISABLED
@@ -62,7 +62,7 @@ TIME_FORMAT
 #
 # All _id fields but case_id are converted to a string representation.
 #
-@Bugzilla::Testopia::Constants::TESTCASE_EXPORT = qw(
+@Testopia::Constants::TESTCASE_EXPORT = qw(
 case_id
 summary
 set_up

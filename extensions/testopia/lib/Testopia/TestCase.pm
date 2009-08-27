@@ -30,7 +30,7 @@
 #                 Jeff Dayley <jedayley@novell.com>
 #                 M-A Parent <maparent@miranda.com>
 
-package Bugzilla::Testopia::TestCase;
+package Testopia::TestCase;
 
 use strict;
 
@@ -41,19 +41,19 @@ use Bugzilla::Config;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 
-use Bugzilla::Testopia::Constants;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::TestCaseRun;
-use Bugzilla::Testopia::Category;
-use Bugzilla::Testopia::Attachment;
+use Testopia::Constants;
+use Testopia::Util;
+use Testopia::TestPlan;
+use Testopia::TestRun;
+use Testopia::TestCaseRun;
+use Testopia::Category;
+use Testopia::Attachment;
 
 use JSON;
 use Text::Diff;
 
 use base qw(Exporter Bugzilla::Object);
-@Bugzilla::Testopia::TestCase::EXPORT = qw(lookup_status lookup_status_by_name 
+@Testopia::TestCase::EXPORT = qw(lookup_status lookup_status_by_name 
                                        lookup_category lookup_category_by_name
                                        lookup_priority lookup_priority_by_value
                                        lookup_default_tester);
@@ -161,7 +161,7 @@ sub _check_status{
     $status = trim($status);
     my $status_id;
     if ($status =~ /^\d+$/){
-        $status_id = Bugzilla::Testopia::Util::validate_selection($status, 'case_status_id', 'test_case_status');
+        $status_id = Testopia::Util::validate_selection($status, 'case_status_id', 'test_case_status');
     }
     else {
         trick_taint($status);
@@ -177,13 +177,13 @@ sub _check_category{
     my $category_id;
     if (ref $category){
         $product = Bugzilla::Product::check_product($category->{'product'});
-        $category_id = Bugzilla::Testopia::Category::check_case_category($category->{'category'}, $product); 
+        $category_id = Testopia::Category::check_case_category($category->{'category'}, $product); 
     }
     elsif ($category =~ /^\d+$/){
-        $category_id = Bugzilla::Testopia::Util::validate_selection($category, 'category_id', 'test_case_categories');
+        $category_id = Testopia::Util::validate_selection($category, 'category_id', 'test_case_categories');
     }
     else {
-        $category_id = Bugzilla::Testopia::Category::check_case_category($category, $product);
+        $category_id = Testopia::Category::check_case_category($category, $product);
     }
     
     return $category_id;
@@ -195,7 +195,7 @@ sub _check_priority{
     trick_taint($priority);
     my $priority_id;
     if ($priority =~ /^\d+$/){
-        $priority_id = Bugzilla::Testopia::Util::validate_selection($priority, 'id', 'priority');
+        $priority_id = Testopia::Util::validate_selection($priority, 'id', 'priority');
     }
     else {
         $priority_id = lookup_priority_by_value($priority);
@@ -318,7 +318,7 @@ sub _check_dependency{
         my @validvalues;
         foreach my $id (split(/[\s,]+/, $value)) {
             next unless $id;
-            Bugzilla::Testopia::Util::validate_test_id($id, 'case');
+            Testopia::Util::validate_test_id($id, 'case');
             push(@validvalues, $id);
         }
         $value = join(",", @validvalues);
@@ -339,8 +339,8 @@ sub _check_cases {
     my @cases;
     
     foreach my $caseid (split(/[\s,]+/, $caseids)){
-        Bugzilla::Testopia::Util::validate_test_id($caseid, 'case');
-        push @cases, Bugzilla::Testopia::TestCase->new($caseid);
+        Testopia::Util::validate_test_id($caseid, 'case');
+        push @cases, Testopia::TestCase->new($caseid);
     }
     
     return \@cases;
@@ -353,8 +353,8 @@ sub _check_runs {
         $runids = join(',' ,@$runids);
     }
     foreach my $runid (split(/[\s,]+/, $runids)){
-        Bugzilla::Testopia::Util::validate_test_id($runid, 'run');
-        push @runs, Bugzilla::Testopia::TestRun->new($runid);
+        Testopia::Util::validate_test_id($runid, 'run');
+        push @runs, Testopia::TestRun->new($runid);
     }
     return \@runs;
 }
@@ -393,7 +393,7 @@ sub _check_components {
         @comp_ids = split(/[\s,]+/, $components);
     }
     foreach my $id (@comp_ids){
-        Bugzilla::Testopia::Util::validate_selection($id, 'id', 'components');
+        Testopia::Util::validate_selection($id, 'id', 'components');
         trick_taint($id);
         
         if (ref $invocant){
@@ -496,7 +496,7 @@ sub create {
     $class->SUPER::check_required_create_fields($params);
     my $field_values = $class->run_create_validators($params);
     
-    $field_values->{creation_date} = Bugzilla::Testopia::Util::get_time_stamp();
+    $field_values->{creation_date} = Testopia::Util::get_time_stamp();
        
     # We have to handle these fields a bit differently since they have their own tables.
     my $action    = $field_values->{action};
@@ -543,7 +543,7 @@ sub create {
 sub update {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
     
     $self->update_deps($self->{'dependson'}, $self->{'blocks'});
     
@@ -554,7 +554,7 @@ sub update {
     delete $changed->{'sortkey'};
     
     foreach my $field (keys %$changed){
-        Bugzilla::Testopia::Util::log_activity('case', $self->id, $field, $timestamp, 
+        Testopia::Util::log_activity('case', $self->id, $field, $timestamp, 
                                                $changed->{$field}->[0], $changed->{$field}->[1]);
     }
 
@@ -689,7 +689,7 @@ sub get_category_list{
           WHERE product_id IN (". join(",", @{$self->get_product_ids}) .")");
     my @categories;
     foreach my $c (@$ids){
-        push @categories, Bugzilla::Testopia::Category->new($c);
+        push @categories, Testopia::Category->new($c);
     }
     return \@categories;    
 }
@@ -818,7 +818,7 @@ sub add_tag {
     }
 
     foreach my $name (@tags){
-        my $tag = Bugzilla::Testopia::TestTag->create({'tag_name' => $name});
+        my $tag = Testopia::TestTag->create({'tag_name' => $name});
         $tag->attach($self);
     }
 }
@@ -832,7 +832,7 @@ Disassociates a tag from this test case
 sub remove_tag {    
     my $self = shift;
     my ($tag_name) = @_;
-    my $tag = Bugzilla::Testopia::TestTag->check_tag($tag_name);
+    my $tag = Testopia::TestTag->check_tag($tag_name);
     ThrowUserError('testopia-unknown-tag', {'name' => $tag}) unless $tag;
     my $dbh = Bugzilla->dbh;
     $dbh->do("DELETE FROM test_case_tags 
@@ -1156,7 +1156,7 @@ sub store {
     my $dbh = Bugzilla->dbh;    
     # Exclude the auto-incremented field from the column list.
     my $columns = join(", ", grep {$_ ne 'case_id'} DB_COLUMNS);
-    my ($timestamp) = Bugzilla::Testopia::Util::get_time_stamp();
+    my ($timestamp) = Testopia::Util::get_time_stamp();
 
     $dbh->do("INSERT INTO test_cases ($columns) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
               undef,                      ## Database Column ##
@@ -1199,7 +1199,7 @@ sub store_text {
     my $dbh = Bugzilla->dbh;
     my ($key, $author, $action, $effect, $setup, $breakdown, $reset_version, $timestamp) = @_;
     if (!defined $timestamp){
-        ($timestamp) = Bugzilla::Testopia::Util::get_time_stamp();
+        ($timestamp) = Testopia::Util::get_time_stamp();
     }
     trick_taint($action) if $action;
     trick_taint($effect) if $effect;
@@ -1249,7 +1249,7 @@ sub link_plan {
     
     # Update the plans array to include new plan added.
         
-   push @{$self->{'plans'}}, Bugzilla::Testopia::TestPlan->new($plan_id);
+   push @{$self->{'plans'}}, Testopia::TestPlan->new($plan_id);
 
 }
 
@@ -1264,7 +1264,7 @@ sub unlink_plan {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
     my ($plan_id) = @_;
-    my $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
+    my $plan = Testopia::TestPlan->new($plan_id);
 
     if (scalar @{$self->plans} == 1){
         $self->obliterate;
@@ -1304,7 +1304,7 @@ sub copy {
     my ($author, $tester, $copydoc, $category_id) = @_;
     # Exclude the auto-incremented field from the column list.
     my $columns = join(", ", grep {$_ ne 'case_id'} DB_COLUMNS);
-    my ($timestamp) = Bugzilla::Testopia::Util::get_time_stamp();
+    my ($timestamp) = Testopia::Util::get_time_stamp();
     $category_id ||= $self->{'category_id'};
 
     $dbh->do("INSERT INTO test_cases ($columns) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -1481,7 +1481,7 @@ sub update_deps {
             my @validvalues;
             foreach my $id (split(/[\s,]+/, $fields->{$field})) {
                 next unless $id;
-                Bugzilla::Testopia::Util::validate_test_id($id, 'case');
+                Testopia::Util::validate_test_id($id, 'case');
                 push(@validvalues, $id);
             }
             $fields->{$field} = join(",", @validvalues);
@@ -1758,7 +1758,7 @@ sub can_unlink_plan {
     my $self = shift;
     my ($plan_id) = @_;
     
-    my $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
+    my $plan = Testopia::TestPlan->new($plan_id);
     return 1 if Bugzilla->user->in_group('admin');
     return 1 if Bugzilla->user->in_group('Testers') && Bugzilla->params->{"testopia-allow-group-member-deletes"};
     return 1 if $plan->get_user_rights(Bugzilla->user->id) & TR_DELETE;
@@ -1883,7 +1883,7 @@ sub attachments {
     
     my @attachments;
     foreach my $attach (@{$attachments}){
-        push @attachments, Bugzilla::Testopia::Attachment->new($attach);
+        push @attachments, Testopia::Attachment->new($attach);
     }
     $self->{'attachments'} = \@attachments;
     return $self->{'attachments'};
@@ -1955,7 +1955,7 @@ Returns the category name based on the category_id of this case
 sub category {
     my $self = shift;
     return $self->{'category'} if exists $self->{'category'};
-    $self->{'category'} = Bugzilla::Testopia::Category->new($self->{'category_id'});
+    $self->{'category'} = Testopia::Category->new($self->{'category_id'});
     return $self->{'category'};
 }
 
@@ -1991,7 +1991,7 @@ sub components {
 
 =head2 tags
 
-Returns a reference to a list of Bugzilla::Testopia::TestTag objects 
+Returns a reference to a list of Testopia::TestTag objects 
 associated with this case.
 
 =cut
@@ -2008,7 +2008,7 @@ sub tags {
                                           undef, $self->{'case_id'});
     my @tags;
     foreach my $id (@{$tagids}){
-        push @tags, Bugzilla::Testopia::TestTag->new($id);
+        push @tags, Testopia::TestTag->new($id);
     }
     $self->{'tags'} = \@tags;
     return $self->{'tags'};
@@ -2016,7 +2016,7 @@ sub tags {
 
 =head2 plans
 
-Returns a reference to a list of Bugzilla::Testopia::TestPlan objects 
+Returns a reference to a list of Testopia::TestPlan objects 
 associated with this case.
 
 =cut
@@ -2031,7 +2031,7 @@ sub plans {
                                        undef, $self->{'case_id'});
     my @plans;
     foreach my $id (@{$ref}){
-        push @plans, Bugzilla::Testopia::TestPlan->new($id);
+        push @plans, Testopia::TestPlan->new($id);
     }
     $self->{'plans'} = \@plans;
     return $self->{'plans'};
@@ -2058,7 +2058,7 @@ sub bugs {
         next unless Bugzilla->user->can_see_bug($row->{'bug_id'});
         my $bug = Bugzilla::Bug->new($row->{'bug_id'}, Bugzilla->user->id);
         if ($row->{'case_run_id'}){
-            my $cr = Bugzilla::Testopia::TestCaseRun->new($row->{'case_run_id'});
+            my $cr = Testopia::TestCaseRun->new($row->{'case_run_id'});
             next unless $cr;
             $bug->{'build'} = $cr->build->name;
             $bug->{'env'} = $cr->environment->name;
@@ -2127,7 +2127,7 @@ sub text {
 
 =head2 runs
 
-Returns a reference to a list of Bugzilla::Testopia::TestRun objects 
+Returns a reference to a list of Testopia::TestRun objects 
 associated with this case.
 
 =cut
@@ -2144,7 +2144,7 @@ sub runs {
        undef, $self->{'case_id'});
     my @runs;
     foreach my $id (@{$ref}){
-        push @runs, Bugzilla::Testopia::TestRun->new($id);
+        push @runs, Testopia::TestRun->new($id);
     }
     $self->{'runs'} = \@runs;
     return $self->{'runs'};
@@ -2163,7 +2163,7 @@ sub run_count {
 
 =head2 caseruns
 
-Returns a reference to a list of Bugzilla::Testopia::TestCaseRun objects 
+Returns a reference to a list of Testopia::TestCaseRun objects 
 associated with this case.
 
 =cut
@@ -2178,7 +2178,7 @@ sub caseruns {
                                         undef, $self->{'case_id'});
     my @runs;
     foreach my $id (@{$ref}){
-        push @runs, Bugzilla::Testopia::TestCaseRun->new($id);
+        push @runs, Testopia::TestCaseRun->new($id);
     }
     $self->{'caseruns'} = \@runs;
     return $self->{'caseruns'};
@@ -2195,7 +2195,7 @@ sub sortkey {
 
 =head2 blocked
 
-Returns a reference to a list of Bugzilla::Testopia::TestCase objects 
+Returns a reference to a list of Testopia::TestCase objects 
 which are blocked by this test case.
 
 =cut
@@ -2206,7 +2206,7 @@ sub blocked {
     my @deps;
     my $ref = _get_dep_lists("dependson", "blocked", $self->{'case_id'});
     foreach my $id (@{$ref}){
-        push @deps, Bugzilla::Testopia::TestCase->new($id);
+        push @deps, Testopia::TestCase->new($id);
     }
     $self->{'blocked'} = \@deps;
     return $self->{'blocked'};
@@ -2237,7 +2237,7 @@ sub blocked_list_uncached {
 
 =head2 dependson
 
-Returns a reference to a list of Bugzilla::Testopia::TestCase objects 
+Returns a reference to a list of Testopia::TestCase objects 
 which depend on this test case.
 
 =cut
@@ -2248,7 +2248,7 @@ sub dependson {
     my @deps;
     my $ref = _get_dep_lists("blocked", "dependson", $self->{'case_id'});
     foreach my $id (@{$ref}){
-        push @deps, Bugzilla::Testopia::TestCase->new($id);
+        push @deps, Testopia::TestCase->new($id);
     }
     $self->{'dependson'} = \@deps;
     return $self->{'dependson'};
@@ -2320,7 +2320,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::TestCase - Testopia Test Case object
+Testopia::TestCase - Testopia Test Case object
 
 =head1 DESCRIPTION
 
@@ -2329,10 +2329,10 @@ be linked to one or more test plans.
 
 =head1 SYNOPSIS
 
-use Bugzilla::Testopia::TestCase;
+use Testopia::TestCase;
 
- $case = Bugzilla::Testopia::TestCase->new($case_id);
- $case = Bugzilla::Testopia::TestCase->new(\%case_hash);
+ $case = Testopia::TestCase->new($case_id);
+ $case = Testopia::TestCase->new(\%case_hash);
 
 =cut
 

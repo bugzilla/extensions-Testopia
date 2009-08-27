@@ -22,7 +22,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Util
+Testopia::Util
 
 =head1 DESCRIPTION
 
@@ -31,12 +31,12 @@ It exports all of these functions using Exporter.
 
 =cut
 
-package Bugzilla::Testopia::Util;
+package Testopia::Util;
 
 use strict;
 
 use base qw(Exporter);
-@Bugzilla::Testopia::Util::EXPORT = qw(get_test_field_id get_time_stamp 
+@Testopia::Util::EXPORT = qw(get_test_field_id get_time_stamp 
                                        validate_test_id validate_selection
                                        support_server_push process_list
                                        percentage);
@@ -46,7 +46,7 @@ use Bugzilla::Config;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 use Bugzilla::Util;
-#use Bugzilla::Testopia::TestPlan;
+#use Testopia::TestPlan;
 
 ### Methods ###
 
@@ -193,7 +193,7 @@ sub log_activity {
     $timestamp ||= get_time_stamp();
     
     trick_taint($newvalue) if defined $newvalue;
-    my $field_id = Bugzilla::Testopia::Util::get_test_field_id($field, "test_". $type ."s");
+    my $field_id = Testopia::Util::get_test_field_id($field, "test_". $type ."s");
     $dbh->do("INSERT INTO test_". $type ."_activity 
               (". $type . "_id, fieldid, who, changed, oldvalue, newvalue)
                    VALUES(?,?,?,?,?,?)",

@@ -32,7 +32,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Search - A module to support searches in Testopis
+Testopia::Search - A module to support searches in Testopis
 
 =head1 DESCRIPTION
 
@@ -46,11 +46,11 @@ on one column at a time in ascending order.
 
 =head1 SYNOPSIS
 
- $search = Bugzilla::Testopia::Search($cgi);
+ $search = Testopia::Search($cgi);
 
 =cut
 
-package Bugzilla::Testopia::Search;
+package Testopia::Search;
 
 use strict;
 
@@ -58,8 +58,8 @@ use Bugzilla::Util;
 use Bugzilla::User;
 use Bugzilla::Config;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestCase;
+use Testopia::Util;
+use Testopia::TestCase;
 
 use Date::Format;
 use Date::Parse;
@@ -119,7 +119,7 @@ sub init {
         my @plan_ids = split(',',$cgi->param('plan_ids'));
         my @plans;
         foreach my $p (@plan_ids){
-            my $plan = Bugzilla::Testopia::TestPlan->new(trim($p));
+            my $plan = Testopia::TestPlan->new(trim($p));
             push @plans, $plan->id if $plan && $plan->canview;
         }
         my $plans = join(',',@plans);

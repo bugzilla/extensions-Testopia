@@ -18,17 +18,17 @@
 #
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Testopia::Build;
+package Testopia::Build;
 
 use strict;
 
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Product;
+use Testopia::Product;
 use JSON;
 
 use base qw(Exporter Bugzilla::Object);
-@Bugzilla::Testopia::Build::EXPORT = qw(check_build);
+@Testopia::Build::EXPORT = qw(check_build);
 
 ###############################
 ####    Initialization     ####
@@ -67,7 +67,7 @@ sub _check_product {
         $product = Bugzilla::Product::check_product($product_id);
     }
     else {
-        $product = Bugzilla::Testopia::Product->new($product_id);
+        $product = Testopia::Product->new($product_id);
     }
     
     if (ref $invocant){
@@ -196,7 +196,7 @@ sub check_build {
          undef, $name, $product->id);
     if ($throw){
         ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $name}) unless $is;
-        return Bugzilla::Testopia::Build->new($is);
+        return Testopia::Build->new($is);
     }
     return $is;
 }
@@ -250,7 +250,7 @@ sub product {
     
     return $self->{'product'} if exists $self->{'product'};
 
-    $self->{'product'} = Bugzilla::Testopia::Product->new($self->product_id);
+    $self->{'product'} = Testopia::Product->new($self->product_id);
     return $self->{'product'};
 }
 
@@ -299,14 +299,14 @@ sub runs {
     my $dbh = Bugzilla->dbh;
     return $self->{'runs'} if exists $self->{'runs'};
     
-    require Bugzilla::Testopia::TestRun;
+    require Testopia::TestRun;
     
     my $runids = $dbh->selectcol_arrayref("SELECT run_id FROM test_runs
                                           WHERE build_id = ?", 
                                           undef, $self->id);
     my @runs;
     foreach my $id (@{$runids}){
-        push @runs, Bugzilla::Testopia::TestRun->new($id);
+        push @runs, Testopia::TestRun->new($id);
     }
     
     $self->{'runs'} = \@runs;
@@ -324,14 +324,14 @@ sub caseruns {
     my $dbh = Bugzilla->dbh;
     return $self->{'caseruns'} if exists $self->{'caseruns'};
     
-    require Bugzilla::Testopia::TestCaseRun;
+    require Testopia::TestCaseRun;
 
     my $ids = $dbh->selectcol_arrayref("SELECT case_run_id FROM test_case_runs
                                           WHERE build_id = ?", 
                                           undef, $self->id);
     my @caseruns;
     foreach my $id (@{$ids}){
-        push @caseruns, Bugzilla::Testopia::TestCaseRun->new($id);
+        push @caseruns, Testopia::TestCaseRun->new($id);
     }
     
     $self->{'caseruns'} = \@caseruns;
@@ -344,7 +344,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Build
+Testopia::Build
 
 =head1 EXTENDS
 
@@ -360,10 +360,10 @@ and are associated with a milestone if targetmilestones are used in Bugzilla.
 
 =head2 Creating
 
- $build = Bugzilla::Testopia::Build->new($build_id);
- $build = Bugzilla::Testopia::Build->new({name => $name});
+ $build = Testopia::Build->new($build_id);
+ $build = Testopia::Build->new({name => $name});
 
- $new_build = Bugzilla::Testopia::Build->create({name => $name, 
+ $new_build = Testopia::Build->create({name => $name, 
                                                  description => $desc
                                                  ... });
 
@@ -457,7 +457,7 @@ Boolean - Determines whether to show this build in lists for selection.
                        or a hash with the "name" key representing the named
                        build in the database.
 
- Returns:     A blessed Bugzilla::Testopia::Build object
+ Returns:     A blessed Testopia::Build object
 
 =item C<create()>
 
@@ -551,7 +551,7 @@ Boolean - Determines whether to show this build in lists for selection.
 
 =item C<product()>
 
- Returns a Bugzilla::Testopia::Product object of the product this build is of.
+ Returns a Testopia::Product object of the product this build is of.
 
 =item C<product_id()>
 
@@ -573,8 +573,8 @@ Boolean - Determines whether to show this build in lists for selection.
 
 =over
 
-L<Bugzilla::Testopia::Product>
-L<Bugzilla::Testopia::TestRun> 
+L<Testopia::Product>
+L<Testopia::TestRun> 
 L<Bugzilla::Object> 
 
 =back

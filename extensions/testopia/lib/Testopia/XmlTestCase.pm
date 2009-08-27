@@ -20,38 +20,38 @@
 #                 Jeff Dayley <jedayley@novell.com>
 #                 Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Testopia::XmlTestCase;
+package Testopia::XmlTestCase;
 #use fields qw(testplans testcases tags categories builds);
 
 use strict;
 
 use Bugzilla::Product;
-use Bugzilla::Testopia::Attachment;
-use Bugzilla::Testopia::Build;
-use Bugzilla::Testopia::Category;
-use Bugzilla::Testopia::TestCase;
-use Bugzilla::Testopia::TestPlan;
-use Bugzilla::Testopia::TestRun;
-use Bugzilla::Testopia::TestTag;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::XmlReferences;
-use Bugzilla::Testopia::Product;
+use Testopia::Attachment;
+use Testopia::Build;
+use Testopia::Category;
+use Testopia::TestCase;
+use Testopia::TestPlan;
+use Testopia::TestRun;
+use Testopia::TestTag;
+use Testopia::Util;
+use Testopia::XmlReferences;
+use Testopia::Product;
 use Bugzilla::User;
 use Bugzilla::Util;
 
 use Class::Struct;
 
 struct(
-    'Bugzilla::Testopia::XmlTestCase',
+    'Testopia::XmlTestCase',
     {
         attachments                => '@',
-        blocks                     => 'Bugzilla::Testopia::XmlReferences',
+        blocks                     => 'Testopia::XmlReferences',
         category                   => '$',
         component_ids              => '@',
-        dependson                  => 'Bugzilla::Testopia::XmlReferences',
+        dependson                  => 'Testopia::XmlReferences',
         tags                       => '@',
         testcase                   => '$',
-        testplan                   => 'Bugzilla::Testopia::XmlReferences',
+        testplan                   => 'Testopia::XmlReferences',
     }
 );
 
@@ -96,7 +96,7 @@ sub add_component {
     return "Cannot find product $component_product for component $component." if ( $product_id eq "" );
     
     # Find the component identifier for the product's componet
-    my $product = Bugzilla::Testopia::Product->new($product_id);
+    my $product = Testopia::Product->new($product_id);
     my $components_ref = $product->components;
     foreach my $product_component ( @$components_ref ) {
         if ( $component eq $product_component->name ) {
@@ -181,24 +181,24 @@ sub get_testcase_ids {
     my ($self, $field, @new_testcases) = @_;
     my $error_message = "";
     
-    my @testcase_id = @{$self->$field->get(uc $Bugzilla::Testopia::Xml::DATABASE_ID)};
+    my @testcase_id = @{$self->$field->get(uc $Testopia::Xml::DATABASE_ID)};
     
-    foreach my $testcase_summary ( @{$self->$field->get(uc $Bugzilla::Testopia::Xml::XML_DESCRIPTION)} ) {
+    foreach my $testcase_summary ( @{$self->$field->get(uc $Testopia::Xml::XML_DESCRIPTION)} ) {
         foreach my $testcase (@new_testcases) {
             push @testcase_id, $testcase->testcase->{'case_id'} if ( $testcase->testcase->{'summary'} eq $testcase_summary );
         }
     }
     
     #TODO Testplans using Database_Description
-    foreach my $testcase_summary ( @{$self->$field->get(uc $Bugzilla::Testopia::Xml::DATABASE_DESCRIPTION)} ) {
+    foreach my $testcase_summary ( @{$self->$field->get(uc $Testopia::Xml::DATABASE_DESCRIPTION)} ) {
             $error_message .= "\n" if  ( $error_message ne "" );
-            $error_message .= "Have not implemented code for $Bugzilla::Testopia::Xml::DATABASE_DESCRIPTION lookup for blocking test case " . $testcase_summary . "' for Test Case '". $self->testcase->summary . "'.";
+            $error_message .= "Have not implemented code for $Testopia::Xml::DATABASE_DESCRIPTION lookup for blocking test case " . $testcase_summary . "' for Test Case '". $self->testcase->summary . "'.";
     }
     return $error_message if ( $error_message ne "" );
     
     my @return_testcase_id;
     foreach my $testcase_id (@testcase_id) {
-        my $testcase = Bugzilla::Testopia::TestCase->new($testcase_id);
+        my $testcase = Testopia::TestCase->new($testcase_id);
         if ( ! defined($testcase) ) {
             $error_message .= "\n" if  ( $error_message ne "" );
             $error_message .= "Could not find blocking Test Case '" . $testcase_id . "' for Test Case '". $self->testcase->summary . "'.";
@@ -215,22 +215,22 @@ sub get_testcase_ids {
 sub store {
     my ($self, @new_testplans) = @_;
     my $error_message = "";
-    my @testplan_id = @{$self->testplan->get(uc $Bugzilla::Testopia::Xml::DATABASE_ID)};
+    my @testplan_id = @{$self->testplan->get(uc $Testopia::Xml::DATABASE_ID)};
     
     # If we have any references to test plans from the XML data we need to search the @new_testplans
     # array to find the actual test plan id.  The new_testplans array contains all test plans created
     # from the XML.
     # Order of looping does not matter, number of test plans associated to each test case should be small.
-    foreach my $testplan_name ( @{$self->testplan->get(uc $Bugzilla::Testopia::Xml::XML_DESCRIPTION)} ) {
+    foreach my $testplan_name ( @{$self->testplan->get(uc $Testopia::Xml::XML_DESCRIPTION)} ) {
         foreach my $testplan (@new_testplans) {
             push @testplan_id, $testplan->id() if ( $testplan->name() eq $testplan_name );
         }
     }
     
     #TODO Testplans using Database_Description
-    foreach my $testplan_name ( @{$self->testplan->get(uc $Bugzilla::Testopia::Xml::DATABASE_DESCRIPTION)} ) {
+    foreach my $testplan_name ( @{$self->testplan->get(uc $Testopia::Xml::DATABASE_DESCRIPTION)} ) {
             $error_message .= "\n" if  ( $error_message ne "" );
-            $error_message .= "Have not implemented code for $Bugzilla::Testopia::Xml::DATABASE_DESCRIPTION lookup of test plan " . $testplan_name . "' for Test Case '". $self->testcase->{'summary'} . "'.";
+            $error_message .= "Have not implemented code for $Testopia::Xml::DATABASE_DESCRIPTION lookup of test plan " . $testplan_name . "' for Test Case '". $self->testcase->{'summary'} . "'.";
     }
     return $error_message if ( $error_message ne "" );
     
@@ -240,7 +240,7 @@ sub store {
     # Verify that each testplan exists.
     my @testplan;
     foreach my $testplan_id (@testplan_id) {
-        my $testplan = Bugzilla::Testopia::TestPlan->new($testplan_id);
+        my $testplan = Testopia::TestPlan->new($testplan_id);
         if ( ! defined($testplan) ) {
             $error_message .= "\n" if  ( $error_message ne "" );
             $error_message .= "Could not find Test Plan '" . $testplan_id . "' for Test Case '". $self->testcase->{'summary'} . "'.";
@@ -256,9 +256,9 @@ sub store {
     foreach my $testplan (@testplan) {
         my $category = $testplan->product->categories->[0];
 
-        my $categoryid = check_case_category($self->category, new Bugzilla::Testopia::Product($testplan->product_id)) if ( defined($category) );
+        my $categoryid = check_case_category($self->category, new Testopia::Product($testplan->product_id)) if ( defined($category) );
         if ( ! defined($categoryid) ) {
-            my $new_category = Bugzilla::Testopia::Category->create({
+            my $new_category = Testopia::Category->create({
                 product_id  => $testplan->product_id,
                 name        => $self->category,
                 description => "FIX ME.  Created during Test Plan import."
@@ -268,11 +268,11 @@ sub store {
         $self->testcase->{'category_id'} = $categoryid if ( ! defined($self->testcase->{'category_id'}) );
     }
     $self->testcase->{plans} = \@testplan;
-    my $case = Bugzilla::Testopia::TestCase->create($self->testcase); 
+    my $case = Testopia::TestCase->create($self->testcase); 
     $self->testcase->{'case_id'} = $case->id;
     foreach my $attachment ( @{$self->attachments} ) {
         $attachment->{'case_id'} = $case->id;
-        $attachment = Bugzilla::Testopia::Attachment->create($attachment);
+        $attachment = Testopia::Attachment->create($attachment);
     }
     foreach my $asciitag ( @{$self->tags} ) {
         $case->add_tag($asciitag);
@@ -292,7 +292,7 @@ sub store {
 sub store_relationships {
     my ($self, @new_testcases) = @_;
     return unless $self->testcase->{'case_id'}; 
-    my $testcase = Bugzilla::Testopia::TestCase->new($self->testcase->{'case_id'});
+    my $testcase = Testopia::TestCase->new($self->testcase->{'case_id'});
 
     # Hashes are used because the entires in blocks and dependson must be unique.
     my %blocks = ();
@@ -330,7 +330,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::XmlTestCase
+Testopia::XmlTestCase
 
 =head1 DESCRIPTION
 
@@ -341,7 +341,7 @@ structure stores these references to be used during verfication and writting to 
 
 =head1 SYNOPSIS
 
- $testcase = Bugzilla::Testopia::XMLTestcase->new($case_hash_ref);
+ $testcase = Testopia::XMLTestcase->new($case_hash_ref);
  
  $testcase->store();
  
@@ -380,7 +380,7 @@ Hash representation of the test case that will be created.
 
 =item C<testplan>
 
-Bugzilla::Testopia::XmlReferences of plans to link to this test case
+Testopia::XmlReferences of plans to link to this test case
 
 =back
 
@@ -459,7 +459,7 @@ Bugzilla::Testopia::XmlReferences of plans to link to this test case
  
 =item C<get_available_products()>
  
- Description: Returns a list of products.  This is the same code as Bugzilla::Testopia::TestPlan->get_available_products
+ Description: Returns a list of products.  This is the same code as Testopia::TestPlan->get_available_products
               without view restrictions.
  
  Params:      None.
@@ -472,11 +472,11 @@ Bugzilla::Testopia::XmlReferences of plans to link to this test case
 
 =over
 
-L<Bugzilla::Testopia::TestCase> 
+L<Testopia::TestCase> 
 
-L<Bugzilla::Testopia::Xml>
+L<Testopia::Xml>
 
-L<Bugzilla::Testopia::XmlReferences> 
+L<Testopia::XmlReferences> 
 
 =back
 

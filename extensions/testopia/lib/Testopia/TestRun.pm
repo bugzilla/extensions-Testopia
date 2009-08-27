@@ -20,7 +20,7 @@
 #                 Ed Fuentetaja <efuentetaja@acm.org>
 #                 Joel Smith <jsmith@novell.com>
 
-package Bugzilla::Testopia::TestRun;
+package Testopia::TestRun;
 
 use strict;
 
@@ -31,15 +31,15 @@ use Bugzilla::Constants;
 use Bugzilla::Bug;
 use Bugzilla::Config;
 
-use Bugzilla::Testopia::Constants;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Build;
+use Testopia::Constants;
+use Testopia::Environment;
+use Testopia::Build;
 
 use JSON;
 use Date::Parse;
 use base qw(Exporter Bugzilla::Object);
 
-@Bugzilla::Testopia::TestRun::EXPORT = qw(calculate_percent);
+@Testopia::TestRun::EXPORT = qw(calculate_percent);
 
 ###############################
 ####    Initialization     ####
@@ -110,7 +110,7 @@ sub _check_plan {
     my ($invocant, $plan_id) = @_;
     trick_taint($plan_id);
     ThrowUserError('testopia-missing-required-field', {'field' => 'plan'}) unless $plan_id;
-    Bugzilla::Testopia::Util::validate_test_id($plan_id, 'plan');
+    Testopia::Util::validate_test_id($plan_id, 'plan');
     return $plan_id;
 }
 
@@ -118,7 +118,7 @@ sub _check_env {
     my ($invocant, $env_id) = @_;
     trick_taint($env_id);
     ThrowUserError('testopia-missing-required-field', {'field' => 'environment'}) unless $env_id;
-    Bugzilla::Testopia::Util::validate_test_id($env_id, 'environment');
+    Testopia::Util::validate_test_id($env_id, 'environment');
     return $env_id;
 }
 
@@ -126,7 +126,7 @@ sub _check_build {
     my ($invocant, $build_id) = @_;
     trick_taint($build_id);
     ThrowUserError('testopia-missing-required-field', {'field' => 'build'}) unless $build_id;
-    Bugzilla::Testopia::Util::validate_test_id($build_id, 'build');
+    Testopia::Util::validate_test_id($build_id, 'build');
     return $build_id;
 }
 
@@ -230,7 +230,7 @@ sub new {
 sub run_create_validators {
     my $class  = shift;
     my $params = $class->SUPER::run_create_validators(@_);
-    my $plan = Bugzilla::Testopia::TestPlan->new($params->{plan_id});
+    my $plan = Testopia::TestPlan->new($params->{plan_id});
     
     $params->{product_version} = $class->_check_product_version($params->{product_version}, $plan->product);
     
@@ -239,13 +239,13 @@ sub run_create_validators {
 
 sub create {
     my ($class, $params) = @_;
-    require Bugzilla::Testopia::TestPlan;
+    require Testopia::TestPlan;
     
     $class->SUPER::check_required_create_fields($params);
     my $field_values = $class->run_create_validators($params);
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
     $field_values->{start_date} = $timestamp; 
-    $field_values->{stop_date} = Bugzilla::Testopia::Util::get_time_stamp() if $field_values->{status} == 0;  
+    $field_values->{stop_date} = Testopia::Util::get_time_stamp() if $field_values->{status} == 0;  
     delete $field_values->{status};
     
     my $self = $class->SUPER::insert_create_data($field_values);
@@ -256,14 +256,14 @@ sub create {
 sub update {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     $dbh->bz_start_transaction();
     
     my $changed = $self->SUPER::update();
 
     foreach my $field (keys %$changed){
-        Bugzilla::Testopia::Util::log_activity('run', $self->id, $field, $timestamp, $changed->{$field}->[0], $changed->{$field}->[1]);
+        Testopia::Util::log_activity('run', $self->id, $field, $timestamp, $changed->{$field}->[0], $changed->{$field}->[1]);
     }
 
     $dbh->bz_commit_transaction();
@@ -350,7 +350,7 @@ sub add_tag {
     }
 
     foreach my $name (@tags){
-        my $tag = Bugzilla::Testopia::TestTag->create({'tag_name' => $name});
+        my $tag = Testopia::TestTag->create({'tag_name' => $name});
         $tag->attach($self);
     }
 }
@@ -364,7 +364,7 @@ Disassociates a tag from this test run
 sub remove_tag {    
     my $self = shift;
     my ($tag_name) = @_;
-    my $tag = Bugzilla::Testopia::TestTag->check_tag($tag_name);
+    my $tag = Testopia::TestTag->check_tag($tag_name);
     ThrowUserError('testopia-unknown-tag', {'name' => $tag}) unless $tag;
     my $dbh = Bugzilla->dbh;
     $dbh->do("DELETE FROM test_run_tags 
@@ -386,12 +386,12 @@ sub add_case_run {
     $status ||=IDLE;
     trick_taint($case_id);
     return 0 if $self->check_case($case_id);
-    my $case = Bugzilla::Testopia::TestCase->new($case_id);
+    my $case = Testopia::TestCase->new($case_id);
     $sortkey = $case->sortkey unless $sortkey;
 
     return 0 if $case->status ne 'CONFIRMED';
     my $assignee = $case->default_tester ? $case->default_tester->id : undef;
-    my $caserun = Bugzilla::Testopia::TestCaseRun->create({
+    my $caserun = Testopia::TestCaseRun->create({
         'run_id'     => $self->{'run_id'},
         'case_id'    => $case_id,
         'assignee'   => $assignee,
@@ -416,7 +416,7 @@ sub store {
     my $dbh = Bugzilla->dbh;
     # Exclude the auto-incremented field from the column list.
     my $columns = join(", ", grep {$_ ne 'run_id'} DB_COLUMNS);
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     $dbh->do("INSERT INTO test_runs ($columns) VALUES (?,?,?,?,?,?,?,?,?,?)",
               undef, ($self->{'plan_id'}, $self->{'environment_id'},
@@ -455,7 +455,7 @@ sub clone {
     my $dbh = Bugzilla->dbh;
     # Exclude the auto-incremented field from the column list.
     my $columns = join(", ", grep {$_ ne 'run_id'} DB_COLUMNS);
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     $dbh->do("INSERT INTO test_runs ($columns) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
               undef, ($plan_id, $env_id,
@@ -702,7 +702,7 @@ sub filter_case_categories {
     
     my @categories;
     foreach my $id (@$ids){
-        push @categories, Bugzilla::Testopia::Category->new($id);
+        push @categories, Testopia::Category->new($id);
     }
     
     return \@categories;
@@ -722,7 +722,7 @@ sub filter_builds {
     
     my @builds;
     foreach my $id (@$ids){
-        push @builds, Bugzilla::Testopia::Build->new($id);
+        push @builds, Testopia::Build->new($id);
     }
     return \@builds;
 }
@@ -766,7 +766,7 @@ sub environments {
     
     my @environments;
     foreach my $id (@{$environments}){
-        push @environments, Bugzilla::Testopia::Environment->new($id);
+        push @environments, Testopia::Environment->new($id);
     }
     $self->{'environments'} = \@environments;
     return $self->{'environments'};
@@ -1043,8 +1043,8 @@ is assoceated with
 sub plan {
     my $self = shift;
     return $self->{'plan'} if exists $self->{'plan'};
-    require Bugzilla::Testopia::TestPlan;
-    $self->{'plan'} = Bugzilla::Testopia::TestPlan->new($self->{'plan_id'});
+    require Testopia::TestPlan;
+    $self->{'plan'} = Testopia::TestPlan->new($self->{'plan_id'});
     return $self->{'plan'};
 }
 
@@ -1067,7 +1067,7 @@ sub tags {
                                           undef, $self->{'run_id'});
     my @tags;
     foreach my $t (@{$tagids}){
-        push @tags, Bugzilla::Testopia::TestTag->new($t);
+        push @tags, Testopia::TestTag->new($t);
     }
     $self->{'tags'} = \@tags;
     return $self->{'tags'};
@@ -1083,7 +1083,7 @@ this run is assoceated with
 sub environment {
     my $self = shift;
     return $self->{'environment'} if exists $self->{'environment'};
-    $self->{'environment'} = Bugzilla::Testopia::Environment->new($self->{'environment_id'});
+    $self->{'environment'} = Testopia::Environment->new($self->{'environment_id'});
     return $self->{'environment'};
     
 }
@@ -1098,7 +1098,7 @@ is assoceated with
 sub build {
     my $self = shift;
     return $self->{'build'} if exists $self->{'build'};
-    $self->{'build'} = Bugzilla::Testopia::Build->new($self->{'build_id'});
+    $self->{'build'} = Testopia::Build->new($self->{'build_id'});
     return $self->{'build'};
     
 }
@@ -1173,7 +1173,7 @@ sub cases {
     return $self->{'cases'} if exists $self->{'cases'};
     my @cases;
     foreach my $cr (@{$self->current_caseruns}){
-        push @cases, Bugzilla::Testopia::TestCase->new($cr->case_id);
+        push @cases, Testopia::TestCase->new($cr->case_id);
     }
     $self->{'cases'} = \@cases;
     return $self->{'cases'};
@@ -1400,7 +1400,7 @@ sub current_caseruns {
     my $dbh = Bugzilla->dbh;
     return $self->{'current_caseruns'} if exists $self->{'current_caseruns'};
     
-    require Bugzilla::Testopia::TestCaseRun;
+    require Testopia::TestCaseRun;
     
     my $ref = $dbh->selectcol_arrayref(
         "SELECT case_run_id FROM test_case_runs
@@ -1409,7 +1409,7 @@ sub current_caseruns {
     my @caseruns;
     
     foreach my $id (@{$ref}){
-        push @caseruns, Bugzilla::Testopia::TestCaseRun->new($id);
+        push @caseruns, Testopia::TestCaseRun->new($id);
     }
     $self->{'current_caseruns'} = \@caseruns;
     return $self->{'current_caseruns'};
@@ -1427,7 +1427,7 @@ sub caseruns {
     my $dbh = Bugzilla->dbh;
     return $self->{'caseruns'} if exists $self->{'caseruns'};
     
-    require Bugzilla::Testopia::TestCaseRun;
+    require Testopia::TestCaseRun;
     
     my $ref = $dbh->selectcol_arrayref(
         "SELECT case_run_id FROM test_case_runs
@@ -1435,7 +1435,7 @@ sub caseruns {
     my @caseruns;
     
     foreach my $id (@{$ref}){
-        push @caseruns, Bugzilla::Testopia::TestCaseRun->new($id);
+        push @caseruns, Testopia::TestCaseRun->new($id);
     }
     $self->{'caseruns'} = \@caseruns;
     return $self->{'caseruns'};
@@ -1473,7 +1473,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::TestRun - Testopia Test Run object
+Testopia::TestRun - Testopia Test Run object
 
 =head1 DESCRIPTION
 
@@ -1484,10 +1484,10 @@ case-runs.
 
 =head1 SYNOPSIS
 
-use Bugzilla::Testopia::TestRun;
+use Testopia::TestRun;
 
- $run = Bugzilla::Testopia::TestRun->new($run_id);
- $run = Bugzilla::Testopia::TestRun->new(\%run_hash);
+ $run = Testopia::TestRun->new($run_id);
+ $run = Testopia::TestRun->new(\%run_hash);
 
 =cut
 

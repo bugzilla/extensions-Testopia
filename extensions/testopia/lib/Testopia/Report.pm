@@ -23,7 +23,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Report - Generates report data.
+Testopia::Report - Generates report data.
 
 =head1 DESCRIPTION
 
@@ -38,15 +38,15 @@ Reports
 
 =cut
 
-package Bugzilla::Testopia::Report;
+package Testopia::Report;
 
 use strict;
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Error;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Search;
+use Testopia::Util;
+use Testopia::Search;
 
 
 ###############################
@@ -200,7 +200,7 @@ sub init {
     $cgi->param('viewall', 1);
     
     my $dbh = Bugzilla->switch_to_shadow_db;
-    my $search = Bugzilla::Testopia::Search->new($cgi, \@selectnames);
+    my $search = Testopia::Search->new($cgi, \@selectnames);
     my $results = $dbh->selectall_arrayref($search->query);
     $dbh = Bugzilla->switch_to_main_db;
     

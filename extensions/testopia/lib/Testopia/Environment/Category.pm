@@ -23,7 +23,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Environment::Category - A test element category
+Testopia::Environment::Category - A test element category
 
 =head1 DESCRIPTION
 
@@ -31,12 +31,12 @@ Categories are used to organize environment elements.
 
 =head1 SYNOPSIS
 
- $prop = Bugzilla::Testopia::Environment::Category->new($env_category_id);
- $prop = Bugzilla::Testopia::Environment::Category->new(\%cat_hash);
+ $prop = Testopia::Environment::Category->new($env_category_id);
+ $prop = Testopia::Environment::Category->new(\%cat_hash);
 
 =cut
 
-package Bugzilla::Testopia::Environment::Category;
+package Testopia::Environment::Category;
 
 use strict;
 
@@ -45,8 +45,8 @@ use Bugzilla::Error;
 use Bugzilla::Config;
 use Bugzilla::User;
 use Bugzilla::Constants;
-use Bugzilla::Testopia::Environment::Element;
-use Bugzilla::Testopia::Product;
+use Testopia::Environment::Element;
+use Testopia::Product;
 
 ###############################
 ####    Initialization     ####
@@ -143,7 +143,7 @@ sub get_elements_by_category {
     my @elements;
 
     foreach my $val (@$ref) {
-        push @elements, Bugzilla::Testopia::Environment::Element->new($val);
+        push @elements, Testopia::Environment::Element->new($val);
     }
 
     return \@elements;
@@ -170,7 +170,7 @@ sub get_parent_elements {
     my @elements;
 
     foreach my $val (@$ref) {
-        push @elements, Bugzilla::Testopia::Environment::Element->new($val);
+        push @elements, Testopia::Environment::Element->new($val);
     }
 
     return \@elements;
@@ -318,7 +318,7 @@ sub get_element_categories_by_product {
     );
     my @objs;
     foreach my $id ( @{$ref} ) {
-        push @objs, Bugzilla::Testopia::Environment::Category->new($id);
+        push @objs, Testopia::Environment::Category->new($id);
     }
     return \@objs;
 }
@@ -399,7 +399,7 @@ sub store {
 
     # Exclude the auto-incremented field from the column list.
     my $columns = join( ", ", grep { $_ ne 'env_category_id' } DB_COLUMNS );
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
 
     return 0 if $self->check_category( $self->{'name'}, $self->{'product_id'} );
 
@@ -470,7 +470,7 @@ sub obliterate {
     );
 
     foreach my $id (@$children) {
-        my $element = Bugzilla::Testopia::Environment::Element->new($id);
+        my $element = Testopia::Environment::Element->new($id);
         $element->obliterate;
     }
     $dbh->do( "DELETE FROM test_environment_category WHERE env_category_id = ?",
@@ -526,7 +526,7 @@ sub product_id { return $_[0]->{'product_id'}; }
 sub product {
     my $self = shift;
 
-    $self->{'product'} = Bugzilla::Testopia::Product->new( $self->product_id );
+    $self->{'product'} = Testopia::Product->new( $self->product_id );
     return $self->{'product'};
 }
 

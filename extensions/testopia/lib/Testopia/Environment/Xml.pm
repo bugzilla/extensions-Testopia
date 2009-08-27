@@ -21,7 +21,7 @@
 
 =head1 NAME
 
-Bugzilla::Testopia::Environment::Xml - An XML representation of the Environment Object.
+Testopia::Environment::Xml - An XML representation of the Environment Object.
 
 =head1 DESCRIPTION
 
@@ -33,7 +33,7 @@ initialized using new and passing it an XML scalar.  It can also take two other 
     $max_depth - the max depth of child elements to import.
     
 Example:
-    my $env_xml = Bugzilla::Testopia::Environment::Xml->new($xml, 1, 5);
+    my $env_xml = Testopia::Environment::Xml->new($xml, 1, 5);
     
 Other subroutines can be called on the object.  For example:
     parse - takes the same three parameters as new
@@ -51,17 +51,17 @@ Import XML Environment Implementation Example: see tr_import_environment.cgi
 To export an environment by env_id to XML use export
 
 Example:
-    my $xml = Bugzilla::Testopia::Environment::Xml->export($env_id);
+    my $xml = Testopia::Environment::Xml->export($env_id);
     
 Export Environment XML Implementation Example: see tr_export_environment.cgi
 
 =head1 SYNOPSIS
 
-use Bugzilla::Testopia::Environment::Xml;
+use Testopia::Environment::Xml;
 
 =cut
 
-package Bugzilla::Testopia::Environment::Xml;
+package Testopia::Environment::Xml;
 
 #************************************************** Uses ****************************************************#
 use strict;
@@ -75,19 +75,19 @@ use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Product;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::Environment::Category;
-use Bugzilla::Testopia::Environment::Element;
-use Bugzilla::Testopia::Environment::Property;
+use Testopia::Util;
+use Testopia::Environment;
+use Testopia::Product;
+use Testopia::Environment::Category;
+use Testopia::Environment::Element;
+use Testopia::Environment::Property;
 
 our constant $max_depth = 7;
 
 
 =head2 new
 
-Instantiates a new Bugzilla::Testopia::Environment::Xml object
+Instantiates a new Testopia::Environment::Xml object
 
 =cut
 
@@ -102,7 +102,7 @@ sub new {
 
 =head2 _init
 
-Private constructor for the Bugzilla::Testopia::Environment::XML class
+Private constructor for the Testopia::Environment::XML class
 
 =cut
 
@@ -158,7 +158,7 @@ sub parse() {
     }
     else {
         $self->{'message'} .= "..Checking if <U>$product_name</U> <STRONG>PRODUCT</STRONG> already exists...";
-        ($product_id) = Bugzilla::Testopia::Product->check_product_by_name($product_name);
+        ($product_id) = Testopia::Product->check_product_by_name($product_name);
         if ($product_id) {
             $self->{'message'} .= "EXISTS.<BR />";
         }
@@ -173,7 +173,7 @@ sub parse() {
     my $environment_name = $root->{'att'}->{'name'};
     $self->{'name'} = $environment_name;
     $self->{'message'} .= "..Checking if <U>$environment_name</U> <STRONG>ENVIRONMENT NAME</STRONG> already exists for the <U>$product_name</U> <STRONG>PRODUCT</STRONG>...";
-    my $environment = Bugzilla::Testopia::Environment->new({});
+    my $environment = Testopia::Environment->new({});
     my ($env_id) = $environment->check_environment($environment_name, $product_id);
     my $environment_id;        
     if ($env_id < 1) {
@@ -182,7 +182,7 @@ sub parse() {
         if ($admin) {
                 $self->{'message'} .= "....Storing new <U>$environment_name</U> <STRONG>ENVIRONMENT NAME</STRONG> in the <U>$self->{'product_name'}</U> <STRONG>PRODUCT</STRONG>...";
                 $environment->{'name'} = $environment_name;
-                ($environment_id) = Bugzilla::Testopia::Environment->store_environment_name($self->{'name'}, $product_id);
+                ($environment_id) = Testopia::Environment->store_environment_name($self->{'name'}, $product_id);
                 $self->{'message'} .= "DONE.<BR />";
         }
     }
@@ -198,7 +198,7 @@ sub parse() {
     foreach my $twig_category ($root->children("category")) {
         my $category_name = $twig_category->{'att'}->{'name'};
         # Makes sure to get the category_id by name and product_id
-        my $category = Bugzilla::Testopia::Environment::Category->new({});
+        my $category = Testopia::Environment::Category->new({});
         my ($cat_id) = $category->check_category($category_name, $product_id);
         my $category_id;
         # Checking if Categories already exist.
@@ -258,7 +258,7 @@ sub parse_child_elements() {
     }
     $self->{'message'} .= "Checking if <U>$element_name</U> <STRONG>ELEMENT</STRONG> already exists in the <U>$category_name</U> <STRONG>CATEGORY</STRONG>...";
     my ($product_id) = $self->{'product_id'};
-    my $element = Bugzilla::Testopia::Environment::Element->new({});
+    my $element = Testopia::Environment::Element->new({});
     my ($elem_id) = $element->check_element($element_name, $env_category_id);
     my $element_id;    
     if ($elem_id < 1) {
@@ -300,7 +300,7 @@ sub parse_child_elements() {
             $self->{'message'} .= "....";
         }
         $self->{'message'} .= "....Checking if <U>$property_name</U> <STRONG>PROPERTY</STRONG> already exists...";
-        my $property = Bugzilla::Testopia::Environment::Property->new({});
+        my $property = Testopia::Environment::Property->new({});
         my ($prop_id) = $property->check_property($property_name, $element_id);
         my $property_id;
         if ($prop_id < 1) {
@@ -324,7 +324,7 @@ sub parse_child_elements() {
             ($property_id) = $prop_id;
             $self->{'message'} .= "EXISTS.<BR />";
         }
-        $property = Bugzilla::Testopia::Environment::Property->new($property_id);
+        $property = Testopia::Environment::Property->new($property_id);
         # Checking if new Selected Value and Valid Expression exist.
         my $validexp;
         if ($property) {
@@ -373,7 +373,7 @@ sub parse_child_elements() {
                 $self->{'message'} .= "....";
             }
             $self->{'message'} .= "............Storing new <STRONG>VALUE SELECTED</STRONG> <U>$value</U>...";
-            my $environment = Bugzilla::Testopia::Environment->new($self->{'environment_id'});
+            my $environment = Testopia::Environment->new($self->{'environment_id'});
             $environment->store_property_value($property_id, $element_id, $value);
             $self->{'message'} .= "DONE.<BR/>";
         }
@@ -446,9 +446,9 @@ sub store() {
     my $self = shift;
     $self->{'message'} .= "Storing new XML Environment...";
     if (!$self->{'environment_id'}) {
-        $self->{'environment_id'} = Bugzilla::Testopia::Environment->store_environment_name($self->{'name'}, $self->{'product_id'});
+        $self->{'environment_id'} = Testopia::Environment->store_environment_name($self->{'name'}, $self->{'product_id'});
     }
-    my $environment = Bugzilla::Testopia::Environment->new($self);
+    my $environment = Testopia::Environment->new($self);
     my $success = $environment->update();
     if (!$success) {
         $self->{'message'} .= "ABORTED!<BR/>";
@@ -474,7 +474,7 @@ sub export() {
     
     my $xml;
     
-    my $environment = Bugzilla::Testopia::Environment->new($env_id);
+    my $environment = Testopia::Environment->new($env_id);
     
     $xml =
         "<?xml version='1.0' encoding='UTF-8'?>" .
@@ -564,7 +564,7 @@ sub export_element_and_children() {
     
     my $properties = $element->{'properties'};
     foreach my $property (@$properties) {
-        my $value_selected = Bugzilla::Testopia::Environment->get_value_selected(
+        my $value_selected = Testopia::Environment->get_value_selected(
             $env_id, $element->{'element_id'}, $property->{'property_id'});
         if (defined($value_selected)) {
             $xml .=

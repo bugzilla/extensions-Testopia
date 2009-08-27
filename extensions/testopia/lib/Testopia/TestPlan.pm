@@ -18,7 +18,7 @@
 #
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Testopia::TestPlan;
+package Testopia::TestPlan;
 
 use strict;
 
@@ -30,17 +30,17 @@ use Bugzilla::Constants;
 use Bugzilla::Version;
 use Bugzilla::Bug;
 
-use Bugzilla::Testopia::Constants;
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::TestTag;
-use Bugzilla::Testopia::Product;
-use Bugzilla::Testopia::Attachment;
+use Testopia::Constants;
+use Testopia::Util;
+use Testopia::TestTag;
+use Testopia::Product;
+use Testopia::Attachment;
 
 use Text::Diff;
 use JSON;
 
 use base qw(Exporter Bugzilla::Object);
-@Bugzilla::Testopia::TestPlan::EXPORT = qw(lookup_type_by_name lookup_type);
+@Testopia::TestPlan::EXPORT = qw(lookup_type_by_name lookup_type);
 
 ###############################
 ####    Initialization     ####
@@ -118,10 +118,10 @@ sub _check_product {
     my $product;
     if ($product_id !~ /^\d+$/ ){
         $product = Bugzilla::Product::check_product($product_id);
-        $product = Bugzilla::Testopia::Product->new($product->id);
+        $product = Testopia::Product->new($product->id);
     }
     else {
-        $product = Bugzilla::Testopia::Product->new($product_id);
+        $product = Testopia::Product->new($product_id);
     }
 
     ThrowUserError("invalid-test-id-non-existent", {'id' => $product_id, 'type' => 'product'}) unless $product;
@@ -153,7 +153,7 @@ sub _check_type {
     if ($type_id !~ /^\d+$/){
         $type_id = lookup_type_by_name($type_id) || $type_id;
     }
-    Bugzilla::Testopia::Util::validate_selection($type_id, 'type_id', 'test_plan_types');
+    Testopia::Util::validate_selection($type_id, 'type_id', 'test_plan_types');
     return $type_id;
 }
 
@@ -226,7 +226,7 @@ sub create {
     $class->SUPER::check_required_create_fields($params);
     my $field_values = $class->run_create_validators($params);
     
-    $field_values->{creation_date} = Bugzilla::Testopia::Util::get_time_stamp();
+    $field_values->{creation_date} = Testopia::Util::get_time_stamp();
     $field_values->{isactive}  = 1;
 
     #We have to handle the plan document text a bit differently since it has its own table.
@@ -247,8 +247,8 @@ sub create {
     
     # Create default category
     unless (scalar @{$self->product->categories}){
-        require Bugzilla::Testopia::Category;
-        my $category = Bugzilla::Testopia::Category->create(
+        require Testopia::Category;
+        my $category = Testopia::Category->create(
             {'name' => '--default--',
              'description' => 'Default product category for test cases',
              'product_id' => $self->product->id });
@@ -260,13 +260,13 @@ sub create {
 sub update {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
     $dbh->bz_start_transaction();
 
     my $changed = $self->SUPER::update();
     
     foreach my $field (keys %$changed){
-        Bugzilla::Testopia::Util::log_activity('plan', $self->id, $field, $timestamp, $changed->{$field}->[0], $changed->{$field}->[1]);
+        Testopia::Util::log_activity('plan', $self->id, $field, $timestamp, $changed->{$field}->[0], $changed->{$field}->[1]);
     }
     $dbh->bz_commit_transaction();
 }
@@ -288,7 +288,7 @@ sub store_text {
     my $dbh = Bugzilla->dbh;
     my ($key, $author, $text, $timestamp) = @_;
     if (!defined $timestamp){
-        ($timestamp) = Bugzilla::Testopia::Util::get_time_stamp();
+        ($timestamp) = Testopia::Util::get_time_stamp();
     }
     $text ||= '';
     trick_taint($text);
@@ -317,7 +317,7 @@ sub clone {
     my $dbh = Bugzilla->dbh;
     # Exclude the auto-incremented field from the column list.
     my $columns = join(", ", grep {$_ ne 'plan_id'} DB_COLUMNS);
-    my ($timestamp) = Bugzilla::Testopia::Util::get_time_stamp();
+    my ($timestamp) = Testopia::Util::get_time_stamp();
 
     $dbh->do("INSERT INTO test_plans ($columns) VALUES (?,?,?,?,?,?,?)",
               undef, ($product_id, $author,
@@ -367,7 +367,7 @@ sub add_tag {
     }
 
     foreach my $name (@tags){
-        my $tag = Bugzilla::Testopia::TestTag->create({'tag_name' => $name});
+        my $tag = Testopia::TestTag->create({'tag_name' => $name});
         $tag->attach($self);
     }
 }
@@ -381,7 +381,7 @@ Removes a tag from this plan. Takes the tag_id of the tag to remove.
 sub remove_tag {    
     my $self = shift;
     my ($tag_name) = @_;
-    my $tag = Bugzilla::Testopia::TestTag->check_tag($tag_name);
+    my $tag = Testopia::TestTag->check_tag($tag_name);
     ThrowUserError('testopia-unknown-tag', {'name' => $tag}) unless $tag;
     my $dbh = Bugzilla->dbh;
     $dbh->do("DELETE FROM test_plan_tags 
@@ -1132,7 +1132,7 @@ sub attachments {
     
     my @attachments;
     foreach my $attach (@{$attachments}){
-        push @attachments, Bugzilla::Testopia::Attachment->new($attach);
+        push @attachments, Testopia::Attachment->new($attach);
     }
     $self->{'attachments'} = \@attachments;
     return $self->{'attachments'};
@@ -1177,7 +1177,7 @@ sub product {
     
     return $self->{'product'} if exists $self->{'product'};
 
-    $self->{'product'} = Bugzilla::Testopia::Product->new($self->product_id);
+    $self->{'product'} = Testopia::Product->new($self->product_id);
     return $self->{'product'};
 }
 
@@ -1193,7 +1193,7 @@ sub test_cases {
     my $dbh = Bugzilla->dbh;
     return $self->{'test_cases'} if exists $self->{'test_cases'};
     
-    require Bugzilla::Testopia::TestCase;
+    require Testopia::TestCase;
     
     my $caseids = $dbh->selectcol_arrayref(
             "SELECT case_id FROM test_case_plans
@@ -1201,7 +1201,7 @@ sub test_cases {
              undef, $self->{'plan_id'});
     my @cases;
     foreach my $id (@{$caseids}){
-        push @cases, Bugzilla::Testopia::TestCase->new($id);
+        push @cases, Testopia::TestCase->new($id);
     }
 
     $self->{'test_cases'} = \@cases;
@@ -1241,7 +1241,7 @@ sub test_runs {
                                           undef, $self->{'plan_id'});
     my @runs;
     foreach my $id (@{$runids}){
-        push @runs, Bugzilla::Testopia::TestRun->new($id);
+        push @runs, Testopia::TestRun->new($id);
     }
     
     $self->{'test_runs'} = \@runs;
@@ -1291,7 +1291,7 @@ sub builds_seen {
     my ($status_id) = @_;
     my $dbh = Bugzilla->dbh;
     
-    require Bugzilla::Testopia::Build;
+    require Testopia::Build;
     
     my $ref = $dbh->selectcol_arrayref(
         "SELECT DISTINCT test_case_runs.build_id 
@@ -1302,7 +1302,7 @@ sub builds_seen {
     
     my @o;      
     foreach my $id (@$ref){
-        push @o, Bugzilla::Testopia::Build->new($id);
+        push @o, Testopia::Build->new($id);
     }
     return \@o;
 }
@@ -1312,7 +1312,7 @@ sub environments_seen {
     my ($status_id) = @_;
     my $dbh = Bugzilla->dbh;
     
-    require Bugzilla::Testopia::Environment;
+    require Testopia::Environment;
     
     my $ref = $dbh->selectcol_arrayref(
         "SELECT DISTINCT test_case_runs.environment_id 
@@ -1323,7 +1323,7 @@ sub environments_seen {
           
     my @o; 
     foreach my $id (@$ref){
-        push @o, Bugzilla::Testopia::Environment->new($id);
+        push @o, Testopia::Environment->new($id);
     }
     return \@o;   
 }
@@ -1347,7 +1347,7 @@ sub tags {
                                           undef, $self->{'plan_id'});
     my @plan_tags;
     foreach my $t (@{$tagids}){
-        push @plan_tags, Bugzilla::Testopia::TestTag->new($t);
+        push @plan_tags, Testopia::TestTag->new($t);
     }
     $self->{'tags'} = \@plan_tags;
     return $self->{'tags'};
@@ -1445,7 +1445,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::TestPlan - Testopia Test Plan object
+Testopia::TestPlan - Testopia Test Plan object
 
 =head1 DESCRIPTION
 
@@ -1455,10 +1455,10 @@ to a plan.
 
 =head1 SYNOPSIS
 
-use Bugzilla::Testopia::TestPlan;
+use Testopia::TestPlan;
 
- $plan = Bugzilla::Testopia::TestPlan->new($plan_id);
- $plan = Bugzilla::Testopia::TestPlan->new({});
+ $plan = Testopia::TestPlan->new($plan_id);
+ $plan = Testopia::TestPlan->new({});
 
 =cut
 

@@ -19,7 +19,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 
-package Bugzilla::Testopia::TestCaseRun;
+package Testopia::TestCaseRun;
 
 use strict;
 
@@ -30,17 +30,17 @@ use Bugzilla::Bug;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 
-use Bugzilla::Testopia::Util;
-use Bugzilla::Testopia::Environment;
-use Bugzilla::Testopia::Build;
-use Bugzilla::Testopia::Constants;
-use Bugzilla::Testopia::Attachment;
+use Testopia::Util;
+use Testopia::Environment;
+use Testopia::Build;
+use Testopia::Constants;
+use Testopia::Attachment;
 
 use Date::Format;
 use Date::Parse;
 
 use base qw(Exporter Bugzilla::Object);
-#@Bugzilla::Testopia::TestCaseRun::EXPORT = qw(lookup_status lookup_status_by_name);
+#@Testopia::TestCaseRun::EXPORT = qw(lookup_status lookup_status_by_name);
 
 ###############################
 ####    Initialization     ####
@@ -124,22 +124,22 @@ sub report_columns {
 ###############################
 sub _check_case_id {
     my ($invocant, $id) = @_;
-    return Bugzilla::Testopia::Util::validate_test_id($id, 'case');
+    return Testopia::Util::validate_test_id($id, 'case');
 }
 
 sub _check_run_id {
     my ($invocant, $id) = @_;
-    return Bugzilla::Testopia::Util::validate_test_id($id, 'run');
+    return Testopia::Util::validate_test_id($id, 'run');
 }
 
 sub _check_build_id {
     my ($invocant, $id) = @_;
-    return Bugzilla::Testopia::Util::validate_test_id($id, 'build');
+    return Testopia::Util::validate_test_id($id, 'build');
 }
 
 sub _check_env_id {
     my ($invocant, $id) = @_;
-    return Bugzilla::Testopia::Util::validate_test_id($id, 'environment');
+    return Testopia::Util::validate_test_id($id, 'environment');
 }
 
 sub _check_case_run_status_id {
@@ -147,7 +147,7 @@ sub _check_case_run_status_id {
     $status = trim($status);
     my $status_id;
     if ($status =~ /^\d+$/){
-        $status_id = Bugzilla::Testopia::Util::validate_selection($status, 'case_run_status_id', 'test_case_run_status');
+        $status_id = Testopia::Util::validate_selection($status, 'case_run_status_id', 'test_case_run_status');
     }
     else {
         $status_id = lookup_status_by_name($status);
@@ -267,7 +267,7 @@ sub switch {
           undef, ($run_id, $case_id, $build_id, $env_id));
 
    if ($is){
-       $self = Bugzilla::Testopia::TestCaseRun->new($is);
+       $self = Testopia::TestCaseRun->new($is);
    }
    else {
        my $oldbuild = $self->{'build_id'};
@@ -284,7 +284,7 @@ sub switch {
                 });
        
        if ($oldbuild != $build_id){
-           my $build = Bugzilla::Testopia::Build->new($oldbuild);
+           my $build = Testopia::Build->new($oldbuild);
            my $note  = "Build Changed by ". Bugzilla->user->login; 
               $note .= ". Old build: '". $build->name;
               $note .= "' New build: '". $self->build->name;
@@ -292,7 +292,7 @@ sub switch {
            $self->append_note($note);
        }
        if ($oldenv != $env_id){
-           my $environment = Bugzilla::Testopia::Environment->new($oldenv);
+           my $environment = Testopia::Environment->new($oldenv);
            my $note  = "Environment Changed by ". Bugzilla->user->login;
               $note .= ". Old environment: '". $environment->name;
               $note .= "' New environment: '". $self->environment->name;
@@ -421,13 +421,13 @@ sub set_status {
         $self->{'testedby'} = undef;
     }
     elsif ($status_id == RUNNING || $status_id == PAUSED){
-        my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+        my $timestamp = Testopia::Util::get_time_stamp();
         $self->_update_fields({'running_date' => $timestamp}) if $status_id == RUNNING; 
         $self->_update_fields({'close_date' => undef});
         $self->{'close_date'} = undef;
     }
     else {
-        my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+        my $timestamp = Testopia::Util::get_time_stamp();
         $self->_update_fields({'close_date' => $timestamp});
         $self->_update_fields({'testedby' => Bugzilla->user->id});
         $self->{'close_date'} = $timestamp;
@@ -609,7 +609,7 @@ Attaches the specified bug to this test case-run
 sub attach_bug {
     my $self = shift;
     my ($bugs, $caserun_id) = @_;
-    $bugs = Bugzilla::Testopia::TestCase->_check_bugs($bugs, "ATTACH");
+    $bugs = Testopia::TestCase->_check_bugs($bugs, "ATTACH");
 
     $caserun_id ||= $self->{'case_run_id'};
     my $dbh = Bugzilla->dbh;
@@ -682,7 +682,7 @@ sub update_bugs {
     my ($status) = @_;
     my $resolution;
     my $dbh = Bugzilla->dbh;
-    my $timestamp = Bugzilla::Testopia::Util::get_time_stamp();
+    my $timestamp = Testopia::Util::get_time_stamp();
     foreach my $bug (@{$self->bugs}){
         my $oldstatus = $bug->bug_status;
         my $oldresolution = $bug->resolution;
@@ -855,8 +855,8 @@ Returns the TestRun object that this case-run is associated with
 sub run {
     my $self = shift;
     return $self->{'run'} if exists $self->{'run'};
-    require Bugzilla::Testopia::TestRun;
-    $self->{'run'} = Bugzilla::Testopia::TestRun->new($self->{'run_id'});
+    require Testopia::TestRun;
+    $self->{'run'} = Testopia::TestRun->new($self->{'run_id'});
     return $self->{'run'};
 }
 
@@ -870,8 +870,8 @@ Returns the TestCase object that this case-run is associated with
 sub case {
     my $self = shift;
     return $self->{'case'} if exists $self->{'case'};
-    require Bugzilla::Testopia::TestCase;
-    $self->{'case'} = Bugzilla::Testopia::TestCase->new($self->{'case_id'});
+    require Testopia::TestCase;
+    $self->{'case'} = Testopia::TestCase->new($self->{'case_id'});
     return $self->{'case'};
 }
 
@@ -884,7 +884,7 @@ Returns the Build object that this case-run is associated with
 sub build {
     my $self = shift;
     return $self->{'build'} if exists $self->{'build'};
-    $self->{'build'} = Bugzilla::Testopia::Build->new($self->{'build_id'});
+    $self->{'build'} = Testopia::Build->new($self->{'build_id'});
     return $self->{'build'};
 }
 
@@ -897,7 +897,7 @@ Returns the Build object that this case-run is associated with
 sub environment {
     my $self = shift;
     return $self->{'environment'} if exists $self->{'environment'};
-    $self->{'environment'} = Bugzilla::Testopia::Environment->new($self->{'environment_id'});
+    $self->{'environment'} = Testopia::Environment->new($self->{'environment_id'});
     return $self->{'environment'};
 }
 
@@ -937,7 +937,7 @@ sub attachments {
     
     my @attachments;
     foreach my $attach (@{$attachments}){
-        my $att = Bugzilla::Testopia::Attachment->new($attach->{attachment_id});
+        my $att = Testopia::Attachment->new($attach->{attachment_id});
         $att->{'caserun_id'} = $self->id if $attach->{case_run_id};
         push @attachments, $att;
     }
@@ -1157,7 +1157,7 @@ sub lookup_status_by_name {
 __END__
 =head1 NAME
 
-Bugzilla::Testopia::TestCaseRun - Testopia Test Case Run object
+Testopia::TestCaseRun - Testopia Test Case Run object
 
 =head1 DESCRIPTION
 
@@ -1171,10 +1171,10 @@ case-run is made in the table for historical purposes.
 
 =head1 SYNOPSIS
 
-use Bugzilla::Testopia::TestCaseRun;
+use Testopia::TestCaseRun;
 
- $caserun = Bugzilla::Testopia::TestCaseRun->new($caserun_id);
- $caserun = Bugzilla::Testopia::TestCaseRun->new(\%caserun_hash);
+ $caserun = Testopia::TestCaseRun->new($caserun_id);
+ $caserun = Testopia::TestCaseRun->new(\%caserun_hash);
 
 =cut
 

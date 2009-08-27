@@ -18,7 +18,7 @@
 #
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
-package Bugzilla::Testopia::Product;
+package Testopia::Product;
 
 use strict;
 
@@ -34,7 +34,7 @@ sub environments {
     
     return $self->{'environments'} if defined $self->{'environments'};
     
-    require Bugzilla::Testopia::Environment;    
+    require Testopia::Environment;    
     
     my $query = "SELECT environment_id"; 
        $query .= " FROM test_environments";
@@ -51,7 +51,7 @@ sub environments {
 
     my @objs;
     foreach my $id (@{$ref}){
-        push @objs, Bugzilla::Testopia::Environment->new($id);
+        push @objs, Testopia::Environment->new($id);
     }
 
     $self->{'environments'} = \@objs;
@@ -63,7 +63,7 @@ sub builds {
     my($active, $current) = @_;
     my $dbh = Bugzilla->dbh;
 
-    require Bugzilla::Testopia::Build;    
+    require Testopia::Build;    
     
     my $query = "SELECT build_id FROM test_builds WHERE product_id = ?";
     if ($active && $current){
@@ -87,7 +87,7 @@ sub builds {
 
     my @objs;
     foreach my $id (@{$ref}){
-        push @objs, Bugzilla::Testopia::Build->new($id);
+        push @objs, Testopia::Build->new($id);
     }
 
     $self->{'builds'} = \@objs;
@@ -105,9 +105,9 @@ sub categories {
                  ORDER BY name",
                     undef, $self->{'id'});
     my @objs;
-    require Bugzilla::Testopia::Category;
+    require Testopia::Category;
     foreach my $id (@{$ref}){
-        push @objs, Bugzilla::Testopia::Category->new($id);
+        push @objs, Testopia::Category->new($id);
     }
     $self->{'categories'} = \@objs;
     return $self->{'categories'};
@@ -119,7 +119,7 @@ sub plans {
     
     return $self->{'plans'} if exists $self->{'plans'};
     
-    require Bugzilla::Testopia::TestPlan;
+    require Testopia::TestPlan;
     
     my $ref = $dbh->selectcol_arrayref(
                    "SELECT plan_id 
@@ -130,7 +130,7 @@ sub plans {
     my @objs;
     
     foreach my $id (@{$ref}){
-        push @objs, Bugzilla::Testopia::TestPlan->new($id);
+        push @objs, Testopia::TestPlan->new($id);
     }
     $self->{'plans'} = \@objs;
     return $self->{'plans'};
@@ -141,7 +141,7 @@ sub cases {
     my $dbh = Bugzilla->dbh;
     return $self->{'cases'} if exists $self->{'cases'};
     
-    require Bugzilla::Testopia::TestCase;
+    require Testopia::TestCase;
     
     my $caseids = $dbh->selectcol_arrayref(
         "SELECT case_id FROM test_case_plans
@@ -151,7 +151,7 @@ sub cases {
 
     my @cases;
     foreach my $id (@{$caseids}){
-        push @cases, Bugzilla::Testopia::TestCase->new($id);
+        push @cases, Testopia::TestCase->new($id);
     }
 
     $self->{'cases'} = \@cases;
@@ -163,7 +163,7 @@ sub runs {
     my $dbh = Bugzilla->dbh;
     return $self->{'runs'} if exists $self->{'runs'};
 
-    require Bugzilla::Testopia::TestRun;
+    require Testopia::TestRun;
     
     my $runids = $dbh->selectcol_arrayref(
         "SELECT run_id FROM test_runs
@@ -173,7 +173,7 @@ sub runs {
 
     my @runs;
     foreach my $id (@{$runids}){
-        push @runs, Bugzilla::Testopia::TestRun->new($id);
+        push @runs, Testopia::TestRun->new($id);
     }
     
     $self->{'runs'} = \@runs;
@@ -190,9 +190,9 @@ sub environment_categories {
                     WHERE product_id = ?",
                     undef, $self->id);
     my @objs;
-    require Bugzilla::Testopia::Environment::Category;
+    require Testopia::Environment::Category;
     foreach my $id (@{$ref}){
-        push @objs, Bugzilla::Testopia::Environment::Category->new($id);
+        push @objs, Testopia::Environment::Category->new($id);
     }
     $self->{'environment_categories'} = \@objs;
     return $self->{'environment_categories'};
@@ -245,7 +245,7 @@ sub tags {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
     
-    require Bugzilla::Testopia::TestTag;
+    require Testopia::TestTag;
     
     my $ref = $dbh->selectcol_arrayref(
     "(SELECT test_tags.tag_id, test_tags.tag_name AS name 
@@ -272,7 +272,7 @@ sub tags {
     
     my @product_tags;
     foreach my $id (@$ref){
-        push @product_tags, Bugzilla::Testopia::TestTag->new($id);
+        push @product_tags, Testopia::TestTag->new($id);
     }
 
     $self->{'tags'} = \@product_tags;
@@ -325,7 +325,7 @@ __END__
 
 =head1 NAME
 
-Bugzilla::Testopia::Product
+Testopia::Product
 
 =head1 EXTENDS
 
@@ -341,8 +341,8 @@ creating new products, see Bugzilla::Product.
 
 =head2 Creating
  
- $build = Bugzilla::Testopia::Product->new($product_id);
- $build = Bugzilla::Testopia::Product->new({name => $name});
+ $build = Testopia::Product->new($product_id);
+ $build = Testopia::Product->new({name => $name});
 
 =head1 METHODS
 
@@ -469,7 +469,7 @@ creating new products, see Bugzilla::Product.
 
 =over
 
-L<Bugzilla::Testopia::Product>
+L<Testopia::Product>
 
 L<Bugzilla::Webservice> 
 
