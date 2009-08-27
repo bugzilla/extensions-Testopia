@@ -13,8 +13,8 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.43"
-   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/testopia/img"
-   sodipodi:docname="copy.svg">
+   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img"
+   sodipodi:docname="new.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -74,12 +74,12 @@
      id="layer1">
     <g
        id="g3913"
-       transform="matrix(1,0,0,0.964407,0,23.21902)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/copy.png"
-       inkscape:export-xdpi="6.27"
-       inkscape:export-ydpi="6.27">
+       transform="matrix(1,0,0,0.969091,0,19.91307)"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/new.png"
+       inkscape:export-xdpi="7.6199999"
+       inkscape:export-ydpi="7.6199999">
       <rect
-         ry="11.405969"
+         ry="11.350845"
          rx="11"
          y="654.36218"
          x="163"
@@ -108,41 +108,24 @@
          d="M 179.5,746.11218 C 289.9087,746.11218 290.5,746.11218 290.5,746.11218"
          style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
-    <g
-       id="g3921"
-       transform="matrix(1,0,0,0.964407,81,72.8171)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/copy.png"
-       inkscape:export-xdpi="6.27"
-       inkscape:export-ydpi="6.27">
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect3923"
-         width="144.59145"
-         height="182"
-         x="163"
-         y="654.36218"
-         rx="11"
-         ry="11.405969" />
-      <path
-         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 179.5,677.36218 C 289.9087,677.36218 290.5,677.36218 290.5,677.36218"
-         id="path3925" />
-      <path
-         id="path3927"
-         d="M 179.5,711.73718 C 289.9087,711.73718 290.5,711.73718 290.5,711.73718"
-         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <path
-         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 179.5,780.48718 C 289.9087,780.48718 290.5,780.48718 290.5,780.48718"
-         id="path3929" />
-      <path
-         id="path3931"
-         d="M 179.5,814.86218 C 289.9087,814.86218 290.5,814.86218 290.5,814.86218"
-         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <path
-         style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 179.5,746.11218 C 289.9087,746.11218 290.5,746.11218 290.5,746.11218"
-         id="path3933" />
-    </g>
+    <path
+       sodipodi:type="star"
+       style="fill:#ffff32;fill-opacity:1;stroke:#000000;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path3935"
+       sodipodi:sides="6"
+       sodipodi:cx="220"
+       sodipodi:cy="629.50507"
+       sodipodi:r1="57.587555"
+       sodipodi:r2="28.793777"
+       sodipodi:arg1="-0.12435499"
+       sodipodi:arg2="0.39924378"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="M 277.14286,622.36221 L 246.5293,640.69783 L 254.75732,675.4208 L 223.57143,658.07649 L 197.61447,682.56366 L 197.04213,646.88373 L 162.85714,636.64792 L 193.4707,618.3123 L 185.24268,583.58933 L 216.42857,600.93364 L 242.38553,576.44647 L 242.95787,612.1264 L 277.14286,622.36221 z "
+       transform="matrix(1,0,0,0.969091,70.35714,88.03873)"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/new.png"
+       inkscape:export-xdpi="7.6199999"
+       inkscape:export-ydpi="7.6199999" />
   </g>
 </svg>

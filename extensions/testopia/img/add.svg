@@ -13,7 +13,7 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.43"
-   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/testopia/img"
+   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img"
    sodipodi:docname="add.svg">
   <defs
      id="defs4" />
@@ -64,7 +64,7 @@
        style="fill:#00bfd3;fill-opacity:1;stroke:#000000;stroke-width:3.09202647;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 71.355001,893.66892 C 66.904462,893.9496 63.412864,897.64798 63.412864,902.17771 L 63.412864,955.40597 L 10.256072,955.40597 C 5.5485334,955.40597 1.75871,959.20089 1.75871,963.91476 L 1.75871,981.87507 C 1.75871,986.58894 5.5485334,990.38385 10.256072,990.38386 L 63.412864,990.38386 L 63.412864,1042.0651 C 63.412864,1046.779 67.202688,1050.5739 71.910227,1050.5739 L 89.84642,1050.5739 C 94.553958,1050.5739 98.343781,1046.779 98.343781,1042.0651 L 98.343781,990.38386 L 149.9556,990.38386 C 154.66314,990.38386 158.45296,986.58893 158.45296,981.87507 L 158.45296,963.91476 C 158.45296,959.20089 154.66314,955.40597 149.9556,955.40597 L 98.343781,955.40597 L 98.343781,902.17771 C 98.343781,897.46384 94.553958,893.66892 89.84642,893.66892 L 71.910227,893.66892 C 71.726336,893.66892 71.535918,893.65751 71.355001,893.66892 z "
        id="rect1307"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/add.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/add.png"
        inkscape:export-xdpi="9.0100002"
        inkscape:export-ydpi="9.0100002" />
   </g>

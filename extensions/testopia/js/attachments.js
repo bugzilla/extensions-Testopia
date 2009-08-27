@@ -77,7 +77,7 @@ AttachGrid = function(object){
         {
             xtype: 'button',
             id: 'edit_attachment_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Edit Attachments',
@@ -87,14 +87,14 @@ AttachGrid = function(object){
         },{
             xtype: 'button',
             id: 'add_attachment_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Attach a new file',
             handler: this.newAttachment.createDelegate(this)
         },{
             xtype: 'button',
             id: 'delete_attachment_btn',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Remove selected attachments',
@@ -135,7 +135,7 @@ Ext.extend(AttachGrid, Ext.grid.EditorGridPanel, {
                 items: [{
                     text: "Delete Selected Attachments",
                     id: 'attach_delete_mnu',
-                    icon: 'testopia/img/delete.png',
+                    icon: 'extensions/testopia/img/delete.png',
                     iconCls: 'img_button_16x',
                     disabled: true,
                     handler: this.deleteAttachment.createDelegate(this)

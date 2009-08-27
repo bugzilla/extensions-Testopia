@@ -13,7 +13,7 @@
    id="svg3166"
    sodipodi:version="0.32"
    inkscape:version="0.45.1"
-   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/testopia/img"
+   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img"
    sodipodi:docname="refresh.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
@@ -67,7 +67,7 @@
        transform="matrix(31.181669,0,0,32.843134,296.12666,150.95827)"
        inkscape:export-xdpi="2.9524615"
        inkscape:export-ydpi="2.9524615"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/refresh.png" />
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/refresh.png" />
     <path
        sodipodi:type="star"
        style="fill:#007a00;fill-opacity:1;stroke:#007a00;stroke-width:0.29435093;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -84,7 +84,7 @@
        inkscape:randomized="0"
        d="M 16.893565,-0.39801995 L 18.424814,0.06939768 L 17.254394,1.1617902 L 16.893565,-0.39801995 z "
        transform="matrix(143.32752,23.682724,-19.325585,125.64936,-2081.734,-205.10339)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/refresh.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/refresh.png"
        inkscape:export-xdpi="2.9524615"
        inkscape:export-ydpi="2.9524615" />
   </g>

@@ -130,7 +130,7 @@ PlanSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_plan_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -139,7 +139,7 @@ PlanSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_plan_report_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -220,7 +220,7 @@ CaseSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_case_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -229,7 +229,7 @@ CaseSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_case_report_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -312,7 +312,7 @@ RunSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_run_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -321,7 +321,7 @@ RunSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_run_report_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -402,7 +402,7 @@ CaseRunSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_caserun_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -411,7 +411,7 @@ CaseRunSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_plan_list_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -549,7 +549,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 }
             },{
                 text: 'Edit', 
-                icon: 'testopia/img/edit.png',
+                icon: 'extensions/testopia/img/edit.png',
                 iconCls: 'img_button_16x',
                 disabled: d ? false : true,
                 handler: function(){
@@ -577,7 +577,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 }
             },{
                 text: 'Delete',
-                icon: 'testopia/img/delete.png',
+                icon: 'extensions/testopia/img/delete.png',
                 iconCls: 'img_button_16x',
                 handler: function (){
                     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
@@ -604,7 +604,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 }
             },{
                 text: 'Refresh List',
-                icon: 'testopia/img/refresh.png',
+                icon: 'extensions/testopia/img/refresh.png',
                 iconCls: 'img_button_16x',
                 handler: function(){
                     grid.store.reload();
@@ -633,7 +633,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             Ext.getCmp('search' + r.get('name')).getTopToolbar().add({
                 xtype: 'button',
                 id: 'link_dashboard_btn',
-                icon: 'testopia/img/link.png',
+                icon: 'extensions/testopia/img/link.png',
                 iconCls: 'img_button_16x',
                 tooltip: 'Create a link to this dashboard',
                 handler: function(b,e){
@@ -734,7 +734,7 @@ PortalTools = [{
                 }
             },{
                 text: 'Refresh',
-                icon: 'testopia/img/refresh.png',
+                icon: 'extensions/testopia/img/refresh.png',
                 iconCls: 'img_button_16x',
                 handler: function(){
                     panel.load({url: panel.url});

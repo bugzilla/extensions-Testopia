@@ -130,7 +130,7 @@ Ext.onReady(function(){
         id: 'file-menu',
         items: [{
             text: "Clone",
-            icon: 'testopia/img/copy.png',
+            icon: 'extensions/testopia/img/copy.png',
             iconCls: 'img_button_16x',
             handler: function(){
                 caseClonePopup(tcase.product_id, tcase.case_id);
@@ -156,7 +156,7 @@ Ext.onReady(function(){
         },{
             text: "Delete",
             id: 'btn-delete',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             disabled: tcase.candelete ? false : true,
             handler: confirmDelete
@@ -172,7 +172,7 @@ Ext.onReady(function(){
     {
         xtype: 'button',
         id: 'plan-copy-button',
-        icon: 'testopia/img/copy.png',
+        icon: 'extensions/testopia/img/copy.png',
         iconCls: 'img_button_16x',
         tooltip: 'Clone this Test Case',
         handler: function(){
@@ -183,7 +183,7 @@ Ext.onReady(function(){
     ,{
         xtype: 'button',
         id: 'plan-delete-btn',
-        icon: 'testopia/img/delete.png',
+        icon: 'extensions/testopia/img/delete.png',
         iconCls: 'img_button_16x',
         tooltip: 'Delete this Test Case',
         handler: confirmDelete
@@ -470,7 +470,7 @@ Ext.onReady(function(){
     var summary_edit_btn = new Ext.Button({
         applyTo: 'case_summary_edit_btn_div',
         id:'case_summary_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Case Summary',
         handler: function(){
@@ -498,7 +498,7 @@ Ext.onReady(function(){
     var tester_edit_btn = new Ext.Button({
         applyTo: 'tester_edit_btn_div',
         id:'tester_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Default Tester',
         handler: function(){
@@ -526,7 +526,7 @@ Ext.onReady(function(){
     var requirement_edit_btn = new Ext.Button({
         applyTo: 'requirement_edit_btn_div',
         id:'requirment_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Requirement',
         handler: function(){
@@ -556,7 +556,7 @@ Ext.onReady(function(){
     var time_edit_btn = new Ext.Button({
         applyTo: 'time_edit_btn_div',
         id:'time_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Estimated Time',
         handler: function(){

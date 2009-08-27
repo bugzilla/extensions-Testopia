@@ -13,7 +13,7 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.43"
-   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/testopia/img"
+   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img"
    sodipodi:docname="stop.svg">
   <defs
      id="defs4" />
@@ -64,7 +64,7 @@
        inkscape:randomized="0"
        d="M 442.85714,315.21932 L 294.81077,466.92062 L 82.857154,469.50503 L -68.844139,321.45865 L -71.428555,109.50504 L 76.617824,-42.196251 L 288.57143,-44.780666 L 440.27273,103.26571 L 442.85714,315.21932 z "
        transform="translate(188.5714,234.2857)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/stop.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/stop.png"
        inkscape:export-xdpi="2.72"
        inkscape:export-ydpi="2.72" />
     <text
@@ -75,7 +75,7 @@
        id="text1309"
        sodipodi:linespacing="125%"
        transform="scale(0.649872,1.538765)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/stop.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/stop.png"
        inkscape:export-xdpi="2.72"
        inkscape:export-ydpi="2.72"><tspan
          sodipodi:role="line"

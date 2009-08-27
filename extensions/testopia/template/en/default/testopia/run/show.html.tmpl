@@ -110,7 +110,7 @@ Ext.onReady(function(){
         items: [{
             text: "Clone",
             id:'run-clone-icon',
-            icon: 'testopia/img/copy.png',
+            icon: 'extensions/testopia/img/copy.png',
             iconCls: 'img_button_16x',
             handler: function(){
                 RunClonePopup(run.product_id, run.run_id);
@@ -119,7 +119,7 @@ Ext.onReady(function(){
             text: "Delete",
             disabled: run.candelete ? false : true,
             id:'run-delete-icon',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             handler: function(){
                 Ext.Msg.show({
@@ -142,7 +142,7 @@ Ext.onReady(function(){
     ,{
         xtype: 'button',
         id:'run-clone-ibtn',
-        icon: 'testopia/img/copy.png',
+        icon: 'extensions/testopia/img/copy.png',
         iconCls: 'img_button_16x',
         tooltip: 'Clone this Test Run',
         handler: function(){
@@ -153,7 +153,7 @@ Ext.onReady(function(){
     ,{
         xtype: 'button',
         id: 'run_delete_btn',
-        icon: 'testopia/img/delete.png',
+        icon: 'extensions/testopia/img/delete.png',
         iconCls: 'img_button_16x',
         tooltip: 'Delete this Run',
         handler: function(){
@@ -238,7 +238,7 @@ Ext.onReady(function(){
     var manager_edit_btn = new Ext.Button({
         applyTo: 'manager_edit_btn_div',
         id:'manager_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Manager',
         handler: function(){
@@ -265,7 +265,7 @@ Ext.onReady(function(){
     var tcomp_edit_btn = new Ext.Button({
         applyTo: 'run_tcomp_edit_btn_div',
         id:'run_tcomp_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Run Summary',
         handler: function(){
@@ -296,7 +296,7 @@ Ext.onReady(function(){
     var tpass_edit_btn = new Ext.Button({
         applyTo: 'run_tpass_edit_btn_div',
         id:'run_tpass_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Run Summary',
         handler: function(){
@@ -330,7 +330,7 @@ Ext.onReady(function(){
     var summary_edit_btn = new Ext.Button({
         applyTo: 'run_summary_edit_btn_div',
         id:'run_summary_edit_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Run Summary',
         handler: function(){
@@ -385,19 +385,19 @@ Ext.onReady(function(){
         id: 'run_status_cycle',
         showText: true,
         [% 'disabled: true,' UNLESS run.canstatus %]
-        icon: 'testopia/img/[% run.stop_date ? "stop" : "go" %].png',
+        icon: 'extensions/testopia/img/[% run.stop_date ? "stop" : "go" %].png',
         iconCls: 'img_button_16x',
 
         items: [{
             text: 'RUNNING',
-            icon: 'testopia/img/go.png',
+            icon: 'extensions/testopia/img/go.png',
             id: 'run_status_running',
             iconCls: 'img_button_16x'
             [% ',checked: true' IF NOT run.stop_date %]
         },{
             text: 'STOPPED',
             id: 'run_status_stopped',
-            icon: 'testopia/img/stop.png',
+            icon: 'extensions/testopia/img/stop.png',
             iconCls: 'img_button_16x'
             [% ',checked: true' IF run.stop_date %]
         }],

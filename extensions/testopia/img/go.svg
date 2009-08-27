@@ -13,7 +13,7 @@
    id="svg2188"
    sodipodi:version="0.32"
    inkscape:version="0.43"
-   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/testopia/img"
+   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img"
    sodipodi:docname="go.svg">
   <defs
      id="defs2190" />
@@ -58,7 +58,7 @@
        sodipodi:ry="321.42856"
        d="M 731.42856 556.64789 A 321.42856 321.42856 0 1 1  88.571442,556.64789 A 321.42856 321.42856 0 1 1  731.42856 556.64789 z"
        transform="translate(-22.85714,-94.28571)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/go.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/go.png"
        inkscape:export-xdpi="2.1900001"
        inkscape:export-ydpi="2.1900001" />
     <text
@@ -69,7 +69,7 @@
        id="text2198"
        sodipodi:linespacing="125%"
        transform="scale(0.829429,1.205649)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/go.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/go.png"
        inkscape:export-xdpi="2.1900001"
        inkscape:export-ydpi="2.1900001"><tspan
          sodipodi:role="line"

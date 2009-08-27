@@ -124,7 +124,7 @@ var imgButtonTpl = new Ext.Template(
     '</tr></tbody></table>');
 TestopiaUtil = function(){
     this.statusIcon =  function (name){
-        return '<img src="testopia/img/' + name + '_small.gif" alt="'+ name +'" title="'+ name +'">';
+        return '<img src="extensions/testopia/img/' + name + '_small.gif" alt="'+ name +'" title="'+ name +'">';
     };
     this.caseLink = function(id,m,r,ri,ci,s){
         if (s.isTreport === true)
@@ -1097,7 +1097,7 @@ Ext.extend(HistoryGrid, Ext.grid.GridPanel,{
                 id:'history-ctx-menu',
                 items: [{
                     text: 'Refresh',
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
@@ -1831,7 +1831,7 @@ AttachGrid = function(object){
         {
             xtype: 'button',
             id: 'edit_attachment_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Edit Attachments',
@@ -1841,14 +1841,14 @@ AttachGrid = function(object){
         },{
             xtype: 'button',
             id: 'add_attachment_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Attach a new file',
             handler: this.newAttachment.createDelegate(this)
         },{
             xtype: 'button',
             id: 'delete_attachment_btn',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Remove selected attachments',
@@ -1889,7 +1889,7 @@ Ext.extend(AttachGrid, Ext.grid.EditorGridPanel, {
                 items: [{
                     text: "Delete Selected Attachments",
                     id: 'attach_delete_mnu',
-                    icon: 'testopia/img/delete.png',
+                    icon: 'extensions/testopia/img/delete.png',
                     iconCls: 'img_button_16x',
                     disabled: true,
                     handler: this.deleteAttachment.createDelegate(this)
@@ -2301,7 +2301,7 @@ PlanGrid = function(params,cfg){
         {
             xtype: 'button',
             id: 'save_plan_list_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this search',
             handler: function(b,e){
@@ -2310,7 +2310,7 @@ PlanGrid = function(params,cfg){
         },{
             xtype: 'button',
             id: 'link_plan_list_btn',
-            icon: 'testopia/img/link.png',
+            icon: 'extensions/testopia/img/link.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a link to this list',
             handler: function(b,e){
@@ -2319,7 +2319,7 @@ PlanGrid = function(params,cfg){
         },{
             xtype: 'button',
             id: 'edit_plan_list_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Edit Selected Test Plan',
@@ -2329,7 +2329,7 @@ PlanGrid = function(params,cfg){
         },{
             xtype: 'button',
             id: 'new_plan_list_btn',
-            icon: 'testopia/img/new.png',
+            icon: 'extensions/testopia/img/new.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a New Test Plan',
             handler: function(){
@@ -2356,7 +2356,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                 items: [{
                     text: 'Create a New Test Plan',
                     id: 'plan_menu_new_plan',
-                    icon: 'testopia/img/new.png',
+                    icon: 'extensions/testopia/img/new.png',
                     iconCls: 'img_button_16x',
                     handler: this.newPlan.createDelegate(this)
                 },{
@@ -2567,7 +2567,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Refresh List',
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x', 
                     handler: function(){
                         grid.store.reload();
@@ -3227,7 +3227,7 @@ CaseGrid = function(params, cfg){
         {
             xtype: 'button',
             id: 'save_case_list_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this search',
             handler: function(b,e){
@@ -3236,7 +3236,7 @@ CaseGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'link_case_list_btn',
-            icon: 'testopia/img/link.png',
+            icon: 'extensions/testopia/img/link.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a link to this list',
             handler: function(b,e){
@@ -3245,7 +3245,7 @@ CaseGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'edit_case_list_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             disabled: true,
             iconCls: 'img_button_16x',
             tooltip: 'Edit Selected Test Case',
@@ -3255,7 +3255,7 @@ CaseGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'add_case_list_btn',
-            icon: 'testopia/img/new.png',
+            icon: 'extensions/testopia/img/new.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a New Test Case',
             handler: function(){
@@ -3272,7 +3272,7 @@ CaseGrid = function(params, cfg){
             xtype: 'button',
             id: 'delete_case_list_btn',
             disabled: true,
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             tooltip: 'Delete Selected Test Cases',
             handler: this.deleteList.createDelegate(this)
@@ -3301,7 +3301,7 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                 id:'case_list_ctx_menu',
                 items: [{
                     text: 'Modify Selected Test Cases',
-                    icon: 'testopia/img/edit.png',
+                    icon: 'extensions/testopia/img/edit.png',
                     iconCls: 'img_button_16x',
                     menu: {
                         items: [{
@@ -3508,7 +3508,7 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Delete Selected Test Cases',
-                    icon: 'testopia/img/delete.png',
+                    icon: 'extensions/testopia/img/delete.png',
                     iconCls: 'img_button_16x',
                     handler: this.deleteList.createDelegate(this)
 
@@ -3587,7 +3587,7 @@ Ext.extend(CaseGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
@@ -4052,7 +4052,7 @@ CasePlans = function(tcid, product_id){
     });
     
     var addButton = new Ext.Button({
-        icon: 'testopia/img/add.png',
+        icon: 'extensions/testopia/img/add.png',
         iconCls: 'img_button_16x',
         tooltip: 'Link to plan',
         handler: function(){
@@ -4069,7 +4069,7 @@ CasePlans = function(tcid, product_id){
     });
     
     var deleteButton = new Ext.Button({
-        icon: 'testopia/img/delete.png',
+        icon: 'extensions/testopia/img/delete.png',
         iconCls: 'img_button_16x',
         tooltip: 'Unlink Selected Plans',
         handler: this.remove
@@ -4116,7 +4116,7 @@ Ext.extend(CasePlans, Ext.grid.GridPanel, {
                     {
                          text: 'Unlink Selected Plans',
                          id: 'plan_remove_mnu',
-                         icon: 'testopia/img/delete.png',
+                         icon: 'extensions/testopia/img/delete.png',
                          iconCls: 'img_button_16x',
                          handler: grid.remove
                     },{
@@ -4126,7 +4126,7 @@ Ext.extend(CasePlans, Ext.grid.GridPanel, {
                         }
                     },{
                         text: 'Refresh', 
-                        icon: 'testopia/img/refresh.png',
+                        icon: 'extensions/testopia/img/refresh.png',
                         iconCls: 'img_button_16x',
                         handler: function(){
                             grid.store.reload();
@@ -4583,7 +4583,7 @@ CaseRunListGrid = function(params, cfg){
         {
             xtype: 'button',
             id: 'save_caserun_list_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this search',
             handler: function(b,e){
@@ -4592,7 +4592,7 @@ CaseRunListGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'link_case_list_btn',
-            icon: 'testopia/img/link.png',
+            icon: 'extensions/testopia/img/link.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a link to this list',
             handler: function(b,e){
@@ -4821,7 +4821,7 @@ CaseRunGrid = function(params, run){
             {
                 xtype: 'button',
                 template:imgButtonTpl,
-                text: 'testopia/img/IDLE.gif',
+                text: 'extensions/testopia/img/IDLE.gif',
                 tooltip: 'Mark as IDLE (Not Run)',
                 disabled: true,
                 handler: function(){
@@ -4830,7 +4830,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 template:imgButtonTpl,
-                text: 'testopia/img/PASSED.gif',
+                text: 'extensions/testopia/img/PASSED.gif',
                 tooltip: 'Mark as PASSED',
                 disabled: true,
                 handler: function(){
@@ -4839,7 +4839,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 template:imgButtonTpl,
-                text: 'testopia/img/FAILED.gif',
+                text: 'extensions/testopia/img/FAILED.gif',
                 tooltip: 'Mark as FAILED',
                 disabled: true,
                 handler: function(){
@@ -4848,7 +4848,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 template:imgButtonTpl,
-                text: 'testopia/img/RUNNING.gif',
+                text: 'extensions/testopia/img/RUNNING.gif',
                 tooltip: 'Mark as RUNNING',
                 disabled: true,
                 handler: function(){
@@ -4882,7 +4882,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 template:imgButtonTpl,
-                text: 'testopia/img/PAUSED.gif',
+                text: 'extensions/testopia/img/PAUSED.gif',
                 tooltip: 'Mark as PAUSED',
                 disabled: true,
                 handler: function(){
@@ -4891,7 +4891,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 template:imgButtonTpl,
-                text: 'testopia/img/BLOCKED.gif',
+                text: 'extensions/testopia/img/BLOCKED.gif',
                 tooltip: 'Mark as BLOCKED',
                 disabled: true,
                 handler: function(){
@@ -4900,7 +4900,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 template:imgButtonTpl,
-                text: 'testopia/img/ERROR.gif',
+                text: 'extensions/testopia/img/ERROR.gif',
                 tooltip: 'Mark as ERROR',
                 disabled: true,
                 handler: function(){
@@ -4917,7 +4917,7 @@ CaseRunGrid = function(params, run){
                 xtype: 'button',
                 id: 'add_case_to_run_btn',
                 tooltip: "Add cases to this run",
-                icon: 'testopia/img/add.png',
+                icon: 'extensions/testopia/img/add.png',
                 iconCls: 'img_button_16x',
                 handler: function(){
                     t.addCaseToRunPopup(run);
@@ -4926,7 +4926,7 @@ CaseRunGrid = function(params, run){
                 xtype: 'button',
                 id: 'new_case_to_run_btn',
                 tooltip: "Create a new case and add it to this run",
-                icon: 'testopia/img/new.png',
+                icon: 'extensions/testopia/img/new.png',
                 iconCls: 'img_button_16x',
                 handler: function(){
                     t.newCaseForm(run.plan_id, run.product_id, run.run_id);
@@ -4934,7 +4934,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 id: 'caserun_grid_edit_btn',
-                icon: 'testopia/img/edit.png',
+                icon: 'extensions/testopia/img/edit.png',
                 iconCls: 'img_button_16x',
                 tooltip: 'Edit Selected Test Case',
                 handler: function(){
@@ -4943,7 +4943,7 @@ CaseRunGrid = function(params, run){
             },{
                 xtype: 'button',
                 id: 'caserun_grid_delete_btn',
-                icon: 'testopia/img/delete.png',
+                icon: 'extensions/testopia/img/delete.png',
                 iconCls: 'img_button_16x',
                 tooltip: 'Remove Selected Test Cases from This Run',
                 handler: this.deleteList.createDelegate(this)
@@ -5060,7 +5060,7 @@ Ext.extend(CaseRunGrid, Ext.grid.EditorGridPanel, {
                 items: [
                 {
                     text: 'Change', 
-                    icon: 'testopia/img/edit.png',
+                    icon: 'extensions/testopia/img/edit.png',
                     iconCls: 'img_button_16x',
                     menu: {
                         items: [{
@@ -5257,7 +5257,7 @@ Ext.extend(CaseRunGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Remove Selected Cases', 
-                    icon: 'testopia/img/delete.png',
+                    icon: 'extensions/testopia/img/delete.png',
                     iconCls: 'img_button_16x',
                     handler: this.deleteList.createDelegate(this)
                 },{
@@ -5293,7 +5293,7 @@ Ext.extend(CaseRunGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
@@ -5478,28 +5478,28 @@ CaseRun = function(){
         disabled: true,
         items: [new Ext.Button({
                 template:imgButtonTpl,
-                text: 'testopia/img/IDLE.gif',
+                text: 'extensions/testopia/img/IDLE.gif',
                 tooltip: 'Mark as IDLE (Not Run)',
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 1, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
             }),new Ext.Button({
                 template:imgButtonTpl,
-                text: 'testopia/img/PASSED.gif',
+                text: 'extensions/testopia/img/PASSED.gif',
                 tooltip: 'Mark as PASSED',
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 2, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
                 }
             }),new Ext.Button({
                 template:imgButtonTpl,
-                text: 'testopia/img/FAILED.gif',
+                text: 'extensions/testopia/img/FAILED.gif',
                 tooltip: 'Mark as FAILED',
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 3, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id'), update_bug: Ext.getCmp('update_bugs').getValue()}, Ext.getCmp('caserun_grid'));
                 }
             }),new Ext.Button({
                 template:imgButtonTpl,
-                text: 'testopia/img/RUNNING.gif',
+                text: 'extensions/testopia/img/RUNNING.gif',
                 tooltip: 'Mark as RUNNING',
                 handler: function(){
                     var reassign = 0;
@@ -5531,21 +5531,21 @@ CaseRun = function(){
                 }
             }),new Ext.Button({
                 template:imgButtonTpl,
-                text: 'testopia/img/PAUSED.gif',
+                text: 'extensions/testopia/img/PAUSED.gif',
                 tooltip: 'Mark as PAUSED',
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 5, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
             }),new Ext.Button({
                 template:imgButtonTpl,
-                text: 'testopia/img/BLOCKED.gif',
+                text: 'extensions/testopia/img/BLOCKED.gif',
                 tooltip: 'Mark as BLOCKED',
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 6, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
                 }
             }),new Ext.Button({
                 template:imgButtonTpl,
-                text: 'testopia/img/ERROR.gif',
+                text: 'extensions/testopia/img/ERROR.gif',
                 tooltip: 'Mark as ERROR',
                 handler: function(){
                     TestopiaUpdateMultiple('caserun', { status_id: 7, ids: getSelectedObjects(Ext.getCmp('caserun_grid'),'caserun_id')}, Ext.getCmp('caserun_grid'));
@@ -5895,19 +5895,19 @@ CaseBugsGrid = function(id){
         }), {
             xtype: 'button',
             tooltip: "Attach a Bug",
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             handler: addbug.createDelegate(this)
         },{
             xtype: 'button',
             tooltip: "File new Bug",
-            icon: 'testopia/img/new.png',
+            icon: 'extensions/testopia/img/new.png',
             iconCls: 'img_button_16x',
             handler: newbug.createDelegate(this)
         },{
             xtype: 'button',
             tooltip: "Remove selected bugs from test case or run",
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             handler: removebug.createDelegate(this)
         },new Ext.Toolbar.Separator(), 
@@ -5933,7 +5933,7 @@ Ext.extend(CaseBugsGrid, Ext.grid.GridPanel, {
             id:'tags-ctx-menu',
             items: [{
                 text: 'Refresh List', 
-                icon: 'testopia/img/refresh.png',
+                icon: 'extensions/testopia/img/refresh.png',
                 iconCls: 'img_button_16x',
                 handler: function(){
                     grid.store.reload();
@@ -5941,7 +5941,7 @@ Ext.extend(CaseBugsGrid, Ext.grid.GridPanel, {
             },{
                 text: 'Attach Selected Bug to Current Run/Build/Environment', 
                 id: 'reattach_bug',
-                icon: 'testopia/img/add.png',
+                icon: 'extensions/testopia/img/add.png',
                 disabled: Ext.getCmp('caserun_grid') ? false : true,
                 iconCls: 'img_button_16x',
                 handler: function(){
@@ -6083,13 +6083,13 @@ CaseComponentsGrid = function(id){
         {
             xtype: 'button',
             tooltip: "Attach selected component",
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             handler: addcomp.createDelegate(this)
         },{
             xtype: 'button',
             tooltip: "Remove component from test case",
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             handler: removecomp.createDelegate(this)
 
@@ -6115,7 +6115,7 @@ Ext.extend(CaseComponentsGrid, Ext.grid.GridPanel, {
                 id:'tags-ctx-menu',
                 items: [{
                     text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
@@ -6403,7 +6403,7 @@ RunGrid = function(params, cfg){
         {
             xtype: 'button',
             id: 'save_run_list_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this search',
             handler: function(b,e){
@@ -6412,7 +6412,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'link_run_list_btn',
-            icon: 'testopia/img/link.png',
+            icon: 'extensions/testopia/img/link.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a link to this list',
             handler: function(b,e){
@@ -6421,7 +6421,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'edit_run_list_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Edit Selected Test Run',
@@ -6431,7 +6431,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'add_run_list_btn',
-            icon: 'testopia/img/new.png',
+            icon: 'extensions/testopia/img/new.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a New Test Run',
             handler: function(){
@@ -6447,7 +6447,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'delete_run_list_btn',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Delete Selected Test Runs',
@@ -6716,7 +6716,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                         }
                     },{
                     text: 'Clone Selected Test Runs',
-                    icon: 'testopia/img/copy.png',
+                    icon: 'extensions/testopia/img/copy.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         RunClonePopup(grid.getSelectionModel().getSelected().get('product_id'), getSelectedObjects(grid,'run_id'));
@@ -6724,13 +6724,13 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
 
                 },{
                     text: 'Delete Selected Test Runs',
-                    icon: 'testopia/img/delete.png',
+                    icon: 'extensions/testopia/img/delete.png',
                     iconCls: 'img_button_16x',
                     handler: this.deleteList.createDelegate(this)
 
                 },{
                     text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
@@ -7662,7 +7662,7 @@ BuildGrid = function(product_id){
         {
             xtype: 'button',
             id: 'edit_build_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             tooltip: 'Edit Selected Build',
             handler: function(){
@@ -7671,7 +7671,7 @@ BuildGrid = function(product_id){
         },{
             xtype: 'button',
             id: 'add_build_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add a new Build',
             handler: this.newRecord
@@ -7730,19 +7730,19 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Add a Build', 
-                    icon: 'testopia/img/add.png',
+                    icon: 'extensions/testopia/img/add.png',
                     iconCls: 'img_button_16x',
                     handler: this.newRecord
                 },{
                     text: 'Edit This Build', 
-                    icon: 'testopia/img/edit.png',
+                    icon: 'extensions/testopia/img/edit.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         editFirstSelection(grid);
                     }
                 },{
                     text: 'Refresh',
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
@@ -7877,7 +7877,7 @@ CaseCategoryGrid = function(product_id){
         {
             xtype: 'button',
             id: 'edit_category_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             tooltip: 'Edit Selected Category',
             handler: function(){
@@ -7886,13 +7886,13 @@ CaseCategoryGrid = function(product_id){
         },{
             xtype: 'button',
             id: 'add_category_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add a new Category',
             handler: this.newRecord
         },{
             xtype: 'button',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             tooltip: 'Delete this Category',
             handler: function(){
@@ -7933,19 +7933,19 @@ Ext.extend(CaseCategoryGrid, Ext.grid.EditorGridPanel, {
                 items: [
                     {
                         text: 'Add a Category', 
-                        icon: 'testopia/img/add.png',
+                        icon: 'extensions/testopia/img/add.png',
                         iconCls: 'img_button_16x',
                         handler: this.newRecord
                     },{
                         text: 'Edit This Category', 
-                        icon: 'testopia/img/edit.png',
+                        icon: 'extensions/testopia/img/edit.png',
                         iconCls: 'img_button_16x',
                         handler: function(){
                             editFirstSelection(grid);
                         }
                     },{
                         text: 'Refresh',
-                        icon: 'testopia/img/refresh.png',
+                        icon: 'extensions/testopia/img/refresh.png',
                         iconCls: 'img_button_16x',
                         handler: function(){
                             grid.store.reload();
@@ -8130,7 +8130,7 @@ EnvironmentGrid = function(params, cfg){
         new Ext.Toolbar.Fill(),{
             xtype: 'button',
             id : 'add_env_list_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add an Environment',
             handler: this.createEnv.createDelegate(this,['','add'])
@@ -8138,7 +8138,7 @@ EnvironmentGrid = function(params, cfg){
             xtype: 'button',
             id : 'clone_env_list_btn',
             disabled: true,
-            icon: 'testopia/img/copy.png',
+            icon: 'extensions/testopia/img/copy.png',
             iconCls: 'img_button_16x',
             tooltip: 'Clone this Environment',
             handler: this.cloneEnv.createDelegate(this)
@@ -8146,7 +8146,7 @@ EnvironmentGrid = function(params, cfg){
             xtype: 'button',
             id : 'delete_env_list_btn',
             disabled: true,
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             tooltip: 'Delete this Environment',
             handler: this.deleteEnv.createDelegate(this)
@@ -8175,7 +8175,7 @@ Ext.extend(EnvironmentGrid, Ext.grid.EditorGridPanel, {
                     handler: this.deleteEnv.createDelegate(this)
                 },{
                     text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
@@ -8504,7 +8504,7 @@ PlanSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_plan_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -8513,7 +8513,7 @@ PlanSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_plan_report_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -8594,7 +8594,7 @@ CaseSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_case_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -8603,7 +8603,7 @@ CaseSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_case_report_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -8686,7 +8686,7 @@ RunSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_run_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -8695,7 +8695,7 @@ RunSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_run_report_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -8776,7 +8776,7 @@ CaseRunSearch = function(params){
                         {
                             xtype: 'button',
                             id: 'save_caserun_report_btn',
-                            icon: 'testopia/img/save.png',
+                            icon: 'extensions/testopia/img/save.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
@@ -8785,7 +8785,7 @@ CaseRunSearch = function(params){
                         },{
                             xtype: 'button',
                             id: 'link_plan_list_btn',
-                            icon: 'testopia/img/link.png',
+                            icon: 'extensions/testopia/img/link.png',
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
@@ -8923,7 +8923,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 }
             },{
                 text: 'Edit', 
-                icon: 'testopia/img/edit.png',
+                icon: 'extensions/testopia/img/edit.png',
                 iconCls: 'img_button_16x',
                 disabled: d ? false : true,
                 handler: function(){
@@ -8951,7 +8951,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 }
             },{
                 text: 'Delete',
-                icon: 'testopia/img/delete.png',
+                icon: 'extensions/testopia/img/delete.png',
                 iconCls: 'img_button_16x',
                 handler: function (){
                     var form = new Ext.form.BasicForm('testopia_helper_frm',{});
@@ -8978,7 +8978,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                 }
             },{
                 text: 'Refresh List',
-                icon: 'testopia/img/refresh.png',
+                icon: 'extensions/testopia/img/refresh.png',
                 iconCls: 'img_button_16x',
                 handler: function(){
                     grid.store.reload();
@@ -9007,7 +9007,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             Ext.getCmp('search' + r.get('name')).getTopToolbar().add({
                 xtype: 'button',
                 id: 'link_dashboard_btn',
-                icon: 'testopia/img/link.png',
+                icon: 'extensions/testopia/img/link.png',
                 iconCls: 'img_button_16x',
                 tooltip: 'Create a link to this dashboard',
                 handler: function(b,e){
@@ -9108,7 +9108,7 @@ PortalTools = [{
                 }
             },{
                 text: 'Refresh',
-                icon: 'testopia/img/refresh.png',
+                icon: 'extensions/testopia/img/refresh.png',
                 iconCls: 'img_button_16x',
                 handler: function(){
                     panel.load({url: panel.url});
@@ -9284,13 +9284,13 @@ TestopiaObjectTags = function(obj, obj_id){
     
     var addButton = new Ext.Button({
         id: 'tag_add_btn',
-        icon: 'testopia/img/add.png',
+        icon: 'extensions/testopia/img/add.png',
         iconCls: 'img_button_16x',
         handler: this.add.createDelegate(this)
     });
     
     var deleteButton = new Ext.Button({
-        icon: 'testopia/img/delete.png',
+        icon: 'extensions/testopia/img/delete.png',
         iconCls: 'img_button_16x',
         handler: this.remove.createDelegate(this)
     });
@@ -9329,13 +9329,13 @@ Ext.extend(TestopiaObjectTags, Ext.grid.GridPanel, {
                 items: [
                     {
                          text: 'Remove Selected Tags', 
-                         icon: 'testopia/img/delete.png',
+                         icon: 'extensions/testopia/img/delete.png',
                          iconCls: 'img_button_16x',
                          obj_id: this.obj_id,
                          handler: this.remove
                     },{
                         text: 'Refresh List', 
-                        icon: 'testopia/img/refresh.png',
+                        icon: 'extensions/testopia/img/refresh.png',
                         iconCls: 'img_button_16x',
                         handler: function(){
                             grid.store.reload();
@@ -9421,7 +9421,7 @@ Ext.extend(TestopiaProductTags, Ext.grid.GridPanel, {
                 items: [
                     {
                          text: 'Refresh', 
-                         icon: 'testopia/img/refresh.png',
+                         icon: 'extensions/testopia/img/refresh.png',
                          iconCls: 'img_button_16x',
                          handler: function(){
                              ds.reload();

@@ -80,7 +80,7 @@ EnvironmentGrid = function(params, cfg){
         new Ext.Toolbar.Fill(),{
             xtype: 'button',
             id : 'add_env_list_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add an Environment',
             handler: this.createEnv.createDelegate(this,['','add'])
@@ -88,7 +88,7 @@ EnvironmentGrid = function(params, cfg){
             xtype: 'button',
             id : 'clone_env_list_btn',
             disabled: true,
-            icon: 'testopia/img/copy.png',
+            icon: 'extensions/testopia/img/copy.png',
             iconCls: 'img_button_16x',
             tooltip: 'Clone this Environment',
             handler: this.cloneEnv.createDelegate(this)
@@ -96,7 +96,7 @@ EnvironmentGrid = function(params, cfg){
             xtype: 'button',
             id : 'delete_env_list_btn',
             disabled: true,
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             tooltip: 'Delete this Environment',
             handler: this.deleteEnv.createDelegate(this)
@@ -125,7 +125,7 @@ Ext.extend(EnvironmentGrid, Ext.grid.EditorGridPanel, {
                     handler: this.deleteEnv.createDelegate(this)
                 },{
                     text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();

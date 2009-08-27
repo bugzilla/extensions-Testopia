@@ -77,7 +77,7 @@ BuildGrid = function(product_id){
         {
             xtype: 'button',
             id: 'edit_build_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             tooltip: 'Edit Selected Build',
             handler: function(){
@@ -86,7 +86,7 @@ BuildGrid = function(product_id){
         },{
             xtype: 'button',
             id: 'add_build_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add a new Build',
             handler: this.newRecord
@@ -145,19 +145,19 @@ Ext.extend(BuildGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Add a Build', 
-                    icon: 'testopia/img/add.png',
+                    icon: 'extensions/testopia/img/add.png',
                     iconCls: 'img_button_16x',
                     handler: this.newRecord
                 },{
                     text: 'Edit This Build', 
-                    icon: 'testopia/img/edit.png',
+                    icon: 'extensions/testopia/img/edit.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         editFirstSelection(grid);
                     }
                 },{
                     text: 'Refresh',
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();

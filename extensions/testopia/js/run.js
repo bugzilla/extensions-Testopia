@@ -198,7 +198,7 @@ RunGrid = function(params, cfg){
         {
             xtype: 'button',
             id: 'save_run_list_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this search',
             handler: function(b,e){
@@ -207,7 +207,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'link_run_list_btn',
-            icon: 'testopia/img/link.png',
+            icon: 'extensions/testopia/img/link.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a link to this list',
             handler: function(b,e){
@@ -216,7 +216,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'edit_run_list_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Edit Selected Test Run',
@@ -226,7 +226,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'add_run_list_btn',
-            icon: 'testopia/img/new.png',
+            icon: 'extensions/testopia/img/new.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a New Test Run',
             handler: function(){
@@ -242,7 +242,7 @@ RunGrid = function(params, cfg){
         },{
             xtype: 'button',
             id: 'delete_run_list_btn',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Delete Selected Test Runs',
@@ -511,7 +511,7 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
                         }
                     },{
                     text: 'Clone Selected Test Runs',
-                    icon: 'testopia/img/copy.png',
+                    icon: 'extensions/testopia/img/copy.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         RunClonePopup(grid.getSelectionModel().getSelected().get('product_id'), getSelectedObjects(grid,'run_id'));
@@ -519,13 +519,13 @@ Ext.extend(RunGrid, Ext.grid.EditorGridPanel, {
 
                 },{
                     text: 'Delete Selected Test Runs',
-                    icon: 'testopia/img/delete.png',
+                    icon: 'extensions/testopia/img/delete.png',
                     iconCls: 'img_button_16x',
                     handler: this.deleteList.createDelegate(this)
 
                 },{
                     text: 'Refresh List', 
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();

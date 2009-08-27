@@ -27,9 +27,9 @@
 [% PROCESS testopia/blocks.html.tmpl %]
 [% PROCESS testopia/style.none.tmpl %]
 
-[% javascript_urls.push("testopia/extjs/examples/ux/Portal.js") %]
-[% javascript_urls.push("testopia/extjs/examples/ux/PortalColumn.js") %]
-[% javascript_urls.push("testopia/extjs/examples/ux/Portlet.js") %]
+[% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portal.js") %]
+[% javascript_urls.push("extensions/testopia/extjs/examples/ux/PortalColumn.js") %]
+[% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portlet.js") %]
 
 [% PROCESS global/header.html.tmpl %]
 
@@ -88,7 +88,7 @@ Ext.onReady(function(){
         Ext.getCmp('dashboardpanel').getTopToolbar().add({
             xtype: 'button',
             id: 'save_dashboard_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this dashboard',
             handler: function(b,e){

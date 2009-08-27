@@ -110,7 +110,7 @@ rights to that user.)
     <td align="center"><input type="checkbox" style="border: none" [% 'disabled="disabled"' UNLESS plan.canadmin %] name="d[% row.user.id %]" [% 'checked="checked"' IF row.delete %] value="1"></td>
     <td align="center"><input type="checkbox" style="border: none" [% 'disabled="disabled"' UNLESS plan.canadmin %] name="a[% row.user.id %]" [% 'checked="checked"' IF row.admin %] value="1"></td>
   [% IF plan.canadmin %]
-    <td><input type="image" src="testopia/img/delete.png" onclick="planAccess({action: 'delete', user: '[% row.user.id %]',plan_id: [% plan.id FILTER none %]})"> </td>
+    <td><input type="image" src="extensions/testopia/img/delete.png" onclick="planAccess({action: 'delete', user: '[% row.user.id %]',plan_id: [% plan.id FILTER none %]})"> </td>
   [% END %]
   </tr>
   [% END %]

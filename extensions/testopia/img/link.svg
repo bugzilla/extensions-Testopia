@@ -13,7 +13,7 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.43"
-   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/testopia/img"
+   sodipodi:docbase="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img"
    sodipodi:docname="link.svg">
   <defs
      id="defs4" />
@@ -51,7 +51,7 @@
     <g
        id="g2220"
        transform="matrix(0.694138,0,0,0.668649,-144.0612,-419.2452)"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/link.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/link.png"
        inkscape:export-xdpi="1.9299999"
        inkscape:export-ydpi="1.9299999">
       <path
@@ -77,14 +77,14 @@
        style="fill:#ecdb7d;fill-opacity:1;stroke:#000000;stroke-width:14.5030365;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 120.69462,292.29401 C 23.350697,293.38143 -55.268989,363.32018 -55.268989,449.32967 C -55.268989,536.01639 24.61395,606.36533 123.01779,606.36533 C 221.42163,606.36533 301.27137,536.01637 301.27137,449.32967 C 301.27137,362.64295 221.42162,292.29399 123.01779,292.29401 C 122.24901,292.29401 121.46111,292.28544 120.69462,292.29401 z M 123.05097,384.90741 C 123.89279,384.89387 124.72636,384.90741 125.57327,384.90741 C 179.77637,384.90742 223.77703,412.81665 223.77703,447.20849 C 223.77703,481.60034 179.77637,509.50956 125.57327,509.50956 C 71.370187,509.50955 27.402709,481.60032 27.402709,447.20849 C 27.402708,413.35404 70.017066,385.76089 123.05097,384.90741 z "
        id="path1307"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/link.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/link.png"
        inkscape:export-xdpi="1.9299999"
        inkscape:export-ydpi="1.9299999" />
     <path
        style="fill:#ecdb7d;fill-opacity:1;stroke:#000000;stroke-width:14.5030365;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 433.68975,292.29401 C 336.34583,293.38143 257.72614,363.32018 257.72614,449.32967 C 257.72614,536.01639 337.60908,606.36533 436.01292,606.36533 C 534.41676,606.36533 614.26651,536.01637 614.26651,449.32967 C 614.26651,362.64295 534.41675,292.29399 436.01292,292.29401 C 435.24414,292.29401 434.45624,292.28544 433.68975,292.29401 z M 436.04611,384.90741 C 436.88792,384.89386 437.72149,384.90741 438.56841,384.90741 C 492.77151,384.90742 536.77216,412.81665 536.77216,447.20849 C 536.77216,481.60034 492.77151,509.50956 438.56841,509.50956 C 384.36532,509.50955 340.39784,481.60032 340.39784,447.20849 C 340.39784,413.35404 383.0122,385.76089 436.04611,384.90741 z "
        id="path2284"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/link.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/link.png"
        inkscape:export-xdpi="1.9299999"
        inkscape:export-ydpi="1.9299999" />
     <rect
@@ -95,7 +95,7 @@
        x="92.127907"
        y="381.00513"
        ry="68.384583"
-       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/testopia/img/link.png"
+       inkscape:export-filename="/home/ghendricks/workspace/bnc-3.0/extensions/testopia/img/link.png"
        inkscape:export-xdpi="1.9299999"
        inkscape:export-ydpi="1.9299999" />
   </g>

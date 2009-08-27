@@ -82,7 +82,7 @@ var imgButtonTpl = new Ext.Template(
     '</tr></tbody></table>');
 TestopiaUtil = function(){
     this.statusIcon =  function (name){
-        return '<img src="testopia/img/' + name + '_small.gif" alt="'+ name +'" title="'+ name +'">';
+        return '<img src="extensions/testopia/img/' + name + '_small.gif" alt="'+ name +'" title="'+ name +'">';
     };
     this.caseLink = function(id,m,r,ri,ci,s){
         if (s.isTreport === true)
@@ -1055,7 +1055,7 @@ Ext.extend(HistoryGrid, Ext.grid.GridPanel,{
                 id:'history-ctx-menu',
                 items: [{
                     text: 'Refresh',
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();

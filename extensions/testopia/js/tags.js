@@ -101,13 +101,13 @@ TestopiaObjectTags = function(obj, obj_id){
     
     var addButton = new Ext.Button({
         id: 'tag_add_btn',
-        icon: 'testopia/img/add.png',
+        icon: 'extensions/testopia/img/add.png',
         iconCls: 'img_button_16x',
         handler: this.add.createDelegate(this)
     });
     
     var deleteButton = new Ext.Button({
-        icon: 'testopia/img/delete.png',
+        icon: 'extensions/testopia/img/delete.png',
         iconCls: 'img_button_16x',
         handler: this.remove.createDelegate(this)
     });
@@ -146,13 +146,13 @@ Ext.extend(TestopiaObjectTags, Ext.grid.GridPanel, {
                 items: [
                     {
                          text: 'Remove Selected Tags', 
-                         icon: 'testopia/img/delete.png',
+                         icon: 'extensions/testopia/img/delete.png',
                          iconCls: 'img_button_16x',
                          obj_id: this.obj_id,
                          handler: this.remove
                     },{
                         text: 'Refresh List', 
-                        icon: 'testopia/img/refresh.png',
+                        icon: 'extensions/testopia/img/refresh.png',
                         iconCls: 'img_button_16x',
                         handler: function(){
                             grid.store.reload();
@@ -238,7 +238,7 @@ Ext.extend(TestopiaProductTags, Ext.grid.GridPanel, {
                 items: [
                     {
                          text: 'Refresh', 
-                         icon: 'testopia/img/refresh.png',
+                         icon: 'extensions/testopia/img/refresh.png',
                          iconCls: 'img_button_16x',
                          handler: function(){
                              ds.reload();

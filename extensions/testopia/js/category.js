@@ -57,7 +57,7 @@ CaseCategoryGrid = function(product_id){
         {
             xtype: 'button',
             id: 'edit_category_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             tooltip: 'Edit Selected Category',
             handler: function(){
@@ -66,13 +66,13 @@ CaseCategoryGrid = function(product_id){
         },{
             xtype: 'button',
             id: 'add_category_btn',
-            icon: 'testopia/img/add.png',
+            icon: 'extensions/testopia/img/add.png',
             iconCls: 'img_button_16x',
             tooltip: 'Add a new Category',
             handler: this.newRecord
         },{
             xtype: 'button',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             tooltip: 'Delete this Category',
             handler: function(){
@@ -113,19 +113,19 @@ Ext.extend(CaseCategoryGrid, Ext.grid.EditorGridPanel, {
                 items: [
                     {
                         text: 'Add a Category', 
-                        icon: 'testopia/img/add.png',
+                        icon: 'extensions/testopia/img/add.png',
                         iconCls: 'img_button_16x',
                         handler: this.newRecord
                     },{
                         text: 'Edit This Category', 
-                        icon: 'testopia/img/edit.png',
+                        icon: 'extensions/testopia/img/edit.png',
                         iconCls: 'img_button_16x',
                         handler: function(){
                             editFirstSelection(grid);
                         }
                     },{
                         text: 'Refresh',
-                        icon: 'testopia/img/refresh.png',
+                        icon: 'extensions/testopia/img/refresh.png',
                         iconCls: 'img_button_16x',
                         handler: function(){
                             grid.store.reload();

@@ -186,7 +186,7 @@ PlanGrid = function(params,cfg){
         {
             xtype: 'button',
             id: 'save_plan_list_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this search',
             handler: function(b,e){
@@ -195,7 +195,7 @@ PlanGrid = function(params,cfg){
         },{
             xtype: 'button',
             id: 'link_plan_list_btn',
-            icon: 'testopia/img/link.png',
+            icon: 'extensions/testopia/img/link.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a link to this list',
             handler: function(b,e){
@@ -204,7 +204,7 @@ PlanGrid = function(params,cfg){
         },{
             xtype: 'button',
             id: 'edit_plan_list_btn',
-            icon: 'testopia/img/edit.png',
+            icon: 'extensions/testopia/img/edit.png',
             iconCls: 'img_button_16x',
             disabled: true,
             tooltip: 'Edit Selected Test Plan',
@@ -214,7 +214,7 @@ PlanGrid = function(params,cfg){
         },{
             xtype: 'button',
             id: 'new_plan_list_btn',
-            icon: 'testopia/img/new.png',
+            icon: 'extensions/testopia/img/new.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a New Test Plan',
             handler: function(){
@@ -241,7 +241,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                 items: [{
                     text: 'Create a New Test Plan',
                     id: 'plan_menu_new_plan',
-                    icon: 'testopia/img/new.png',
+                    icon: 'extensions/testopia/img/new.png',
                     iconCls: 'img_button_16x',
                     handler: this.newPlan.createDelegate(this)
                 },{
@@ -452,7 +452,7 @@ Ext.extend(PlanGrid, Ext.grid.EditorGridPanel, {
                     }
                 },{
                     text: 'Refresh List',
-                    icon: 'testopia/img/refresh.png',
+                    icon: 'extensions/testopia/img/refresh.png',
                     iconCls: 'img_button_16x', 
                     handler: function(){
                         grid.store.reload();

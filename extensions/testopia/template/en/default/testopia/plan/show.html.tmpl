@@ -27,9 +27,9 @@
 [% PROCESS testopia/blocks.html.tmpl %]
 [% PROCESS testopia/style.none.tmpl %]
 
-[% javascript_urls.push("testopia/extjs/examples/ux/Portal.js") %]
-[% javascript_urls.push("testopia/extjs/examples/ux/PortalColumn.js") %]
-[% javascript_urls.push("testopia/extjs/examples/ux/Portlet.js") %]
+[% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portal.js") %]
+[% javascript_urls.push("extensions/testopia/extjs/examples/ux/PortalColumn.js") %]
+[% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portlet.js") %]
 
 
 [% IF NOT plan.isactive %]
@@ -109,7 +109,7 @@ Ext.onReady(function(){
         [% IF user.in_group('Testers') %]
         ,{
             text: 'Clone',
-            icon: 'testopia/img/copy.png',
+            icon: 'extensions/testopia/img/copy.png',
             iconCls: 'img_button_16x',
             handler: function(){
                 PlanClonePopup(plan);
@@ -158,7 +158,7 @@ Ext.onReady(function(){
         },{
             text: "Delete",
             id: 'btn-delete',
-            icon: 'testopia/img/delete.png',
+            icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             disabled: plan.candelete ? false : true,
             handler: confirmDelete
@@ -196,7 +196,7 @@ Ext.onReady(function(){
     ,{
         xtype: 'button',
         id: 'plan-copy-button',
-        icon: 'testopia/img/copy.png',
+        icon: 'extensions/testopia/img/copy.png',
         iconCls: 'img_button_16x',
         tooltip: 'Clone this Test Plan',
         handler: function(){
@@ -208,7 +208,7 @@ Ext.onReady(function(){
     ,{
         xtype: 'button',
         id: 'plan-delete-btn',
-        icon: 'testopia/img/delete.png',
+        icon: 'extensions/testopia/img/delete.png',
         iconCls: 'img_button_16x',
         tooltip: 'Delete this Plan',
         handler: confirmDelete
@@ -336,7 +336,7 @@ Ext.onReady(function(){
     var edit_summary_btn = new Ext.Button({
         applyTo: 'plan_name_edit_btn',
         id:'edit_plan_summary_btn',
-        icon: 'testopia/img/edit.png',
+        icon: 'extensions/testopia/img/edit.png',
         iconCls: 'img_button_16x',
         tooltip: 'Edit Plan Summary',
         handler: function(){
@@ -370,7 +370,7 @@ Ext.onReady(function(){
         Ext.getCmp('dashboardpanel').getTopToolbar().add({
             xtype: 'button',
             id: 'save_dashboard_btn',
-            icon: 'testopia/img/save.png',
+            icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this dashboard',
             handler: function(b,e){
