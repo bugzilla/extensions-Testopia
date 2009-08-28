@@ -52,7 +52,7 @@ Ext.onReady(function(){
             xtype: 'tabpanel',
             enableTabScroll: true,
             activeTab: 0,
-            items: [list_grid, new DashboardPanel({})]
+            items: [list_grid, new Testopia.Search.DashboardPanel({})]
         },{
             region: 'east',
             width: 250,
@@ -61,17 +61,17 @@ Ext.onReady(function(){
             activeTab: 2,
             xtype: 'tabpanel',
             items: [
-                new ReportGrid({
+                new Testopia.Search.SavedReportsList({
                     title: 'Dashboards',
                     id: 'dashboard_grid',
                     type: 3
                 }),
-                new ReportGrid({
+                new Testopia.Search.SavedReportsList({
                     title: 'Reports',
                     id: 'reports_grid',
                     type: 1
                 }),
-                new ReportGrid({
+                new Testopia.Search.SavedReportsList({
                     title: 'Searches',
                     id: 'searches_grid',
                     type: 0

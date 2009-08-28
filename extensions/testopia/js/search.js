@@ -20,9 +20,6 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-Testopia.Search = {};
-Testopia.Search.dashboard_urls = [];
-
 Testopia.Search.fillInForm = function(type, params, name){
     var f = document.getElementById(type + '_search_form');
     for (var i=0; i < f.length; i++){
@@ -55,7 +52,71 @@ Testopia.Search.fillInForm = function(type, params, name){
     }
 };
 
-SearchPopup = function(tab, params){
+Testopia.Search.DashboardPanel = function(cfg){
+    Testopia.Search.DashboardPanel.superclass.constructor.call(this, {
+        title: cfg.title || 'Dashboard',
+        layout: 'fit',
+        closable: cfg.closable || false,
+        id: cfg.id || 'dashboardpanel',
+        tbar: [{
+            xtype: 'button',
+            text: 'Add Custom Panel',
+            handler: function(b, e){
+                Ext.Msg.prompt('Enter URL', '', function(btn, text){
+                    if (btn == 'ok') {
+                        var url = text + '&noheader=1';
+                        Testopia.Search.dashboard_urls.push(url);
+                        var newPortlet = new Ext.ux.Portlet({
+                            title: 'Custom',
+                            closable: true,
+                            autoScroll: true,
+                            tools: PortalTools,
+                            url: url
+                        });
+                        
+                        Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                        Ext.getCmp('dashboard_leftcol').doLayout();
+                        newPortlet.load({
+                            url: url,
+                            scripts: false
+                        });
+                    }
+                });
+            }
+        }, new Ext.Toolbar.Fill()],
+        items: [{
+            xtype: 'portal',
+            margins: '35 5 5 0',
+            items: [{
+                columnWidth: 0.5,
+                baseCls: 'x-plain',
+                bodyStyle: 'padding:10px 10px 10px 10px',
+                id: cfg.lc || 'dashboard_leftcol',
+                items: [{
+                    title: ' ',
+                    hidden: true
+                }]
+            }, {
+                columnWidth: 0.5,
+                baseCls: 'x-plain',
+                bodyStyle: 'padding:10px 10px 10px 10px',
+                id: cfg.rc || 'dashboard_rightcol',
+                items: [{
+                    title: ' ',
+                    hidden: true
+                }]
+            }]
+        }]
+    });
+    this.on('activate', this.onActivate, this);
+};
+Ext.extend(Testopia.Search.DashboardPanel, Ext.Panel, {
+    onActivate: function(p){
+        p.doLayout();
+    }
+});
+
+Testopia.Search.Popup = function(tab, params){
     if (Ext.getCmp('search_win')){
         Ext.getCmp('search_win').show();
         return;
@@ -68,15 +129,15 @@ SearchPopup = function(tab, params){
         plain: true,
         shadow: false,
         layout: 'fit',
-        items: [new SearchPanel(tab, params)]
+        items: [new Testopia.Search.Panel(tab, params)]
     });
     win.show();
 };
 
-SearchPanel = function(tab, params){
+Testopia.Search.Panel = function(tab, params){
     params = params || {};
 
-    SearchPanel.superclass.constructor.call(this,{
+    Testopia.Search.Panel.superclass.constructor.call(this,{
         title: 'Create a Search',
         id: 'search_panel',
         autoScroll: true,
@@ -87,18 +148,18 @@ SearchPanel = function(tab, params){
             autoScroll: true
         },
         items:[
-            new PlanSearch(params),
-            new CaseSearch(params),
-            new RunSearch(params),
-            new CaseRunSearch(params)
+            new Testopia.Search.PlansForm(params),
+            new Testopia.Search.CasesForm(params),
+            new Testopia.Search.RunsForm(params),
+            new Testopia.Search.CaseRunsForm(params)
         ]
     });
 };
-Ext.extend(SearchPanel, Ext.TabPanel);
+Ext.extend(Testopia.Search.Panel, Ext.TabPanel);
 
-PlanSearch = function(params){
+Testopia.Search.PlansForm = function(params){
     this.params = params;
-    PlanSearch.superclass.constructor.call(this,{
+    Testopia.Search.PlansForm.superclass.constructor.call(this,{
         title: 'Plan Search',
         id: 'plan_search_panel',
         layout:'fit',
@@ -163,7 +224,7 @@ PlanSearch = function(params){
 
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(PlanSearch, Ext.Panel,{
+Ext.extend(Testopia.Search.PlansForm, Ext.Panel,{
     onActivate: function(event){
         if (Ext.get('case_search_form')){
             Ext.get('case_search_form').remove();
@@ -186,9 +247,9 @@ Ext.extend(PlanSearch, Ext.Panel,{
     }
 });
 
-CaseSearch = function(params){
+Testopia.Search.CasesForm = function(params){
     this.params = params;
-    CaseSearch.superclass.constructor.call(this,{
+    Testopia.Search.CasesForm.superclass.constructor.call(this,{
         title: 'Case Search',
         id: 'case_search_panel',
         layout:'fit',
@@ -253,7 +314,7 @@ CaseSearch = function(params){
 
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(CaseSearch, Ext.Panel,{
+Ext.extend(Testopia.Search.CasesForm, Ext.Panel,{
     onActivate: function(event){
         if (Ext.get('run_search_form')){
             Ext.get('run_search_form').remove();
@@ -276,9 +337,9 @@ Ext.extend(CaseSearch, Ext.Panel,{
     }
 });
 
-RunSearch = function(params){
+Testopia.Search.RunsForm = function(params){
     this.params = params;
-    RunSearch.superclass.constructor.call(this,{
+    Testopia.Search.RunsForm.superclass.constructor.call(this,{
         title: 'Run Search',
         id: 'run_search_panel',
         layout:'fit',
@@ -332,7 +393,7 @@ RunSearch = function(params){
                     Ext.getCmp('object_panel').activate('run_search' + searchnum);
                 }
                 else{
-                    Ext.getCmp('object_panel').add(new RunGrid(values,{
+                    Ext.getCmp('object_panel').add(new Testopia.TestRun.Grid(values,{
                         id: 'run_search' + searchnum, 
                         closable: true,
                         title: 'Run Search'
@@ -345,7 +406,7 @@ RunSearch = function(params){
 
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(RunSearch, Ext.Panel,{
+Ext.extend(Testopia.Search.RunsForm, Ext.Panel,{
     onActivate: function(event){
         if (Ext.get('case_search_form')){
             Ext.get('case_search_form').remove();
@@ -368,9 +429,9 @@ Ext.extend(RunSearch, Ext.Panel,{
     }
 });
 
-CaseRunSearch = function(params){
+Testopia.Search.CaseRunsForm = function(params){
     this.params = params;
-    CaseRunSearch.superclass.constructor.call(this,{
+    Testopia.Search.CaseRunsForm.superclass.constructor.call(this,{
         title: 'Case-Run Search',
         id: 'caserun_search_panel',
         layout:'fit',
@@ -435,7 +496,7 @@ CaseRunSearch = function(params){
 
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(CaseRunSearch, Ext.Panel,{
+Ext.extend(Testopia.Search.CaseRunsForm, Ext.Panel,{
     onActivate: function(event){
         if (Ext.get('case_search_form')){
             Ext.get('case_search_form').remove();
@@ -457,7 +518,7 @@ Ext.extend(CaseRunSearch, Ext.Panel,{
     }
 });
 
-ReportGrid = function(cfg){
+Testopia.Search.SavedReportsList = function(cfg){
     
     this.store = new Ext.data.JsonStore({
         url: 'tr_query.cgi',
@@ -472,7 +533,7 @@ ReportGrid = function(cfg){
         {header: "Name", width: 30, dataindex: "name", sortable: true}
     ];
     
-    ReportGrid.superclass.constructor.call(this, {
+    Testopia.Search.SavedReportsList.superclass.constructor.call(this, {
         id: cfg.id || "reports_grid",
         loadMask: {msg: "Loading ..."},
         autoScroll: true,
@@ -514,7 +575,7 @@ ReportGrid = function(cfg){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(ReportGrid, Ext.grid.GridPanel, {
+Ext.extend(Testopia.Search.SavedReportsList, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
         var d = grid.store.getAt(index).get('query').match(/(tr_list_|_reports)/);
         if (d){
@@ -573,7 +634,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                     type = type[1];
                     
                     var params = searchToJson(r.get('query'));
-                    SearchPopup(type, params);
+                    Testopia.Search.Popup(type, params);
                 }
             },{
                 text: 'Delete',
@@ -628,7 +689,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
             rc: 'rc_' + r.get('name')
         };
         if (r.get('type') == 3){
-            Ext.getCmp('object_panel').add(new DashboardPanel(cfg));
+            Ext.getCmp('object_panel').add(new Testopia.Search.DashboardPanel(cfg));
             Ext.getCmp('object_panel').activate('search' + r.get('name'));
             Ext.getCmp('search' + r.get('name')).getTopToolbar().add({
                 xtype: 'button',
@@ -689,7 +750,7 @@ Ext.extend(ReportGrid, Ext.grid.GridPanel, {
                     Ext.getCmp('object_panel').add(new Testopia.TestPlan.Grid(params,cfg));
                     break;
                 case 'run':
-                    Ext.getCmp('object_panel').add(new RunGrid(params,cfg));
+                    Ext.getCmp('object_panel').add(new Testopia.TestRun.Grid(params,cfg));
                     break;
                 case 'case':
                     Ext.getCmp('object_panel').add(new Testopia.TestCase.Grid(params,cfg));

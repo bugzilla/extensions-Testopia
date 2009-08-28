@@ -78,8 +78,8 @@ Ext.onReady(function(){
         }
     };
     var cgrid = new Testopia.TestCase.Grid({plan_id: plan.plan_id },{id: 'plan_case_grid'});
-    var rgrid = new RunGrid({plan_id: plan.plan_id },{id: 'plan_run_grid'});
-    var tgrid = new TestopiaObjectTags('plan', plan.plan_id);
+    var rgrid = new Testopia.TestRun.Grid({plan_id: plan.plan_id },{id: 'plan_run_grid'});
+    var tgrid = new Testopia.Tags.ObjectTags('plan', plan.plan_id);
     var attachGrid = new Testopia.Attachment.Grid(plan);
     var t = new TestopiaUtil();
     
@@ -147,12 +147,12 @@ Ext.onReady(function(){
             menu: [{
                 text: 'Test Run',
                 handler: function(){
-                    t.newRunPopup(plan);
+                    Testopia.TestRun.NewRunPopup(plan);
                 }
             },{
                 text: 'Test Case',
                 handler: function(){
-                    t.newCaseForm(plan.plan_id, plan.product_id);
+                    Testopia.TestCase.NewCasePopup(plan.plan_id, plan.product_id);
                 }
             }]
         },{
@@ -236,7 +236,7 @@ Ext.onReady(function(){
               }
             },
             items: [
-            new DashboardPanel({}),
+            new Testopia.Search.DashboardPanel({}),
             rgrid,cgrid,attachGrid,
             {
                 layout: 'fit',
@@ -286,7 +286,7 @@ Ext.onReady(function(){
             width: '200',
             activeTab: 0,
             split: true,
-            items: [tgrid, new ReportGrid({
+            items: [tgrid, new Testopia.Search.SavedReportsList({
                     title: 'Reports',
                     id: 'reports_grid',
                     type: 1
@@ -295,7 +295,7 @@ Ext.onReady(function(){
         }]
     });
 [% IF plan.canedit %]    
-    var vbox = new ProductVersionCombo({
+    var vbox = new Testopia.Product.VersionCombo({
         hiddenName: 'product_version',
         transform: 'product_version'
     });
@@ -318,7 +318,7 @@ Ext.onReady(function(){
         adduser.render('adduser');
     }
     
-    var types = new PlanTypesCombo({
+    var types = new Testopia.TestPlan.TypesCombo({
         hiddenName: 'plan_type',
         transform: 'plan_type'
     });

@@ -113,7 +113,7 @@ Ext.onReady(function(){
             icon: 'extensions/testopia/img/copy.png',
             iconCls: 'img_button_16x',
             handler: function(){
-                RunClonePopup(run.product_id, run.run_id);
+                Testopia.TestRun.ClonePopup(run.product_id, run.run_id);
             }
         },{
             text: "Delete",
@@ -146,7 +146,7 @@ Ext.onReady(function(){
         iconCls: 'img_button_16x',
         tooltip: 'Clone this Test Run',
         handler: function(){
-            RunClonePopup(run.product_id, run.run_id);
+            Testopia.TestRun.ClonePopup(run.product_id, run.run_id);
         }
     }
 [% IF run.candelete %]
@@ -222,11 +222,11 @@ Ext.onReady(function(){
                 activeTab: 0,
                 id: 'run_east_panel',
                 items:[
-                    new TestopiaObjectTags('run', [% run.id FILTER none %]),
+                    new Testopia.Tags.ObjectTags('run', [% run.id FILTER none %]),
     //                {
     //                    title: 'CC List'
     //                },
-                    new RunFilterGrid(run)
+                    new Testopia.TestRun.FiltersList(run)
                     
                 ]
             }]
@@ -355,7 +355,7 @@ Ext.onReady(function(){
     });
 
 // Combo Boxes
-    var pbox = new ProductVersionCombo({
+    var pbox = new Testopia.Product.VersionCombo({
         hiddenName: 'run_product_version',
         transform: 'product_version'
     });
@@ -363,7 +363,7 @@ Ext.onReady(function(){
         submitEdits('run_product_version', r.get('value'));
     });
     
-    var bbox = new BuildCombo({
+    var bbox = new Testopia.Build.Combo({
         hiddenName: 'build',
         transform: 'run_default_build'
     });
@@ -371,7 +371,7 @@ Ext.onReady(function(){
         submitEdits('build', r.get('value'));
     });
 
-    var ebox = new EnvironmentCombo({
+    var ebox = new Testopia.Environment.Combo({
         hiddenName: 'environment',
         transform: 'run_default_environment'
     });

@@ -41,7 +41,7 @@
 <script type="text/javascript">
 Ext.onReady(function(){
     Ext.QuickTips.init();
-    var form = new Testopia.TestCase.Form('[% tc.plans %]', [% product_id FILTER none %]);
+    var form = new Testopia.TestCase.NewCaseForm('[% tc.plans %]', [% product_id FILTER none %]);
     form.render('caseform');
     [% IF tc.summary %]
     Ext.getCmp('ncf-summary').setValue('[% tc.summary FILTER js %]');

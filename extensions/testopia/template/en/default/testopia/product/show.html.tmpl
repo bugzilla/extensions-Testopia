@@ -63,21 +63,21 @@ Ext.onReady(function(){
     
     var pgrid = new Testopia.TestPlan.Grid({product_id: product_id},{id: 'product_plan_grid'});
     var cgrid = new Testopia.TestCase.Grid({product_id: product_id},{id: 'product_case_grid'});
-    var rgrid = new RunGrid({product_id: product_id},{id: 'product_run_grid'});
-    var egrid = new EnvironmentGrid({product_id: product_id});
-    var utag = new TestopiaProductTags("User Tags", "user");
-    var ptag = new TestopiaProductTags("Product Tags", "product", product_id);
-    var dtab = new ReportGrid({
+    var rgrid = new Testopia.TestRun.Grid({product_id: product_id},{id: 'product_run_grid'});
+    var egrid = new Testopia.Environment.Grid({product_id: product_id});
+    var utag = new Testopia.Tags.ProductTags("User Tags", "user");
+    var ptag = new Testopia.Tags.ProductTags("Product Tags", "product", product_id);
+    var dtab = new Testopia.Search.SavedReportsList({
         title: 'Dashboards',
         id: 'dashboard_grid',
         type: 3
     });
-    var rtab = new ReportGrid({
+    var rtab = new Testopia.Search.SavedReportsList({
         title: 'Reports',
         id: 'reports_grid',
         type: 1
     });
-    var stab = new ReportGrid({
+    var stab = new Testopia.Search.SavedReportsList({
         title: 'Searches',
         id: 'searches_grid',
         type: 0
@@ -88,7 +88,7 @@ Ext.onReady(function(){
         items:[{
             text: 'New Test Plan',
             handler: function(){
-                t.newPlanPopup(product_id);
+                Testopia.TestPlan.NewPlanPopup(product_id);
             }
         },{
             text: 'New Build',
@@ -114,22 +114,22 @@ Ext.onReady(function(){
         items:[{
             text: 'Test Plan Search',
             handler: function(){
-                SearchPopup('plan');
+                Testopia.Search.Popup('plan');
             }
         },{
             text: 'Test Case Search',
             handler: function(){
-                SearchPopup('case');
+                Testopia.Search.Popup('case');
             }
         },{
             text: 'Test Run Search',
             handler: function(){
-                SearchPopup('run');
+                Testopia.Search.Popup('run');
             }
         },{
             text: 'Test Results Search',
             handler: function(){
-                SearchPopup('caserun');
+                Testopia.Search.Popup('caserun');
             }
         }]
     });
@@ -142,22 +142,22 @@ Ext.onReady(function(){
                 items:[{
                     text: 'Test Plan Report',
                     handler: function(){
-                        SearchPopup('plan', {report: true});
+                        Testopia.Search.Popup('plan', {report: true});
                     }
                 },{
                     text: 'Test Case Report',
                     handler: function(){
-                        SearchPopup('case', {report: true});
+                        Testopia.Search.Popup('case', {report: true});
                     }
                 },{
                     text: 'Test Run Report',
                     handler: function(){
-                        SearchPopup('run', {report: true});
+                        Testopia.Search.Popup('run', {report: true});
                     }
                 },{
                     text: 'Test Results Report',
                     handler: function(){
-                        SearchPopup('caserun', {report: true});
+                        Testopia.Search.Popup('caserun', {report: true});
                     }
                 }]
             }
@@ -274,7 +274,7 @@ Ext.onReady(function(){
                     Ext.state.Manager.set('product_active_tab', Ext.getCmp('object_panel').getActiveTab().getId());
               }
             },
-            items: [new DashboardPanel({}),
+            items: [new Testopia.Search.DashboardPanel({}),
                 pgrid, 
                 cgrid, 
                 rgrid, 
@@ -373,7 +373,7 @@ Ext.onReady(function(){
     Ext.getCmp('prod_tag_panel').activate(Ext.state.Manager.get('product_tabs_tab', 0));
 
   [% IF search %]
-    SearchPopup('case');
+    Testopia.Search.Popup('case');
   [% END %]
 });
 

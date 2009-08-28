@@ -20,60 +20,125 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-Testopia.Tags = {};
-
-Testopia.Tags.renderer = function(v,md,r,ri,ci,s,type,pid){
-    return '<div style="cursor:pointer" onclick=Testopia.Tags.list("' + type + '",' + pid +',"'+ r.get('tag_name') +'")>'+ v + '</div>';
+/*
+ * Testopia.Tags.Lookup - This generates a typeahead lookup for Tagnames.
+ * It can be used anywhere in Testopia. Extends Ext ComboBox
+ */
+Testopia.Tags.Lookup = function(cfg){
+    Testopia.Tags.Lookup.superclass.constructor.call(this, {
+        id: cfg.id || 'tag_lookup',
+        store: new Ext.data.JsonStore({
+            url: 'tr_quicksearch.cgi',
+            baseParams: {
+                action: 'gettag'
+            },
+            root: 'tags',
+            totalProperty: 'total',
+            fields: [{
+                name: 'id',
+                mapping: 'tag_id'
+            }, {
+                name: 'name',
+                mapping: 'tag_name'
+            }]
+        }),
+        queryParam: 'search',
+        loadingText: 'Looking up tags...',
+        displayField: 'name',
+        valueField: 'id',
+        typeAhead: false,
+        hiddenName: 'tag',
+        hideTrigger: true,
+        minListWidth: 300,
+        minChars: 2,
+        width: 150,
+        editable: true,
+        forceSelection: false,
+        emptyText: 'Type a tagname...',
+        listeners: {
+            'specialkey': function(f, e){
+                if (e.getKey() == e.ENTER) {
+                    Ext.getCmp('tag_add_btn').fireEvent('click');
+                }
+            }
+        }
+    });
+    Ext.apply(this, cfg);
 };
- 
+Ext.extend(Testopia.Tags.Lookup, Ext.form.ComboBox);
+
+Testopia.Tags.renderer = function(v, md, r, ri, ci, s, type, pid){
+    return '<div style="cursor:pointer" onclick=Testopia.Tags.list("' + type + '",' + pid + ',"' + r.get('tag_name') + '")>' + v + '</div>';
+};
+
 Testopia.Tags.list = function(type, product, tag){
     var cfg = {
         title: 'Tag Results: ' + tag,
         closable: true,
         id: tag + 'search' + product,
         autoScroll: true
-    }; 
+    };
     var search = {
         product_id: product,
         tags: tag
     };
     
     var newTab
-    if (type == 'case'){
-        newTab = new Testopia.TestCase.Grid(search, cfg); 
+    if (type == 'case') {
+        newTab = new Testopia.TestCase.Grid(search, cfg);
     }
-    else if (type == 'plan'){
-        newTab = new Testopia.TestPlan.Grid(search, cfg); 
-    }
-    else if (type == 'run'){
-        newTab = new RunGrid(search, cfg); 
-    }
+    else 
+        if (type == 'plan') {
+            newTab = new Testopia.TestPlan.Grid(search, cfg);
+        }
+        else 
+            if (type == 'run') {
+                newTab = new Testopia.TestRun.Grid(search, cfg);
+            }
     
     Ext.getCmp('object_panel').add(newTab);
     Ext.getCmp('object_panel').activate(tag + 'search' + product);
 };
-TestopiaObjectTags = function(obj, obj_id){
+
+Testopia.Tags.ObjectTags = function(obj, obj_id){
     this.orig_id = obj_id;
     this.obj_id = obj_id;
     this.store = new Ext.data.JsonStore({
         url: 'tr_tags.cgi',
-        baseParams: {action: 'gettags', type: obj},
+        baseParams: {
+            action: 'gettags',
+            type: obj
+        },
         root: 'tags',
         id: 'tag_id',
-        fields: [
-            {name: 'tag_id', mapping: 'tag_id'},
-            {name: 'tag_name', mapping: 'tag_name'},
-            {name: 'run_count', mapping:'run_count'},
-            {name: 'case_count', mapping:'case_count'},
-            {name: 'plan_count', mapping:'plan_count'}
-        ]
+        fields: [{
+            name: 'tag_id',
+            mapping: 'tag_id'
+        }, {
+            name: 'tag_name',
+            mapping: 'tag_name'
+        }, {
+            name: 'run_count',
+            mapping: 'run_count'
+        }, {
+            name: 'case_count',
+            mapping: 'case_count'
+        }, {
+            name: 'plan_count',
+            mapping: 'plan_count'
+        }]
     });
     var ds = this.store;
     this.remove = function(){
-        var form = new Ext.form.BasicForm('testopia_helper_frm',{});
+        var form = new Ext.form.BasicForm('testopia_helper_frm', {});
         form.submit({
             url: 'tr_tags.cgi',
-            params: {action: 'removetag', type: obj, id: this.obj_id, tag: getSelectedObjects(Ext.getCmp(obj + 'tagsgrid'), 'tag_name')},
+            params: {
+                action: 'removetag',
+                type: obj,
+                id: this.obj_id,
+                tag: getSelectedObjects(Ext.getCmp(obj + 'tagsgrid'), 'tag_name')
+            },
             success: function(){
                 ds.reload();
             },
@@ -81,23 +146,54 @@ TestopiaObjectTags = function(obj, obj_id){
         });
     };
     this.add = function(){
-        var form = new Ext.form.BasicForm('testopia_helper_frm',{});
+        var form = new Ext.form.BasicForm('testopia_helper_frm', {});
         form.submit({
             url: 'tr_tags.cgi',
-            params: {action: 'addtag', type: obj, id: this.obj_id, tag: Ext.getCmp(obj + 'tag_lookup').getRawValue()},
+            params: {
+                action: 'addtag',
+                type: obj,
+                id: this.obj_id,
+                tag: Ext.getCmp(obj + 'tag_lookup').getRawValue()
+            },
             success: function(){
                 ds.reload();
             },
             failure: testopiaError
         });
     };
-    this.columns = [
-        {dataIndex: 'tag_id', hidden: true, hideable: false},
-        {header: 'Name', width: 150, dataIndex: 'tag_name', id: 'tag_name', sortable:true, hideable: false},
-        {header: 'Cases', width: 35, dataIndex: 'case_count', sortable:true, hidden: true, renderer: Testopia.Tags.renderer.createDelegate(this, ['case'], true)},
-        {header: 'Runs', width: 35, dataIndex: 'run_count', sortable:true, hidden: true, renderer: Testopia.Tags.renderer.createDelegate(this, ['run'], true)},
-        {header: 'Plans', width: 35, dataIndex: 'plan_count', sortable:true, hidden: true, renderer: Testopia.Tags.renderer.createDelegate(this, ['plan'], true)}
-    ];
+    this.columns = [{
+        dataIndex: 'tag_id',
+        hidden: true,
+        hideable: false
+    }, {
+        header: 'Name',
+        width: 150,
+        dataIndex: 'tag_name',
+        id: 'tag_name',
+        sortable: true,
+        hideable: false
+    }, {
+        header: 'Cases',
+        width: 35,
+        dataIndex: 'case_count',
+        sortable: true,
+        hidden: true,
+        renderer: Testopia.Tags.renderer.createDelegate(this, ['case'], true)
+    }, {
+        header: 'Runs',
+        width: 35,
+        dataIndex: 'run_count',
+        sortable: true,
+        hidden: true,
+        renderer: Testopia.Tags.renderer.createDelegate(this, ['run'], true)
+    }, {
+        header: 'Plans',
+        width: 35,
+        dataIndex: 'plan_count',
+        sortable: true,
+        hidden: true,
+        renderer: Testopia.Tags.renderer.createDelegate(this, ['plan'], true)
+    }];
     
     var addButton = new Ext.Button({
         id: 'tag_add_btn',
@@ -111,8 +207,8 @@ TestopiaObjectTags = function(obj, obj_id){
         iconCls: 'img_button_16x',
         handler: this.remove.createDelegate(this)
     });
-        
-    TestopiaObjectTags.superclass.constructor.call(this, {
+    
+    Testopia.Tags.ObjectTags.superclass.constructor.call(this, {
         title: 'Tags',
         split: true,
         region: 'east',
@@ -121,89 +217,127 @@ TestopiaObjectTags = function(obj, obj_id){
         autoExpandColumn: "tag_name",
         collapsible: true,
         id: obj + 'tagsgrid',
-        loadMask: {msg:'Loading ' + obj + ' tags...'},
+        loadMask: {
+            msg: 'Loading ' + obj + ' tags...'
+        },
         autoScroll: true,
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: false
         }),
         viewConfig: {
-            forceFit:true
+            forceFit: true
         },
-        tbar: [
-            new TagLookup({id: obj + 'tag_lookup'}), addButton, deleteButton
-        ]
+        tbar: [new Testopia.Tags.Lookup({
+            id: obj + 'tag_lookup'
+        }), addButton, deleteButton]
     });
-
+    
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(TestopiaObjectTags, Ext.grid.GridPanel, {
+Ext.extend(Testopia.Tags.ObjectTags, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
-        if(!this.menu){ // create context menu on first right click
+        if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
-                id:'tags-ctx-menu',
-                items: [
-                    {
-                         text: 'Remove Selected Tags', 
-                         icon: 'extensions/testopia/img/delete.png',
-                         iconCls: 'img_button_16x',
-                         obj_id: this.obj_id,
-                         handler: this.remove
-                    },{
-                        text: 'Refresh List', 
-                        icon: 'extensions/testopia/img/refresh.png',
-                        iconCls: 'img_button_16x',
-                        handler: function(){
-                            grid.store.reload();
-                        } 
+                id: 'tags-ctx-menu',
+                items: [{
+                    text: 'Remove Selected Tags',
+                    icon: 'extensions/testopia/img/delete.png',
+                    iconCls: 'img_button_16x',
+                    obj_id: this.obj_id,
+                    handler: this.remove
+                }, {
+                    text: 'Refresh List',
+                    icon: 'extensions/testopia/img/refresh.png',
+                    iconCls: 'img_button_16x',
+                    handler: function(){
+                        grid.store.reload();
                     }
-                ]
+                }]
             });
         }
         e.stopEvent();
-        if (grid.getSelectionModel().getCount() < 1){
+        if (grid.getSelectionModel().getCount() < 1) {
             grid.getSelectionModel().selectRow(index);
         }
         this.menu.showAt(e.getXY());
     },
-
+    
     onActivate: function(event){
-        if (!this.store.getCount() || this.orig_id != this.obj_id){
-            this.store.load({params:{id: this.obj_id}});
+        if (!this.store.getCount() || this.orig_id != this.obj_id) {
+            this.store.load({
+                params: {
+                    id: this.obj_id
+                }
+            });
         }
     }
 });
 
 /*
- * TestopiaProductTags - Display a grid of tags for a product, or a user.
+ * Testopia.Tags.ProductTags - Display a grid of tags for a product, or a user.
  */
-TestopiaProductTags = function(title, type, product_id){
+Testopia.Tags.ProductTags = function(title, type, product_id){
     var tag_id;
     this.product_id = product_id;
     
     this.store = new Ext.data.JsonStore({
         url: 'tr_tags.cgi',
-        baseParams: {action: 'gettags', type: type},
-        root:'tags',
+        baseParams: {
+            action: 'gettags',
+            type: type
+        },
+        root: 'tags',
         id: 'tag_id',
-        fields: [
-            {name: 'tag_id', mapping: 'tag_id'},
-            {name: 'tag_name', mapping: 'tag_name'},
-            {name: 'run_count', mapping:'run_count'},
-            {name: 'case_count', mapping:'case_count'},
-            {name: 'plan_count', mapping:'plan_count'}
-        ]
+        fields: [{
+            name: 'tag_id',
+            mapping: 'tag_id'
+        }, {
+            name: 'tag_name',
+            mapping: 'tag_name'
+        }, {
+            name: 'run_count',
+            mapping: 'run_count'
+        }, {
+            name: 'case_count',
+            mapping: 'case_count'
+        }, {
+            name: 'plan_count',
+            mapping: 'plan_count'
+        }]
     });
     var ds = this.store;
     
-    this.columns = [
-        {header: "ID", dataIndex: 'tag_id', hidden: true},
-        {header: 'Name', width: 150, dataIndex: 'tag_name', id: 'tag_name', sortable:true},
-        {header: 'Cases', width: 35, dataIndex: 'case_count', sortable:true, renderer: Testopia.Tags.renderer.createDelegate(this, ['case', product_id], true)},
-        {header: 'Runs', width: 35, dataIndex: 'run_count', sortable:true, renderer: Testopia.Tags.renderer.createDelegate(this, ['run', product_id], true)},
-        {header: 'Plans', width: 35, dataIndex: 'plan_count', sortable:true, renderer: Testopia.Tags.renderer.createDelegate(this, ['plan', product_id], true)}
-    ];
+    this.columns = [{
+        header: "ID",
+        dataIndex: 'tag_id',
+        hidden: true
+    }, {
+        header: 'Name',
+        width: 150,
+        dataIndex: 'tag_name',
+        id: 'tag_name',
+        sortable: true
+    }, {
+        header: 'Cases',
+        width: 35,
+        dataIndex: 'case_count',
+        sortable: true,
+        renderer: Testopia.Tags.renderer.createDelegate(this, ['case', product_id], true)
+    }, {
+        header: 'Runs',
+        width: 35,
+        dataIndex: 'run_count',
+        sortable: true,
+        renderer: Testopia.Tags.renderer.createDelegate(this, ['run', product_id], true)
+    }, {
+        header: 'Plans',
+        width: 35,
+        dataIndex: 'plan_count',
+        sortable: true,
+        renderer: Testopia.Tags.renderer.createDelegate(this, ['plan', product_id], true)
+    }];
     
     var filter = new Ext.form.TextField({
         allowBlank: true,
@@ -211,17 +345,19 @@ TestopiaProductTags = function(title, type, product_id){
         selectOnFocus: true
     });
     
-    TestopiaProductTags.superclass.constructor.call(this, {
+    Testopia.Tags.ProductTags.superclass.constructor.call(this, {
         title: title,
         id: type + 'tags',
-        loadMask: {msg:'Loading ' + title + ' ...'},
+        loadMask: {
+            msg: 'Loading ' + title + ' ...'
+        },
         autoExpandColumn: "tag_name",
         autoScroll: true,
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: false
         }),
         viewConfig: {
-            forceFit:true
+            forceFit: true
         }
     });
     
@@ -229,76 +365,82 @@ TestopiaProductTags = function(title, type, product_id){
     this.on('activate', this.onActivate, this);
 };
 
-Ext.extend(TestopiaProductTags, Ext.grid.GridPanel, {
+Ext.extend(Testopia.Tags.ProductTags, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
-        
-        if(!this.menu){ // create context menu on first right click
+    
+        if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
-                id:'tags-ctx-menu',
-                items: [
-                    {
-                         text: 'Refresh', 
-                         icon: 'extensions/testopia/img/refresh.png',
-                         iconCls: 'img_button_16x',
-                         handler: function(){
-                             ds.reload();
-                         }
-                     }
-                ]
+                id: 'tags-ctx-menu',
+                items: [{
+                    text: 'Refresh',
+                    icon: 'extensions/testopia/img/refresh.png',
+                    iconCls: 'img_button_16x',
+                    handler: function(){
+                        ds.reload();
+                    }
+                }]
             });
         }
         e.stopEvent();
         this.menu.showAt(e.getXY());
     },
-
+    
     onActivate: function(event){
-        if (!this.store.getCount()){
-            this.store.load({params: {product_id: this.product_id}});
+        if (!this.store.getCount()) {
+            this.store.load({
+                params: {
+                    product_id: this.product_id
+                }
+            });
         }
     }
 });
 
-TagsUpdate = function(type, grid){
+Testopia.Tags.update = function(type, grid){
     function commitTag(action, value, grid){
-        var form = new Ext.form.BasicForm('testopia_helper_frm',{});
+        var form = new Ext.form.BasicForm('testopia_helper_frm', {});
         form.submit({
             url: 'tr_tags.cgi',
-            params: {action: action, tag: value, type: type, id: getSelectedObjects(grid, type+'_id')},
-            success: function(){},
+            params: {
+                action: action,
+                tag: value,
+                type: type,
+                id: getSelectedObjects(grid, type + '_id')
+            },
+            success: function(){
+            },
             failure: testopiaError
         });
     }
-     var win = new Ext.Window({
-         title: 'Add or Remove Tags',
-         id: 'tags_edit_win',
-         layout: 'fit',
-         split: true,
-         plain: true,
-         shadow: false,
-         width: 350,
-         height: 150,
-         items: [
-            new Ext.FormPanel({
-                labelWidth: '40',
-                bodyStyle: 'padding: 5px',
-                items: [new TagLookup({
-                    fieldLabel: 'Tags'
-                })]
-            })
-        ],
+    var win = new Ext.Window({
+        title: 'Add or Remove Tags',
+        id: 'tags_edit_win',
+        layout: 'fit',
+        split: true,
+        plain: true,
+        shadow: false,
+        width: 350,
+        height: 150,
+        items: [new Ext.FormPanel({
+            labelWidth: '40',
+            bodyStyle: 'padding: 5px',
+            items: [new Testopia.Tags.Lookup({
+                fieldLabel: 'Tags'
+            })]
+        })],
         buttons: [{
-            text:'Add Tag',
+            text: 'Add Tag',
             handler: function(){
                 commitTag('addtag', Ext.getCmp('tag_lookup').getRawValue(), grid);
                 win.close();
             }
-        },{
+        }, {
             text: 'Remove Tag',
             handler: function(){
                 commitTag('removetag', Ext.getCmp('tag_lookup').getRawValue(), grid);
                 win.close();
             }
-        },{
+        }, {
             text: 'Close',
             handler: function(){
                 win.close();
@@ -307,4 +449,3 @@ TagsUpdate = function(type, grid){
     });
     win.show();
 };
-         

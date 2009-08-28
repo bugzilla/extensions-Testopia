@@ -460,7 +460,7 @@ Ext.onReady(function(){
             width: 200,
             activeTab: 0,
             items:[
-                new TestopiaObjectTags('case', [% case.id FILTER none %]),
+                new Testopia.Tags.ObjectTags('case', [% case.id FILTER none %]),
                 new Testopia.TestCase.PlanList([% case.id FILTER none %], [% case.plans.0.product_id FILTER none %])
             ]
         }]
@@ -581,7 +581,7 @@ Ext.onReady(function(){
     });
 
 // Combo Boxes
-    var pbox = new PriorityCombo({
+    var pbox = new Testopia.TestCase.PriorityCombo({
         hiddenName: 'priority',
         transform: 'priority'
     });
@@ -589,7 +589,7 @@ Ext.onReady(function(){
         submitEdits('priority', r.get('value'));
     });
 
-    var sbox = new CaseStatusCombo({
+    var sbox = new Testopia.TestCase.StatusListCombo({
         hiddenName: 'status',
         transform: 'status'
     });
@@ -597,7 +597,7 @@ Ext.onReady(function(){
         submitEdits('status', r.get('value'));
     });
 
-    var cbox = new CaseCategoryCombo({
+    var cbox = new Testopia.Category.Combo({
         hiddenName: 'category',
         transform: 'category'
     });

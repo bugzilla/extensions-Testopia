@@ -20,7 +20,98 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-Testopia.TestPlan = {};
+Testopia.TestPlan.Store = function(params, auto){
+    params.ctype = 'json';
+    Testopia.TestPlan.Store.superclass.constructor.call(this, {
+        url: 'tr_list_plans.cgi',
+        baseParams: params,
+        totalProperty: 'totalResultsAvailable',
+        root: 'Result',
+        autoLoad: auto,
+        id: 'plan_id',
+        fields: [{
+            name: "plan_id",
+            mapping: "plan_id"
+        }, {
+            name: "name",
+            mapping: "name"
+        }, {
+            name: "author",
+            mapping: "author_name"
+        }, {
+            name: "creation_date",
+            mapping: "creation_date"
+        }, {
+            name: "product",
+            mapping: "product_name"
+        }, {
+            name: "product_id",
+            mapping: "product_id"
+        }, {
+            name: "default_product_version",
+            mapping: "default_product_version"
+        }, {
+            name: "plan_type",
+            mapping: "plan_type"
+        }, {
+            name: "case_count",
+            mapping: "case_count"
+        }, {
+            name: "run_count",
+            mapping: "run_count"
+        }],
+        remoteSort: true
+    });
+    
+    this.paramNames.sort = "order";
+};
+Ext.extend(Testopia.TestPlan.Store, Ext.data.JsonStore);
+
+Testopia.TestPlan.TypesStore = function(auto){
+    Testopia.TestPlan.TypesStore.superclass.constructor.call(this, {
+        url: 'tr_quicksearch.cgi',
+        root: 'types',
+        baseParams: {
+            action: 'getplantypes'
+        },
+        autoLoad: auto,
+        id: 'id',
+        fields: [{
+            name: 'id',
+            mapping: 'id'
+        }, {
+            name: 'name',
+            mapping: 'name'
+        }]
+    });
+};
+Ext.extend(Testopia.TestPlan.TypesStore, Ext.data.JsonStore);
+
+/*
+ * Testopia.TestPlan.TypesCombo
+ */
+Testopia.TestPlan.TypesCombo = function(cfg){
+    Testopia.TestPlan.TypesCombo.superclass.constructor.call(this, {
+        id: cfg.id || 'plan_type_combo',
+        store: cfg.transform ? false : new Testopia.TestPlan.TypesStore(cfg.mode == 'local' ? true : false),
+        loadingText: 'Looking up types...',
+        displayField: 'name',
+        valueField: 'id',
+        typeAhead: true,
+        triggerAction: 'all',
+        minListWidth: 300,
+        forceSelection: true,
+        transform: cfg.transform,
+        emptyText: 'Please select...'
+    });
+    Ext.apply(this, cfg);
+    this.store.on('load', function(){
+        if (cfg.value) {
+            this.setValue(cfg.value);
+        }
+    }, this);
+};
+Ext.extend(Testopia.TestPlan.TypesCombo, Ext.form.ComboBox);
 
 Testopia.TestPlan.Import = function(plan_id){
     var win = new Ext.Window({
@@ -36,14 +127,18 @@ Testopia.TestPlan.Import = function(plan_id){
             height: 250,
             url: 'tr_importer.cgi',
             id: 'importform',
-            baseParams: {action: 'upload', ctype: 'json', plan_id: plan_id},
+            baseParams: {
+                action: 'upload',
+                ctype: 'json',
+                plan_id: plan_id
+            },
             fileUpload: true,
             items: [{
                 height: 50,
                 style: "padding: 5px",
                 border: false,
                 html: 'Accepts CSV and XML files under 1 MB in size. <br> See <a href="extensions/testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="testopia.dtd" target="_blank">testopia.dtd</a> for proper format.'
-            },{
+            }, {
                 xtype: 'field',
                 fieldLabel: 'Upload File',
                 labelStyle: "padding: 5px",
@@ -69,104 +164,142 @@ Testopia.TestPlan.Import = function(plan_id){
     win.show(this);
 }
 
-Testopia.TestPlan.Grid = function(params,cfg){
+Testopia.TestPlan.Grid = function(params, cfg){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
     params.current_tab = 'plan';
     this.params = params;
     var tutil = new TestopiaUtil();
     this.t = tutil;
-    var versionbox = new ProductVersionCombo({
-         id: 'plan_grid_version_chooser',
-         hiddenName: 'prod_version',
-         mode: 'remote',
-         params: {product_id: params.product_id}
+    var versionbox = new Testopia.Product.VersionCombo({
+        id: 'plan_grid_version_chooser',
+        hiddenName: 'prod_version',
+        mode: 'remote',
+        params: {
+            product_id: params.product_id
+        }
     });
     
-    this.store = new TestPlanStore(params);
+    this.store = new Testopia.TestPlan.Store(params);
     var ds = this.store;
-
-    this.columns = [
-        {header: "ID", width: 30, dataIndex: 'plan_id', sortable: true, renderer: tutil.planLink, hideable: false},
-        {header: "Name", 
-         width: 220, 
-         dataIndex: 'name', 
-         id: "plan_name", 
-         sortable: true,
-         editor: new Ext.grid.GridEditor(
-             new Ext.form.TextField({
-                 allowBlank: false
-             }))
-        },
-        {header: "Author", width: 150, sortable: true, dataIndex: 'author'},
-        {header: "Created", width: 110, sortable: true, dataIndex: 'creation_date', hidden: true},
-        {header: "Product", width: 180, sortable: true, dataIndex: 'product', hidden: true},        
-        {header: "Product Version", width: 60, sortable: true, dataIndex: 'default_product_version',
-         editor: new Ext.grid.GridEditor(
-             versionbox,{listeners: {
-                 'startedit' : function(){
-                     var pid = Ext.getCmp(cfg.id || 'plan_grid').getSelectionModel().getSelected().get('product_id');
-                     if (versionbox.store.baseParams.product_id != pid){
-                         versionbox.store.baseParams.product_id = pid;
-                         versionbox.store.load();
-                     }
-                 }
-             }}
-         ), renderer: TestopiaComboRenderer.createDelegate(this)
-        },        
-        {header: "Type", width: 60, sortable: true,
-         dataIndex: 'plan_type',
-         editor: new Ext.grid.GridEditor(
-             new PlanTypesCombo({
-                 id: 'plan_grid_ types_chooser',
-                 hiddenName:'type',
-                 mode: 'remote'
-             })
-         ), renderer: TestopiaComboRenderer.createDelegate(this)
-        },        
-        {header: "Cases", width: 20, sortable: false, dataIndex: 'case_count'},        
-        {header: "Runs", width: 20, sortable: false, dataIndex: 'run_count'}
-    ];
-
+    
+    this.columns = [{
+        header: "ID",
+        width: 30,
+        dataIndex: 'plan_id',
+        sortable: true,
+        renderer: tutil.planLink,
+        hideable: false
+    }, {
+        header: "Name",
+        width: 220,
+        dataIndex: 'name',
+        id: "plan_name",
+        sortable: true,
+        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+            allowBlank: false
+        }))
+    }, {
+        header: "Author",
+        width: 150,
+        sortable: true,
+        dataIndex: 'author'
+    }, {
+        header: "Created",
+        width: 110,
+        sortable: true,
+        dataIndex: 'creation_date',
+        hidden: true
+    }, {
+        header: "Product",
+        width: 180,
+        sortable: true,
+        dataIndex: 'product',
+        hidden: true
+    }, {
+        header: "Product Version",
+        width: 60,
+        sortable: true,
+        dataIndex: 'default_product_version',
+        editor: new Ext.grid.GridEditor(versionbox, {
+            listeners: {
+                'startedit': function(){
+                    var pid = Ext.getCmp(cfg.id || 'plan_grid').getSelectionModel().getSelected().get('product_id');
+                    if (versionbox.store.baseParams.product_id != pid) {
+                        versionbox.store.baseParams.product_id = pid;
+                        versionbox.store.load();
+                    }
+                }
+            }
+        }),
+        renderer: TestopiaComboRenderer.createDelegate(this)
+    }, {
+        header: "Type",
+        width: 60,
+        sortable: true,
+        dataIndex: 'plan_type',
+        editor: new Ext.grid.GridEditor(new Testopia.TestPlan.TypesCombo({
+            id: 'plan_grid_ types_chooser',
+            hiddenName: 'type',
+            mode: 'remote'
+        })),
+        renderer: TestopiaComboRenderer.createDelegate(this)
+    }, {
+        header: "Cases",
+        width: 20,
+        sortable: false,
+        dataIndex: 'case_count'
+    }, {
+        header: "Runs",
+        width: 20,
+        sortable: false,
+        dataIndex: 'run_count'
+    }];
+    
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
     this.bbar = new TestopiaPager('plan', this.store);
-
+    
     Testopia.TestPlan.Grid.superclass.constructor.call(this, {
         title: 'Test Plans',
         id: cfg.id || 'plan_grid',
         layout: 'fit',
         region: 'center',
-        stripeRows:true,
-        loadMask: {msg:'Loading Test Plans...'},
+        stripeRows: true,
+        loadMask: {
+            msg: 'Loading Test Plans...'
+        },
         autoExpandColumn: "plan_name",
         autoScroll: true,
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: cfg.single || false,
-            listeners: {'rowselect':function(sm,i,r){
-                if (Ext.getCmp('plan_add_run_mnu')){
-                    Ext.getCmp('plan_add_run_mnu').enable();
-                }
-                if (Ext.getCmp('plan_add_case_mnu')){
-                    Ext.getCmp('plan_add_case_mnu').enable();
-                }
-                if (Ext.getCmp('plan_grid_edit_mnu')){
-                    Ext.getCmp('plan_grid_edit_mnu').enable();
-                }
-                Ext.getCmp('new_run_button').enable();
-                Ext.getCmp('new_case_button').enable();
-                Ext.getCmp('edit_plan_list_btn').enable();
-                if (sm.getCount() > 1){
-                    if (Ext.getCmp('plan_add_run_mnu')){
-                        Ext.getCmp('plan_add_run_mnu').disable();
+            listeners: {
+                'rowselect': function(sm, i, r){
+                    if (Ext.getCmp('plan_add_run_mnu')) {
+                        Ext.getCmp('plan_add_run_mnu').enable();
                     }
-                    Ext.getCmp('new_run_button').disable();
+                    if (Ext.getCmp('plan_add_case_mnu')) {
+                        Ext.getCmp('plan_add_case_mnu').enable();
+                    }
+                    if (Ext.getCmp('plan_grid_edit_mnu')) {
+                        Ext.getCmp('plan_grid_edit_mnu').enable();
+                    }
+                    Ext.getCmp('new_run_button').enable();
+                    Ext.getCmp('new_case_button').enable();
+                    Ext.getCmp('edit_plan_list_btn').enable();
+                    if (sm.getCount() > 1) {
+                        if (Ext.getCmp('plan_add_run_mnu')) {
+                            Ext.getCmp('plan_add_run_mnu').disable();
+                        }
+                        Ext.getCmp('new_run_button').disable();
+                    }
+                },
+                'rowdeselect': function(sm, i, r){
+                    if (sm.getCount() < 1) {
+                        Ext.getCmp('new_run_button').disable();
+                        Ext.getCmp('new_case_button').disable();
+                        Ext.getCmp('edit_plan_list_btn').disable();
+                    }
                 }
-            },'rowdeselect': function(sm,i,r){
-                if (sm.getCount() < 1){
-                    Ext.getCmp('new_run_button').disable();
-                    Ext.getCmp('new_case_button').disable();
-                    Ext.getCmp('edit_plan_list_btn').disable();
-                }
-            }}
+            }
         }),
         enableColumnHide: true,
         tbar: [{
@@ -175,33 +308,32 @@ Testopia.TestPlan.Grid = function(params,cfg){
             id: 'new_run_button',
             disabled: true,
             handler: this.newRun.createDelegate(this)
-        },{
+        }, {
             xtype: 'button',
             text: 'New Case',
             id: 'new_case_button',
             disabled: true,
             handler: this.newCase.createDelegate(this)
-
-        },new Ext.Toolbar.Fill(),
-        {
+        
+        }, new Ext.Toolbar.Fill(), {
             xtype: 'button',
             id: 'save_plan_list_btn',
             icon: 'extensions/testopia/img/save.png',
             iconCls: 'img_button_16x',
             tooltip: 'Save this search',
-            handler: function(b,e){
+            handler: function(b, e){
                 saveSearch('plan', Ext.getCmp(cfg.id || 'plan_grid').store.baseParams);
             }
-        },{
+        }, {
             xtype: 'button',
             id: 'link_plan_list_btn',
             icon: 'extensions/testopia/img/link.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a link to this list',
-            handler: function(b,e){
+            handler: function(b, e){
                 linkPopup(Ext.getCmp(cfg.id || 'plan_grid').store.baseParams);
             }
-        },{
+        }, {
             xtype: 'button',
             id: 'edit_plan_list_btn',
             icon: 'extensions/testopia/img/edit.png',
@@ -211,22 +343,22 @@ Testopia.TestPlan.Grid = function(params,cfg){
             handler: function(){
                 editFirstSelection(Ext.getCmp(cfg.id || 'plan_grid'));
             }
-        },{
+        }, {
             xtype: 'button',
             id: 'new_plan_list_btn',
             icon: 'extensions/testopia/img/new.png',
             iconCls: 'img_button_16x',
             tooltip: 'Create a New Test Plan',
             handler: function(){
-                tutil.newPlanPopup(params.product_id);
+                Testopia.TestPlan.NewPlanPopup(params.product_id);
             }
         }],
         
         viewConfig: {
-            forceFit:true
+            forceFit: true
         }
     });
-    Ext.apply(this,cfg);
+    Ext.apply(this, cfg);
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('afteredit', this.onGridEdit, this);
     this.on('activate', this.onActivate, this);
@@ -235,24 +367,24 @@ Testopia.TestPlan.Grid = function(params,cfg){
 Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
     onContextClick: function(grid, index, e){
         grid.selindex = index;
-        if(!this.menu){ // create context menu on first right click
+        if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
-                id:'plan-ctx-menu',
+                id: 'plan-ctx-menu',
                 items: [{
                     text: 'Create a New Test Plan',
                     id: 'plan_menu_new_plan',
                     icon: 'extensions/testopia/img/new.png',
                     iconCls: 'img_button_16x',
                     handler: this.newPlan.createDelegate(this)
-                },{
+                }, {
                     text: 'Add a New Test Run to Selected Plan',
                     id: 'plan_add_run_mnu',
                     handler: this.newRun.createDelegate(this)
-                },{
+                }, {
                     text: 'Add a New Test Case to Selected Plans',
                     id: 'plan_add_case_mnu',
                     handler: this.newCase.createDelegate(this)
-                },{
+                }, {
                     text: 'Edit',
                     id: 'plan_grid_edit_mnu',
                     menu: {
@@ -268,27 +400,25 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                                     shadow: false,
                                     width: 350,
                                     height: 150,
-                                    items: [
-                                        new Ext.FormPanel({
-                                            labelWidth: '40',
-                                            bodyStyle: 'padding: 5px',
-                                            items: [new PlanTypesCombo({
-                                                id: 'plan_type_win_types_combo',
-                                                fieldLabel: 'Plan Type'
-                                            })]
-                                        })
-                                    ],
+                                    items: [new Ext.FormPanel({
+                                        labelWidth: '40',
+                                        bodyStyle: 'padding: 5px',
+                                        items: [new Testopia.TestPlan.TypesCombo({
+                                            id: 'plan_type_win_types_combo',
+                                            fieldLabel: 'Plan Type'
+                                        })]
+                                    })],
                                     buttons: [{
-                                        text:'Update Type',
+                                        text: 'Update Type',
                                         handler: function(){
                                             var params = {
-                                                plan_type: Ext.getCmp('plan_type_combo').getValue(), 
+                                                plan_type: Ext.getCmp('plan_type_combo').getValue(),
                                                 ids: getSelectedObjects(grid, 'plan_id')
                                             };
-                                            TestopiaUpdateMultiple('plan',params,grid);
+                                            Testopia.Util.updateFromList('plan', params, grid);
                                             win.close();
                                         }
-                                    },{
+                                    }, {
                                         text: 'Cancel',
                                         handler: function(){
                                             win.close();
@@ -297,14 +427,14 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                                 });
                                 win.show();
                             }
-                        },{
+                        }, {
                             text: 'Tags',
                             handler: function(){
-                                TagsUpdate('plan', grid);
-                            }    
+                                Testopia.Tags.update('plan', grid);
+                            }
                         }]
                     }
-                },{
+                }, {
                     text: "Reports",
                     menu: {
                         items: [{
@@ -326,7 +456,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                                     url: newPortlet.url
                                 });
                             }
-                        },{
+                        }, {
                             text: 'New Completion Report',
                             handler: function(){
                                 Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
@@ -345,124 +475,121 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                                     url: newPortlet.url
                                 });
                             }
-                        },{
-                                text: 'New Run Execution Report',
-                                handler: function(){
-                                    var win = new Ext.Window({
-                                       title: 'Select a date range',
-                                       id: 'plan_execution_win',
-                                       layout: 'fit',
-                                       split: true,
-                                       plain: true,
-                                       shadow: false,
-                                       width: 350,
-                                       height: 150,
-                                       items: [
-                                           new Ext.FormPanel({
-                                               labelWidth: '40',
-                                               bodyStyle: 'padding: 5px',
-                                               items: [{
-                                                   xtype: 'datefield',
-                                                   id: 'execution_start_date',
-                                                   fieldLabel: 'Start Date',
-                                                   name: 'chfieldfrom'
-                                               },{
-                                                   xtype: 'datefield',
-                                                   fieldLabel: 'Stop Date',
-                                                   id: 'execution_stop_date',
-                                                   emptyText: 'Now',
-                                                   name: 'chfieldto'
-                                               }]
-                                           })
-                                       ],
-                                        buttons: [{
-                                          text:'Submit',
-                                           handler: function(){
-                                                Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                                                
-                                                var newPortlet = new Ext.ux.Portlet({
-                                                    title: 'Execution Report',
-                                                    closable: true,
-                                                    autoScroll: true,
-                                                    tools: PortalTools
-                                                });
-                                                newPortlet.url = 'tr_run_reports.cgi?type=execution&plan_ids=' + getSelectedObjects(grid, 'plan_id') +'&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
-                                                Testopia.Search.dashboard_urls.push(newPortlet.url);
-                                                Ext.getCmp('dashboard_leftcol').add(newPortlet);
-                                                Ext.getCmp('dashboard_leftcol').doLayout();
-                                                newPortlet.load({
-                                                    url: newPortlet.url
-                                                });
-                                               win.close();
-                                           }
-                                       },{
-                                           text: 'Cancel',
-                                           handler: function(){
-                                               win.close();
-                                           }
-                                       }]
-                                    });
-                                    win.show();
-                                }
-                            },{
-                                text: 'New Priority Breakdown Report',
-                                handler: function(){
-                                    Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                                    
-                                    var newPortlet = new Ext.ux.Portlet({
-                                        title: 'Status Report',
-                                        closable: true,
-                                        autoScroll: true,
-                                        tools: PortalTools
-                                    });
-                                    newPortlet.url = 'tr_run_reports.cgi?type=priority&plan_ids=' + getSelectedObjects(grid, 'plan_id');
-                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
-                                    Ext.getCmp('dashboard_leftcol').add(newPortlet);
-                                    Ext.getCmp('dashboard_leftcol').doLayout();
-                                    newPortlet.load({
-                                        url: newPortlet.url
-                                    });
-                                }
-                            },{
-                                text: 'New Bug Report',
-                                handler: function(){
-                                    Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
-                                    var newPortlet = new Ext.ux.Portlet({
-                                        title: 'Bug Report',
-                                        closable: true,
-                                        autoScroll: true,
-                                        tools: PortalTools
-                                    });
-                                    newPortlet.url = 'tr_run_reports.cgi?type=bug_grid&plan_ids=' + getSelectedObjects(grid, 'plan_id') + '&noheader=1';
-                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
-                                    Ext.getCmp('dashboard_leftcol').add(newPortlet);
-                                    Ext.getCmp('dashboard_leftcol').doLayout();
-                                    newPortlet.load({
-                                        scripts: true,
-                                        url: newPortlet.url
-                                    });
-                                }
-                            },{
-                                text: 'Missing Cases Report',
-                                handler: function(){
-                                    window.open('tr_list_cases.cgi?report_type=missing&plan_ids=' + getSelectedObjects(grid, 'plan_id'));
-                                }
+                        }, {
+                            text: 'New Run Execution Report',
+                            handler: function(){
+                                var win = new Ext.Window({
+                                    title: 'Select a date range',
+                                    id: 'plan_execution_win',
+                                    layout: 'fit',
+                                    split: true,
+                                    plain: true,
+                                    shadow: false,
+                                    width: 350,
+                                    height: 150,
+                                    items: [new Ext.FormPanel({
+                                        labelWidth: '40',
+                                        bodyStyle: 'padding: 5px',
+                                        items: [{
+                                            xtype: 'datefield',
+                                            id: 'execution_start_date',
+                                            fieldLabel: 'Start Date',
+                                            name: 'chfieldfrom'
+                                        }, {
+                                            xtype: 'datefield',
+                                            fieldLabel: 'Stop Date',
+                                            id: 'execution_stop_date',
+                                            emptyText: 'Now',
+                                            name: 'chfieldto'
+                                        }]
+                                    })],
+                                    buttons: [{
+                                        text: 'Submit',
+                                        handler: function(){
+                                            Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                            
+                                            var newPortlet = new Ext.ux.Portlet({
+                                                title: 'Execution Report',
+                                                closable: true,
+                                                autoScroll: true,
+                                                tools: PortalTools
+                                            });
+                                            newPortlet.url = 'tr_run_reports.cgi?type=execution&plan_ids=' + getSelectedObjects(grid, 'plan_id') + '&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
+                                            Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                            Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                            Ext.getCmp('dashboard_leftcol').doLayout();
+                                            newPortlet.load({
+                                                url: newPortlet.url
+                                            });
+                                            win.close();
+                                        }
+                                    }, {
+                                        text: 'Cancel',
+                                        handler: function(){
+                                            win.close();
+                                        }
+                                    }]
+                                });
+                                win.show();
                             }
-                        ]
+                        }, {
+                            text: 'New Priority Breakdown Report',
+                            handler: function(){
+                                Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                
+                                var newPortlet = new Ext.ux.Portlet({
+                                    title: 'Status Report',
+                                    closable: true,
+                                    autoScroll: true,
+                                    tools: PortalTools
+                                });
+                                newPortlet.url = 'tr_run_reports.cgi?type=priority&plan_ids=' + getSelectedObjects(grid, 'plan_id');
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                Ext.getCmp('dashboard_leftcol').doLayout();
+                                newPortlet.load({
+                                    url: newPortlet.url
+                                });
+                            }
+                        }, {
+                            text: 'New Bug Report',
+                            handler: function(){
+                                Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                var newPortlet = new Ext.ux.Portlet({
+                                    title: 'Bug Report',
+                                    closable: true,
+                                    autoScroll: true,
+                                    tools: PortalTools
+                                });
+                                newPortlet.url = 'tr_run_reports.cgi?type=bug_grid&plan_ids=' + getSelectedObjects(grid, 'plan_id') + '&noheader=1';
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                Ext.getCmp('dashboard_leftcol').doLayout();
+                                newPortlet.load({
+                                    scripts: true,
+                                    url: newPortlet.url
+                                });
+                            }
+                        }, {
+                            text: 'Missing Cases Report',
+                            handler: function(){
+                                window.open('tr_list_cases.cgi?report_type=missing&plan_ids=' + getSelectedObjects(grid, 'plan_id'));
+                            }
+                        }]
                     }
-                },{
+                }, {
                     text: 'Refresh List',
                     icon: 'extensions/testopia/img/refresh.png',
-                    iconCls: 'img_button_16x', 
+                    iconCls: 'img_button_16x',
                     handler: function(){
                         grid.store.reload();
-                    } 
-                },{
+                    }
+                }, {
                     text: 'View Test Plan(s) in a New Tab',
                     handler: function(){
-                        var plan_ids = getSelectedObjects(grid,'plan_id').split(',');
+                        var plan_ids = getSelectedObjects(grid, 'plan_id').split(',');
                         var i;
-                        for (i=0; i<plan_ids.length; i+=1) {
+                        for (i = 0; i < plan_ids.length; i += 1) {
                             window.open('tr_show_plan.cgi?plan_id=' + plan_ids[i]);
                         }
                     }
@@ -470,154 +597,167 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
             });
         }
         e.stopEvent();
-        if (grid.getSelectionModel().getCount() < 1){
+        if (grid.getSelectionModel().getCount() < 1) {
             grid.getSelectionModel().selectRow(index);
         }
         this.menu.showAt(e.getXY());
     },
     newPlan: function(){
-        this.t.newPlanPopup(this.params.product_id);
+        Testopia.TestPlan.NewPlanPopup(this.params.product_id);
     },
     newRun: function(){
-        this.t.newRunPopup(this.getSelectionModel().getSelected());
+        Testopia.TestRun.NewRunPopup(this.getSelectionModel().getSelected());
     },
     newCase: function(){
-        this.t.newCaseForm(getSelectedObjects(this, 'plan_id'), this.getSelectionModel().getSelected().get('product_id'));
+        Testopia.TestCase.NewCasePopup(getSelectedObjects(this, 'plan_id'), this.getSelectionModel().getSelected().get('product_id'));
     },
-
+    
     onGridEdit: function(gevent){
-        var myparams = {action: "edit", plan_id: gevent.record.get('plan_id')};
+        var myparams = {
+            action: "edit",
+            plan_id: gevent.record.get('plan_id')
+        };
         var ds = this.store;
-        switch(gevent.field){
-        case 'default_product_version':
-            myparams.prod_version = gevent.value; 
-            break;
-        case 'plan_type':
-            myparams.type = gevent.value;
-            break;
-        case 'name':
-            myparams.name = gevent.value;
-            break;
-
+        switch (gevent.field) {
+            case 'default_product_version':
+                myparams.prod_version = gevent.value;
+                break;
+            case 'plan_type':
+                myparams.type = gevent.value;
+                break;
+            case 'name':
+                myparams.name = gevent.value;
+                break;
+                
         }
         this.form.submit({
-            url:"tr_process_plan.cgi",
+            url: "tr_process_plan.cgi",
             params: myparams,
-            success: function(f,a){
+            success: function(f, a){
                 ds.commitChanges();
             },
-            failure: function(f,a){
-                testopiaError(f,a);
+            failure: function(f, a){
+                testopiaError(f, a);
                 ds.rejectChanges();
             }
         });
     },
     onActivate: function(event){
-        if (!this.store.getCount()){
+        if (!this.store.getCount()) {
             this.store.load();
         }
     }
 });
 
 Testopia.TestPlan.NewPlanForm = function(product_id){
-    var versionsBox = new ProductVersionCombo({
+    var versionsBox = new Testopia.Product.VersionCombo({
         id: 'new_plan_form_version_chooser',
         hiddenName: 'prod_version',
         fieldLabel: "<b>Product Version</b>",
-        mode:'local',
-        params: {product_id: product_id}
+        mode: 'local',
+        params: {
+            product_id: product_id
+        }
     });
-    var productsBox = new ProductCombo({
+    var productsBox = new Testopia.Product.Combo({
         id: 'new_plan_form_product_chooser',
         hiddenName: 'product_id',
         fieldLabel: "<b>Product</b>",
-        mode:'local',
+        mode: 'local',
         value: product_id
     });
-    productsBox.on('select', function(c,r,i){
+    productsBox.on('select', function(c, r, i){
         versionsBox.reset();
         versionsBox.store.baseParams.product_id = r.get('id');
         versionsBox.store.load();
         versionsBox.enable();
     });
     
-    Testopia.TestPlan.NewPlanForm.superclass.constructor.call(this,{
+    Testopia.TestPlan.NewPlanForm.superclass.constructor.call(this, {
         url: 'tr_new_plan.cgi',
         id: 'new_plan_form',
-        baseParams: {action: 'add'},
+        baseParams: {
+            action: 'add'
+        },
         fileUpload: true,
         labelAlign: 'top',
-        frame:true,
+        frame: true,
         title: 'New Plan',
-        bodyStyle:'padding:5px 5px 0',
+        bodyStyle: 'padding:5px 5px 0',
         width: 800,
         height: 500,
         items: [{
-            layout:'column',
-            items:[{
+            layout: 'column',
+            items: [{
                 columnWidth: 0.5,
                 layout: 'form',
                 items: [{
-                    xtype:'textfield',
+                    xtype: 'textfield',
                     fieldLabel: '<b>Plan Name</b>',
                     name: 'plan_name',
-                    anchor:'95%',
+                    anchor: '95%',
                     allowBlank: false
-                }, new PlanTypesCombo({id: 'new_plan_form_types_chooser', mode: 'local', hiddenName: 'type', fieldLabel: '<b>Plan Type</b>'})]
-            },{
+                }, new Testopia.TestPlan.TypesCombo({
+                    id: 'new_plan_form_types_chooser',
+                    mode: 'local',
+                    hiddenName: 'type',
+                    fieldLabel: '<b>Plan Type</b>'
+                })]
+            }, {
                 columnWidth: 0.5,
                 layout: 'form',
-                items: [productsBox,versionsBox]
+                items: [productsBox, versionsBox]
             }]
-        },{
+        }, {
             xtype: 'tabpanel',
             height: 280,
             activeItem: 0,
-            items:[{
+            items: [{
                 layout: 'fit',
                 title: 'Plan Document',
                 items: [{
                     id: 'plan_doc',
-                    xtype:'htmleditor',
+                    xtype: 'htmleditor',
                     name: 'plandoc'
                 }]
-                
-            },new Testopia.Attachment.Form()]
+            
+            }, new Testopia.Attachment.Form()]
         }],
         buttons: [{
             text: 'Submit',
             handler: function(){
-                if (!Ext.getCmp('new_plan_form').getForm().isValid()){
+                if (!Ext.getCmp('new_plan_form').getForm().isValid()) {
                     return;
                 }
                 Ext.getCmp('new_plan_form').getForm().submit({
                     success: function(form, data){
-                        if (data.result.err){
+                        if (data.result.err) {
                             alert('One or more attachments were either too large or were empty. These have been ignored.');
                         }
                         Ext.Msg.show({
-                            title:'Plan Created',
+                            title: 'Plan Created',
                             msg: 'Plan ' + data.result.plan + ' Created. Would you like to go there now?',
                             buttons: Ext.Msg.YESNO,
                             icon: Ext.MessageBox.QUESTION,
                             fn: function(btn){
-                                if (btn == 'yes'){
+                                if (btn == 'yes') {
                                     window.location = 'tr_show_plan.cgi?plan_id=' + data.result.plan;
                                 }
                             }
                         });
-                        try{
+                        try {
                             Ext.getCmp('newplan-win').close();
+                        } 
+                        catch (err) {
                         }
-                        catch(err){}
                     },
                     failure: testopiaError
                 });
             }
-        },{
+        }, {
             text: 'Cancel',
             handler: function(){
-                if (Ext.getCmp('newplan-win')){
+                if (Ext.getCmp('newplan-win')) {
                     Ext.getCmp('newplan-win').close();
                 }
                 else {
@@ -630,8 +770,22 @@ Testopia.TestPlan.NewPlanForm = function(product_id){
 
 Ext.extend(Testopia.TestPlan.NewPlanForm, Ext.form.FormPanel);
 
+Testopia.TestPlan.NewPlanPopup = function(product_id){
+    var win = new Ext.Window({
+        id: 'newplan-win',
+        closable: true,
+        width: 800,
+        height: 550,
+        plain: true,
+        shadow: false,
+        layout: 'fit',
+        items: [new Testopia.TestPlan.NewPlanForm(product_id)]
+    });
+    win.show(this);
+};
+    
 Testopia.TestPlan.ClonePanel = function(plan){
-    var pbox = new ProductCombo({
+    var pbox = new Testopia.Product.Combo({
         id: 'plan_clone_product_chooser',
         hiddenName: 'product_id',
         fieldLabel: 'Copy To Product',
@@ -639,38 +793,45 @@ Testopia.TestPlan.ClonePanel = function(plan){
         width: 550,
         value: plan.product_id
     });
-    var vbox = new ProductVersionCombo({
+    var vbox = new Testopia.Product.VersionCombo({
         id: 'plan_clone_version_chooser',
         hiddenName: 'prod_version',
         fieldLabel: 'Product Version',
-        params: {product_id: plan.product_id},
+        params: {
+            product_id: plan.product_id
+        },
         allowBlank: false
     });
-    var bbox  = new BuildCombo({
+    var bbox = new Testopia.Build.Combo({
         fieldLabel: 'Select a Build',
         id: 'plan_clone_build_chooser',
         mode: 'local',
         hiddenName: 'new_run_build',
-        params: {product_id: plan.product_id, activeonly: 1}
+        params: {
+            product_id: plan.product_id,
+            activeonly: 1
+        }
     });
-    var ebox = new EnvironmentCombo({
+    var ebox = new Testopia.Environment.Combo({
         fieldLabel: 'Select an Environment',
         id: 'plan_clone_environment_chooser',
         mode: 'local',
         hiddenName: 'new_run_env',
-        params: {product_id: plan.product_id}
+        params: {
+            product_id: plan.product_id
+        }
     });
-    pbox.on('select', function(c,r,i){
+    pbox.on('select', function(c, r, i){
         vbox.reset();
         vbox.store.baseParams.product_id = r.id;
         Ext.getCmp('plan_clone_build_chooser').store.baseParams.product_id = r.id;
         Ext.getCmp('plan_clone_environment_chooser').store.baseParams.product_id = r.id;
         Ext.getCmp('plan_clone_build_chooser').store.load();
         Ext.getCmp('plan_clone_environment_chooser').store.load();
-        if (r.id == plan.product_id){
+        if (r.id == plan.product_id) {
             Ext.getCmp('copy_categories').disable();
         }
-        else{
+        else {
             Ext.getCmp('copy_categories').enable();
         }
         
@@ -680,16 +841,16 @@ Testopia.TestPlan.ClonePanel = function(plan){
     function doSubmit(){
         var form = this.getForm();
         var p = form.getValues();
-        if (form.isValid()){
+        if (form.isValid()) {
             form.submit({
-                success: function(f,a){
+                success: function(f, a){
                     Ext.Msg.show({
-                        title:'Plan Copied',
+                        title: 'Plan Copied',
                         msg: 'Plan ' + a.result.plan_id + ' Created. Would you like to go there now?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.MessageBox.QUESTION,
                         fn: function(btn){
-                            if (btn == 'yes'){
+                            if (btn == 'yes') {
                                 window.location = 'tr_show_plan.cgi?plan_id=' + a.result.plan_id;
                             }
                         }
@@ -702,31 +863,33 @@ Testopia.TestPlan.ClonePanel = function(plan){
     Testopia.TestPlan.ClonePanel.superclass.constructor.call(this, {
         id: 'plan_clone_panel',
         url: 'tr_process_plan.cgi',
-        baseParams: {action: 'clone'},
+        baseParams: {
+            action: 'clone'
+        },
         bodyStyle: 'padding: 10px',
         border: false,
         autoScroll: true,
         width: 600,
-        items:[{
-            layout:'table',
+        items: [{
+            layout: 'table',
             border: false,
             layoutConfig: {
                 columns: 2,
                 width: '100%'
             },
-            items:[{
+            items: [{
                 colspan: 2,
                 layout: 'form',
                 border: false,
                 items: [{
-                    id:'plan_clone_name',
-                    xtype:'textfield',
+                    id: 'plan_clone_name',
+                    xtype: 'textfield',
                     fieldLabel: '<b>New Plan Name</b>',
                     name: 'plan_name',
                     allowBlank: false,
                     width: 550
-                },pbox, vbox ]
-            },{
+                }, pbox, vbox]
+            }, {
                 layout: 'form',
                 border: false,
                 items: [{
@@ -735,19 +898,19 @@ Testopia.TestPlan.ClonePanel = function(plan){
                     checked: false,
                     boxLabel: 'Copy Plan Attachments',
                     hideLabel: true
-                },{
+                }, {
                     xtype: 'checkbox',
                     name: 'copy_doc',
                     checked: true,
                     boxLabel: 'Copy Plan Document',
                     hideLabel: true
-                },{
+                }, {
                     xtype: 'hidden',
                     name: 'plan_id',
                     value: plan.plan_id
                 }]
-
-            },{
+            
+            }, {
                 layout: 'form',
                 border: false,
                 items: [{
@@ -756,15 +919,15 @@ Testopia.TestPlan.ClonePanel = function(plan){
                     checked: true,
                     boxLabel: 'Copy Plan Tags',
                     hideLabel: true
-                },{
+                }, {
                     xtype: 'checkbox',
                     name: 'copy_perms',
                     checked: true,
                     boxLabel: 'Copy Plan Permissions',
                     hideLabel: true
                 }]
-
-            },{
+            
+            }, {
                 layout: 'form',
                 border: false,
                 colspan: 2,
@@ -774,7 +937,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
                     checked: false,
                     boxLabel: 'Maintain original author (unchecking will make me the author of the new plan)',
                     hideLabel: true
-                },{
+                }, {
                     xtype: 'fieldset',
                     autoHeight: true,
                     checkboxToggle: true,
@@ -788,19 +951,21 @@ Testopia.TestPlan.ClonePanel = function(plan){
                         name: 'make_copy',
                         boxLabel: 'Create a copy (Unchecking will create a link to selected plans)',
                         hideLabel: true,
-                        listeners: {'check':function(box, checked){
-                            if (checked === true){
-                                Ext.getCmp('copy_cases_keep_author').enable();
-                                Ext.getCmp('copy_cases_keep_tester').enable();
-                                Ext.getCmp('copy_run_cases_cbox').disable();
+                        listeners: {
+                            'check': function(box, checked){
+                                if (checked === true) {
+                                    Ext.getCmp('copy_cases_keep_author').enable();
+                                    Ext.getCmp('copy_cases_keep_tester').enable();
+                                    Ext.getCmp('copy_run_cases_cbox').disable();
+                                }
+                                else {
+                                    Ext.getCmp('copy_cases_keep_author').disable();
+                                    Ext.getCmp('copy_cases_keep_tester').disable();
+                                    Ext.getCmp('copy_run_cases_cbox').enable();
+                                }
                             }
-                            else {
-                                Ext.getCmp('copy_cases_keep_author').disable();
-                                Ext.getCmp('copy_cases_keep_tester').disable();
-                                Ext.getCmp('copy_run_cases_cbox').enable();
-                            }
-                        }}
-                    },{
+                        }
+                    }, {
                         xtype: 'checkbox',
                         name: 'keep_case_authors',
                         id: 'copy_cases_keep_author',
@@ -808,23 +973,23 @@ Testopia.TestPlan.ClonePanel = function(plan){
                         disabled: true,
                         boxLabel: 'Maintain original authors (unchecking will make me the author of the copied cases)',
                         hideLabel: true
-                    },{
+                    }, {
                         xtype: 'checkbox',
                         id: 'copy_cases_keep_tester',
                         boxLabel: 'Keep Default Tester (unchecking will make you the default tester of copied cases)',
                         hideLabel: true,
                         name: 'keep_tester',
                         checked: true
-                    },{
+                    }, {
                         xtype: 'checkbox',
                         name: 'copy_categories',
                         id: 'copy_categories',
                         checked: false,
                         disabled: true,
                         boxLabel: 'Copy Categories to new product (unchecking will place copied cases in the default category for the selected product)',
-                        hideLabel: true                        
+                        hideLabel: true
                     }]
-                },{
+                }, {
                     xtype: 'fieldset',
                     autoHeight: true,
                     checkboxToggle: true,
@@ -838,28 +1003,28 @@ Testopia.TestPlan.ClonePanel = function(plan){
                         checked: false,
                         boxLabel: 'Maintain managers (unchecking will make me the manager of the new runs)',
                         hideLabel: true
-                    },{
+                    }, {
                         xtype: 'checkbox',
                         name: 'copy_run_tags',
                         checked: true,
                         boxLabel: 'Copy tags from the old run to the new run',
                         hideLabel: true
-                    },{
+                    }, {
                         xtype: 'checkbox',
                         name: 'copy_run_cases',
                         id: 'copy_run_cases_cbox',
                         checked: true,
                         boxLabel: 'Link cases in copied run to original test cases (unchecking will produce an empty test run)',
                         hideLabel: true
-                    },bbox, ebox]
+                    }, bbox, ebox]
                 }]
-
+            
             }]
         }],
         buttons: [{
             text: 'Submit',
             handler: doSubmit.createDelegate(this)
-        },{
+        }, {
             text: 'Cancel',
             handler: function(){
                 Ext.getCmp('plan-clone-win').close();
@@ -870,7 +1035,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
 Ext.extend(Testopia.TestPlan.ClonePanel, Ext.form.FormPanel);
 
 Testopia.TestPlan.ClonePopup = function(plan){
-    
+
     var win = new Ext.Window({
         id: 'plan-clone-win',
         closable: true,
