@@ -25,6 +25,7 @@ Testopia.Build.Store = function(params, auto){
     Testopia.Build.Store.superclass.constructor.call(this, {
         url: 'tr_builds.cgi',
         root: 'builds',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: params,
         id: 'build_id',
         autoLoad: auto,
@@ -160,7 +161,7 @@ Testopia.Build.Grid = function(product_id){
             iconCls: 'img_button_16x',
             tooltip: 'Edit Selected Build',
             handler: function(){
-                editFirstSelection(Ext.getCmp('build_grid'));
+                Testopia.Util.editFirstSelection(Ext.getCmp('build_grid'));
             }
         }, {
             xtype: 'button',
@@ -218,7 +219,7 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.EditorGridPanel, {
                                     autoScroll: true,
                                     tools: PortalTools
                                 });
-                                newPortlet.url = 'tr_builds.cgi?action=report&product_id=' + grid.product_id + '&build_ids=' + getSelectedObjects(grid, 'id');
+                                newPortlet.url = 'tr_builds.cgi?action=report&product_id=' + grid.product_id + '&build_ids=' + Testopia.Util.getSelectedObjects(grid, 'id');
                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
@@ -238,7 +239,7 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.EditorGridPanel, {
                     icon: 'extensions/testopia/img/edit.png',
                     iconCls: 'img_button_16x',
                     handler: function(){
-                        editFirstSelection(grid);
+                        Testopia.Util.editFirstSelection(grid);
                     }
                 }, {
                     text: 'Refresh',
@@ -294,7 +295,7 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.EditorGridPanel, {
                 ds.commitChanges();
             },
             failure: function(f, a){
-                testopiaError(f, a);
+                Testopia.Util.error(f, a);
                 ds.rejectChanges();
             }
         });

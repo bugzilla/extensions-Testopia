@@ -28,6 +28,7 @@ Testopia.Attachment.Grid = function(object){
     this.store = new Ext.data.JsonStore({
         url: 'tr_attachment.cgi',
         root: 'attachment',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             ctype: 'json',
             action: 'list',
@@ -148,7 +149,7 @@ Testopia.Attachment.Grid = function(object){
             disabled: true,
             tooltip: 'Edit Attachments',
             handler: function(){
-                editFirstSelection(Ext.getCmp('attachments_panel'));
+                Testopia.Util.editFirstSelection(Ext.getCmp('attachments_panel'));
             }
         }, {
             xtype: 'button',
@@ -254,7 +255,7 @@ Ext.extend(Testopia.Attachment.Grid, Ext.grid.EditorGridPanel, {
                 ds.commitChanges();
             },
             failure: function(f, a){
-                testopiaError(f, a);
+                Testopia.Util.error(f, a);
                 ds.rejectChanges();
             }
         });
@@ -275,7 +276,7 @@ Ext.extend(Testopia.Attachment.Grid, Ext.grid.EditorGridPanel, {
                     testopia_form.submit({
                         url: 'tr_attachment.cgi',
                         params: {
-                            attach_ids: getSelectedObjects(Ext.getCmp('attachments_panel'), 'id'),
+                            attach_ids: Testopia.Util.getSelectedObjects(Ext.getCmp('attachments_panel'), 'id'),
                             action: 'remove',
                             ctype: 'json',
                             object: object.type,
@@ -284,7 +285,7 @@ Ext.extend(Testopia.Attachment.Grid, Ext.grid.EditorGridPanel, {
                         success: function(){
                             Ext.getCmp('attachments_panel').store.load();
                         },
-                        failure: testopiaError
+                        failure: Testopia.Util.error
                     });
                 }
             },
@@ -426,7 +427,7 @@ Testopia.Attachment.NewAttachmentPopup = function(object){
                             Ext.getCmp('attachments_panel').store.load();
                             Ext.getCmp('new_attachment_win').close();
                         },
-                        failure: testopiaError
+                        failure: Testopia.Util.error
                     });
                 }
             }, {

@@ -101,9 +101,9 @@ Ext.onReady(function(){
                         isactive: true
                     }, 
                     success:function(object){
-                        TestopiaUtil.notify.msg('Test Environment Updated', 'Environment renamed successfully');
+                        Testopia.Util.notify.msg('Test Environment Updated', 'Environment renamed successfully');
                     }, 
-                    failure: testopiaError
+                    failure: Testopia.Util.error
                 });      
             },
             "contextmenu": function(node, event){
@@ -143,7 +143,7 @@ Ext.onReady(function(){
                                                 if(node != null)
                                                     node.remove();
                                             }, 
-                                            failure: testopiaError
+                                            failure: Testopia.Util.error
                                         });      
                                     }
                                 }
@@ -182,7 +182,7 @@ Ext.onReady(function(){
                                     c.removeClass(["validexp"]);
                                     c.addClass(["validexpYellow"]);             
                                 }, 
-                                failure: testopiaError
+                                failure: Testopia.Util.error
                             }); 
                         }
                     },{
@@ -324,9 +324,9 @@ Ext.onReady(function(){
                 type: node.attributes.cls
             }, 
             success:function(f,a){
-                TestopiaUtil.notify.msg('Environment' + type + 'Updated', type + ' renamed successfully');
+                Testopia.Util.notify.msg('Environment' + type + 'Updated', type + ' renamed successfully');
             }, 
-            failure: testopiaError
+            failure: Testopia.Util.error
         });      
     }
     
@@ -467,7 +467,7 @@ Ext.onReady(function(){
                     }
                 });
             }, 
-            failure: testopiaError
+            failure: Testopia.Util.error
         });      
     }
     
@@ -482,9 +482,9 @@ Ext.onReady(function(){
             }, 
             success:function(object){
                 node.remove();
-                TestopiaUtil.notify.msg('Environment '+ node.attributes.type +' Deleted', '');
+                Testopia.Util.notify.msg('Environment '+ node.attributes.type +' Deleted', '');
             }, 
-            failure: testopiaError
+            failure: Testopia.Util.error
         }); 
     }
     
@@ -547,7 +547,7 @@ Ext.onReady(function(){
             success: function(f,a){
                 etree.getLoader().load(etree.root, function(){etree.root.expand()});
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     }
     

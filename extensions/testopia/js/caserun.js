@@ -24,6 +24,7 @@ Testopia.TestCaseRun.StatusListStore = function(auto){
     Testopia.TestCaseRun.StatusListStore.superclass.constructor.call(this, {
         url: 'tr_quicksearch.cgi',
         root: 'statuses',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'getcaserunstatus'
         },
@@ -134,9 +135,9 @@ Testopia.TestCaseRun.Filter = function(){
                     success: function(){
                         Ext.getCmp('run_east_panel').activate('run_filter_grid');
                         Ext.getCmp('run_filter_grid').store.reload();
-                        TestopiaUtil.notify.msg('Filter Saved', 'Added filter {0}', params.query_name);
+                        Testopia.Util.notify.msg('Filter Saved', 'Added filter {0}', params.query_name);
                     },
-                    failure: testopiaError
+                    failure: Testopia.Util.error
                 });
             }
         },        //        new Ext.Toolbar.Fill(),
@@ -184,7 +185,6 @@ Testopia.TestCaseRun.Filter = function(){
 Ext.extend(Testopia.TestCaseRun.Filter, Ext.Panel);
 
 Testopia.TestCaseRun.List = function(params, cfg){
-    var tutil = new TestopiaUtil();
     this.params = params;
     this.store = new Ext.data.GroupingStore({
         url: 'tr_list_caseruns.cgi',
@@ -258,7 +258,7 @@ Testopia.TestCaseRun.List = function(params, cfg){
         this.getView().mainHd.select('td').removeClass(this.getView().sortClasses);
         this.store.load();
     };
-    this.bbar = new TestopiaPager('caserun', this.store);
+    this.bbar = new Testopia.Util.PagingBar('caserun', this.store);
     this.columns = [{
         header: "Case",
         width: 50,
@@ -267,7 +267,7 @@ Testopia.TestCaseRun.List = function(params, cfg){
         groupRenderer: function(v){
             return v;
         },
-        renderer: tutil.caseLink
+        renderer: Testopia.Util.makeLink.createDelegate(this,['case'],true)
     }, {
         header: "Run",
         width: 50,
@@ -276,7 +276,7 @@ Testopia.TestCaseRun.List = function(params, cfg){
         groupRenderer: function(v){
             return v;
         },
-        renderer: tutil.runLink
+        renderer: Testopia.Util.makeLink.createDelegate(this,['run'],true)
     }, {
         header: "Build",
         width: 50,
@@ -306,7 +306,7 @@ Testopia.TestCaseRun.List = function(params, cfg){
         groupRenderer: function(v){
             return v;
         },
-        renderer: tutil.statusIcon
+        renderer: Testopia.Util.displayStatusIcon
     }, {
         header: "Closed",
         width: 60,
@@ -361,7 +361,7 @@ Testopia.TestCaseRun.List = function(params, cfg){
         iconCls: 'img_button_16x',
         tooltip: 'Save this search',
         handler: function(b, e){
-            saveSearch('caserun', Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams);
+            Testopia.Search.save('caserun', Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams);
         }
     }, {
         xtype: 'button',
@@ -370,7 +370,7 @@ Testopia.TestCaseRun.List = function(params, cfg){
         iconCls: 'img_button_16x',
         tooltip: 'Create a link to this list',
         handler: function(b, e){
-            linkPopup(Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams);
+            Testopia.Search.LinkPopup(Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams);
         }
     }];
     
@@ -410,7 +410,7 @@ Ext.extend(Testopia.TestCaseRun.List, Ext.grid.GridPanel, {
                     testopia_form.submit({
                         url: 'tr_list_caseruns.cgi',
                         params: {
-                            caserun_ids: getSelectedObjects(grid, 'caserun_id'),
+                            caserun_ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id'),
                             action: 'delete',
                             single: true,
                             ctype: 'json'
@@ -424,7 +424,7 @@ Ext.extend(Testopia.TestCaseRun.List, Ext.grid.GridPanel, {
                             grid.store.reload();
                         },
                         failure: function(f, a){
-                            testopiaError(f, a);
+                            Testopia.Util.error(f, a);
                             grid.store.reload();
                         }
                     });
@@ -441,7 +441,6 @@ Ext.extend(Testopia.TestCaseRun.List, Ext.grid.GridPanel, {
 
 Testopia.TestCaseRun.Grid = function(params, run){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
-    var t = new TestopiaUtil();
     this.params = params;
     this.run = run;
     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm', {});
@@ -578,14 +577,14 @@ Testopia.TestCaseRun.Grid = function(params, run){
     buildCombo.on('select', function(c, r, i){
         params = {
             build_id: r.get('id'),
-            ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+            ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
         };
         Testopia.Util.updateFromList('caserun', params, Ext.getCmp('caserun_grid'));
     });
     envCombo.on('select', function(c, r, i){
         params = {
             env_id: r.get('environment_id'),
-            ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+            ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
         };
         Testopia.Util.updateFromList('caserun', params, Ext.getCmp('caserun_grid'));
     });
@@ -595,13 +594,13 @@ Testopia.TestCaseRun.Grid = function(params, run){
         width: 50,
         dataIndex: 'case_id',
         sortable: true,
-        renderer: t.caseLink
+        renderer: Testopia.Util.makeLink.createDelegate(this,['case'],true)
     }, {
         header: "Run",
         width: 50,
         dataIndex: 'run_id',
         sortable: true,
-        renderer: t.runLink,
+        renderer: Testopia.Util.makeLink.createDelegate(this,['run'],true),
         hidden: true
     }, {
         header: "Index",
@@ -620,7 +619,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
                 activeonly: 1
             }
         })),
-        renderer: TestopiaComboRenderer.createDelegate(this)
+        renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Environment",
         width: 50,
@@ -638,10 +637,10 @@ Testopia.TestCaseRun.Grid = function(params, run){
         width: 150,
         sortable: true,
         dataIndex: 'assignee',
-        editor: new Ext.grid.GridEditor(new UserLookup({
+        editor: new Ext.grid.GridEditor(new Testopia.User.Lookup({
             id: 'caserun_assignee'
         })),
-        renderer: TestopiaComboRenderer.createDelegate(this)
+        renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Tested By",
         width: 150,
@@ -659,7 +658,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
         sortable: true,
         dataIndex: 'status',
         align: 'center',
-        renderer: t.statusIcon
+        renderer: Testopia.Util.displayStatusIcon
     }, {
         header: "Priority",
         width: 60,
@@ -668,7 +667,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
         editor: new Ext.grid.GridEditor(new Testopia.TestCase.PriorityCombo({
             id: 'caserun_priority'
         })),
-        renderer: TestopiaComboRenderer.createDelegate(this)
+        renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Category",
         width: 100,
@@ -680,7 +679,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
                 product_id: run.plan.product_id
             }
         })),
-        renderer: TestopiaComboRenderer.createDelegate(this)
+        renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Requirement",
         width: 150,
@@ -712,7 +711,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
     }];
     
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
-    this.bbar = new TestopiaPager('caserun', this.store);
+    this.bbar = new Testopia.Util.PagingBar('caserun', this.store);
     this.tbar = new Ext.Toolbar({
         id: 'caserun_grid_tb',
         items: [{
@@ -724,7 +723,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 1,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }, {
@@ -736,7 +735,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 2,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
                     update_bug: Ext.getCmp('update_bugs').getValue()
                 }, Ext.getCmp('caserun_grid'));
             }
@@ -749,7 +748,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 3,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
                     update_bug: Ext.getCmp('update_bugs').getValue()
                 }, Ext.getCmp('caserun_grid'));
             }
@@ -782,7 +781,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
                             Testopia.Util.updateFromList('caserun', {
                                 status_id: 4,
                                 reassign: reassign,
-                                ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                                ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                             }, Ext.getCmp('caserun_grid'));
                         }
                     });
@@ -791,7 +790,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
                     Testopia.Util.updateFromList('caserun', {
                         status_id: 4,
                         reassign: reassign,
-                        ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                        ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                     }, Ext.getCmp('caserun_grid'));
                 }
             }
@@ -804,7 +803,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 5,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }, {
@@ -816,7 +815,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 6,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }, {
@@ -828,7 +827,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 7,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }, ' ', '-', 'Update Bugs: ', new Ext.form.Checkbox({
@@ -859,7 +858,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             iconCls: 'img_button_16x',
             tooltip: 'Edit Selected Test Case',
             handler: function(){
-                editFirstSelection(Ext.getCmp('caserun_grid'));
+                Testopia.Util.editFirstSelection(Ext.getCmp('caserun_grid'));
             }
         }, {
             xtype: 'button',
@@ -1017,7 +1016,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                                 run_id: grid.run.run_id,
                                                 applyall: Ext.getCmp('build_applyall').getValue(),
                                                 build_id: Ext.getCmp('multi_build').getValue(),
-                                                ids: getSelectedObjects(grid, 'caserun_id')
+                                                ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id')
                                             };
                                             Testopia.Util.updateFromList('caserun', params, grid);
                                             win.close();
@@ -1061,7 +1060,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                                 run_id: grid.run.run_id,
                                                 applyall: Ext.getCmp('env_applyall').getValue(),
                                                 env_id: Ext.getCmp('multi_env').getValue(),
-                                                ids: getSelectedObjects(grid, 'caserun_id')
+                                                ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id')
                                             };
                                             Testopia.Util.updateFromList('caserun', params, grid);
                                             win.close();
@@ -1097,7 +1096,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                             params = {
                                                 run_id: grid.run.run_id,
                                                 priority: Ext.getCmp('multi_priority').getValue(),
-                                                ids: getSelectedObjects(grid, 'case_id')
+                                                ids: Testopia.Util.getSelectedObjects(grid, 'case_id')
                                             };
                                             Testopia.Util.updateFromList('case', params, grid);
                                             win.close();
@@ -1132,7 +1131,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                         handler: function(){
                                             Testopia.Util.updateFromList('case', {
                                                 category: Ext.getCmp('case_category_combo').getValue(),
-                                                ids: getSelectedObjects(grid, 'case_id')
+                                                ids: Testopia.Util.getSelectedObjects(grid, 'case_id')
                                             }, grid);
                                             win.close();
                                         }
@@ -1157,7 +1156,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                     height: 150,
                                     layout: 'form',
                                     bodyStyle: 'padding: 5px',
-                                    items: [new UserLookup({
+                                    items: [new Testopia.User.Lookup({
                                         fieldLabel: 'Assignee',
                                         id: 'multi_assignee'
                                     }), new Ext.form.Checkbox({
@@ -1171,7 +1170,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                                 run_id: grid.run.run_id,
                                                 applyall: Ext.getCmp('assignee_applyall').getValue(),
                                                 assignee: Ext.getCmp('multi_assignee').getValue(),
-                                                ids: getSelectedObjects(grid, 'caserun_id')
+                                                ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id')
                                             };
                                             Testopia.Util.updateFromList('caserun', params, grid);
                                             win.close();
@@ -1206,13 +1205,13 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                 }, {
                     text: 'Clone Run with Selected Cases',
                     handler: function(){
-                        Testopia.TestRun.ClonePopup(grid.run.product_id, grid.run.run_id, getSelectedObjects(grid, 'case_id'));
+                        Testopia.TestRun.ClonePopup(grid.run.product_id, grid.run.run_id, Testopia.Util.getSelectedObjects(grid, 'case_id'));
                     }
                 }, {
                     text: 'Copy or Link Selected Test Cases to Plan(s)... ',
                     handler: function(){
                         var r = grid.getSelectionModel().getSelected();
-                        Testopia.TestCase.clonePopup(grid.run.product_id, getSelectedObjects(grid, 'case_id'));
+                        Testopia.TestCase.clonePopup(grid.run.product_id, Testopia.Util.getSelectedObjects(grid, 'case_id'));
                     }
                 }, {
                     text: 'Add Selected Test Cases to Run... ',
@@ -1221,7 +1220,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                             if (btn == 'ok') {
                                 Testopia.Util.updateFromList('case', {
                                     addruns: text,
-                                    ids: getSelectedObjects(grid, 'case_id')
+                                    ids: Testopia.Util.getSelectedObjects(grid, 'case_id')
                                 }, grid);
                             }
                         });
@@ -1243,7 +1242,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                     handler: function(){
                         var params = Ext.getCmp('caserun_search').form.getValues();
                         if (params) {
-                            window.open('tr_list_cases.cgi?' + jsonToSearch(params, '', ['current_tab']) + '&isactive=1');
+                            window.open('tr_list_cases.cgi?' + Testopia.Util.JSONToURLQuery(params, '', ['current_tab']) + '&isactive=1');
                         }
                         else {
                             window.open('tr_list_cases.cgi?run_id=' + grid.store.getAt(grid.selindex).get('run_id'));
@@ -1308,7 +1307,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                 }
             },
             failure: function(f, a){
-                testopiaError(f, a);
+                Testopia.Util.error(f, a);
                 ds.rejectChanges();
             }
         });
@@ -1330,7 +1329,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                     testopia_form.submit({
                         url: 'tr_list_caseruns.cgi',
                         params: {
-                            caserun_ids: getSelectedObjects(grid, 'caserun_id'),
+                            caserun_ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id'),
                             action: 'delete',
                             ctype: 'json'
                         },
@@ -1343,7 +1342,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                             grid.store.reload();
                         },
                         failure: function(f, a){
-                            testopiaError(f, a);
+                            Testopia.Util.error(f, a);
                             grid.store.reload();
                         }
                     });
@@ -1359,7 +1358,6 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
 });
 
 Testopia.TestCaseRun.Info = function(){
-    var t = new TestopiaUtil();
     this.caserun_id;
     this.store = new Ext.data.Store({
         url: 'tr_caserun.cgi',
@@ -1408,13 +1406,13 @@ Testopia.TestCaseRun.Info = function(){
             params: {
                 action: 'update',
                 note: Ext.getCmp('caserun_append_note_fld').getValue(),
-                ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
             },
             success: function(){
                 Ext.getCmp('caserun_append_note_fld').reset();
                 store.reload();
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     processText = function(){
@@ -1430,9 +1428,9 @@ Testopia.TestCaseRun.Info = function(){
             url: 'tr_process_case.cgi',
             params: params,
             success: function(){
-                TestopiaUtil.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'Document');
+                Testopia.Util.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'Document');
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     }
     var summary_tb = new Ext.Toolbar({
@@ -1445,7 +1443,7 @@ Testopia.TestCaseRun.Info = function(){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 1,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }), new Ext.Button({
@@ -1455,7 +1453,7 @@ Testopia.TestCaseRun.Info = function(){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 2,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
                     update_bug: Ext.getCmp('update_bugs').getValue()
                 }, Ext.getCmp('caserun_grid'));
             }
@@ -1466,7 +1464,7 @@ Testopia.TestCaseRun.Info = function(){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 3,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id'),
                     update_bug: Ext.getCmp('update_bugs').getValue()
                 }, Ext.getCmp('caserun_grid'));
             }
@@ -1497,7 +1495,7 @@ Testopia.TestCaseRun.Info = function(){
                             Testopia.Util.updateFromList('caserun', {
                                 status_id: 4,
                                 reassign: reassign,
-                                ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                                ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                             }, Ext.getCmp('caserun_grid'));
                         }
                     });
@@ -1506,7 +1504,7 @@ Testopia.TestCaseRun.Info = function(){
                     Testopia.Util.updateFromList('caserun', {
                         status_id: 4,
                         reassign: reassign,
-                        ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                        ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                     }, Ext.getCmp('caserun_grid'));
                 }
             }
@@ -1517,7 +1515,7 @@ Testopia.TestCaseRun.Info = function(){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 5,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }), new Ext.Button({
@@ -1527,7 +1525,7 @@ Testopia.TestCaseRun.Info = function(){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 6,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }), new Ext.Button({
@@ -1537,7 +1535,7 @@ Testopia.TestCaseRun.Info = function(){
             handler: function(){
                 Testopia.Util.updateFromList('caserun', {
                     status_id: 7,
-                    ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                    ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
         }), new Ext.Toolbar.TextItem('')]
@@ -1674,10 +1672,9 @@ Testopia.TestCaseRun.Info = function(){
 Ext.extend(Testopia.TestCaseRun.Info, Ext.Panel, this);
 
 Testopia.TestCaseRun.History = function(){
-    var t = new TestopiaUtil();
-    
     this.store = new Ext.data.JsonStore({
         url: 'tr_caserun.cgi',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'gethistory'
         },
@@ -1723,7 +1720,7 @@ Testopia.TestCaseRun.History = function(){
         width: 50,
         dataIndex: 'status',
         sortable: true,
-        renderer: t.statusIcon
+        renderer: Testopia.Util.displayStatusIcon
     }, {
         header: "Tested By",
         width: 200,
@@ -1784,7 +1781,6 @@ Ext.extend(Testopia.TestCaseRun.History, Ext.grid.GridPanel, {
 });
 
 Testopia.TestCase.Bugs.Grid = function(id){
-    var tutil = new TestopiaUtil();
     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm', {});
     function bug_link(id){
         return '<a href="show_bug.cgi?id=' + id + '" target="_blank">' + id + '</a>';
@@ -1799,6 +1795,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
     this.store = new Ext.data.JsonStore({
         url: 'tr_process_case.cgi',
         root: 'bugs',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'getbugs'
         },
@@ -1843,7 +1840,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
         var type = 'case';
         if (Ext.getCmp('caserun_grid')) {
             type = 'caserun';
-            ids = getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
+            ids = Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
         }
         else {
             ids = tcid;
@@ -1865,7 +1862,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
                 });
                 Ext.getCmp('attachbug').reset();
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     removebug = function(){
@@ -1873,7 +1870,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
         var type = 'case';
         if (Ext.getCmp('caserun_grid')) {
             type = 'caserun';
-            ids = getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
+            ids = Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
         }
         else {
             ids = tcid;
@@ -1882,7 +1879,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
             url: 'tr_list_cases.cgi',
             params: {
                 action: 'update_bugs',
-                bugs: getSelectedObjects(Ext.getCmp('case_bugs_panel'), 'bug_id'),
+                bugs: Testopia.Util.getSelectedObjects(Ext.getCmp('case_bugs_panel'), 'bug_id'),
                 type: type,
                 ids: ids
             },
@@ -1893,7 +1890,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
                     }
                 });
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     newbug = function(){
@@ -1963,7 +1960,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
         width: 50,
         dataIndex: 'run_id',
         sortable: true,
-        renderer: tutil.runLink
+        renderer: Testopia.Util.makeLink.createDelegate(this,['run'],true)
     }, {
         header: "With Build",
         width: 50,
@@ -2070,16 +2067,16 @@ Ext.extend(Testopia.TestCase.Bugs.Grid, Ext.grid.GridPanel, {
                         params: {
                             action: 'update_bugs',
                             bug_action: 'attach',
-                            bugs: getSelectedObjects(Ext.getCmp('case_bugs_panel'), 'bug_id'),
+                            bugs: Testopia.Util.getSelectedObjects(Ext.getCmp('case_bugs_panel'), 'bug_id'),
                             type: 'caserun',
-                            ids: getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
+                            ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                         },
                         success: function(){
                             Ext.getCmp('caserun_grid').store.reload();
                             grid.store.reload();
                             Ext.getCmp('attachbug').reset();
                         },
-                        failure: testopiaError
+                        failure: Testopia.Util.error
                     });
                 }
             }]
@@ -2125,6 +2122,7 @@ Testopia.TestCase.Components = function(id){
     this.store = new Ext.data.JsonStore({
         url: 'tr_process_case.cgi',
         root: 'comps',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'getcomponents'
         },
@@ -2179,12 +2177,12 @@ Testopia.TestCase.Components = function(id){
                     action: 'update',
                     comp_action: 'add',
                     components: compchooser.getValue(),
-                    ids: getSelectedObjects(tcid, 'case_id')
+                    ids: Testopia.Util.getSelectedObjects(tcid, 'case_id')
                 },
                 success: function(){
-                    TestopiaUtil.notify.msg('Component Added', 'Added component {0} to {1} cases(s)', compchooser.getRawValue(), tcid.getSelectionModel().getCount());
+                    Testopia.Util.notify.msg('Component Added', 'Added component {0} to {1} cases(s)', compchooser.getRawValue(), tcid.getSelectionModel().getCount());
                 },
-                failure: testopiaError
+                failure: Testopia.Util.error
             });
             return;
         }
@@ -2202,7 +2200,7 @@ Testopia.TestCase.Components = function(id){
                     }
                 });
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     removecomp = function(){
@@ -2214,12 +2212,12 @@ Testopia.TestCase.Components = function(id){
                     action: 'update',
                     comp_action: 'rem',
                     components: compchooser.getValue(),
-                    ids: getSelectedObjects(tcid, 'case_id')
+                    ids: Testopia.Util.getSelectedObjects(tcid, 'case_id')
                 },
                 success: function(){
-                    TestopiaUtil.notify.msg('Component Removed', 'Removed component {0} from {1} cases(s)', compchooser.getRawValue(), tcid.getSelectionModel().getCount());
+                    Testopia.Util.notify.msg('Component Removed', 'Removed component {0} from {1} cases(s)', compchooser.getRawValue(), tcid.getSelectionModel().getCount());
                 },
-                failure: testopiaError
+                failure: Testopia.Util.error
             });
             return;
         }
@@ -2227,7 +2225,7 @@ Testopia.TestCase.Components = function(id){
             url: 'tr_process_case.cgi',
             params: {
                 action: 'removecomponent',
-                component_id: getSelectedObjects(Ext.getCmp('case_comps_panel'), 'id'),
+                component_id: Testopia.Util.getSelectedObjects(Ext.getCmp('case_comps_panel'), 'id'),
                 case_id: this.tcid
             },
             success: function(){
@@ -2237,7 +2235,7 @@ Testopia.TestCase.Components = function(id){
                     }
                 });
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     Testopia.TestCase.Components.superclass.constructor.call(this, {
@@ -2299,7 +2297,7 @@ Ext.extend(Testopia.TestCase.Components, Ext.grid.GridPanel, {
             },
             callback: function(r, o, s){
                 if (s === false) {
-                    testopiaLoadError();
+                    Testopia.Util.loadError();
                 }
             }
         });
@@ -2317,11 +2315,11 @@ Testopia.TestCase.Bugs.update = function(grid){
                 bug_action: action,
                 bugs: value,
                 type: 'case',
-                ids: getSelectedObjects(grid, 'case_id')
+                ids: Testopia.Util.getSelectedObjects(grid, 'case_id')
             },
             success: function(){
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     }
     var win = new Ext.Window({

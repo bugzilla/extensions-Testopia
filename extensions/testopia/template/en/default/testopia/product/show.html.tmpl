@@ -27,7 +27,7 @@
 [% javascript_urls.push("extensions/testopia/extjs/examples/ux/PortalColumn.js") %]
 [% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portlet.js") %]
 
-[% title = "Product Information" %]
+[% title = "Testopia Product Dashboard" %]
 [% PROCESS global/header.html.tmpl %]
 
 
@@ -57,8 +57,7 @@ Ext.onReady(function(){
     product_id = [% product.id || 0 %];
   [% END %]
     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
-    var t = new TestopiaUtil();        
-    
+    var t = new Testopia.Util.CascadeProductSelection();    
     Ext.QuickTips.init();
     
     var pgrid = new Testopia.TestPlan.Grid({product_id: product_id},{id: 'product_plan_grid'});
@@ -165,7 +164,6 @@ Ext.onReady(function(){
     });
     
     var product_toolbar = new Ext.Toolbar({
-        renderTo: 'productmenudiv',
         items:[{
             text: 'File',
             menu: product_menu
@@ -180,7 +178,8 @@ Ext.onReady(function(){
     
     var productView = new Ext.Panel({
         layout: 'border',
-        height: 650,
+        height: 680,
+        title:'Product: [% product.name || "(Please select a product from the tree)" FILTER js %]',
         monitorResize: true,
         split: true,
         id:'product_view',
@@ -238,6 +237,7 @@ Ext.onReady(function(){
                         if (p && p.store){
                             p.store.load();
                         }
+                        Ext.getCmp('product_view').setTitle('Product: ' + node.text);
                         Ext.getCmp('producttags').store.load({params: {product_id: product_id}});
                         document.cookie = "TESTOPIA_PRODUCT_ID=" + product_id + "; path=[% cookiepath %]; expires=Fri, 01 Jan 2038 00:00:04 GMT";
                     }
@@ -293,7 +293,7 @@ Ext.onReady(function(){
             iconCls: 'img_button_16x',
             tooltip: 'Save this dashboard',
             handler: function(b,e){
-                saveSearch('dashboard', Testopia.Search.dashboard_urls);
+                Testopia.Search.save('dashboard', Testopia.Search.dashboard_urls);
             }
         });
     });
@@ -316,7 +316,8 @@ Ext.onReady(function(){
         baseParams: {action: 'get_saved_searches', type: 3, userid: [% userid || user.id FILTER js %]},
         root: 'searches',
         fields: ["name","query","author","type"],
-        listeners: {'load': function(obj, rs){
+        listeners: {'exception': Testopia.Util.loadError,
+            'load': function(obj, rs){
             Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
             var current_col = 'dashboard_leftcol';
             var query;
@@ -336,7 +337,7 @@ Ext.onReady(function(){
                 if(typeof qs[i] == 'function'){
                     continue;
                 }
-                var p = searchToJson(qs[i]);
+                var p = Testopia.Util.urlQueryToJSON(qs[i]);
                 var t;
                 typeof p.qname == 'object' ? t = p.qname[0] : t = p.qname;
                 
@@ -362,7 +363,7 @@ Ext.onReady(function(){
     dstore.load();
 
   [% END %]
-    var s = searchToJson(window.location.search);
+    var s = Testopia.Util.urlQueryToJSON(window.location.search);
     if (s.tab){
         Ext.getCmp('object_panel').activate('product_' + s.tab + '_grid');
     }
@@ -384,8 +385,6 @@ Ext.onReady(function(){
 }
 </style>
 
-<div id="productcontainer">
-    <div id="productmenudiv"></div>
-</div>
+<div id="productcontainer"></div>
 
 [% PROCESS global/footer.html.tmpl %]

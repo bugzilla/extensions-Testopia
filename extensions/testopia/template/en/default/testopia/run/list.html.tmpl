@@ -37,7 +37,7 @@
 <script type="text/javascript">
 Ext.onReady(function(){
     Ext.QuickTips.init();
-    var params = searchToJson(window.location.search);
+    var params = Testopia.Util.urlQueryToJSON(window.location.search);
     var list_grid = new Testopia.TestRun.Grid(params, {});
     var objPanel = new Ext.Panel({
         layout: 'border',
@@ -90,7 +90,7 @@ Ext.onReady(function(){
             iconCls: 'img_button_16x',
             tooltip: 'Save this dashboard',
             handler: function(b,e){
-                saveSearch('dashboard', Testopia.Search.dashboard_urls);
+                Testopia.Search.save('dashboard', Testopia.Search.dashboard_urls);
             }
         });
     });

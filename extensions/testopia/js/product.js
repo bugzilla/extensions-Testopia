@@ -24,6 +24,7 @@ Testopia.Product.Store = function(class_id, auto){
     Testopia.Product.Store.superclass.constructor.call(this, {
         url: 'tr_quicksearch.cgi',
         root: 'products',
+        listeners: { 'exception': Testopia.Util.loadError },
         autoLoad: auto,
         id: 'id',
         baseParams: {
@@ -46,6 +47,7 @@ Testopia.Product.VersionStore = function(params, auto){
     Testopia.Product.VersionStore.superclass.constructor.call(this, {
         url: 'tr_quicksearch.cgi',
         root: 'versions',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: params,
         autoLoad: auto,
         id: 'id',
@@ -65,6 +67,7 @@ Testopia.Product.MilestoneStore = function(params, auto){
     Testopia.Product.MilestoneStore.superclass.constructor.call(this, {
         url: 'tr_quicksearch.cgi',
         root: 'milestones',
+        listeners: { 'exception': Testopia.Util.loadError },
         autoLoad: auto,
         baseParams: params,
         id: 'id',

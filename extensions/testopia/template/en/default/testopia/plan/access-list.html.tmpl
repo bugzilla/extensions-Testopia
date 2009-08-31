@@ -21,7 +21,7 @@
 function fireLoad(){
     Ext.getCmp('plan-permissions').fireEvent('load');
     if (Ext.get('adduser')){
-        var adduser = new UserLookup({
+        var adduser = new Testopia.User.Lookup({
             id: 'plan_permission_add_user',
             hiddenName: 'adduser'
         });
@@ -45,7 +45,7 @@ function planAccess(o){
     form.submit({
         url: 'tr_plan_access.cgi',
         success: function(f,a){
-            TestopiaUtil.notify.msg('Test plan updated', 'Test plan {0} was updated successfully', 'Permissions');
+            Testopia.Util.notify.msg('Test plan updated', 'Test plan {0} was updated successfully', 'Permissions');
             f.el.unmask();
             Ext.getCmp('plan-permissions').load({
                 url: 'tr_plan_access.cgi',
@@ -54,7 +54,7 @@ function planAccess(o){
                 callback: fireLoad
             })
         },
-        failure: testopiaError
+        failure: Testopia.Util.error
     })
 }
 </script>

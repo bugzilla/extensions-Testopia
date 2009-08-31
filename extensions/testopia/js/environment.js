@@ -24,6 +24,7 @@ Testopia.Environment.Store = function(params, auto){
     params.ctype = 'json';
     Testopia.Environment.Store.superclass.constructor.call(this, {
         url: 'tr_list_environments.cgi',
+        listeners: { 'exception': Testopia.Util.loadError },
         root: 'Result',
         baseParams: params,
         totalProperty: 'totalResultsAvailable',
@@ -129,7 +130,7 @@ Testopia.Environment.Grid = function(params, cfg){
         width: 25
     })];
     this.form = new Ext.form.BasicForm('testopia_helper_frm', {});
-    this.bbar = new TestopiaPager('environment', this.store);
+    this.bbar = new Testopia.Util.PagingBar('environment', this.store);
     Testopia.Environment.Grid.superclass.constructor.call(this, {
         title: 'Environments',
         id: 'environment-grid',
@@ -242,7 +243,7 @@ Ext.extend(Testopia.Environment.Grid, Ext.grid.EditorGridPanel, {
                 ds.commitChanges();
             },
             failure: function(f, a){
-                testopiaError(f, a);
+                Testopia.Util.error(f, a);
                 ds.rejectChanges();
             }
         });
@@ -274,7 +275,7 @@ Ext.extend(Testopia.Environment.Grid, Ext.grid.EditorGridPanel, {
                             grid.store.reload();
                         },
                         failure: function(f, a){
-                            testopiaError(f, a);
+                            Testopia.Util.error(f, a);
                             grid.store.reload();
                         }
                     });
@@ -341,7 +342,7 @@ Ext.extend(Testopia.Environment.Grid, Ext.grid.EditorGridPanel, {
                                 });
                                 Ext.getCmp('create-env-win').close();
                             },
-                            failure: testopiaError
+                            failure: Testopia.Util.error
                         });
                     }
                 }, {

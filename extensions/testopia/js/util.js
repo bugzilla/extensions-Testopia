@@ -19,114 +19,23 @@
  *                 Ryan Hamilton <rhamilton@novell.com>
  *                 Daniel Parker <dparker1@novell.com>
  */
-Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
-    expires: new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30))
-}));
-Ext.data.Connection.timeout = 120000;
-Ext.Updater.defaults.timeout = 120000;
-Ext.Ajax.timeout = 120000;
 
-// From JeffHowden at http://extjs.com/forum/showthread.php?t=17532
-Ext.override(Ext.form.Field, {
-    fireKey: function(e){
-        if (((Ext.isIE && e.type == 'keydown') || e.type == 'keypress') && e.isSpecialKey()) {
-            this.fireEvent('specialkey', this, e);
-        }
-        else {
-            this.fireEvent(e.type, this, e);
-        }
-    },
-    initEvents: function(){
-        //                this.el.on(Ext.isIE ? "keydown" : "keypress", this.fireKey,  this);
-        this.el.on("focus", this.onFocus, this);
-        this.el.on("blur", this.onBlur, this);
-        this.el.on("keydown", this.fireKey, this);
-        this.el.on("keypress", this.fireKey, this);
-        this.el.on("keyup", this.fireKey, this);
-        
-        // reference to original value for reset
-        this.originalValue = this.getValue();
-    }
-});// End Override
-
-var Testopia = {};
-Testopia.Attachment = {};
-Testopia.Build = {};
-Testopia.TestCase = {};
-Testopia.TestCase.Bugs = {};
-Testopia.TestCaseRun = {};
-Testopia.Category = {};
-Testopia.Environment = {};
-Testopia.TestPlan = {};
-Testopia.TestRun = {};
-Testopia.Search = {};
-Testopia.Tags = {};
-Testopia.Util = {};
-Testopia.Product = {};
-Testopia.User = {};
-
-Testopia.Search.dashboard_urls = [];
-
-//check column widget
-Ext.grid.CheckColumn = function(config){
-    Ext.apply(this, config);
-    if (!this.id) {
-        this.id = Ext.id();
-    }
-    this.renderer = this.renderer.createDelegate(this);
+Testopia.Util.displayStatusIcon = function(name){
+    return '<img src="extensions/testopia/img/' + name + '_small.gif" alt="' + name + '" title="' + name + '">';
 };
 
-Ext.grid.CheckColumn.prototype = {
-    init: function(grid){
-        this.grid = grid;
-        this.grid.on('render', function(){
-            var view = this.grid.getView();
-            view.mainBody.on('mousedown', this.onMouseDown, this);
-        }, this);
-    },
-    
-    onMouseDown: function(e, t){
-        if (t.className && t.className.indexOf('x-grid3-cc-' + this.id) != -1) {
-            e.stopEvent();
-            var index = this.grid.getView().findRowIndex(t);
-            var record = this.grid.store.getAt(index);
-            record.set(this.dataIndex, !record.data[this.dataIndex]);
-        }
-    },
-    
-    renderer: function(v, p, record){
-        p.css += ' x-grid3-check-col-td';
-        return '<div class="x-grid3-check-col' + (v == '1' ? '-on' : '') + ' x-grid3-cc-' + this.id + '">&#160;</div>';
-    }
-};
-var imgButtonTpl = new Ext.Template('<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>' +
-'<td><button type="button"><img src="{0}"></button></td>' +
-'</tr></tbody></table>');
-TestopiaUtil = function(){
-    this.statusIcon = function(name){
-        return '<img src="extensions/testopia/img/' + name + '_small.gif" alt="' + name + '" title="' + name + '">';
-    };
-    this.caseLink = function(id, m, r, ri, ci, s){
-        if (s.isTreport === true) 
-            return '<a href="tr_show_case.cgi?case_id=' + id + '" target="_blank">' + id + '</a>';
-        return '<a href="tr_show_case.cgi?case_id=' + id + '">' + id + '</a>';
-    };
-    this.runLink = function(id, m, r, ri, ci, s){
-        if (s.isTreport === true) 
-            return '<a href="tr_show_run.cgi?run_id=' + id + '" target="_blank">' + id + '</a>';
-        return '<a href="tr_show_run.cgi?run_id=' + id + '">' + id + '</a>';
-    };
-    this.planLink = function(id, m, r, ri, ci, s){
-        if (s.isTreport === true) 
-            return '<a href="tr_show_plan.cgi?plan_id=' + id + '" target="_blank">' + id + '</a>';
-        return '<a href="tr_show_plan.cgi?plan_id=' + id + '">' + id + '</a>';
-    };
-    this.bugLink = function(id, m, r, ri, ci, s){
+Testopia.Util.makeLink = function(id, m, r, ri, ci, s, type){
+    if (type == 'bug') {
         if (s.isTreport === true) 
             return '<a href="show_bug.cgi?id=' + id + '" target="_blank">' + id + '</a>';
         return '<a href="show_bug.cgi?id=' + id + '">' + id + '</a>';
-    };
+    }
+    if (s.isTreport === true) 
+        return '<a href="tr_show_' + type + '.cgi?' + type +'_id=' + id + '" target="_blank">' + id + '</a>';
+    return '<a href="tr_show_' + type +'.cgi?' + type + '_id=' + id + '">' + id + '</a>';
+};
 
+Testopia.Util.CascadeProductSelection = function(){
     addOption = function(selectElement, newOption){
         try {
             selectElement.add(newOption, null);
@@ -150,7 +59,7 @@ TestopiaUtil = function(){
     };
     this.addOption = addOption;
     var fillSelects = function(data, prods){
-        var s = searchToJson(window.location.search);
+        var s = Testopia.Util.urlQueryToJSON(window.location.search);
         if (prods) {
             s.product = prods;
         }
@@ -192,7 +101,7 @@ TestopiaUtil = function(){
             success: function(f, a){
                 fillSelects(a.result.objects);
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     
@@ -202,14 +111,15 @@ TestopiaUtil = function(){
 
 
 /*
- * UserLookup - This generates a typeahead lookup for usernames.
+ * Testopia.User.Lookup - This generates a typeahead lookup for usernames.
  * It can be used anywhere in Testopia. Extends Ext ComboBox
  */
-UserLookup = function(cfg){
-    UserLookup.superclass.constructor.call(this, {
+Testopia.User.Lookup = function(cfg){
+    Testopia.User.Lookup.superclass.constructor.call(this, {
         id: cfg.id || 'user_lookup',
         store: new Ext.data.JsonStore({
             url: 'tr_quicksearch.cgi',
+            listeners: { 'exception': Testopia.Util.loadError },
             baseParams: {
                 action: 'getuser'
             },
@@ -259,11 +169,13 @@ UserLookup = function(cfg){
     });
     Ext.apply(this, cfg);
 };
-Ext.extend(UserLookup, Ext.form.ComboBox);
+Ext.extend(Testopia.User.Lookup, Ext.form.ComboBox);
 
+//TODO: Implement this (see bug 340461)
 DocCompareToolbar = function(object, id){
     var store = new Ext.data.JsonStore({
         url: 'tr_history.cgi',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'getdocversions',
             object: object,
@@ -333,7 +245,7 @@ DocCompareToolbar = function(object, id){
                         object_id: id,
                         version: Ext.getCmp('doc_view').getValue()
                     },
-                    failure: testopiaError
+                    failure: Testopia.Util.error
                 });
             }
         }]
@@ -342,11 +254,12 @@ DocCompareToolbar = function(object, id){
     return this.toolbar;
 };
 /*
- * HistoryGrid -
+ * Testopia.Util.HistoryList -
  */
-HistoryGrid = function(object, id){
+Testopia.Util.HistoryList = function(object, id){
     this.store = new Ext.data.JsonStore({
         url: 'tr_history.cgi',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'show',
             object: object,
@@ -397,7 +310,7 @@ HistoryGrid = function(object, id){
         sortable: true,
         dataIndex: 'newvalue'
     }];
-    HistoryGrid.superclass.constructor.call(this, {
+    Testopia.Util.HistoryList.superclass.constructor.call(this, {
         title: 'Change History',
         id: 'history-grid',
         layout: 'fit',
@@ -413,7 +326,7 @@ HistoryGrid = function(object, id){
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('activate', this.onActivate, this);
 };
-Ext.extend(HistoryGrid, Ext.grid.GridPanel, {
+Ext.extend(Testopia.Util.HistoryList, Ext.grid.GridPanel, {
     onActivate: function(){
         if (!this.store.getCount()) {
             this.store.load();
@@ -439,7 +352,7 @@ Ext.extend(HistoryGrid, Ext.grid.GridPanel, {
     
 });
 
-var TestopiaPager = function(type, store){
+Testopia.Util.PagingBar = function(type, store){
     this.type = type;
     var baseParams = clone(store.baseParams);
     function doUpdate(){
@@ -628,7 +541,7 @@ var TestopiaPager = function(type, store){
             html: "Enter column and search term separated by ':'<br> <b>Example:</b> priority: P3<br>Blank field and ENTER to clear"
         });
     });
-    TestopiaPager.superclass.constructor.call(this, {
+    Testopia.Util.PagingBar.superclass.constructor.call(this, {
         id: type + '_pager',
         pageSize: Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25),
         displayInfo: true,
@@ -647,7 +560,7 @@ var TestopiaPager = function(type, store){
     this.on('render', this.setPager, this);
     this.cursor = 0;
 };
-Ext.extend(TestopiaPager, Ext.PagingToolbar, {
+Ext.extend(Testopia.Util.PagingBar, Ext.PagingToolbar, {
     setPager: function(){
         Ext.getCmp(this.type + '_page_sizer').setValue(Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25));
     }
@@ -664,7 +577,7 @@ Testopia.Util.updateFromList = function(type, params, grid){
             if (type == 'caserun') {
                 Ext.getCmp('run_progress').updateProgress(a.result.passed, a.result.failed, a.result.blocked, a.result.complete);
             }
-            TestopiaUtil.notify.msg('Test ' + type + 's updated', 'The selected {0}s were updated successfully', type);
+            Testopia.Util.notify.msg('Test ' + type + 's updated', 'The selected {0}s were updated successfully', type);
             if (grid.selectedRows) {
                 grid.store.baseParams.addcases = grid.selectedRows.join(',');
                 Ext.getCmp(type + '_filtered_txt').show();
@@ -693,7 +606,7 @@ Testopia.Util.updateFromList = function(type, params, grid){
             });
         },
         failure: function(f, a){
-            testopiaError(f, a);
+            Testopia.Util.error(f, a);
             grid.store.reload({
                 callback: function(){
                     if (grid.selectedRows) {
@@ -705,7 +618,7 @@ Testopia.Util.updateFromList = function(type, params, grid){
     });
 };
 
-TestopiaComboRenderer = function(v, md, r, ri, ci, s){
+Testopia.Util.ComboRenderer = function(v, md, r, ri, ci, s){
     f = this.getColumnModel().getCellEditor(ci, ri).field;
     record = f.store.getById(v);
     if (record) {
@@ -717,11 +630,11 @@ TestopiaComboRenderer = function(v, md, r, ri, ci, s){
 };
 
 /*
- * testopiaError - global public function for displaying Bugzilla error messages
+ * Testopia.Util.error - global public function for displaying Bugzilla error messages
  * when ERROR_MODE_AJAX is set. All failure branches of Ext.basicForm submit calls
  * should point here.
  */
-testopiaError = function(f, a){
+Testopia.Util.error = function(f, a){
     f.el.unmask();
     var message;
     if (a.response.status && a.response.status != 200) {
@@ -745,16 +658,24 @@ testopiaError = function(f, a){
     Ext.Msg.show(message);
 };
 
-testopiaLoadError = function(){
+Testopia.Util.loadError = function(dp, errtype, a,o,r,ar,args){
+    var message = 'There was an error loading the data';
+    if (errtype == 'response'){
+        message += r.responseText; 
+    }
     Ext.Msg.show({
         title: 'An Error Has Occurred',
-        msg: 'There was an error loading the data',
+        width: 450,
+        msg: message,
+        prompt: true,
+        multiline: true,
+        value: message,
         buttons: Ext.Msg.OK,
         icon: Ext.MessageBox.ERROR
     });
 };
 
-getSelectedObjects = function(grid, field){
+Testopia.Util.getSelectedObjects = function(grid, field){
     var selections = grid.getSelectionModel().getSelections();
     var arIDs = [];
     var ids;
@@ -765,7 +686,7 @@ getSelectedObjects = function(grid, field){
     return ids;
 };
 
-editFirstSelection = function(grid){
+Testopia.Util.editFirstSelection = function(grid){
     if (grid.getSelectionModel().getCount() === 0) {
         return;
     }
@@ -780,95 +701,7 @@ editFirstSelection = function(grid){
     }
 };
 
-saveSearch = function(type, params){
-    var loc;
-    var ntype;
-    
-    if (type == 'dashboard') {
-        ntype = 3;
-        loc = Testopia.Search.dashboard_urls.join('::>');
-    }
-    else 
-        if (type == 'custom') {
-            loc = params;
-            params = {
-                report: true
-            };
-            ntype = 1;
-        }
-        else {
-            if (type == 'caserun') {
-                params.current_tab = 'case_run';
-            }
-            else {
-                params.current_tab = type;
-            }
-            if (params.report) {
-                loc = 'tr_' + type + '_reports.cgi?';
-                ntype = 1;
-            }
-            else {
-                loc = 'tr_list_' + type + 's.cgi?';
-                ntype = 0;
-            }
-            loc = loc + jsonToSearch(params, '', ['ctype']);
-        }
-    var form = new Ext.form.BasicForm('testopia_helper_frm', {});
-    Ext.Msg.prompt('Save As', '', function(btn, text){
-        if (btn == 'ok') {
-            form.submit({
-                url: 'tr_query.cgi',
-                params: {
-                    action: 'save_query',
-                    query_name: text,
-                    query_part: loc,
-                    type: ntype
-                },
-                success: function(){
-                    if (Ext.getCmp('searches_grid')) {
-                        Ext.getCmp('searches_grid').store.load();
-                    }
-                    if (Ext.getCmp('reports_grid')) {
-                        Ext.getCmp('reports_grid').store.load();
-                    }
-                    if (Ext.getCmp('dashboard_grid')) {
-                        Ext.getCmp('dashboard_grid').store.load();
-                    }
-                    TestopiaUtil.notify.msg('Saved', 'Your search or report was saved.');
-                },
-                failure: testopiaError
-            });
-        }
-    });
-};
-linkPopup = function(params){
-    if (params.current_tab == 'case_run') {
-        params.current_tab = 'caserun';
-    }
-    var file;
-    if (params.report == 1) {
-        file = 'tr_' + params.current_tab + '_reports.cgi';
-    }
-    else {
-        file = 'tr_list_' + params.current_tab + 's.cgi';
-    }
-    var l = window.location;
-    var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
-    pathprefix = pathprefix[1];
-    
-    var win = new Ext.Window({
-        width: 300,
-        plain: true,
-        shadow: false,
-        items: [new Ext.form.TextField({
-            value: l.protocol + '//' + l.host + pathprefix + '/' + file + '?' + jsonToSearch(params, '', ['ctype']),
-            width: 287
-        })]
-    });
-    win.show();
-};
-
-searchToJson = function(url){
+Testopia.Util.urlQueryToJSON = function(url){
     url = url.replace(/.*\//, '');
     var params = {};
     var loc = url.split('?', 2);
@@ -895,7 +728,7 @@ searchToJson = function(url){
     return params;
 };
 
-jsonToSearch = function(params, searchStr, drops){
+Testopia.Util.JSONToURLQuery = function(params, searchStr, drops){
     searchStr = searchStr || '';
     for (var key in params) {
         if (drops.indexOf(key) != -1) {
@@ -919,7 +752,7 @@ jsonToSearch = function(params, searchStr, drops){
  * Testopia.notify - Displays a floating notification area.
  * Taken from ext/examples/examples.js
  */
-TestopiaUtil.notify = function(){
+Testopia.Util.notify = function(){
     var msgCt;
     
     function createBox(t, s){
@@ -981,7 +814,7 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
         buttons: [{
             text: 'Use Selected',
             handler: function(){
-                var loc = cfg.action + '?plan_id=' + getSelectedObjects(pg, 'plan_id');
+                var loc = cfg.action + '?plan_id=' + Testopia.Util.getSelectedObjects(pg, 'plan_id');
                 if (cfg.bug_id) {
                     loc = loc + '&bug=' + cfg.bug_id;
                 }

@@ -20,6 +20,68 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
+Testopia.Search.save = function(type, params){
+    var loc;
+    var ntype;
+    
+    if (type == 'dashboard') {
+        ntype = 3;
+        loc = Testopia.Search.dashboard_urls.join('::>');
+    }
+    else 
+        if (type == 'custom') {
+            loc = params;
+            params = {
+                report: true
+            };
+            ntype = 1;
+        }
+        else {
+            if (type == 'caserun') {
+                params.current_tab = 'case_run';
+            }
+            else {
+                params.current_tab = type;
+            }
+            if (params.report) {
+                loc = 'tr_' + type + '_reports.cgi?';
+                ntype = 1;
+            }
+            else {
+                loc = 'tr_list_' + type + 's.cgi?';
+                ntype = 0;
+            }
+            loc = loc + Testopia.Util.JSONToURLQuery(params, '', ['ctype']);
+        }
+    var form = new Ext.form.BasicForm('testopia_helper_frm', {});
+    Ext.Msg.prompt('Save As', '', function(btn, text){
+        if (btn == 'ok') {
+            form.submit({
+                url: 'tr_query.cgi',
+                params: {
+                    action: 'save_query',
+                    query_name: text,
+                    query_part: loc,
+                    type: ntype
+                },
+                success: function(){
+                    if (Ext.getCmp('searches_grid')) {
+                        Ext.getCmp('searches_grid').store.load();
+                    }
+                    if (Ext.getCmp('reports_grid')) {
+                        Ext.getCmp('reports_grid').store.load();
+                    }
+                    if (Ext.getCmp('dashboard_grid')) {
+                        Ext.getCmp('dashboard_grid').store.load();
+                    }
+                    Testopia.Util.notify.msg('Saved', 'Your search or report was saved.');
+                },
+                failure: Testopia.Util.error
+            });
+        }
+    });
+};
+
 Testopia.Search.fillInForm = function(type, params, name){
     var f = document.getElementById(type + '_search_form');
     for (var i=0; i < f.length; i++){
@@ -195,7 +257,7 @@ Testopia.Search.PlansForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
-                                saveSearch('plan', values);
+                                Testopia.Search.save('plan', values);
                             }
                         },{
                             xtype: 'button',
@@ -204,7 +266,7 @@ Testopia.Search.PlansForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
-                                linkPopup(values);
+                                Testopia.Search.LinkPopup(values);
                             }
                         }]
                     }));
@@ -285,7 +347,7 @@ Testopia.Search.CasesForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
-                                saveSearch('case', values);
+                                Testopia.Search.save('case', values);
                             }
                         },{
                             xtype: 'button',
@@ -294,7 +356,7 @@ Testopia.Search.CasesForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
-                                linkPopup(values);
+                                Testopia.Search.LinkPopup(values);
                             }
                         }]
                     }));
@@ -377,7 +439,7 @@ Testopia.Search.RunsForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
-                                saveSearch('run', values);
+                                Testopia.Search.save('run', values);
                             }
                         },{
                             xtype: 'button',
@@ -386,7 +448,7 @@ Testopia.Search.RunsForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
-                                linkPopup(values);
+                                Testopia.Search.LinkPopup(values);
                             }
                         }]
                     }));
@@ -467,7 +529,7 @@ Testopia.Search.CaseRunsForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Save this report',
                             handler: function(b,e){
-                                saveSearch('caserun', values);
+                                Testopia.Search.save('caserun', values);
                             }
                         },{
                             xtype: 'button',
@@ -476,7 +538,7 @@ Testopia.Search.CaseRunsForm = function(params){
                             iconCls: 'img_button_16x',
                             tooltip: 'Create a link to this report',
                             handler: function(b,e){
-                                linkPopup(values);
+                                Testopia.Search.LinkPopup(values);
                             }
                         }]
                     }));
@@ -522,6 +584,7 @@ Testopia.Search.SavedReportsList = function(cfg){
     
     this.store = new Ext.data.JsonStore({
         url: 'tr_query.cgi',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {action: 'get_saved_searches', type: cfg.type},
         root: 'searches',
         fields: ["name","query","author","type"]
@@ -633,7 +696,7 @@ Ext.extend(Testopia.Search.SavedReportsList, Ext.grid.GridPanel, {
                     }
                     type = type[1];
                     
-                    var params = searchToJson(r.get('query'));
+                    var params = Testopia.Util.urlQueryToJSON(r.get('query'));
                     Testopia.Search.Popup(type, params);
                 }
             },{
@@ -657,7 +720,7 @@ Ext.extend(Testopia.Search.SavedReportsList, Ext.grid.GridPanel, {
                                             grid.store.load();
                                         }
                                     },
-                                    failure: testopiaError
+                                    failure: Testopia.Util.error
                                 });
                             }
                         }
@@ -721,7 +784,7 @@ Ext.extend(Testopia.Search.SavedReportsList, Ext.grid.GridPanel, {
                 if (typeof urls[i] != 'string'){
                     continue;
                 }
-                var p = searchToJson(urls[i]);
+                var p = Testopia.Util.urlQueryToJSON(urls[i]);
                 var t;
                 typeof p.qname == 'object' ? t = p.qname[0] : t = p.qname;
                 newPortlet = new Ext.ux.Portlet({
@@ -743,7 +806,7 @@ Ext.extend(Testopia.Search.SavedReportsList, Ext.grid.GridPanel, {
             }
         }
         else{
-            var params = searchToJson(r.get('query'));
+            var params = Testopia.Util.urlQueryToJSON(r.get('query'));
             var tab = params.current_tab;
             switch(tab){
                 case 'plan':
@@ -788,7 +851,7 @@ PortalTools = [{
                                     Ext.getCmp('reports_grid').store.load();
                                     panel.title = text;
                                 },
-                                failure: testopiaError
+                                failure: Testopia.Util.error
                             });
                         }
                     });
@@ -843,7 +906,7 @@ PortalTools = [{
                                         Ext.getCmp('reports_grid').store.load();
                                         panel.ownerCt.remove(panel, true);
                                     },
-                                    failure: testopiaError
+                                    failure: Testopia.Util.error
                                 });
                             }
                         }
@@ -860,3 +923,30 @@ PortalTools = [{
         panel.ownerCt.remove(panel, true);
     }
 }];
+
+Testopia.Search.LinkPopup = function(params){
+    if (params.current_tab == 'case_run') {
+        params.current_tab = 'caserun';
+    }
+    var file;
+    if (params.report == 1) {
+        file = 'tr_' + params.current_tab + '_reports.cgi';
+    }
+    else {
+        file = 'tr_list_' + params.current_tab + 's.cgi';
+    }
+    var l = window.location;
+    var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
+    pathprefix = pathprefix[1];
+    
+    var win = new Ext.Window({
+        width: 300,
+        plain: true,
+        shadow: false,
+        items: [new Ext.form.TextField({
+            value: l.protocol + '//' + l.host + pathprefix + '/' + file + '?' + Testopia.Util.JSONToURLQuery(params, '', ['ctype']),
+            width: 287
+        })]
+    });
+    win.show();
+};

@@ -29,6 +29,7 @@ Testopia.Tags.Lookup = function(cfg){
         id: cfg.id || 'tag_lookup',
         store: new Ext.data.JsonStore({
             url: 'tr_quicksearch.cgi',
+            listeners: { 'exception': Testopia.Util.loadError },
             baseParams: {
                 action: 'gettag'
             },
@@ -105,6 +106,7 @@ Testopia.Tags.ObjectTags = function(obj, obj_id){
     this.obj_id = obj_id;
     this.store = new Ext.data.JsonStore({
         url: 'tr_tags.cgi',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'gettags',
             type: obj
@@ -137,12 +139,12 @@ Testopia.Tags.ObjectTags = function(obj, obj_id){
                 action: 'removetag',
                 type: obj,
                 id: this.obj_id,
-                tag: getSelectedObjects(Ext.getCmp(obj + 'tagsgrid'), 'tag_name')
+                tag: Testopia.Util.getSelectedObjects(Ext.getCmp(obj + 'tagsgrid'), 'tag_name')
             },
             success: function(){
                 ds.reload();
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     this.add = function(){
@@ -158,7 +160,7 @@ Testopia.Tags.ObjectTags = function(obj, obj_id){
             success: function(){
                 ds.reload();
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     };
     this.columns = [{
@@ -284,6 +286,7 @@ Testopia.Tags.ProductTags = function(title, type, product_id){
     
     this.store = new Ext.data.JsonStore({
         url: 'tr_tags.cgi',
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
             action: 'gettags',
             type: type
@@ -405,11 +408,11 @@ Testopia.Tags.update = function(type, grid){
                 action: action,
                 tag: value,
                 type: type,
-                id: getSelectedObjects(grid, type + '_id')
+                id: Testopia.Util.getSelectedObjects(grid, type + '_id')
             },
             success: function(){
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     }
     var win = new Ext.Window({

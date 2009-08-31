@@ -73,7 +73,7 @@ Ext.onReady(function(){
                     });
                     window.location = 'tr_show_product.cgi?product_id=' + plan.product_id;
                 },
-                failure: testopiaError
+                failure: Testopia.Util.error
             });
         }
     };
@@ -81,7 +81,6 @@ Ext.onReady(function(){
     var rgrid = new Testopia.TestRun.Grid({plan_id: plan.plan_id },{id: 'plan_run_grid'});
     var tgrid = new Testopia.Tags.ObjectTags('plan', plan.plan_id);
     var attachGrid = new Testopia.Attachment.Grid(plan);
-    var t = new TestopiaUtil();
     
     var fileMenu = new Ext.menu.Menu({
         id: 'plan-file-menu',
@@ -94,7 +93,7 @@ Ext.onReady(function(){
                     url: 'tr_process_plan.cgi',
                     params: {action: c ? 'archive':'unarchive' , plan_id: plan.plan_id},
                     success: function(){
-                        TestopiaUtil.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'archival');
+                        Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'archival');
                         if (c){
                             Ext.get('archive_flag').addClass('plan_archived');
                         }
@@ -102,7 +101,7 @@ Ext.onReady(function(){
                             Ext.get('archive_flag').removeClass('plan_archived');
                         }
                     },
-                    failure: testopiaError
+                    failure: Testopia.Util.error
                 });
             }
         }
@@ -255,9 +254,9 @@ Ext.onReady(function(){
                             url: 'tr_process_plan.cgi',
                             params: {action: 'edit', plandoc: Ext.getCmp('plan_doc').getValue(), plan_id: plan.plan_id},
                             success: function(){
-                                TestopiaUtil.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'Document');
+                                Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'Document');
                             },
-                            failure: testopiaError
+                            failure: Testopia.Util.error
                         });
                     }
                 }]
@@ -269,7 +268,7 @@ Ext.onReady(function(){
                 autoScroll: true,
                 contentEl: 'plan-permissions-div',
                 bodyStyle: 'padding: 10px;'
-            },new HistoryGrid('plan',plan.plan_id)]
+            },new Testopia.Util.HistoryList('plan',plan.plan_id)]
             
         },{
             xtype: 'panel',
@@ -304,14 +303,14 @@ Ext.onReady(function(){
             url: 'tr_process_plan.cgi',
             params: {action: 'edit', prod_version: r.get('value'), plan_id: plan.plan_id},
             success: function(){
-                TestopiaUtil.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'Product Version');
+                Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'Product Version');
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     });
 
     if (Ext.get('adduser')){
-        var adduser = new UserLookup({
+        var adduser = new Testopia.User.Lookup({
             id: 'plan_permission_add_user',
             hiddenName: 'adduser'
         });
@@ -327,9 +326,9 @@ Ext.onReady(function(){
             url: 'tr_process_plan.cgi',
             params: {action: 'edit', type: r.get('value'), plan_id: plan.plan_id},
             success: function(){
-                TestopiaUtil.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'type');
+                Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'type');
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     });
 
@@ -360,9 +359,9 @@ Ext.onReady(function(){
             url: 'tr_process_plan.cgi',
             params: {action: 'edit', name: v, plan_id: plan.plan_id},
             success: function(){
-                TestopiaUtil.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'name');
+                Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'name');
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     });
 [% END %]
@@ -374,7 +373,7 @@ Ext.onReady(function(){
             iconCls: 'img_button_16x',
             tooltip: 'Save this dashboard',
             handler: function(b,e){
-                saveSearch('dashboard', Testopia.Search.dashboard_urls);
+                Testopia.Search.save('dashboard', Testopia.Search.dashboard_urls);
             }
         });
     });

@@ -74,14 +74,14 @@ Ext.onReady(function(){
             url: 'tr_process_run.cgi',
             params: params,
             success: function(f,a){
-                TestopiaUtil.notify.msg('Test Run updated', 'Test Run {0} was updated successfully', field);
+                Testopia.Util.notify.msg('Test Run updated', 'Test Run {0} was updated successfully', field);
             },
             failure: function(f,a){
                 if (field == 'status'){
                     Ext.getCmp('run_status_cycle').setActiveItem(Ext.getCmp('run_status_cycle').getActiveItem().id == 'run_status_stopped' ? Ext.getCmp('run_status_running') : Ext.getCmp('run_status_stopped'), true);
                     Ext.getCmp('run_status_cycle').getEl().child(Ext.getCmp('run_status_cycle').buttonSelector).setStyle('background-image', 'url(' +Ext.getCmp('run_status_cycle').getActiveItem().icon +')');
                 }
-                testopiaError(f,a);
+                Testopia.Util.error(f,a);
             }
         });
     }
@@ -101,7 +101,7 @@ Ext.onReady(function(){
                     });
                     window.location="tr_show_plan.cgi?plan_id=" + run.plan.id;
                 },
-                failure: testopiaError
+                failure: Testopia.Util.error
             });
         }
     };
@@ -182,7 +182,7 @@ Ext.onReady(function(){
             xtype: 'tabpanel',
             activeTab: 0,
             id: 'object_panel',
-            items: [new Testopia.TestCaseRun.Panel(searchToJson(window.location.search), run),
+            items: [new Testopia.TestCaseRun.Panel(Testopia.Util.urlQueryToJSON(window.location.search), run),
             {
                 title: 'Notes',
                 layout: 'fit',
@@ -199,7 +199,7 @@ Ext.onReady(function(){
                     }
                 }]
             },
-            new HistoryGrid('run', [% run.id FILTER none %])
+            new Testopia.Util.HistoryList('run', [% run.id FILTER none %])
             ]
         },{
             split: true,
@@ -246,7 +246,7 @@ Ext.onReady(function(){
         }
     });
     var manager_edt = new Ext.Editor(
-        new UserLookup({
+        new Testopia.User.Lookup({
             hiddenName:'manager',
             value: run.manager
         }),

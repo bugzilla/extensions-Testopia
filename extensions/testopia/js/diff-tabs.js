@@ -45,6 +45,7 @@ diff_tab_panel = function(type, id, doctype){
 
     var doc_store = new Ext.data.JsonStore({
         url: "tr_history.cgi",
+        listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {action: 'getversions',
                      type:   type,
                      id:     id},

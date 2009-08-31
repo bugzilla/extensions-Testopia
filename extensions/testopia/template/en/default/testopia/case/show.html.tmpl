@@ -63,7 +63,7 @@ Ext.onReady(function(){
                     });
                     window.location = 'tr_show_plan.cgi?plan_id=[% case.plans.0.id FILTER none %]';
                 },
-                failure: testopiaError
+                failure: Testopia.Util.error
             });
         }
     };
@@ -100,9 +100,9 @@ Ext.onReady(function(){
             url: 'tr_process_case.cgi',
             params: params,
             success: function(){
-                TestopiaUtil.notify.msg('Test Case updated', 'Test Case {0} was updated successfully', field);
+                Testopia.Util.notify.msg('Test Case updated', 'Test Case {0} was updated successfully', field);
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
 
     }
@@ -120,9 +120,9 @@ Ext.onReady(function(){
             method: 'POST',
             params: params,
             success: function(){
-                TestopiaUtil.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'Document');
+                Testopia.Util.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'Document');
             },
-            failure: testopiaError
+            failure: Testopia.Util.error
         });
     }
 
@@ -194,7 +194,6 @@ Ext.onReady(function(){
     var cases = new Ext.grid.GridPanel({
         
     });
-    var tutil = new TestopiaUtil();// utils yo!
     var casepanel = new Ext.Panel({
         layout: 'border',
         monitorResize: true,
@@ -288,7 +287,7 @@ Ext.onReady(function(){
                     handler: processText
                 }]
             },
-            new HistoryGrid('case', [% case.id FILTER none %]),
+            new Testopia.Util.HistoryList('case', [% case.id FILTER none %]),
             new Testopia.TestCaseRun.List({case_id: tcase.case_id, viewall: 1 },{id: 'case_history_grid'}),
             new Testopia.Attachment.Grid(tcase),
             new Testopia.TestCase.Bugs.Grid([% case.id FILTER none %]), 
@@ -333,9 +332,9 @@ Ext.onReady(function(){
                                 }
                                 Ext.getCmp('case_blocked_list').body.dom.innerHTML = blocked;
                                 Ext.getCmp('case_dependson_list').body.dom.innerHTML = deps;
-                                TestopiaUtil.notify.msg('Test Case updated', 'Test Case {0} was updated successfully', 'dependencies');
+                                Testopia.Util.notify.msg('Test Case updated', 'Test Case {0} was updated successfully', 'dependencies');
                             },
-                            failure: testopiaError
+                            failure: Testopia.Util.error
                         });
                     }
                 }],
@@ -410,9 +409,9 @@ Ext.onReady(function(){
                             url: 'tr_process_case.cgi',
                             params: params,
                             success: function(){
-                                TestopiaUtil.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'automation');
+                                Testopia.Util.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'automation');
                             },
-                            failure: testopiaError
+                            failure: Testopia.Util.error
                         });
                     }
                 }],
@@ -506,7 +505,7 @@ Ext.onReady(function(){
         }
     });
     var tester_edt = new Ext.Editor(
-        new UserLookup({
+        new Testopia.User.Lookup({
             hiddenName: 'tester',
             value: tcase.tester
         }),
