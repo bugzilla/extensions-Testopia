@@ -1694,6 +1694,7 @@ sub TO_JSON {
     $obj->{'component'}    = $self->components->[0]->name if scalar @{$self->components};
     $obj->{'modified'}     = format_time($self->last_changed, TIME_FORMAT);
     $obj->{'creation_date'} = format_time($self->{'creation_date'}, TIME_FORMAT);
+    $obj->{'average_time'} = $self->calculate_average_time;
     
 
     return $json->encode($obj); 

@@ -173,7 +173,146 @@
         var viewMenu = new Ext.menu.Menu({
             id: 'view-menu',
             items: [{
-                text: "Reports"
+                text: "Reports",
+                menu: [{
+                    text: 'New Status Report',
+                    handler: function(){
+                        Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                        
+                        var newPortlet = new Ext.ux.Portlet({
+                            title: 'Status Report',
+                            closable: true,
+                            autoScroll: true,
+                            tools: PortalTools
+                        });
+                        newPortlet.url = 'tr_run_reports.cgi?type=status&plan_ids=' + plan.plan_id;
+                        Testopia.Search.dashboard_urls.push(newPortlet.url);
+                        Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                        Ext.getCmp('dashboard_leftcol').doLayout();
+                        newPortlet.load({
+                            url: newPortlet.url
+                        });
+                    }
+                }, {
+                    text: 'New Completion Report',
+                    handler: function(){
+                        Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                        
+                        var newPortlet = new Ext.ux.Portlet({
+                            title: 'Completion Report',
+                            closable: true,
+                            autoScroll: true,
+                            tools: PortalTools
+                        });
+                        newPortlet.url = 'tr_run_reports.cgi?type=completion&plan_ids=' + plan.plan_id;
+                        Testopia.Search.dashboard_urls.push(newPortlet.url);
+                        Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                        Ext.getCmp('dashboard_leftcol').doLayout();
+                        newPortlet.load({
+                            url: newPortlet.url
+                        });
+                    }
+                }, {
+                    text: 'New Run Execution Report',
+                    handler: function(){
+                        var win = new Ext.Window({
+                            title: 'Select a date range',
+                            id: 'plan_execution_win',
+                            layout: 'fit',
+                            split: true,
+                            plain: true,
+                            shadow: false,
+                            width: 350,
+                            height: 150,
+                            items: [new Ext.FormPanel({
+                                labelWidth: '40',
+                                bodyStyle: 'padding: 5px',
+                                items: [{
+                                    xtype: 'datefield',
+                                    id: 'execution_start_date',
+                                    fieldLabel: 'Start Date',
+                                    name: 'chfieldfrom'
+                                }, {
+                                    xtype: 'datefield',
+                                    fieldLabel: 'Stop Date',
+                                    id: 'execution_stop_date',
+                                    emptyText: 'Now',
+                                    name: 'chfieldto'
+                                }]
+                            })],
+                            buttons: [{
+                                text: 'Submit',
+                                handler: function(){
+                                    Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                    
+                                    var newPortlet = new Ext.ux.Portlet({
+                                        title: 'Execution Report',
+                                        closable: true,
+                                        autoScroll: true,
+                                        tools: PortalTools
+                                    });
+                                    newPortlet.url = 'tr_run_reports.cgi?type=execution&plan_ids=' + plan.plan_id + '&chfieldfrom=' + Ext.getCmp('execution_start_date').getValue() + '&chfieldto=' + Ext.getCmp('execution_stop_date').getValue();
+                                    Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                    Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                    Ext.getCmp('dashboard_leftcol').doLayout();
+                                    newPortlet.load({
+                                        url: newPortlet.url
+                                    });
+                                    win.close();
+                                }
+                            }, {
+                                text: 'Cancel',
+                                handler: function(){
+                                    win.close();
+                                }
+                            }]
+                        });
+                        win.show();
+                    }
+                }, {
+                    text: 'New Priority Breakdown Report',
+                    handler: function(){
+                        Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                        
+                        var newPortlet = new Ext.ux.Portlet({
+                            title: 'Status Report',
+                            closable: true,
+                            autoScroll: true,
+                            tools: PortalTools
+                        });
+                        newPortlet.url = 'tr_run_reports.cgi?type=priority&plan_ids=' + plan.plan_id;
+                        Testopia.Search.dashboard_urls.push(newPortlet.url);
+                        Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                        Ext.getCmp('dashboard_leftcol').doLayout();
+                        newPortlet.load({
+                            url: newPortlet.url
+                        });
+                    }
+                }, {
+                    text: 'New Bug Report',
+                    handler: function(){
+                        Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                        var newPortlet = new Ext.ux.Portlet({
+                            title: 'Bug Report',
+                            closable: true,
+                            autoScroll: true,
+                            tools: PortalTools
+                        });
+                        newPortlet.url = 'tr_run_reports.cgi?type=bug_grid&plan_ids=' + plan.plan_id + '&noheader=1';
+                        Testopia.Search.dashboard_urls.push(newPortlet.url);
+                        Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                        Ext.getCmp('dashboard_leftcol').doLayout();
+                        newPortlet.load({
+                            scripts: true,
+                            url: newPortlet.url
+                        });
+                    }
+                },{
+                    text: 'Missing Cases Report',
+                    handler: function(){
+                        window.open('tr_list_cases.cgi?report_type=missing&plan_ids=' + plan.plan_id);
+                    }
+                }]
             }]
         });
     

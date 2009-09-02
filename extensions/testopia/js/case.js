@@ -339,6 +339,12 @@ Testopia.TestCase.Grid = function(params, cfg){
             }, {
                 name: "plan_name",
                 mapping: "plan_name"
+            }, {
+                name: "average_time",
+                mapping: "average_time"
+            }, {
+                name: "estimated_time",
+                mapping: "estimated_time"
             }]
         }),
         listeners: { 'exception': Testopia.Util.loadError },
@@ -460,6 +466,18 @@ Testopia.TestCase.Grid = function(params, cfg){
         editor: new Ext.grid.GridEditor(new Ext.form.TextField({
             name: 'requirement'
         }))
+    }, {
+        header: "Estimated Time",
+        width: 60,
+        sortable: true,
+        dataIndex: 'estimated_time',
+        hidden: true
+    }, {
+        header: "Average Time",
+        width: 60,
+        sortable: false,
+        dataIndex: 'average_time',
+        hidden: true
     }, {
         header: "Plan",
         width: 40,
