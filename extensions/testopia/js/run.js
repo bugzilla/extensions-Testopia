@@ -1022,13 +1022,16 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
     function doSubmit(){
         var form = Ext.getCmp('run_clone_frm').getForm();
         form.baseParams = {};
-        if (Ext.getCmp('copy_cases_radio_group').getGroupValue() == 'copy_filtered_cases') {
-            form.baseParams = Ext.getCmp('caserun_search').form.getValues();
+        if (Ext.getCmp('run_copy_cases').collapsed === false){
+            switch(Ext.getCmp('copy_cases_radio_group').getGroupValue()){
+                case 'copy_filtered_cases':
+                    form.baseParams = Ext.getCmp('caserun_search').form.getValues();
+                    break;
+                 case 'copy_selected_cases':
+                    form.baseParams.case_list = Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
+                    break;
+            } 
         }
-        else 
-            if (Ext.getCmp('copy_cases_radio_group').getGroupValue() == 'copy_selected_cases') {
-                form.baseParams.case_list = Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
-            }
         form.baseParams.action = 'clone';
         form.baseParams.ids = runs;
         form.baseParams.new_run_build = bbox.getValue();
@@ -1123,6 +1126,12 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
                         name: 'copy_tags',
                         checked: true,
                         boxLabel: 'Copy Run Tags',
+                        hideLabel: true
+                    }, {
+                        xtype: 'checkbox',
+                        name: 'copy_filters',
+                        checked: true,
+                        boxLabel: 'Copy Run Filters',
                         hideLabel: true
                     }, {
                         xtype: 'hidden',

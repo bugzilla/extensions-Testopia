@@ -872,6 +872,84 @@ sub get_environments {
     return $ref;
 }
 
+sub get_filters {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    my $qnameregexp = '__run_id_' . $self->id . '_';
+    
+    my $filters = $dbh->selectall_arrayref(
+        "SELECT name, query 
+           FROM test_named_queries 
+          WHERE name REGEXP(?)",
+            {'Slice' => {}},($qnameregexp));
+    foreach my $f (@$filters){
+        $f->{'name'} =~ s/^__run_id_\d+_//;
+    }
+    return $filters;
+}
+
+sub save_filter {
+    my $self = shift;
+    my $qname = shift;
+    my $dbh = Bugzilla->dbh;
+    
+    $qname = '__run_id_' . $self->id . '_' . $qname;
+    my $query = Bugzilla->cgi->canonicalise_query('action');   
+
+    trick_taint($query);
+    trick_taint($qname);
+    
+    my ($name) = $dbh->selectrow_array(
+        "SELECT name 
+           FROM test_named_queries 
+          WHERE name = ?",
+            undef,($qname));
+            
+    if ($name){
+        $dbh->do(
+            "UPDATE test_named_queries 
+                SET query = ?
+              WHERE name = ?",
+                undef,($query, $qname));
+    }
+    else{
+        my $quoted_qname = url_quote($qname);
+        $dbh->do("INSERT INTO test_named_queries 
+                  VALUES(?,?,?,?,?)",
+                  undef, (Bugzilla->user->id, $qname, 0, $query, SAVED_FILTER)); 
+        
+    }
+}
+
+sub copy_filter {
+    my $self = shift;
+    my ($qname, $query) = @_;
+    my $dbh = Bugzilla->dbh;
+    
+    $query =~ s/\&run_id=\d+//;
+    $query .= '&run_id=' . $self->id;
+    $qname = '__run_id_' . $self->id . '_' . $qname;
+    
+    $dbh->do("INSERT INTO test_named_queries 
+              VALUES(?,?,?,?,?)",
+              undef, (Bugzilla->user->id, $qname, 0, $query, SAVED_FILTER)); 
+}
+
+sub delete_filter {
+    my $self = shift;
+    my $qname = shift;
+    my $dbh = Bugzilla->dbh;
+    
+    trick_taint($qname);
+    
+    $qname = '__run_id_' . $self->id . '_' . $qname;
+    
+    $dbh->do(
+        "DELETE FROM test_named_queries 
+          WHERE name = ?",
+            undef,($qname));
+}
+
 =head2 canview
 
 Returns true if the logged in user has rights to view this test run.

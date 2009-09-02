@@ -153,6 +153,12 @@ elsif ($action eq 'clone'){
                     $newrun->add_tag($tag->name);
                 }
             }
+            
+            if($cgi->param('copy_filters')){
+                foreach my $f (@{$run->get_filters}){
+                    $newrun->copy_filter($f->{'name'}, $f->{'query'});
+                }
+            }
     
             foreach my $cr (@caseruns){
                 my $result = $newrun->add_case_run($cr->case_id, 
