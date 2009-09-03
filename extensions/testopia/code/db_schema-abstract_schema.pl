@@ -260,6 +260,15 @@ $schema->{test_attachments} = {
                 DELETE => 'CASCADE'
             }
         },
+        priority_id => {
+            TYPE       => 'INT2',
+            REFERENCES => {
+                TABLE  => 'priority',
+                COLUMN => 'id',
+                DELETE => 'RESTRICT'
+            }
+        },
+        
     ],
     INDEXES => [
         case_run_case_id_idx    => ['case_id'],
@@ -274,6 +283,7 @@ $schema->{test_attachments} = {
         case_run_text_ver_idx => ['case_text_version'],
         case_run_build_idx_v2 => ['build_id'],
         case_run_env_idx_v2   => ['environment_id'],
+        case_run_priority_idx => ['priority_id'],
     ],
   },
   $schema->{test_case_texts} = {

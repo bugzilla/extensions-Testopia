@@ -137,8 +137,8 @@ elsif ($action eq 'update_priority'){
     print $cgi->header;
     ThrowUserError("testopia-read-only", {'object' => $caserun}) unless $caserun->canedit;
     
-    $caserun->case->set_priority($cgi->param('priority'));
-    $caserun->case->update();
+    $caserun->set_priority($cgi->param('priority'));
+    $caserun->update();
     
     print "{'success': true, caserun:" . $caserun->TO_JSON ."}";
     

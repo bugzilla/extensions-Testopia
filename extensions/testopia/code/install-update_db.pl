@@ -84,6 +84,7 @@ sub testopiaUpdateDB {
     $dbh->bz_add_column('test_case_status', 'description', {TYPE => 'MEDIUMTEXT'}, 0);
     $dbh->bz_add_column('test_case_run_status', 'description', {TYPE => 'MEDIUMTEXT'}, 0);
     $dbh->bz_add_column('test_case_runs', 'iscurrent', {TYPE => 'INT1', NOTNULL => 1, DEFAULT => 0}, 0);
+    $dbh->bz_add_column('test_case_runs', 'priority_id', {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0}, 0);
     $dbh->bz_add_column('test_named_queries', 'type', {TYPE => 'INT3', NOTNULL => 1, DEFAULT => 0}, 0);
     fixTables();
 
@@ -227,6 +228,7 @@ sub testopiaUpdateDB {
     $dbh->bz_add_index('test_case_runs', 'case_run_env_idx_v2', ['environment_id']);
     $dbh->bz_add_index('test_case_runs', 'case_run_status_idx', ['case_run_status_id']);
     $dbh->bz_add_index('test_case_runs', 'case_run_text_ver_idx', ['case_text_version']);
+    $dbh->bz_add_index('test_case_runs', 'case_run_priority_idx', ['priority_id']);
     $dbh->bz_add_index('test_cases', 'test_case_requirement_idx', ['requirement']);
     $dbh->bz_add_index('test_cases', 'test_case_status_idx', ['case_status_id']);
     $dbh->bz_add_index('test_cases', 'test_case_tester_idx', ['default_tester_id']);
@@ -559,5 +561,19 @@ sub finalFixups {
             "WHERE name = 'estimated_time'")) {
         $dbh->do("INSERT INTO test_fielddefs (name, description, table_name) " .
                 "VALUES ('estimated_time', 'Estimated Time', 'test_cases')");
+    }
+    if ($dbh->selectrow_array("SELECT COUNT(*) FROM test_case_runs WHERE priority_id = 0")){
+        print "Updating case_run priorities...\n";
+        my $cases = $dbh->selectall_arrayref("SELECT case_id, priority_id FROM test_cases",{'Slice'=>{}});
+        my $sth = $dbh->prepare_cached("UPDATE test_case_runs SET priority_id = ? WHERE case_id = ?");
+        foreach my $c (@$cases){
+            $sth->execute($c->{priority_id},$c->{case_id})
+        }
+        # Anything left over should get the default priority
+        $dbh->do("UPDATE test_case_runs 
+                     SET priority_id = (SELECT id 
+                                          FROM priority 
+                                         WHERE value = ?) 
+                   WHERE priority_id = 0", undef, Bugzilla->params->{defaultpriority});
     }
 }

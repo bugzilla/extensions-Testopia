@@ -77,6 +77,7 @@ use constant DB_COLUMNS => qw(
     case_text_version
     build_id
     environment_id
+    priority_id
     notes
     running_date
     close_date
@@ -85,7 +86,7 @@ use constant DB_COLUMNS => qw(
 );
 
 use constant REQUIRED_CREATE_FIELDS => qw(case_id run_id build_id environment_id case_run_status_id);
-use constant UPDATE_COLUMNS         => qw(case_run_status_id case_text_version notes sortkey);
+use constant UPDATE_COLUMNS         => qw(case_run_status_id case_text_version notes sortkey priority_id);
 
 use constant VALIDATORS => {
     case_id            => \&_check_case_id,
@@ -94,6 +95,7 @@ use constant VALIDATORS => {
     environment_id     => \&_check_env_id,
     case_text_version  => \&_check_case_text_version,
     case_run_status_id => \&_check_case_run_status_id,
+    priority_id        => \&Testopia::TestCase::_check_priority,
 };
 
 sub report_columns {
@@ -175,7 +177,6 @@ sub _check_assignee{
     }
 }
 
-
 ###############################
 ####       Mutators        ####
 ###############################
@@ -218,10 +219,15 @@ sub new {
 
 sub create {
     my ($class, $params) = @_;
-
+    
     $class->SUPER::check_required_create_fields($params);
     my $field_values = $class->run_create_validators($params);
     
+    unless ($field_values->{priority_id}){
+        my $case = Testopia::TestCase->new($field_values->{case_id});
+        $field_values->{priority_id} = $case->{priority_id};
+    }
+
     $field_values->{iscurrent} = 1;
     
     my $self = $class->SUPER::insert_create_data($field_values);
@@ -327,7 +333,7 @@ sub TO_JSON {
     $obj->{'env_name'}    = $self->environment->name if $self->environment;
     $obj->{'env_id'}    = $self->environment->id if $self->environment;
     $obj->{'category'}    = $self->case->category->name if $self->case && $self->case->category;
-    $obj->{'priority'}    = $self->case->priority if $self->case;
+    $obj->{'priority'}    = $self->priority if $self->case;
     $obj->{'bug_count'}    = $self->bug_count;
     $obj->{'case_summary'}    = $self->case->summary if $self->case;
     $obj->{'component'}    = @{$self->case->components}[0]->name if ($self->case && scalar @{$self->case->components});
@@ -454,6 +460,8 @@ sub set_sortkey {
     
     $self->{'sortkey'} = $sortkey;
 }
+
+sub set_priority { $_[0]->set('priority_id', $_[1]); }
 
 =head2 set_assignee
 
@@ -813,6 +821,18 @@ sub status_id         { return $_[0]->{'case_run_status_id'};   }
 sub sortkey           { return $_[0]->{'sortkey'};   }
 sub isprivate         { return $_[0]->{'isprivate'};   }
 sub updated_deps      { return $_[0]->{'updated_deps'};   }
+
+sub priority { 
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    return $self->{'priority'} if exists $self->{'priority'};
+    my ($res) = $dbh->selectrow_array("SELECT value
+                                       FROM priority
+                                       WHERE id = ?", 
+                                       undef, $self->{'priority_id'});
+    $self->{'priority'} = $res;
+    return $self->{'priority'};
+}
 
 =head2 type
 

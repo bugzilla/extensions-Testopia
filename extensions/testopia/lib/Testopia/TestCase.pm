@@ -202,7 +202,6 @@ sub _check_priority{
     }
     ThrowCodeError('bad_arg', {argument => 'priority', function => 'set_priority'}) unless $priority_id; 
     return $priority_id;
-
 }
 
 sub _check_tester{

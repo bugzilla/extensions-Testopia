@@ -404,6 +404,16 @@ sub init {
         push @supptables, "INNER JOIN test_builds AS build ON build.build_id = test_". $obj ."s.build_id";
         push @orderby, 'build.name';
     }
+    elsif ($order eq 'priority') {
+        if ($obj eq 'case_run'){
+            push @supptables, "INNER JOIN priority ON priority.id = test_case_runs.priority_id";
+            push @orderby, 'priority.sortkey';
+        }
+        else{
+            push @supptables, "INNER JOIN priority ON priority.id = test_cases.priority_id";
+            push @orderby, 'priority.sortkey';            
+        }
+    }
     elsif ($order eq 'environment') {        
         push @supptables, "INNER JOIN test_environments AS env ON env.environment_id = test_". $obj ."s.environment_id";
         push @orderby, 'env.name';
@@ -423,13 +433,6 @@ sub init {
     elsif($order eq 'requirement' && $obj eq 'case_run'){
         push @supptables, "INNER JOIN test_cases ON test_cases.case_id = test_case_runs.case_id";
         push @orderby, 'test_cases.requirement';
-    }
-    elsif ($order eq 'priority') {
-        if ($obj eq 'case_run'){
-            push @supptables, "INNER JOIN test_cases ON test_cases.case_id = test_case_runs.case_id";
-        }
-        push @supptables, "INNER JOIN priority ON priority.id = test_cases.priority_id";
-        push @orderby, 'test_cases.priority_id';
     }
     elsif ($order eq 'build') {
         push @supptables, "INNER JOIN test_builds ON test_builds.build_id = test_case_runs.build_id";
@@ -548,11 +551,13 @@ sub init {
              if ($obj eq 'case_run'){
                     push(@supptables,
                         "INNER JOIN test_cases 
-                         ON test_cases.case_id = test_case_runs.case_id");
+                         ON test_case_runs.priority_id = priority.id");
                }
-               push(@supptables,
-                    "INNER JOIN priority ".
-                    "ON test_cases.priority_id = priority.id");
+             else{
+                    push(@supptables,
+                         "INNER JOIN priority ".
+                         "ON test_cases.priority_id = priority.id");
+             }
                $f = 'priority.value';      
          },
          "^environment," => sub {
@@ -658,14 +663,6 @@ sub init {
                       "INNER JOIN components ".
                       "ON components.id = tc_components.component_id");
                $f = "components.name";
-         },
-         "^priority_id," => sub {
-               if ($obj eq 'case_run'){
-                    push(@supptables,
-                        "INNER JOIN test_cases 
-                         ON test_cases.case_id = test_case_runs.case_id");
-               }
-               $f = "test_cases.priority_id";
          },
          "^isautomated," => sub {
                if ($obj eq 'case_run'){

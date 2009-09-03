@@ -113,9 +113,11 @@ sub create {
     
     $new_values->{'build_id'} ||= $new_values->{'build'};
     $new_values->{'environment_id'} ||= $new_values->{'environment'};
+    $new_values->{'priority_id'} ||= $new_values->{'priority'};
     
     delete $new_values->{'build'};
     delete $new_values->{'environment'};
+    delete $new_values->{'priority'};
     
     if (trim($new_values->{'build_id'}) !~ /^\d+$/ ){
         my $build = extensions::testopia::lib::Testopia::Build::check_build($new_values->{'build_id'}, $run->plan->product, "THROWERROR");
@@ -172,6 +174,7 @@ sub update {
     $new_values->{'case_run_status_id'} ||= $new_values->{'status'};
     $new_values->{'build_id'} ||= $new_values->{'build'};
     $new_values->{'environment_id'} ||= $new_values->{'environment'};
+    $new_values->{'priority_id'} ||= $new_values->{'priority'};
     
     my @results;
    
@@ -219,6 +222,13 @@ sub update {
         if ($new_values->{'notes'}){
             $caserun->append_note($new_values->{'notes'});
         }
+        
+        if ($new_values->{'priority'}){
+            delete $new_values->{'priority_id'};
+            $caserun->set_priority($new_values->{'notes'});
+            $caserun->update();
+        }
+        
         
         # Remove assignee user object and replace with just assignee id
         if (ref $caserun->{'assignee'} eq 'Bugzilla::User'){
@@ -414,6 +424,7 @@ TestCaseRun->get($run_id, $case_id, $build_id, $environment_id)
   | case_id            | Integer/String | Required  | ID or alias of test case                       |
   | build              | Integer/String | Required  | ID or name of a Build in plan's product        |
   | environment        | Integer/String | Required  | ID or name of an Environment in plan's product |
+  | priority           | Integer/String | Optional  | ID or name of priority. Default same as case   |
   | assignee           | Integer/String | Optional  | Defaults to test case default tester           |
   | status             | String         | Optional  | Defaults to "IDLE"                             |
   | case_text_version  | Integer        | Optional  |                                                |
@@ -674,6 +685,7 @@ TestCaseRun->get($run_id, $case_id, $build_id, $environment_id)
                       | build              | Integer/String |
                       | environment        | Integer/String |
                       | assignee           | Integer/String |
+                      | priority           | Integer/String |
                       | status             | String         |
                       | notes              | String         |
                       | sortkey            | Integer        |
