@@ -19,7 +19,12 @@
   #%]
 [%
   debug_ext = Param('testopia-debug') == 'ON' 
-      ? "extensions/testopia/extjs/ext-all-debug.js" : "extensions/testopia/extjs/ext-all.js"
+      ? "extensions/testopia/extjs/ext-all-debug.js" 
+      : "extensions/testopia/extjs/ext-all.js"
+  
+  debug_ext_base = Param('testopia-debug') == 'ON'
+      ? "extensions/testopia/extjs/adapter/ext/ext-base-debug.js"
+      : "extensions/testopia/extjs/adapter/ext/ext-base.js"
   
   debug_testopia = Param('testopia-debug') == 'ON' 
       ? "extensions/testopia/testopia.all.js" : "extensions/testopia/testopia.all.ycomp.js"
@@ -29,7 +34,8 @@
 %]
 [% IF Param('testopia-debug') == 'Developer' %]  
     [%  javascript_urls = [
-                       "extensions/testopia/extjs/adapter/ext/ext-base.js",
+    
+                       "extensions/testopia/extjs/adapter/ext/ext-base-debug.js",
                        "extensions/testopia/extjs/ext-all-debug.js"
                        "extensions/testopia/js/strings.js",
                        "extensions/testopia/js/vars.js",
@@ -50,7 +56,5 @@
     %]
 
 [% ELSE %]
-    [%  javascript_urls = ["extensions/testopia/extjs/adapter/ext/ext-base.js", 
-                     debug_ext, debug_testopia]
-    %]
+    [%  javascript_urls = [debug_ext_base, debug_ext, debug_testopia] %]
 [% END %]

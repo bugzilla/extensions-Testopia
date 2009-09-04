@@ -2856,6 +2856,12 @@ Testopia.TestCase.Grid = function(params, cfg){
             }, {
                 name: "plan_name",
                 mapping: "plan_name"
+            }, {
+                name: "average_time",
+                mapping: "average_time"
+            }, {
+                name: "estimated_time",
+                mapping: "estimated_time"
             }]
         }),
         listeners: { 'exception': Testopia.Util.loadError },
@@ -2977,6 +2983,18 @@ Testopia.TestCase.Grid = function(params, cfg){
         editor: new Ext.grid.GridEditor(new Ext.form.TextField({
             name: 'requirement'
         }))
+    }, {
+        header: "Estimated Time",
+        width: 60,
+        sortable: true,
+        dataIndex: 'estimated_time',
+        hidden: true
+    }, {
+        header: "Average Time",
+        width: 60,
+        sortable: false,
+        dataIndex: 'average_time',
+        hidden: true
     }, {
         header: "Plan",
         width: 40,
@@ -7643,13 +7661,16 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
     function doSubmit(){
         var form = Ext.getCmp('run_clone_frm').getForm();
         form.baseParams = {};
-        if (Ext.getCmp('copy_cases_radio_group').getGroupValue() == 'copy_filtered_cases') {
-            form.baseParams = Ext.getCmp('caserun_search').form.getValues();
+        if (Ext.getCmp('run_copy_cases').collapsed === false){
+            switch(Ext.getCmp('copy_cases_radio_group').getGroupValue()){
+                case 'copy_filtered_cases':
+                    form.baseParams = Ext.getCmp('caserun_search').form.getValues();
+                    break;
+                 case 'copy_selected_cases':
+                    form.baseParams.case_list = Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
+                    break;
+            } 
         }
-        else 
-            if (Ext.getCmp('copy_cases_radio_group').getGroupValue() == 'copy_selected_cases') {
-                form.baseParams.case_list = Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id');
-            }
         form.baseParams.action = 'clone';
         form.baseParams.ids = runs;
         form.baseParams.new_run_build = bbox.getValue();
@@ -7744,6 +7765,12 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
                         name: 'copy_tags',
                         checked: true,
                         boxLabel: 'Copy Run Tags',
+                        hideLabel: true
+                    }, {
+                        xtype: 'checkbox',
+                        name: 'copy_filters',
+                        checked: true,
+                        boxLabel: 'Copy Run Filters',
                         hideLabel: true
                     }, {
                         xtype: 'hidden',
@@ -9811,10 +9838,6 @@ Ext.extend(Testopia.Search.DashboardPanel, Ext.Panel, {
 });
 
 Testopia.Search.Popup = function(tab, params){
-    if (Ext.getCmp('search_win')){
-        Ext.getCmp('search_win').show();
-        return;
-    }
     var win = new Ext.Window({
         id: 'search_win',
         closable: true,
@@ -9857,6 +9880,13 @@ Testopia.Search.PlansForm = function(params){
         title: 'Plan Search',
         id: 'plan_search_panel',
         layout:'fit',
+        autoLoad: {
+            url: 'tr_query.cgi?current_tab=plan',
+            params: params,
+            scripts: true,
+            text: 'Loading search form...',
+            callback: Testopia.Search.fillInForm.createDelegate(this,['plan',this.params])
+        },
         buttons:[{
             text: 'Submit',
             handler: function(){
@@ -9920,6 +9950,9 @@ Testopia.Search.PlansForm = function(params){
 };
 Ext.extend(Testopia.Search.PlansForm, Ext.Panel,{
     onActivate: function(event){
+        if (!this.rendered){
+            return;
+        }
         if (Ext.get('case_search_form')){
             Ext.get('case_search_form').remove();
         }
@@ -9947,6 +9980,13 @@ Testopia.Search.CasesForm = function(params){
         title: 'Case Search',
         id: 'case_search_panel',
         layout:'fit',
+        autoLoad: {
+            url: 'tr_query.cgi?current_tab=case',
+            params: params,
+            scripts: true,
+            text: 'Loading search form...',
+            callback: Testopia.Search.fillInForm.createDelegate(this,['case',this.params])
+        },
         buttons:[{
             text: 'Submit',
             handler: function(){
@@ -9956,7 +9996,7 @@ Testopia.Search.CasesForm = function(params){
                 try {
                     // EXT BUG - Closing always causes an error: 
                     // http://extjs.com/forum/showthread.php?t=20930
-                    Ext.getCmp('search_win').hide();
+                    Ext.getCmp('search_win').close();
                 }
                 catch(err){}
                 if (params.report){
@@ -9992,7 +10032,7 @@ Testopia.Search.CasesForm = function(params){
                             }
                         }]
                     }));
-                    Ext.getCmp('object_panel').activate('plan_search' + searchnum);
+                    Ext.getCmp('object_panel').activate('case_search' + searchnum);
                 }
                 else{
                     Ext.getCmp('object_panel').add(new Testopia.TestCase.Grid(values,{
@@ -10010,6 +10050,9 @@ Testopia.Search.CasesForm = function(params){
 };
 Ext.extend(Testopia.Search.CasesForm, Ext.Panel,{
     onActivate: function(event){
+        if (!this.rendered){
+            return;
+        }
         if (Ext.get('run_search_form')){
             Ext.get('run_search_form').remove();
         }
@@ -10037,6 +10080,13 @@ Testopia.Search.RunsForm = function(params){
         title: 'Run Search',
         id: 'run_search_panel',
         layout:'fit',
+        autoLoad: {
+            url: 'tr_query.cgi?current_tab=run',
+            params: params,
+            scripts: true,
+            text: 'Loading search form...',
+            callback: Testopia.Search.fillInForm.createDelegate(this,['run',this.params])
+        },
         buttons:[{
             text: 'Submit',
             handler: function(){
@@ -10102,6 +10152,9 @@ Testopia.Search.RunsForm = function(params){
 };
 Ext.extend(Testopia.Search.RunsForm, Ext.Panel,{
     onActivate: function(event){
+        if (!this.rendered){
+            return;
+        }
         if (Ext.get('case_search_form')){
             Ext.get('case_search_form').remove();
         }
@@ -10129,6 +10182,13 @@ Testopia.Search.CaseRunsForm = function(params){
         title: 'Case-Run Search',
         id: 'caserun_search_panel',
         layout:'fit',
+        autoLoad:{
+            url: 'tr_query.cgi?current_tab=case_run',
+            params: params,
+            scripts: true,
+            text: 'Loading search form...',
+            callback: Testopia.Search.fillInForm.createDelegate(this,['caserun',this.params])
+        },
         buttons:[{
             text: 'Submit',
             handler: function(){
@@ -10192,6 +10252,9 @@ Testopia.Search.CaseRunsForm = function(params){
 };
 Ext.extend(Testopia.Search.CaseRunsForm, Ext.Panel,{
     onActivate: function(event){
+        if (!this.rendered){
+            return;
+        }
         if (Ext.get('case_search_form')){
             Ext.get('case_search_form').remove();
         }
