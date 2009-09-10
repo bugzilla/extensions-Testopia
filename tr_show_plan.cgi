@@ -55,9 +55,16 @@ ThrowUserError("invalid-test-id-non-existent", {'type' => 'plan', id => $plan_id
 ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
 
 $vars->{'table'} = Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi);
-$vars->{'printdoc'} = 1 if ($cgi->param('ctype') eq 'print');
 $vars->{'plan'} = $plan;
-    
+
+# If we are printing we just use the XML format and it will include the stylesheets
+if ($cgi->param('ctype') eq 'print'){
+    print $cgi->header(-type => "text/xml");
+    $template->process("testopia/plan/show.xml.tmpl", $vars) ||
+        ThrowTemplateError($template->error());
+    exit;
+}    
+
 my $format = $template->get_format("testopia/plan/show", scalar $cgi->param('format'), scalar $cgi->param('ctype'));
 my $disp = "inline";
 # We set CSV files to be downloaded, as they are designed for importing
@@ -67,7 +74,7 @@ if ( $format->{'extension'} eq "csv" || $format->{'extension'} eq "xml" ){
     $vars->{'displaycolumns'} = \@Testopia::Constants::TESTCASE_EXPORT;
     $vars->{'table'} = $plan->test_cases;
 }
-    
+
 # Suggest a name for the file if the user wants to save it as a file.
 my @time = localtime(time());
 my $date = sprintf "%04d-%02d-%02d", 1900+$time[5],$time[4]+1,$time[3];

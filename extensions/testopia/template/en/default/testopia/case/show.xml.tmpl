@@ -20,7 +20,92 @@
 
 [%# Testopia Show Test Case XML export template #%]
 
-[% PROCESS testopia/export/xml.header.tmpl %]
-    [%+ PROCESS testopia/export/xml.case.tmpl %]
-
-[% PROCESS testopia/export/xml.footer.tmpl %]
+[% IF NOT header_done %]
+    [% PROCESS global/variables.none.tmpl %]
+    [% PROCESS testopia/export/xml.header.tmpl %]
+    [% SET header_done = 1 %]
+[% END %]
+        <tr:testcase id="[% case.id FILTER xml %]">
+            <tr:alias>[% case.alias FILTER xml %]</tr:alias>
+            <tr:summary>[% case.summary FILTER xml %]</tr:summary>
+            <tr:case_status id="[% case.case_status_id FILTER xml %]">[% case.status FILTER xml %]</tr:case_status>
+            <tr:priority id="[% case.priority_id FILTER xml %]">[% case.priority FILTER xml %]</tr:priority>
+            <tr:category id="[% case.category_id FILTER xml %]">[% case.category.name FILTER xml %]</tr:category>
+            <tr:author id="[% case.author_id FILTER xml %]">
+                <tr:login>[% case.author.login_name FILTER xml %]</tr:login>
+                <tr:name>[% case.author.realname FILTER xml %]</tr:name>
+            </tr:author>
+            <tr:default_tester id="[% case.default_tester_id FILTER xml %]">
+                <tr:login>[% case.default_tester.login_name FILTER xml %]</tr:login>
+                <tr:name>[% case.default_tester.realname FILTER xml %]</tr:name>
+            </tr:default_tester>
+            <tr:creation_date>[% case.creation_date FILTER xml %]</tr:creation_date>
+            <tr:last_changed>[% case.last_changed FILTER xml %]</tr:last_changed>
+            <tr:estimated_time>[% case.estimated_time FILTER xml %]</tr:estimated_time>
+            <tr:isautomated>[% case.isautomated ? 'true' : 'false' FILTER xml %]</tr:isautomated>
+            <tr:script>[% case.sortkey FILTER xml %]</tr:script>
+            <tr:arguments>[% case.arguments FILTER xml %]</tr:arguments>
+            <tr:sortkey>[% case.sortkey FILTER xml %]</tr:sortkey>            
+            <tr:requirement>[% case.requirement FILTER xml %]</tr:requirement>
+            <tr:run_count>[% case.run_count FILTER xml %]</tr:run_count>
+            <tr:tags>
+            [% FOREACH t = case.tags %]
+                <tr:tag>[% t.name FILTER xml %]</tr:tag>
+            [% END %]
+            </tr:tags>
+            <tr:blocks>
+            [% FOREACH i = case.blocked %]
+                <tr:case_id>[% i.id FILTER xml %]</tr:case_id>
+            [% END %]
+            </tr:blocks>
+            <tr:dependson>
+            [% FOREACH i = case.dependson %]
+                <tr:case_id>[% i.id FILTER xml %]</tr:case_id>
+            [% END %]
+            </tr:dependson>
+            <tr:bugs>
+            [% FOREACH i = case.bugs %]
+                <tr:bug_id>[% i.id FILTER xml %]</tr:bug_id>
+            [% END %]
+            </tr:bugs>
+            <tr:linked_plans>
+            [% FOREACH i = case.plans %]
+                <tr:plan_id>[% i.id FILTER xml %]</tr:plan_id>
+            [% END %]
+            </tr:linked_plans>
+            <tr:components>
+            [% FOREACH i = case.components %]
+                <tr:component id="[% i.id FILTER xml %]">
+                    <tr:name>[% i.name FILTER xml %]</tr:name>
+                    <tr:product id="[% i.product_id FILTER xml %]">[% i.product_name FILTER xml %]</tr:product>
+                </tr:component>
+            [% END %]
+            </tr:components>
+            <tr:text version="[% case.text.version FILTER xml %]">
+                <tr:author>[% case.text.author FILTER xml %]</tr:author>
+                <tr:action><![CDATA[[% case.text.action FILTER none %]]]></tr:action>
+                <tr:expected_result><![CDATA[[% case.text.effect FILTER none %]]]></tr:expected_result>
+                <tr:setup><![CDATA[[% case.text.setup FILTER none %]]]></tr:setup>
+                <tr:breakdown><![CDATA[[% case.text.breakdown FILTER none %]]]></tr:breakdown>
+            </tr:text>
+            <tr:attachments>
+            [% FOREACH a = case.attachments %]
+                <tr:attachment id="[% a.id FILTER xml %]">
+                    <tr:submitter id="[% a.submitter_id FILTER xml %]">
+                        <tr:login>[% a.submitter.login_name FILTER xml %]</tr:login>
+                        <tr:name>[% a.submitter.realname FILTER xml %]</tr:name>
+                    </tr:submitter>
+                    <tr:description>[% a.description FILTER xml %]</tr:description>
+                    <tr:filename>[% a.filename FILTER xml %]</tr:filename>
+                    <tr:creation_ts>[% a.creation_ts FILTER xml %]</tr:creation_ts>
+                    <tr:mime_type>[% a.mime_type FILTER xml %]</tr:mime_type>
+                    <tr:size>[% a.datasize FILTER xml %]</tr:size>
+                    <tr:contents>[% a.contents FILTER base64 %]</tr:contents>
+                </tr:attachment>
+            [% END %]
+            </tr:attachments>
+            <tr:caseruns></tr:caseruns>
+        </tr:testcase>
+[% IF NOT plan %]
+    [% PROCESS testopia/export/xml.footer.tmpl %]
+[% END %]

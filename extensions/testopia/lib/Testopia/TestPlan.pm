@@ -1024,6 +1024,12 @@ Returns true if this plan is not archived
 
 =cut
 
+sub fields {
+    my $self = shift;
+    my @fields = qw();
+    return @fields;
+}
+
 sub id              { return $_[0]->{'plan_id'};          }
 sub creation_date   { return $_[0]->{'creation_date'};    }
 sub product_version { return $_[0]->{'default_product_version'};  }

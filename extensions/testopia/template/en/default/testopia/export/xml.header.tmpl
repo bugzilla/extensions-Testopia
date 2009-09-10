@@ -20,9 +20,11 @@
 
 [%# Testopia XML export header template #%]
 
-<?xml version="1.0" [% IF Param('utf8') %]encoding="UTF-8" [% END %]standalone="yes" ?>
-<!DOCTYPE testopia SYSTEM "testopia.dtd" [
-<!ENTITY testopia_lt "<">
-<!ENTITY testopia_gt ">">
-]>
-<testopia version="1.1">
+<?xml version="1.0" [% 'encoding="UTF-8"' IF Param('utf8') %] ?>
+<?xml-stylesheet href="extensions/testopia/testopia.xsl" type="text/xsl" ?>
+<!--<?xml-stylesheet href="extensions/testopia/css/print.css" type="text/css" ?>-->
+<!--
+ version="2.3" 
+ xmlns="http://www.mozilla.org/projects" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
+<tr:testopia version="2.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tr="http://www.mozilla.org/projects">

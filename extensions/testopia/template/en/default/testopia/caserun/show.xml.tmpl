@@ -1,0 +1,48 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Testopia System.
+  #
+  # The Initial Developer of the Original Code is Greg Hendricks.
+  # Portions created by Greg Hendricks are Copyright (C) 2006
+  # Novell. All Rights Reserved.
+  #
+  # Contributor(s): Greg Hendricks <ghendricks@novell.com>
+  #%]
+  
+   <tr:testcaserun>
+       <tr:iscurrent>[% caserun.iscurrent ? 'true' : 'false' FILTER xml %]</tr:iscurrent>
+       <tr:case id="[% caserun.case_id FILTER xml %]">[% caserun.case.summary FILTER xml %]</tr:case>
+       <tr:run id="[% caserun.run_id FILTER xml %]">[% caserun.run.summary FILTER xml %]</tr:run>
+       <tr:build id="[% caserun.build_id FILTER xml %]">[% caserun.build.name FILTER xml %]</tr:build>
+       <tr:environment id="[% caserun.environment_id FILTER xml %]">[% caserun.environment.name FILTER xml %]</tr:environment>
+       <tr:status id="[% caserun.status_id FILTER xml %]">[% caserun.status FILTER xml %]</tr:status>
+       <tr:assignee id="[% caserun.assignee.id FILTER xml %]">
+           <tr:login>[% caserun.assignee.login_name FILTER xml %]</tr:login>
+           <tr:name>[% caserun.assignee.realname FILTER xml %]</tr:name>
+        </tr:assignee>
+       <tr:testedby id="[% caserun.testedby_id FILTER xml %]">
+           <tr:login>[% caserun.testedby.login_name FILTER xml %]</tr:login>
+           <tr:name>[% caserun.testedby.realname FILTER xml %]</tr:name>
+        </tr:testedby>
+       <tr:case_text_version>[% caserun.case_text_version FILTER xml %]</tr:case_text_version>
+       <tr:priority id="[% caserun.priority_id FILTER xml %]">[% caserun.priority FILTER xml %]</tr:priority>
+       <tr:notes><![CDATA[[% caserun.notes FILTER none %]]]></tr:notes>
+       <tr:running_date>[% caserun.running_date FILTER xml %]</tr:running_date>
+       <tr:close_date>[% caserun.close_date FILTER xml %]</tr:close_date>
+       <tr:completion_time>[% caserun.completion_time FILTER xml %]</tr:completion_time>
+       <tr:sortkey>[% caserun.sortkey FILTER xml %]</tr:sortkey>
+       <tr:bugs>
+            [% FOREACH i = caserun.bugs %]
+               <tr:bug_id>[% i.id FILTER xml %]</tr:bug_id>
+            [% END %]
+        </tr:bugs>
+    </tr:testcaserun>\ No newline at end of file

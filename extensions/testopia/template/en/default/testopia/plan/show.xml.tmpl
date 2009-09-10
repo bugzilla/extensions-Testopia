@@ -19,13 +19,59 @@
   #%]
 
 [%# Testopia Test Case list XML export template #%]
-
-[% PROCESS global/variables.none.tmpl %]
-
-[% PROCESS testopia/export/xml.header.tmpl -%]
-
-[% FOREACH test_case = table.list %]
-    [%+ PROCESS testopia/export/xml.case.tmpl case=test_case %]
+[% IF NOT header_done %]
+    [% PROCESS global/variables.none.tmpl %]
+    [% PROCESS testopia/export/xml.header.tmpl %]
+    [% SET header_done = 1 %]
 [% END %]
-
-[%- PROCESS testopia/export/xml.footer.tmpl %]
+    <tr:testplan id="[% plan.id %]">
+        <tr:name>[% plan.name FILTER xml %]</tr:name>
+        <tr:product id="[% plan.product.id FILTER xml %]">[% plan.product.name FILTER xml %]</tr:product>
+        <tr:author id="[% plan.author_id FILTER xml %]">
+            <tr:login>[% plan.author.login_name FILTER xml %]</tr:login>
+            <tr:name>[% plan.author.realname FILTER xml %]</tr:name>
+        </tr:author>
+        <tr:plan_type id="[% plan.type_id FILTER xml %]">[% plan.type FILTER xml %]</tr:plan_type>
+        <tr:default_product_version>[% plan.default_product_version FILTER xml %]</tr:default_product_version>
+        <tr:creation_date>[% plan.creation_date FILTER xml %]</tr:creation_date>
+        <tr:last_changed>[% plan.last_changed FILTER xml %]</tr:last_changed>
+        <tr:archived>[% plan.isactive ? 'false' : 'true' FILTER xml %]</tr:archived>
+        <tr:document version="[% plan.version FILTER xml %]">
+            <tr:author>[% plan.text.author FILTER xml %]</tr:author>
+            <tr:text><![CDATA[[% plan.text.plan_text FILTER none %]]]></tr:text>
+        </tr:document>
+        <tr:tags>
+        [% FOREACH t = plan.tags %]
+            <tr:tag>[% t.name FILTER xml %]</tr:tag>
+        [% END %]
+        </tr:tags>
+        <tr:attachments>
+        [% FOREACH a = plan.attachments %]
+            <tr:attachment id="[% a.id FILTER xml %]">
+                <tr:submitter id="[% a.submitter_id FILTER xml %]">
+                    <tr:login>[% a.submitter.login_name FILTER xml %]</tr:login>
+                    <tr:name>[% a.submitter.realname FILTER xml %]</tr:name>
+                </tr:submitter>
+                <tr:description>[% a.description FILTER xml %]</tr:description>
+                <tr:filename>[% a.filename FILTER xml %]</tr:filename>
+                <tr:creation_ts>[% a.creation_ts FILTER xml %]</tr:creation_ts>
+                <tr:mime_type>[% a.mime_type FILTER xml %]</tr:mime_type>
+                <tr:size>[% a.datasize FILTER xml %]</tr:size>
+                <tr:contents>[% a.contents FILTER base64 %]</tr:contents>
+            </tr:attachment>
+        [% END %]
+        </tr:attachments>
+        <tr:testcases>
+        [% FOREACH test_case = plan.test_cases %]
+            [% PROCESS testopia/case/show.xml.tmpl case=test_case %]
+        [% END %]
+        </tr:testcases>
+        <tr:testruns>
+        [% FOREACH run = plan.test_runs %]
+            [% PROCESS testopia/run/show.xml.tmpl %]
+        [% END %]
+        </tr:testruns>
+    </tr:testplan>
+[% IF NOT planlist %]
+    [% PROCESS testopia/export/xml.footer.tmpl %]
+[% END %]

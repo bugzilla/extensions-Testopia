@@ -1,0 +1,53 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Testopia System.
+  #
+  # The Initial Developer of the Original Code is Greg Hendricks.
+  # Portions created by Greg Hendricks are Copyright (C) 2006
+  # Novell. All Rights Reserved.
+  #
+  # Contributor(s): Greg Hendricks <ghendricks@novell.com>
+  #%]
+   <tr:testrun>
+       <tr:summary>[% run.summary FILTER xml %]</tr:summary>
+       <tr:plan id="[% run.plan_id FILTER xml %]">[% run.plan.name FILTER xml %]</tr:plan>
+       <tr:plan_text_version>[% run.plan_text_version FILTER xml %]</tr:plan_text_version>
+       <tr:product_version>[% run.product_version FILTER xml %]</tr:product_version>
+       <tr:build id="[% run.build_id FILTER xml %]">[% run.build.name FILTER xml %]</tr:build>
+       <tr:environment id="[% run.environment_id FILTER xml %]">[% run.environment_id FILTER xml %]</tr:environment>
+       <tr:manager id="[% run.manager_id FILTER xml %]">
+           <tr:login>[% run.manager.login_name FILTER xml %]</tr:login>
+           <tr:name>[% run.manager.realname FILTER xml %]</tr:name>
+        </tr:manager>  
+       <tr:start_date>[% run.start_date FILTER xml %]</tr:start_date>
+       <tr:stop_date>[% run.stop_date FILTER xml %]</tr:stop_date>
+       <tr:last_changed>[% run.last_changed FILTER xml %]</tr:last_changed>
+       <tr:case_count>[% run.case_count FILTER xml %]</tr:case_count>
+       <tr:total_time>[% run.total_time FILTER xml %]</tr:total_time>
+       <tr:target_pass_rate>[% run.target_pass FILTER xml %]</tr:target_pass_rate>
+       <tr:target_completion_rate>[% run.target_completion FILTER xml %]</tr:target_completion_rate>
+       <tr:percent_complete>[% run.percent_complete FILTER xml %]</tr:percent_complete>
+       <tr:percent_passed>[% run.percent_of_finished(2) FILTER xml %]</tr:percent_passed>
+       <tr:percent_failed>[% run.percent_of_finished(3) FILTER xml %]</tr:percent_failed>
+       <tr:percent_blocked>[% run.percent_of_finished(6) FILTER xml %]</tr:percent_blocked>
+       <tr:tags>
+        [% FOREACH t = run.tags %]
+           <tr:tag>[% t.name FILTER xml %]</tr:tag>
+        [% END %]
+        </tr:tags>
+       <tr:notes><![CDATA[[% run.notes FILTER xml %]]]></tr:notes>
+       <tr:caseruns>
+        [% FOREACH caserun = run.caseruns %]
+            [% PROCESS testopia/caserun/show.xml.tmpl %]
+        [% END %]
+        </tr:caseruns>
+    </tr:testrun>\ No newline at end of file
