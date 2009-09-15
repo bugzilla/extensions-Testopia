@@ -108,6 +108,10 @@ use constant VALIDATORS => {
     tags              => \&_check_tags,
     components        => \&_check_components,
     bugs              => \&_check_bugs,
+    
+};
+
+use constant UPDATE_VALIDATORS => {
     category_id       => \&_check_category,
 };
 
@@ -485,6 +489,13 @@ sub run_create_validators {
     my $product = $params->{plans}->[0]->product;
     
     $params->{category_id} = $class->_check_category($params->{category_id}, $product);
+    
+    return $params;
+}
+
+sub run_import_validators {
+    my $class  = shift;
+    my $params = $class->SUPER::run_create_validators(@_);
     
     return $params;
 }
@@ -2035,6 +2046,18 @@ sub plans {
     }
     $self->{'plans'} = \@plans;
     return $self->{'plans'};
+}
+
+sub plan_list {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    return $self->{'plan_list'} if exists $self->{'plan_list'};
+    my $ref = $dbh->selectcol_arrayref("SELECT plan_id
+                                       FROM test_case_plans
+                                       WHERE case_id = ? ORDER BY plan_id", 
+                                       undef, $self->{'case_id'});
+    $self->{'plan_list'} = join(',', @$ref);
+    return $self->{'plan_list'};
 }
 
 =head2 bugs

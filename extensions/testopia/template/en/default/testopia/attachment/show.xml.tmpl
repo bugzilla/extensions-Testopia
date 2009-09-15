@@ -17,11 +17,16 @@
   #
   # Contributor(s): David Koenig <dkoenig@novell.com>
   #%]
-
-[%# Testopia XML export header template #%]
-
-<?xml version="1.0" [% 'encoding="UTF-8"' IF Param('utf8') %] ?>
-<tr:testopia
- version="2.3"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xmlns:tr="http://www.mozilla.org/projects">
+    <tr:attachment id="[% a.id FILTER xml %]">
+        <tr:submitter id="[% a.submitter_id FILTER xml %]">
+            <tr:login>[% a.submitter.login_name FILTER xml %]</tr:login>
+            <tr:name>[% a.submitter.realname FILTER xml %]</tr:name>
+        </tr:submitter>
+        <tr:description>[% a.description FILTER xml %]</tr:description>
+        <tr:filename>[% a.filename FILTER xml %]</tr:filename>
+        <tr:creation_ts>[% a.creation_ts.replace(' ','T') FILTER xml %]</tr:creation_ts>
+        <tr:mime_type>[% a.mime_type FILTER xml %]</tr:mime_type>
+        <tr:size>[% a.datasize FILTER xml %]</tr:size>
+        <tr:contents encoding="base64">[% a.contents FILTER base64 %]</tr:contents>
+    </tr:attachment>
+    

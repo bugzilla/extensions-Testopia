@@ -22,27 +22,36 @@
        <tr:iscurrent>[% caserun.iscurrent ? 'true' : 'false' FILTER xml %]</tr:iscurrent>
        <tr:case id="[% caserun.case_id FILTER xml %]">[% caserun.case.summary FILTER xml %]</tr:case>
        <tr:run id="[% caserun.run_id FILTER xml %]">[% caserun.run.summary FILTER xml %]</tr:run>
-       <tr:build id="[% caserun.build_id FILTER xml %]">[% caserun.build.name FILTER xml %]</tr:build>
-       <tr:environment id="[% caserun.environment_id FILTER xml %]">[% caserun.environment.name FILTER xml %]</tr:environment>
+       <tr:build id="[% caserun.build_id FILTER xml %]">
+           <tr:name>[% caserun.build.name FILTER xml %]</tr:name>
+           <tr:product id="[% caserun.build.product.id FILTER xml %]">[% caserun.build.product.name FILTER xml %]</tr:product>
+           <tr:milestone>[% caserun.build.milestone FILTER xml %]</tr:milestone>
+       </tr:build>
+       <tr:environment id="[% caserun.environment_id FILTER xml %]">
+           <tr:name>[% caserun.environment.name FILTER xml %]</tr:name>
+           <tr:product id="[% caserun.environment.product.id FILTER xml %]">[% caserun.environment.product.name FILTER xml %]</tr:product>
+       </tr:environment>
        <tr:status id="[% caserun.status_id FILTER xml %]">[% caserun.status FILTER xml %]</tr:status>
        <tr:assignee id="[% caserun.assignee.id FILTER xml %]">
            <tr:login>[% caserun.assignee.login_name FILTER xml %]</tr:login>
            <tr:name>[% caserun.assignee.realname FILTER xml %]</tr:name>
         </tr:assignee>
-       <tr:testedby id="[% caserun.testedby_id FILTER xml %]">
+        [% IF caserun.testedby %]
+       <tr:testedby id="[% caserun.testedby.id FILTER xml %]">
            <tr:login>[% caserun.testedby.login_name FILTER xml %]</tr:login>
            <tr:name>[% caserun.testedby.realname FILTER xml %]</tr:name>
         </tr:testedby>
+        [% END %]
        <tr:case_text_version>[% caserun.case_text_version FILTER xml %]</tr:case_text_version>
        <tr:priority id="[% caserun.priority_id FILTER xml %]">[% caserun.priority FILTER xml %]</tr:priority>
        <tr:notes><![CDATA[[% caserun.notes FILTER none %]]]></tr:notes>
-       <tr:running_date>[% caserun.running_date FILTER xml %]</tr:running_date>
-       <tr:close_date>[% caserun.close_date FILTER xml %]</tr:close_date>
+       [% IF caserun.running_date %]
+       <tr:running_date>[% caserun.running_date.replace(' ','T') FILTER xml %]</tr:running_date>
+       [% END %]
+       [% IF caserun.clos_date %]
+       <tr:close_date>[% caserun.close_date.replace(' ','T') FILTER xml %]</tr:close_date>
+       [% END %]
        <tr:completion_time>[% caserun.completion_time FILTER xml %]</tr:completion_time>
-       <tr:sortkey>[% caserun.sortkey FILTER xml %]</tr:sortkey>
-       <tr:bugs>
-            [% FOREACH i = caserun.bugs %]
-               <tr:bug_id>[% i.id FILTER xml %]</tr:bug_id>
-            [% END %]
-        </tr:bugs>
+       <tr:sortkey>[% caserun.sortkey || 0 FILTER xml %]</tr:sortkey>
+       <tr:bugs>[% caserun.bug_list %]</tr:bugs>
     </tr:testcaserun>\ No newline at end of file

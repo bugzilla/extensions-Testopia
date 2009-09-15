@@ -28,6 +28,24 @@ sub OPTIONAL_MODULES {
         module  => 'Text::CSV',
         version => '1.06',
         feature => 'CSV Importing of test cases'
+    },
+    {
+        package => 'XML Schema Validator',
+        module  => 'XML::Validator::Schema',
+        version => '1.10',
+        feature => 'XML Importing of test cases and plans'
+    },
+    {
+        package => 'XML Schema Parser',
+        module  => 'XML::SAX::ParserFactory',
+        version => 0,
+        feature => 'XML Importing of test cases and plans'
+    },
+    {
+        package => 'XML Twig',
+        module  => 'XML::Twig',
+        version => 0,
+        feature => 'XML Importing of test cases and plans'
     }
     );
     

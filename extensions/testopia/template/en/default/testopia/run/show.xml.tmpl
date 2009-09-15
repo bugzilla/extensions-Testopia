@@ -22,15 +22,24 @@
        <tr:plan id="[% run.plan_id FILTER xml %]">[% run.plan.name FILTER xml %]</tr:plan>
        <tr:plan_text_version>[% run.plan_text_version FILTER xml %]</tr:plan_text_version>
        <tr:product_version>[% run.product_version FILTER xml %]</tr:product_version>
-       <tr:build id="[% run.build_id FILTER xml %]">[% run.build.name FILTER xml %]</tr:build>
-       <tr:environment id="[% run.environment_id FILTER xml %]">[% run.environment_id FILTER xml %]</tr:environment>
+       <tr:build id="[% run.build_id FILTER xml %]">
+           <tr:name>[% run.build.name FILTER xml %]</tr:name>
+           <tr:product id="[% run.build.product.id FILTER xml %]">[% run.build.product.name FILTER xml %]</tr:product>
+           <tr:milestone>[% run.build.milestone FILTER xml %]</tr:milestone>
+       </tr:build>
+       <tr:environment id="[% run.environment_id FILTER xml %]">
+           <tr:name>[% run.environment.name FILTER xml %]</tr:name>
+           <tr:product id="[% run.environment.product.id FILTER xml %]">[% run.environment.product.name FILTER xml %]</tr:product>
+       </tr:environment>
        <tr:manager id="[% run.manager_id FILTER xml %]">
            <tr:login>[% run.manager.login_name FILTER xml %]</tr:login>
            <tr:name>[% run.manager.realname FILTER xml %]</tr:name>
         </tr:manager>  
-       <tr:start_date>[% run.start_date FILTER xml %]</tr:start_date>
-       <tr:stop_date>[% run.stop_date FILTER xml %]</tr:stop_date>
-       <tr:last_changed>[% run.last_changed FILTER xml %]</tr:last_changed>
+       <tr:start_date>[% run.start_date.replace(' ','T') FILTER xml %]</tr:start_date>
+       [% IF run.stop_date %]
+       <tr:stop_date>[% run.stop_date.replace(' ','T') FILTER xml %]</tr:stop_date>
+       [% END %]
+       <tr:last_changed>[% run.last_changed.replace(' ','T') FILTER xml %]</tr:last_changed>
        <tr:case_count>[% run.case_count FILTER xml %]</tr:case_count>
        <tr:total_time>[% run.total_time FILTER xml %]</tr:total_time>
        <tr:target_pass_rate>[% run.target_pass FILTER xml %]</tr:target_pass_rate>
@@ -39,15 +48,11 @@
        <tr:percent_passed>[% run.percent_of_finished(2) FILTER xml %]</tr:percent_passed>
        <tr:percent_failed>[% run.percent_of_finished(3) FILTER xml %]</tr:percent_failed>
        <tr:percent_blocked>[% run.percent_of_finished(6) FILTER xml %]</tr:percent_blocked>
-       <tr:tags>
         [% FOREACH t = run.tags %]
-           <tr:tag>[% t.name FILTER xml %]</tr:tag>
+       <tr:tag>[% t.name FILTER xml %]</tr:tag>
         [% END %]
-        </tr:tags>
        <tr:notes><![CDATA[[% run.notes FILTER xml %]]]></tr:notes>
-       <tr:caseruns>
         [% FOREACH caserun = run.caseruns %]
             [% PROCESS testopia/caserun/show.xml.tmpl %]
         [% END %]
-        </tr:caseruns>
     </tr:testrun>\ No newline at end of file

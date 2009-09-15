@@ -21,7 +21,7 @@
 <html>
   <head>
     <title>Test Plan [% plan.id FILTER html %] - [% plan.name FILTER html %]</title>
-    <link href="testopia/css/print.css" rel="stylesheet" type="text/css"/>
+    <link href="extensions/testopia/css/print.css" rel="stylesheet" type="text/css"/>
   </head>
 </html>
 <h1>Test Plan [% plan.id FILTER html %] - [% plan.name FILTER html %]</h1>
@@ -64,7 +64,6 @@
     </td>
   </tr>
 </table>
-[% IF plan.test_runs AND NOT printdoc %]
 <hr>
 <h3>Pass/Fail Rundown By Build</h3>
 <table>
@@ -137,9 +136,32 @@
   [% END %]
   </tr>
 </table>
-[% END %]
-[% IF printdoc %]
+
+
 <hr>
 <h3>Plan Document</h3>
 [% plan.text.plan_text FILTER html_light %]
-[% END %]
+<h3>Test Cases</h3><hr/>
+    [% FOREACH case = plan.test_cases %]
+    <table cellpadding="5" width="100%">
+        <tr>
+            <th colspan="2">Case [% case.id FILTER html %]: [% case.summary FILTER html %]</th>
+        </tr>
+        <tr>
+            <th>Status: [% case.status FILTER html %]</th><th>Priority: [% case.priority FILTER html %]</th>
+        </tr>
+        <tr>
+            <th>Setup</th><th>Breakdown</th>
+        </tr>
+        <tr>
+            <td>[% case.text.setup FILTER none %]</td><td>[% case.text.breakdown FILTER none %]</td>
+        </tr>
+        <tr>
+            <th>Action</th><th>Expected Result</th>
+        </tr>
+        <tr>
+            <td>[% case.text.action FILTER none %]</td><td>[% case.text.effect FILTER none %]</td>
+        </tr>
+    </table>
+    <hr/>
+    [% END %]

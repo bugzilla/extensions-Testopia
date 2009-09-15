@@ -20,10 +20,9 @@
 #
 # Contributor(s): Dawn Endico <endico@mozilla.org>
 #                 Gregary Hendricks <ghendricks@novell.com>
-#                 Vance Baarda <vrb@novell.com> 
+#                 Vance Baarda <vrb@novell.com>
 
-
-# This script reads in xml bug data from standard input and inserts 
+# This script reads in xml bug data from standard input and inserts
 # a new bug into bugzilla. Everything before the beginning <?xml line
 # is removed so you can pipe in email messages.
 
@@ -36,15 +35,15 @@ use strict;
 # $::path declaration in a BEGIN block so that it is executed before
 # the rest of the file is compiled.
 BEGIN {
- $::path = $0;
- $::path =~ m#(.*)/[^/]+#;
- $::path = $1;
- $::path ||= '.';  # $0 is empty at compile time.  This line will
-                   # have no effect on this script at runtime.
+    $::path = $0;
+    $::path =~ m#(.*)/[^/]+#;
+    $::path = $1;
+    $::path ||= '.';    # $0 is empty at compile time.  This line will
+                        # have no effect on this script at runtime.
 }
 
 chdir $::path;
-use lib ($::path, "extensions/testopia/lib");
+use lib ( $::path, "extensions/testopia/lib" );
 
 use Bugzilla;
 use Bugzilla::Util;
@@ -66,63 +65,61 @@ Bugzilla->usage_mode(Bugzilla::Constants::USAGE_MODE_CMDLINE);
 my $debug = 0;
 my $help  = 0;
 my $login = undef;
-my $pass  = undef; 
+my $pass  = undef;
 
-my $result = GetOptions("verbose|debug+" => \$debug,
-                        "help|?"         => \$help,
-                        "login=s"        => \$login,
-                        "pass=s"         => \$pass);
+my $result = GetOptions(
+    "verbose|debug+" => \$debug,
+    "help|?"         => \$help,
+    "login=s"        => \$login,
+    "pass=s"         => \$pass
+);
 
 pod2usage(0) if $help;
 
 use constant DEBUG_LEVEL => 2;
-use constant ERR_LEVEL => 1;
+use constant ERR_LEVEL   => 1;
 
 sub Debug {
     return unless ($debug);
-    my ($message, $level) = (@_);
-    print STDERR "ERR: ". $message ."\n" if ($level == ERR_LEVEL);
-    print STDERR "$message\n" if (($debug == $level) && ($level == DEBUG_LEVEL));
+    my ( $message, $level ) = (@_);
+    print STDERR "ERR: " . $message . "\n" if ( $level == ERR_LEVEL );
+    print STDERR "$message\n" if ( ( $debug == $level ) && ( $level == DEBUG_LEVEL ) );
 }
 
-Debug("Reading xml", DEBUG_LEVEL);
+Debug( "Reading xml", DEBUG_LEVEL );
 
 my $xml;
 my $filename;
-if ( $#ARGV == -1 )
-{
+if ( $#ARGV == -1 ) {
+
     # Read STDIN in slurp mode. VERY dangerous, but we live on the wild side ;-)
-    local($/);
+    local ($/);
     $xml = <>;
 }
-elsif ( $#ARGV == 0 )
-{
+elsif ( $#ARGV == 0 ) {
     $filename = $ARGV[0];
 }
-else
-{
+else {
     pod2usage(0);
 }
 
 # Log in if credentials are provided.
-if (defined $login)
-{
-    Debug("Logging in as '$login'", DEBUG_LEVEL);
+if ( defined $login ) {
+    Debug( "Logging in as '$login'", DEBUG_LEVEL );
 
     # Make sure no user is logged in
     Bugzilla->logout();
-
     my $cgi = Bugzilla->cgi();
-    $cgi->param("Bugzilla_login", $login);
-    $cgi->param("Bugzilla_password", $pass);
+    $cgi->param( "Bugzilla_login",    $login );
+    $cgi->param( "Bugzilla_password", $pass );
 
     Bugzilla->login();
 }
-                        
-Debug("Parsing tree", DEBUG_LEVEL);
+
+Debug( "Parsing tree", DEBUG_LEVEL );
 
 my $testopiaXml = Testopia::Xml->new();
-$testopiaXml->parse($xml,$filename);
+$testopiaXml->parse( $xml, $filename );
 
 exit 0;
 

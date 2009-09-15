@@ -28,6 +28,8 @@ use strict;
 use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Error;
+use Bugzilla::Constants;
+use Bugzilla::User;
 
 use Testopia::Constants;
 use Testopia::Util;
@@ -56,6 +58,7 @@ use constant VALIDATORS => {
     plan_id  => \&_check_plan,
     case_id  => \&_check_case,
     filename => \&_check_filename,
+    submitter_id => \&_check_submitter,
 };
 
 ###############################
@@ -106,6 +109,20 @@ sub _check_filename {
     trick_taint($filename);
     return $filename;    
 
+}
+
+sub _check_submitter{
+    my ($invocant, $tester) = @_;
+    $tester = trim($tester);
+    return unless $tester;
+    if ($tester =~ /^\d+$/){
+        $tester = Bugzilla::User->new($tester);
+        return $tester->id;
+    }
+    else {
+        my $id = login_to_id($tester, THROW_ERROR);
+        return $id;
+    }
 }
 
 ###############################

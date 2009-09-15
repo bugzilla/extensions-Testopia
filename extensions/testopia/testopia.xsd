@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.mozilla.org/projects/testopia/schema" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tr="http://www.mozilla.org/projects/testopia/schema">
+
+    <complexType name="TestCaseType">
+    	<sequence>
+    		<element name="alias" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="summary" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="case_status" type="tr:GenericIDType" maxOccurs="1" minOccurs="1"></element>
+
+    		<element name="priority" type="tr:GenericIDType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="category" type="tr:ProductDepType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="author" type="tr:UserType" maxOccurs="1" minOccurs="1"></element>
+
+    		<element name="default_tester" type="tr:UserType" maxOccurs="1" minOccurs="0"></element>
+    		<element name="creation_date" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="last_changed" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="estimated_time" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="isautomated" type="boolean" maxOccurs="1" minOccurs="0"></element>
+    		<element name="script" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="arguments" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="sortkey" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="requirement" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="run_count" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="tag" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="blocks" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="dependson" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="bugs" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="linked_plans" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="component" type="tr:ComponentType" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="text" type="tr:CaseTextType" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="attachment" type="tr:AttachmentType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+
+
+    <complexType name="TestPlanType">
+    	<sequence>
+    		<element name="name" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="product" type="tr:GenericIDType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="author" type="tr:UserType" maxOccurs="1" minOccurs="0"></element>
+    		<element name="plan_type" type="tr:GenericIDType" maxOccurs="1" minOccurs="0"></element>
+    		<element name="default_product_version" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="creation_date" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="last_changed" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="archived" type="boolean" maxOccurs="1" minOccurs="0"></element>
+    		<element name="document" type="tr:PlanDocType" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="tag" type="string" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</element>
+    		<element name="testcase" type="tr:TestCaseType" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="testrun" type="tr:TestRunType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+            <element name="attachment" type="tr:AttachmentType" maxOccurs="unbounded" minOccurs="0"></element>
+        </sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+    <complexType name="TestRunType">
+    	<sequence>
+    		<element name="summary" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="plan" type="tr:GenericIDType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="plan_text_version" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="product_version" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="build" type="tr:BuildType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="environment" type="tr:ProductDepType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="manager" type="tr:UserType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="start_date" type="dateTime" maxOccurs="1" minOccurs="1"></element>
+    		<element name="stop_date" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="last_changed" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="case_count" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="total_time" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="target_pass_rate" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="target_completion_rate" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="percent_complete" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="percent_passed" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="percent_failed" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="percent_blocked" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="tag" type="string" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="notes" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="testcaserun" type="tr:TestCaseRunType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+    <complexType name="TestCaseRunType">
+    	<sequence>
+    		<element name="iscurrent" type="boolean" maxOccurs="1" minOccurs="1"></element>
+    		<element name="case" type="tr:GenericIDType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="run" type="tr:GenericIDType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="build" type="tr:BuildType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="environment" type="tr:ProductDepType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="status" type="tr:GenericIDType" maxOccurs="1" minOccurs="0"></element>
+    		<element name="assignee" type="tr:UserType" maxOccurs="1" minOccurs="0"></element>
+    		<element name="testedby" type="tr:UserType" maxOccurs="1" minOccurs="0"></element>
+    		<element name="case_text_version" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="priority" type="tr:GenericIDType" maxOccurs="1" minOccurs="1"></element>
+    		<element name="notes" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="running_date" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="close_date" type="dateTime" maxOccurs="1" minOccurs="0"></element>
+    		<element name="completion_time" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="sortkey" type="int" maxOccurs="1" minOccurs="0"></element>
+    		<element name="bugs" type="string" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="AttachmentType">
+    	<sequence>
+    		<element name="submitter" type="tr:UserType" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="description" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="filename" type="string" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="creation_ts" type="dateTime" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="mime_type" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="size" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="contents" type="tr:contentsType" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+    <complexType name="ComponentType">
+    	<sequence>
+    		<element name="name" type="string"></element>
+    		<element name="product" type="tr:GenericIDType"></element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+
+
+
+    <complexType name="UserType">
+    	<sequence>
+    		<element name="login" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="name" type="string" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+    
+
+
+
+
+
+
+
+
+
+
+    <complexType name="GenericIDType">
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+    <element name="testopia" type="tr:TestopiaType"></element>
+    
+    <complexType name="TestopiaType">
+    	<sequence>
+    		<element name="testplan" type="tr:TestPlanType" maxOccurs="unbounded" minOccurs="0"></element>
+    		<element name="testcase" type="tr:TestCaseType" maxOccurs="unbounded" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="version" type="string"></attribute>
+    </complexType>
+
+    <complexType name="PlanDocType">
+    	<sequence>
+    		<element name="author" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="text" type="string" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    	<attribute name="version" type="int"></attribute>
+    </complexType>
+
+    <complexType name="CaseTextType">
+    	<sequence>
+    		<element name="author" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="action" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="expected_result" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="setup" type="string" maxOccurs="1" minOccurs="0"></element>
+    		<element name="breakdown" type="string" maxOccurs="1" minOccurs="0"></element>
+    	</sequence>
+    	<attribute name="version" type="int"></attribute>
+    </complexType>
+
+    <complexType name="contentsType">
+    	<attribute name="encoding" type="string"></attribute>
+    </complexType>
+
+    <complexType name="BuildType">
+    	<sequence>
+    		<element name="name" type="string"></element>
+    		<element name="product" type="tr:GenericIDType"></element>
+    		<element name="milestone" type="string"></element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+
+    <complexType name="ProductDepType">
+    	<sequence>
+    		<element name="name" type="string"></element>
+    		<element name="product" type="tr:GenericIDType"></element>
+    	</sequence>
+    	<attribute name="id" type="int"></attribute>
+    </complexType>
+</schema>

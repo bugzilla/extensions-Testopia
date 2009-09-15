@@ -228,15 +228,18 @@ sub create {
     
     $field_values->{creation_date} = Testopia::Util::get_time_stamp();
     $field_values->{isactive}  = 1;
-
+    
     #We have to handle the plan document text a bit differently since it has its own table.
     my $plan_document = $field_values->{text};
+    my $tags      = $field_values->{tags};
     
     delete $field_values->{text};
+    delete $field_values->{tags};
     
     my $self = $class->SUPER::insert_create_data($field_values);
 
     $self->store_text($self->id, $field_values->{'author_id'}, $plan_document, $field_values->{creation_date});
+    $self->add_tag($tags);
 
     # Add permissions for the plan
     $self->add_tester($self->{'author_id'},15);
