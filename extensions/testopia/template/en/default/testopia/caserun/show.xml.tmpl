@@ -36,7 +36,7 @@
            <tr:login>[% caserun.assignee.login_name FILTER xml %]</tr:login>
            <tr:name>[% caserun.assignee.realname FILTER xml %]</tr:name>
         </tr:assignee>
-        [% IF caserun.testedby %]
+        [% IF caserun.close_date %]
        <tr:testedby id="[% caserun.testedby.id FILTER xml %]">
            <tr:login>[% caserun.testedby.login_name FILTER xml %]</tr:login>
            <tr:name>[% caserun.testedby.realname FILTER xml %]</tr:name>
@@ -48,7 +48,7 @@
        [% IF caserun.running_date %]
        <tr:running_date>[% caserun.running_date.replace(' ','T') FILTER xml %]</tr:running_date>
        [% END %]
-       [% IF caserun.clos_date %]
+       [% IF caserun.close_date %]
        <tr:close_date>[% caserun.close_date.replace(' ','T') FILTER xml %]</tr:close_date>
        [% END %]
        <tr:completion_time>[% caserun.completion_time FILTER xml %]</tr:completion_time>

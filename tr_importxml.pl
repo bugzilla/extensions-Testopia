@@ -46,21 +46,16 @@ chdir $::path;
 use lib ( $::path, "extensions/testopia/lib" );
 
 use Bugzilla;
-use Bugzilla::Util;
-use Bugzilla::Config;
 use Bugzilla::Constants;
-use Bugzilla::Error;
-use Testopia::Util;
-use Testopia::TestRun;
-use Testopia::Environment;
-use Testopia::Xml;
+use Testopia::Importer;
 
 use XML::Twig;
 use Getopt::Long;
 use Pod::Usage;
 
 # Keep the template from spitting out garbage
-Bugzilla->usage_mode(Bugzilla::Constants::USAGE_MODE_CMDLINE);
+Bugzilla->usage_mode(USAGE_MODE_CMDLINE);
+Bugzilla->error_mode(ERROR_MODE_DIE);
 
 my $debug = 0;
 my $help  = 0;
@@ -97,7 +92,7 @@ if ( $#ARGV == -1 ) {
     $xml = <>;
 }
 elsif ( $#ARGV == 0 ) {
-    $filename = $ARGV[0];
+    $xml = $ARGV[0];
 }
 else {
     pod2usage(0);
@@ -118,8 +113,8 @@ if ( defined $login ) {
 
 Debug( "Parsing tree", DEBUG_LEVEL );
 
-my $testopiaXml = Testopia::Xml->new();
-$testopiaXml->parse( $xml, $filename );
+my $testopiaXml = new Testopia::Importer;
+$testopiaXml->parse( $xml );
 
 exit 0;
 

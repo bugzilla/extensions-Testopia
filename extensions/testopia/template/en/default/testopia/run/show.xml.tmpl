@@ -17,7 +17,7 @@
   #
   # Contributor(s): Greg Hendricks <ghendricks@novell.com>
   #%]
-   <tr:testrun>
+   <tr:testrun id="[% run.id FILTER xml %]">
        <tr:summary>[% run.summary FILTER xml %]</tr:summary>
        <tr:plan id="[% run.plan_id FILTER xml %]">[% run.plan.name FILTER xml %]</tr:plan>
        <tr:plan_text_version>[% run.plan_text_version FILTER xml %]</tr:plan_text_version>

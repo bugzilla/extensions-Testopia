@@ -34,7 +34,7 @@ use Testopia::Constants;
 use Testopia::TestPlan;
 use Testopia::TestCase;
 use Testopia::Category;
-use Testopia::Xml;
+use Testopia::Importer;
 
 use XML::Twig;
 use Text::CSV;
@@ -98,8 +98,8 @@ if ($action eq 'upload') {
         # Limit to 1 MB. Anything larger will take way too long to parse.
         ThrowUserError("file_too_large", { filesize => sprintf("%.0f", length($data)/1024) }) if length($data) >  1048576;
          
-        my $testopiaXml = Testopia::Xml->new();
-        my $case_ids = $testopiaXml->parse($data);
+        my $importer = new Testopia::Importer;
+        my $case_ids = $importer->parse($data);
 
         if ($ctype eq 'json'){
             print '{success: true}';

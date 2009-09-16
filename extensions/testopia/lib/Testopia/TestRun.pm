@@ -93,14 +93,17 @@ use constant UPDATE_COLUMNS         => qw(environment_id build_id product_versio
 
 use constant VALIDATORS => {
     plan_id           => \&_check_plan,
-    environment_id    => \&_check_env,
-    build_id          => \&_check_build,
     summary           => \&_check_summary,
     manager_id        => \&_check_manager,
     plan_text_version => \&_check_plan_text_version,
     notes             => \&_check_notes,
     target_pass       => \&_check_target,
     target_completion => \&_check_target,
+};
+
+use constant UPDATE_VALIDATORS => {
+    environment_id    => \&_check_env,
+    build_id          => \&_check_build,
 };
 
 ###############################
@@ -114,19 +117,39 @@ sub _check_plan {
     return $plan_id;
 }
 
-sub _check_env {
-    my ($invocant, $env_id) = @_;
-    trick_taint($env_id);
-    ThrowUserError('testopia-missing-required-field', {'field' => 'environment'}) unless $env_id;
-    Testopia::Util::validate_test_id($env_id, 'environment');
-    return $env_id;
+sub _check_env{
+    my ($invocant, $environment, $product) = @_;
+    $environment = trim($environment);
+    my $environment_id;
+    if (ref $environment){
+        $product = Bugzilla::Product::check_product($environment->{'product'});
+        $environment_id = Testopia::Environment::check_environment($environment->{'environment'}, $product); 
+    }
+    elsif ($environment =~ /^\d+$/){
+        $environment_id = Testopia::Util::validate_selection($environment, 'environment_id', 'test_environments');
+    }
+    else {
+        $environment_id = Testopia::Environment::check_environment($environment, $product);
+    }
+    ThrowUserError('testopia-missing-required-field', {'field' => 'environment'}) unless $environment_id;
+    return $environment_id;
 }
 
-sub _check_build {
-    my ($invocant, $build_id) = @_;
-    trick_taint($build_id);
+sub _check_build{
+    my ($invocant, $build, $product) = @_;
+    $build = trim($build);
+    my $build_id;
+    if (ref $build){
+        $product = Bugzilla::Product::check_product($build->{'product'});
+        $build_id = Testopia::Build::check_build($build->{'build'}, $product); 
+    }
+    elsif ($build =~ /^\d+$/){
+        $build_id = Testopia::Util::validate_selection($build, 'build_id', 'test_builds');
+    }
+    else {
+        $build_id = Testopia::Build::check_build($build, $product);
+    }
     ThrowUserError('testopia-missing-required-field', {'field' => 'build'}) unless $build_id;
-    Testopia::Util::validate_test_id($build_id, 'build');
     return $build_id;
 }
 
@@ -231,8 +254,17 @@ sub run_create_validators {
     my $class  = shift;
     my $params = $class->SUPER::run_create_validators(@_);
     my $plan = Testopia::TestPlan->new($params->{plan_id});
-    
+
     $params->{product_version} = $class->_check_product_version($params->{product_version}, $plan->product);
+    $params->{build_id} = $class->_check_build($params->{build_id}, $plan->product);
+    $params->{environment_id} = $class->_check_env($params->{environment_id}, $plan->product);
+    
+    return $params;
+}
+
+sub run_import_validators {
+    my $class  = shift;
+    my $params = $class->SUPER::run_create_validators(@_);
     
     return $params;
 }
@@ -244,8 +276,11 @@ sub create {
     $class->SUPER::check_required_create_fields($params);
     my $field_values = $class->run_create_validators($params);
     my $timestamp = Testopia::Util::get_time_stamp();
-    $field_values->{start_date} = $timestamp; 
-    $field_values->{stop_date} = Testopia::Util::get_time_stamp() if $field_values->{status} == 0;  
+    $field_values->{start_date} ||= $timestamp;
+    unless ($field_values->{stop_date}){
+        $field_values->{stop_date} = $timestamp if $field_values->{status} == 0;
+    } 
+      
     delete $field_values->{status};
     
     my $self = $class->SUPER::insert_create_data($field_values);

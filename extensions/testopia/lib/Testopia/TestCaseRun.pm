@@ -86,16 +86,19 @@ use constant DB_COLUMNS => qw(
 );
 
 use constant REQUIRED_CREATE_FIELDS => qw(case_id run_id build_id environment_id case_run_status_id);
-use constant UPDATE_COLUMNS         => qw(case_run_status_id case_text_version notes sortkey priority_id);
+use constant UPDATE_COLUMNS         => qw(case_run_status_id case_text_version notes sortkey priority_id assignee);
 
 use constant VALIDATORS => {
     case_id            => \&_check_case_id,
-    build_id           => \&_check_build_id,
     run_id             => \&_check_run_id,
-    environment_id     => \&_check_env_id,
     case_text_version  => \&_check_case_text_version,
     case_run_status_id => \&_check_case_run_status_id,
     priority_id        => \&Testopia::TestCase::_check_priority,
+};
+
+use constant UPDATE_VALIDATORS => {
+    build_id           => \&Testopia::TestRun::_check_build,
+    environment_id     => \&Testopia::TestRun::_check_env,    
 };
 
 sub report_columns {
@@ -132,16 +135,6 @@ sub _check_case_id {
 sub _check_run_id {
     my ($invocant, $id) = @_;
     return Testopia::Util::validate_test_id($id, 'run');
-}
-
-sub _check_build_id {
-    my ($invocant, $id) = @_;
-    return Testopia::Util::validate_test_id($id, 'build');
-}
-
-sub _check_env_id {
-    my ($invocant, $id) = @_;
-    return Testopia::Util::validate_test_id($id, 'environment');
 }
 
 sub _check_case_run_status_id {
@@ -217,6 +210,26 @@ sub new {
     return $self; 
 }
 
+sub run_create_validators {
+    my $class  = shift;
+    my $params = $class->SUPER::run_create_validators(@_);
+    my $run = Testopia::TestRun->new($params->{run_id});
+
+    $params->{build_id} = Testopia::TestRun::->_check_build($params->{build_id}, $run->plan->product);
+    $params->{environment_id} = Testopia::TestRun::->_check_env($params->{environment_id}, $run->plan->product);
+    $params->{assignee} = $class->_check_assignee($params->{assignee});
+    $params->{testedby} = $class->_check_assignee($params->{testedby});
+    
+    return $params;
+}
+
+sub run_import_validators {
+    my $class  = shift;
+    my $params = $class->SUPER::run_create_validators(@_);
+    
+    return $params;
+}
+
 sub create {
     my ($class, $params) = @_;
     
@@ -230,7 +243,7 @@ sub create {
     }
     
     $field_values->{case_text_version} ||= $case->version;
-    $field_values->{iscurrent} = 1;
+    $field_values->{iscurrent} ||= 1;
     
     my $self = $class->SUPER::insert_create_data($field_values);
     
