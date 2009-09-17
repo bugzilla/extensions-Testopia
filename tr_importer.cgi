@@ -99,7 +99,7 @@ if ($action eq 'upload') {
         ThrowUserError("file_too_large", { filesize => sprintf("%.0f", length($data)/1024) }) if length($data) >  1048576;
          
         my $importer = new Testopia::Importer;
-        my $case_ids = $importer->parse($data);
+        my $case_ids = $importer->parse($data,$cgi->param('product_id'),$cgi->param('plan_id'));
 
         if ($ctype eq 'json'){
             print '{success: true}';

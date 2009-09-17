@@ -61,12 +61,16 @@ my $debug = 0;
 my $help  = 0;
 my $login = undef;
 my $pass  = undef;
+my $product;
+my $plans;
 
 my $result = GetOptions(
     "verbose|debug+" => \$debug,
     "help|?"         => \$help,
     "login=s"        => \$login,
-    "pass=s"         => \$pass
+    "pass=s"         => \$pass,
+    "product=s"      => \$product,
+    "plans=s"        => \$plans, 
 );
 
 pod2usage(0) if $help;
@@ -114,7 +118,8 @@ if ( defined $login ) {
 Debug( "Parsing tree", DEBUG_LEVEL );
 
 my $testopiaXml = new Testopia::Importer;
-$testopiaXml->parse( $xml );
+$testopiaXml->debug($debug);
+$testopiaXml->parse( $xml, $product, $plans );
 
 exit 0;
 
@@ -134,6 +139,8 @@ tr_importxml - Import Testopia data from xml.
                         Multiple -v options increase verbosity.
        --login          Login ID (email address)
        --pass           Password
+       --product        Name of product to import plans into. (Overrides product value in XML)
+       --plans          Comma separated list of plan numbers to import cases into. (Overrides values in XML)
                         
        With no file read standard input.
 

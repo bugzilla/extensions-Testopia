@@ -42,10 +42,6 @@ my $template = Bugzilla->template;
 
 Bugzilla->login(LOGIN_REQUIRED);
 
-my $format = $template->get_format("testopia/caserun/list", scalar $cgi->param('format'), scalar $cgi->param('ctype'));
-
-print $cgi->header;
-
 # prevent DOS attacks from multiple refreshes of large data
 $::SIG{TERM} = 'DEFAULT';
 $::SIG{PIPE} = 'DEFAULT';
@@ -53,6 +49,7 @@ $::SIG{PIPE} = 'DEFAULT';
 my $action = $cgi->param('action') || '';
 
 if ($action eq 'update'){
+    print $cgi->header;
     Bugzilla->error_mode(ERROR_MODE_AJAX);
     my @caseruns;
     my @uneditable;
@@ -109,6 +106,7 @@ if ($action eq 'update'){
 }
 
 elsif ($action eq 'delete'){
+    print $cgi->header;
     Bugzilla->error_mode(ERROR_MODE_AJAX);
     my @case_ids;
     if ($cgi->param('ids')){
@@ -133,6 +131,8 @@ elsif ($action eq 'delete'){
 }
 
 else {
+    my $format = $template->get_format("testopia/caserun/list", scalar $cgi->param('format'), scalar $cgi->param('ctype'));
+    
     $vars->{'qname'} = $cgi->param('qname') if $cgi->param('qname');
     
     # Take the search from the URL params and convert it to SQL
@@ -140,9 +140,22 @@ else {
     $cgi->param('distinct', '1');
     my $search = Testopia::Search->new($cgi);
     my $table = Testopia::Table->new('case_run', 'tr_list_caseruns.cgi', $cgi, undef, $search->query);
-    
-    print $cgi->header;
+    my $disp = "inline";
+    # We set CSV files to be downloaded, as they are designed for importing
+    # into other programs.
+    if ( $format->{'extension'} =~ /(csv|xml)/ ){
+        $disp = "attachment";
+        $vars->{'displaycolumns'} = Testopia::TestCaseRun->fields;
+    }
+    my @time = localtime(time());
+    my $date = sprintf "%04d-%02d-%02d", 1900+$time[5],$time[4]+1,$time[3];
+    my $filename = "testresults-$date.$format->{extension}";
+    print $cgi->header(-type => $format->{'ctype'},
+                   -content_disposition => "$disp; filename=$filename");
+
     $vars->{'json'} = $table->to_ext_json;
+    $vars->{'table'} = $table;
+
     $template->process($format->{'template'}, $vars)
         || ThrowTemplateError($template->error());
 }

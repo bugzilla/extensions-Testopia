@@ -106,6 +106,22 @@ Ext.onReady(function(){
             handler: function(){
                 window.location = 'tr_new_environment.cgi?product_id=' + Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id;
             }
+        },{
+            text: 'Import',
+            menu: [{
+                text: 'Test Plans from XML',
+                handler: function(){
+                    Testopia.TestPlan.Import({product_id: Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id});             
+                }
+            }]
+        },{
+            text: 'Export',
+            menu: [{
+                text: 'Test Plans as XML',
+                handler: function(){
+                    window.location = 'tr_list_plans.cgi?ctype=xml&product_id=' + Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id;             
+                }
+            }]
         }]
     });
     var search_menu = new Ext.menu.Menu({

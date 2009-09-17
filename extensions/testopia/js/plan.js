@@ -115,7 +115,7 @@ Testopia.TestPlan.TypesCombo = function(cfg){
 };
 Ext.extend(Testopia.TestPlan.TypesCombo, Ext.form.ComboBox);
 
-Testopia.TestPlan.Import = function(plan_id){
+Testopia.TestPlan.Import = function(params){
     var win = new Ext.Window({
         id: 'plan_import_win',
         closable: true,
@@ -132,14 +132,15 @@ Testopia.TestPlan.Import = function(plan_id){
             baseParams: {
                 action: 'upload',
                 ctype: 'json',
-                plan_id: plan_id
+                plan_id: params.plan_id,
+                product_id: params.product_id
             },
             fileUpload: true,
             items: [{
                 height: 50,
                 style: "padding: 5px",
                 border: false,
-                html: 'Accepts CSV and XML files under 1 MB in size. <br> See <a href="extensions/testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="testopia.dtd" target="_blank">testopia.dtd</a> for proper format.'
+                html: params.product_id ? PRODUCT_PLAN_IMPORT : PLAN_CASES_IMPORT
             }, {
                 xtype: 'field',
                 fieldLabel: 'Upload File',
@@ -153,8 +154,14 @@ Testopia.TestPlan.Import = function(plan_id){
                 handler: function(){
                     Ext.getCmp('importform').getForm().submit({
                         success: function(){
-                            Ext.getCmp('object_panel').activate('plan_case_grid');
-                            Ext.getCmp('plan_case_grid').store.load();
+                            if (params.product_id) {
+                                Ext.getCmp('object_panel').activate('product_plan_grid');
+                                Ext.getCmp('product_plan_grid').store.load();
+                            }
+                            else {
+                                Ext.getCmp('object_panel').activate('plan_case_grid');
+                                Ext.getCmp('plan_case_grid').store.load();
+                            }
                             Ext.getCmp('plan_import_win').close();
                         },
                         failure: Testopia.Util.error

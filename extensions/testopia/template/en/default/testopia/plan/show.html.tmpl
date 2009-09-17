@@ -121,12 +121,12 @@
             },{
                 text: 'Export',
                 menu: [{
-                    text: 'CSV',
+                    text: 'Cases as CSV',
                     handler: function(){
                         window.location='tr_show_plan.cgi?&plan_id=[% plan.id FILTER none %]&export=testcases&ctype=csv&viewall=1';
                     }
                 },{
-                    text: 'XML',
+                    text: 'Plan as XML',
                     handler: function(){
                         window.location='tr_show_plan.cgi?&plan_id=[% plan.id FILTER none %]&export=testcases&ctype=xml&viewall=1';             
                     }
@@ -136,7 +136,9 @@
                 menu:[{
                     text: 'Cases',
                     handler: function(){
-                        Testopia.TestPlan.Import(plan.plan_id);
+                        Testopia.TestPlan.Import({
+                            plan_id: plan.plan_id
+                        });
                     }
                 }]
             },{

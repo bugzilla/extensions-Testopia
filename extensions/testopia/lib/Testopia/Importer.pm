@@ -24,12 +24,13 @@ package Testopia::Importer;
 
 use strict;
 
-use Class::Struct;
-use Data::Dumper;
 use Testopia::Attachment;
 use Testopia::TestPlan;
 use Testopia::TestCase;
 use Testopia::Category;
+
+use Class::Struct;
+use Data::Dumper;
 use MIME::Base64;
 use XML::Validator::Schema;
 
@@ -39,12 +40,13 @@ local our @cases;
 local our @plans;
 local our @runs;
 local our $xref = { 'cases' => {}, 'plans' => {}, 'runs' => {} };
+local our $debug = 0;
 
-struct( 'Testopia::Importer', {} );
+struct( 'Testopia::Importer', {debug => '$'} );
 
 sub _check_category {
     my ( $twig, $e ) = @_;
-    print "Checking categories...\n";
+    print "Checking categories...\n" if $debug;
     my $product = Bugzilla::Product::check_product( $e->field('tr:product') );
     if ( !Testopia::Category::check_case_category( $e->field('tr:name'), $product ) ) {
         Testopia::Category->create(
@@ -59,7 +61,7 @@ sub _check_category {
 
 sub _check_build {
     my ( $twig, $e ) = @_;
-    print "Checking builds...\n";
+    print "Checking builds...\n" if $debug;
     my $product = Bugzilla::Product::check_product( $e->field('tr:product') );
     if ( !Testopia::Build::check_build( $e->field('tr:name'), $product ) ) {
         Testopia::Build->create(
@@ -74,7 +76,7 @@ sub _check_build {
 
 sub _check_environment {
     my ( $twig, $e ) = @_;
-    print "Checking environments...\n";
+    print "Checking environments...\n" if $debug;
     my $product = Bugzilla::Product::check_product( $e->field('tr:product') );
     if ( !Testopia::Environment::check_environment( $e->field('tr:name'), $product ) ) {
         Testopia::Environment->create(
@@ -89,7 +91,7 @@ sub _check_environment {
 
 sub _check_milestone {
     my ( $twig, $e ) = @_;
-    print "Checking milestones...\n";
+    print "Checking milestones...\n" if $debug;
     my $product = Bugzilla::Product::check_product( $e->parent->field('tr:product') );
     Bugzilla::Milestone->check( { product => $product, name => $e->parent->field('tr:milestone') } );
     return 1;
@@ -258,6 +260,7 @@ sub process_plan {
 
 sub parse {
     my ( $self, $xml, $product, $plans ) = @_;
+    $debug = $self->debug;
     my $validator = XML::Validator::Schema->new( file => 'extensions/testopia/testopia.xsd' );
     my $parser = XML::SAX::ParserFactory->parser( Handler => $validator );
 
@@ -395,7 +398,7 @@ sub parse {
         $params->{xid} = $run->id;
     }
 
-    print Data::Dumper::Dumper($xref);
+    print Data::Dumper::Dumper($xref) if $debug;
     my @newcases = values %{$xref->{cases}}; 
     return \@newcases;
 

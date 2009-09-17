@@ -362,6 +362,31 @@ sub TO_JSON {
     return $json->encode($obj); 
 }
 
+sub fields {
+    my $self = shift;
+    my @fields = qw(
+        case_id
+        case_summary
+        run_id
+        build_id
+        environment_id
+        status_id
+        assignee
+        testedby
+        components
+        tags
+        case_text_version
+        priority_id
+        running_date
+        close_date
+        most_current
+        sortkey
+        bugs
+        notes
+    );
+    return \@fields;
+}
+
 =head2 _update_fields
 
 Update this case-run in the database if a change is made to an 
