@@ -121,6 +121,11 @@
             },{
                 text: 'Export',
                 menu: [{
+                    text: 'Test Results as CSV',
+                    handler: function(){
+                        window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&plan_id=[% plan.id FILTER none %]';
+                    }
+                },{
                     text: 'Cases as CSV',
                     handler: function(){
                         window.location='tr_show_plan.cgi?&plan_id=[% plan.id FILTER none %]&export=testcases&ctype=csv&viewall=1';
@@ -515,6 +520,7 @@
                 }
             });
         });
+        Ext.get('plan_overview').show();
     });
 </script>
 
@@ -522,7 +528,7 @@
 
 <div id="plan-body-div" class="x-display-hidden"></div>
 
-<div id="plan_overview">
+<div id="plan_overview" style="visibility: hidden">
 
 <table border="0" cellpadding="3" cellspacing="3" width="100%" id="plan_overview_table">
   <tbody align="left">

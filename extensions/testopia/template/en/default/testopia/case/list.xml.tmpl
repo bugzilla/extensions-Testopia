@@ -21,9 +21,10 @@
 [%# Testopia Show Test Case XML export template #%]
 
 [% PROCESS testopia/export/xml.header.tmpl -%]
+[% SET header_done = 1 %]
 
 [% FOREACH test_case = table.list %]
-    [%+ PROCESS testopia/export/xml.case.tmpl case=test_case %]
+    [%+ PROCESS testopia/case/show.xml.tmpl case=test_case %]
 [% END %]
 
 [%- PROCESS testopia/export/xml.footer.tmpl %]

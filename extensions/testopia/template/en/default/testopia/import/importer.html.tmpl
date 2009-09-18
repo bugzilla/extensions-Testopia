@@ -29,6 +29,9 @@
 [% IF cases %]
 Test cases created. <a href="tr_list_cases.cgi?case_id=[% cases FILTER none %]">LIST</a>
 [% END %]
+For XML import, Please refer to <a href="extensions/testopia/testopia.xsd">testopia.xsd</a><br/>
+For CSV import, Please refer to <a href="extensions/testopia/import_example.csv">import_example.csv</a><br/>
+
 <form enctype="multipart/form-data" action="tr_importer.cgi" method="post">
     <input type="hidden" name="action" value="upload" />
     <input type="hidden" name="token" value="[% token FILTER none %]" />

@@ -33,6 +33,8 @@ PLAN_DELETE_WARNING = 'You are about to delete the selected test plans including
 RUN_DELETE_WARNING = 'You are about to delete the selected test runs including all children and history. This action cannot be undone. Are you sure you want to continue?';
 CASERUN_DELETE_WARNING = 'You are about to remove the selected test cases from this run including all history. This action cannot be undone. Are you sure you want to continue?';
 ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environment including associated test case data. This action cannot be undone. Are you sure you want to continue?';
+PRODUCT_PLAN_IMPORT = 'Accepts XML files under 2 MB in size. <br> See <a href="extensions/testopia/testopia.xsd" target="_blank">testopia.xsd</a> for proper format.';
+PLAN_CASES_IMPORT = 'Accepts CSV and XML files under 2 MB in size. <br> See <a href="extensions/testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="extensions/testopia/testopia.xsd" target="_blank">testopia.xsd</a> for proper format.';
 /*
  * END OF FILE - /bnc/extensions/testopia/js/strings.js
  */
@@ -90,6 +92,8 @@ Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
 Ext.data.Connection.timeout = 120000;
 Ext.Updater.defaults.timeout = 120000;
 Ext.Ajax.timeout = 120000;
+
+Ext.BLANK_IMAGE_URL = 'extensions/testopia/extjs/resources/images/default/s.gif'; 
 
 // Customized handler for the search field in the paging toolbar.
 // From JeffHowden at http://extjs.com/forum/showthread.php?t=17532
@@ -804,7 +808,7 @@ Testopia.Util.error = function(f, a){
             msg: a.response.responseText,
             buttons: Ext.Msg.OK,
             icon: Ext.MessageBox.ERROR,
-            minWidth: 400
+            minWidth: 450
         };
     }
     else {
@@ -813,7 +817,10 @@ Testopia.Util.error = function(f, a){
             msg: a.result.message,
             buttons: Ext.Msg.OK,
             icon: Ext.MessageBox.ERROR,
-            minWidth: 400
+            prompt: true,
+            value: a.result.message,
+            multiline: true,
+            minWidth: 450
         };
     }
     Ext.Msg.show(message);
@@ -996,6 +1003,23 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
     });
 }
 Ext.extend(Testopia.Util.PlanSelector, Ext.Panel);
+
+Testopia.Util.DisableTools = function(tbar, ex){
+    if (typeof ex != 'object'){
+        ex = [];
+    }
+    for (var i in tbar.items.items) {
+        if (ex.indexOf(tbar.items.items[i].id) != -1) {
+            continue;
+        }
+        try {
+            tbar.items.items[i].disable();
+        }
+        catch (e) {
+            
+        }
+    }
+}
 
 /*
  * END OF FILE - /bnc/extensions/testopia/js/util.js
@@ -1572,7 +1596,7 @@ Testopia.TestPlan.TypesCombo = function(cfg){
 };
 Ext.extend(Testopia.TestPlan.TypesCombo, Ext.form.ComboBox);
 
-Testopia.TestPlan.Import = function(plan_id){
+Testopia.TestPlan.Import = function(params){
     var win = new Ext.Window({
         id: 'plan_import_win',
         closable: true,
@@ -1589,14 +1613,15 @@ Testopia.TestPlan.Import = function(plan_id){
             baseParams: {
                 action: 'upload',
                 ctype: 'json',
-                plan_id: plan_id
+                plan_id: params.plan_id,
+                product_id: params.product_id
             },
             fileUpload: true,
             items: [{
                 height: 50,
                 style: "padding: 5px",
                 border: false,
-                html: 'Accepts CSV and XML files under 1 MB in size. <br> See <a href="extensions/testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="testopia.dtd" target="_blank">testopia.dtd</a> for proper format.'
+                html: params.product_id ? PRODUCT_PLAN_IMPORT : PLAN_CASES_IMPORT
             }, {
                 xtype: 'field',
                 fieldLabel: 'Upload File',
@@ -1610,8 +1635,14 @@ Testopia.TestPlan.Import = function(plan_id){
                 handler: function(){
                     Ext.getCmp('importform').getForm().submit({
                         success: function(){
-                            Ext.getCmp('object_panel').activate('plan_case_grid');
-                            Ext.getCmp('plan_case_grid').store.load();
+                            if (params.product_id) {
+                                Ext.getCmp('object_panel').activate('product_plan_grid');
+                                Ext.getCmp('product_plan_grid').store.load();
+                            }
+                            else {
+                                Ext.getCmp('object_panel').activate('plan_case_grid');
+                                Ext.getCmp('plan_case_grid').store.load();
+                            }
                             Ext.getCmp('plan_import_win').close();
                         },
                         failure: Testopia.Util.error
@@ -2050,6 +2081,24 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                             window.open('tr_show_plan.cgi?plan_id=' + plan_ids[i]);
                         }
                     }
+                },{
+                    text: 'Export',
+                    menu: [{
+                        text: 'Test Results as CSV',
+                        handler: function(){
+                            window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');
+                        }
+                    },{
+                        text: 'Cases as CSV',
+                        handler: function(){
+                            window.location='tr_list_cases.cgi?ctype=csv&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');
+                        }
+                    },{
+                        text: 'Plans as XML',
+                        handler: function(){
+                            window.location='tr_list_plans.cgi?ctype=xml&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');             
+                        }
+                    }]
                 }]
             });
         }
@@ -3052,7 +3101,26 @@ Testopia.TestCase.Grid = function(params, cfg){
         viewConfig: {
             forceFit: true
         },
-        tbar: [new Ext.Toolbar.Fill(), {
+        tbar: [new Ext.Toolbar.Fill(), 
+        {
+            xtype: 'button',
+            id: 'case_grid_tocsv',
+            icon: 'extensions/testopia/img/csv.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Export Test Cases to CSV',
+            handler: function(){
+                window.location = 'tr_list_cases.cgi?ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
+            }
+        },{
+            xtype: 'button',
+            id: 'case_grid_toxml',
+            icon: 'extensions/testopia/img/xml.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Export Test Cases to XML',
+            handler: function(){
+                window.location = 'tr_list_cases.cgi?ctype=xml&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
+            }
+        },{
             xtype: 'button',
             id: 'save_case_list_btn',
             icon: 'extensions/testopia/img/save.png',
@@ -4621,7 +4689,17 @@ Testopia.TestCaseRun.List = function(params, cfg){
             return 'x-grid3-row-expanded';
         }
     });
-    this.tbar = [new Ext.Toolbar.Fill(), {
+    this.tbar = [new Ext.Toolbar.Fill(), 
+    {
+        xtype: 'button',
+        id: 'caserun_grid_tocsv',
+        icon: 'extensions/testopia/img/csv.png',
+        iconCls: 'img_button_16x',
+        tooltip: 'Export Results to CSV',
+        handler: function(){
+            window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery( Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams, '', ['viewall', 'ctype']);
+        }
+    },{
         xtype: 'button',
         id: 'save_caserun_list_btn',
         icon: 'extensions/testopia/img/save.png',
@@ -5100,7 +5178,17 @@ Testopia.TestCaseRun.Grid = function(params, run){
         }, ' ', '-', 'Update Bugs: ', new Ext.form.Checkbox({
             id: 'update_bugs',
             disabled: true
-        }), ' ', '-', ' ', buildCombo, ' ', envCombo, new Ext.Toolbar.Fill(), {
+        }), ' ', '-', ' ', buildCombo, ' ', envCombo, new Ext.Toolbar.Fill(), 
+        {
+            xtype: 'button',
+            id: 'caserun_grid_tocsv',
+            icon: 'extensions/testopia/img/csv.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Export Results to CSV',
+            handler: function(){
+                window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&run_id=' + run.run_id;
+            }
+        }, {
             xtype: 'button',
             id: 'add_case_to_run_btn',
             tooltip: "Add cases to this run",
@@ -5663,7 +5751,7 @@ Testopia.TestCaseRun.Info = function(){
         Ext.getCmp('effect_editor').setValue(r[0].get('results'));
         Ext.getCmp('setup_editor').setValue(r[0].get('setup'));
         Ext.getCmp('breakdown_editor').setValue(r[0].get('breakdown'));
-        Ext.getCmp('summary_tb').items.items[7].td.innerHTML = '<span class="ytb-text">' + 'Case ' + r[0].get('case_id') + ' - ' + r[0].get('summary');
+        Ext.getCmp('caserun_tb_summary').setText('Case ' + r[0].get('case_id') + ' - ' + r[0].get('summary'));
     });
     
     appendNote = function(){
@@ -5805,7 +5893,7 @@ Testopia.TestCaseRun.Info = function(){
                     ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
-        }), new Ext.Toolbar.TextItem('')]
+        }), new Ext.Toolbar.TextItem({text:'', id:'caserun_tb_summary'})]
     });
     Testopia.TestCaseRun.Info.superclass.constructor.call(this, {
         id: 'case_details_panel',
@@ -7280,6 +7368,11 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.EditorGridPanel, {
                     text: 'View Run\'s Test Cases in a New Window',
                     handler: function(){
                         window.open('tr_list_cases.cgi?run_id=' + grid.store.getAt(grid.selindex).get('run_id'));
+                    }
+                },{
+                    text: 'Export Results as CSV',
+                    handler: function(){
+                        window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&run_id=' + Testopia.Util.getSelectedObjects(grid, 'run_id');
                     }
                 }]
             });

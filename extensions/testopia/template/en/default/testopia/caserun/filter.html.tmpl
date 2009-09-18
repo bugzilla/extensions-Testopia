@@ -17,7 +17,7 @@
   #
   # Contributor(s): Greg Hendricks <ghendricks@novell.com>
   #%]
-<div id="caserun-filter-div">
+<div id="caserun-filter-div" style="visibility:hidden">
 <form method="GET" action="tr_list_caseruns.cgi" id="caserun_filter_form">
 <input type="hidden" name="run_id" value="[% run.id FILTER none %]" />
 <input type="hidden" name="current_tab" value="case_run" />
@@ -27,6 +27,7 @@
     <th>Status</th>
     <th>Category</th>
     <th>Build</th>
+    <th>Environment</th>
     <th>Priority</th>
     <th>Component</th>
     <th>Automatic</th>
@@ -57,12 +58,6 @@
           </td>
         </tr>
         <tr>
-          <th align="right">Environment</th>
-          <td><input type="hidden" name="environment_name_type" value="substring" />
-              <input name="environment_name">
-          </td>
-        </tr>
-        <tr>
           <th align="right">Case Tags</th>
           <td><input type="hidden" name="tags_type" value="anyexact" />
               <input id="tags" name="tags"
@@ -81,7 +76,7 @@
       [% PROCESS select sel = { name => "case_run_status",
                                 byname => 1,    
                                 list => caserun.get_status_list,
-                                elements => 6,
+                                elements => 5,
                                 mult => 1, }
       %]
     </td>
@@ -89,7 +84,7 @@
       [% PROCESS select sel = { name => "category", 
                                 list => run.filter_case_categories,
                                 byname => 1,
-                                elements => 6,
+                                elements => 5,
                                 mult => 1, }
       
       %]
@@ -98,14 +93,22 @@
       [% PROCESS select sel = { name => "build", 
                                 list => run.filter_builds,
                                 byname => 1,
-                                elements => 6,
+                                elements => 5,
+                                mult => 1, }
+      %]
+    </td>
+    <td valign="top">
+      [% PROCESS select sel = { name => "environment", 
+                                list => run.filter_environments,
+                                byname => 1,
+                                elements => 5,
                                 mult => 1, }
       %]
     </td>
     <td valign="top">
       [% PROCESS select sel = { name => "priority_id", 
                                 list => case.get_priority_list,
-                                elements => 6,
+                                elements => 5,
                                 mult => 1, }
       %]
     </td>
@@ -113,7 +116,7 @@
       [% PROCESS select sel = { name => "component", 
                                 list => run.filter_components,
                                 byname => 1,
-                                elements => 6,
+                                elements => 5,
                                 mult => 1, }
       %]
     </td>

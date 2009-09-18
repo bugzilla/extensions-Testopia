@@ -743,6 +743,25 @@ sub filter_case_categories {
     return \@categories;
 }
 
+sub filter_environments {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    
+    my $ids = $dbh->selectcol_arrayref(
+            "SELECT DISTINCT test_case_runs.environment_id, test_environments.name
+               FROM test_case_runs
+               INNER JOIN test_environments on test_environments.environment_id = test_case_runs.environment_id
+              WHERE run_id = ?
+              ORDER BY test_environments.name",
+              undef, $self->id);
+    
+    my @environments;
+    foreach my $id (@$ids){
+        push @environments, Testopia::Environment->new($id);
+    }
+    return \@environments;
+}
+
 sub filter_builds {
     my $self = shift;
     my $dbh = Bugzilla->dbh;

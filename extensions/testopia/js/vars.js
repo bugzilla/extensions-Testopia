@@ -49,6 +49,8 @@ Ext.data.Connection.timeout = 120000;
 Ext.Updater.defaults.timeout = 120000;
 Ext.Ajax.timeout = 120000;
 
+Ext.BLANK_IMAGE_URL = 'extensions/testopia/extjs/resources/images/default/s.gif'; 
+
 // Customized handler for the search field in the paging toolbar.
 // From JeffHowden at http://extjs.com/forum/showthread.php?t=17532
 Ext.override(Ext.form.Field, {

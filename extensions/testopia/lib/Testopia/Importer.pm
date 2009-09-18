@@ -24,6 +24,7 @@ package Testopia::Importer;
 
 use strict;
 
+use Bugzilla::Error;
 use Testopia::Attachment;
 use Testopia::TestPlan;
 use Testopia::TestCase;
@@ -106,8 +107,8 @@ sub process_caserun {
     $params->{build_id}           = $e->first_child('tr:build')->field('tr:name');
     $params->{environment_id}     = $e->first_child('tr:environment')->field('tr:name');
     $params->{case_run_status_id} = $e->field('tr:status');
-    $params->{assignee}           = $e->first_child('tr:assignee')->field('tr:login');
-    $params->{testedby}           = $e->first_child('tr:testedby')->field('tr:login');
+    $params->{assignee}           = $e->first_child('tr:assignee')->field('tr:login') if $e->first_child('tr:assignee');
+    $params->{testedby}           = $e->first_child('tr:testedby')->field('tr:login') if $e->first_child('tr:testedby');
     $params->{case_text_version}  = $e->field('tr:case_text_version');
     $params->{priority_id}        = $e->field('tr:priority');
     $params->{notes}              = $e->field('tr:notes');
@@ -184,7 +185,7 @@ sub process_case {
     $params->{'bugs'}              = $e->field('tr:bugs');
     $params->{'plans'}             = \@plans;
     $params->{'components'}        = \@comps;
-    $params->{'default_tester_id'} = $e->first_child('tr:default_tester')->field('tr:login');
+    $params->{'default_tester_id'} = $e->first_child('tr:default_tester')->field('tr:login') if $e->first_child('tr:default_tester');
 
     $params->{'attachments'} = \@att;
     $params->{'xid'}         = $e->{'att'}->{'id'};
@@ -281,12 +282,24 @@ sub parse {
 
     # Check if we have a file
     if ( -e $xml ) {
-        $parser->parse_file($xml);
-        $twig->parsefile($xml);
+        eval{
+            $parser->parse_file($xml);
+            $twig->parsefile($xml);            
+        };
+        if ($@){
+            print STDERR $@;
+            ThrowUserError('import_parse_error', {type => 'XML', msg => $@})
+        }
     }
     elsif ( $xml =~ /^<\?xml/ ) {
-        $parser->parse_string($xml);
-        $twig->parse($xml);
+        eval{
+            $parser->parse_string($xml);
+            $twig->parse($xml);            
+        };
+        if ($@){
+            print STDERR $@;
+            ThrowUserError('import_parse_error', {type => 'XML', msg => $@})
+        }
     }
     else {
         ThrowUserError('invlid-import-source');

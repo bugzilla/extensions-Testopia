@@ -164,33 +164,7 @@ Ext.onReady(function(){
     });
 
     var caseControls = new Ext.Toolbar();
-    caseControls.add({
-        text: 'File',
-        menu: fileMenu
-    },
-    new Ext.Toolbar.Fill(),
-    {
-        xtype: 'button',
-        id: 'plan-copy-button',
-        icon: 'extensions/testopia/img/copy.png',
-        iconCls: 'img_button_16x',
-        tooltip: 'Clone this Test Case',
-        handler: function(){
-            Testopia.TestCase.clonePopup(tcase.product_id, tcase.case_id);
-        }
-    }
-[% IF case.candelete %]
-    ,{
-        xtype: 'button',
-        id: 'plan-delete-btn',
-        icon: 'extensions/testopia/img/delete.png',
-        iconCls: 'img_button_16x',
-        tooltip: 'Delete this Test Case',
-        handler: confirmDelete
-    }
-[% END %]    
-);
-    caseControls.render('case-tb-div');
+    
     var cases = new Ext.grid.GridPanel({
         
     });
@@ -200,6 +174,33 @@ Ext.onReady(function(){
         applyTo: 'case-body-div',
         height: 800,
         footer: true,
+        title: '[% title FILTER js %]',
+        tbar: [{
+                text: 'File',
+                menu: fileMenu
+            },
+            new Ext.Toolbar.Fill(),
+            {
+                xtype: 'button',
+                id: 'plan-copy-button',
+                icon: 'extensions/testopia/img/copy.png',
+                iconCls: 'img_button_16x',
+                tooltip: 'Clone this Test Case',
+                handler: function(){
+                    Testopia.TestCase.clonePopup(tcase.product_id, tcase.case_id);
+                }
+            }
+        [% IF case.candelete %]
+            ,{
+                xtype: 'button',
+                id: 'plan-delete-btn',
+                icon: 'extensions/testopia/img/delete.png',
+                iconCls: 'img_button_16x',
+                tooltip: 'Delete this Test Case',
+                handler: confirmDelete
+            }
+        [% END %]
+        ],
         items:[{
             xtype: 'tabpanel',
             enableTabScroll: true,
@@ -447,10 +448,9 @@ Ext.onReady(function(){
         },{
             xtype: 'panel',
             split: true,
-            title: '[% title FILTER js %]',
             region: 'north',
             contentEl: 'case_overview',
-            height: 250,
+            height: Ext.get('case_overview').getHeight() + 30,
             hideBorders: true
         },{
             xtype: 'tabpanel',
@@ -604,6 +604,7 @@ Ext.onReady(function(){
         submitEdits('category', r.get('value'));
     });
 [% END %]
+Ext.get('case_overview').show();
 });
 </script>
 
@@ -611,8 +612,7 @@ Ext.onReady(function(){
 
 <div id="case-body-div"></div>
 
-<div id="case_overview">
-<div id="case-tb-div"></div>
+<div id="case_overview" style="visibility: hidden">
 <table width="100%">
   <tbody align="left">
     <tr class="bz_row_header">

@@ -535,7 +535,26 @@ Testopia.TestCase.Grid = function(params, cfg){
         viewConfig: {
             forceFit: true
         },
-        tbar: [new Ext.Toolbar.Fill(), {
+        tbar: [new Ext.Toolbar.Fill(), 
+        {
+            xtype: 'button',
+            id: 'case_grid_tocsv',
+            icon: 'extensions/testopia/img/csv.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Export Test Cases to CSV',
+            handler: function(){
+                window.location = 'tr_list_cases.cgi?ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
+            }
+        },{
+            xtype: 'button',
+            id: 'case_grid_toxml',
+            icon: 'extensions/testopia/img/xml.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Export Test Cases to XML',
+            handler: function(){
+                window.location = 'tr_list_cases.cgi?ctype=xml&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
+            }
+        },{
             xtype: 'button',
             id: 'save_case_list_btn',
             icon: 'extensions/testopia/img/save.png',

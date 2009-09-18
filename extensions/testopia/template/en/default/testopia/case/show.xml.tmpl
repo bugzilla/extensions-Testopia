@@ -39,10 +39,12 @@
                 <tr:login>[% case.author.login_name FILTER xml %]</tr:login>
                 <tr:name>[% case.author.realname FILTER xml %]</tr:name>
             </tr:author>
+            [% IF default_tester %]
             <tr:default_tester id="[% case.default_tester_id FILTER xml %]">
                 <tr:login>[% case.default_tester.login_name FILTER xml %]</tr:login>
                 <tr:name>[% case.default_tester.realname FILTER xml %]</tr:name>
             </tr:default_tester>
+            [% END %]
             <tr:creation_date>[% case.creation_date.replace(' ','T') FILTER xml %]</tr:creation_date>
             <tr:last_changed>[% case.last_changed.replace(' ','T') FILTER xml %]</tr:last_changed>
             <tr:estimated_time>[% case.estimated_time FILTER xml %]</tr:estimated_time>
@@ -76,6 +78,6 @@
                 [%+ PROCESS testopia/attachment/show.xml.tmpl %]
             [% END %]
         </tr:testcase>
-[% IF NOT plan %]
+[% IF NOT (plan OR table) %]
     [% PROCESS testopia/export/xml.footer.tmpl %]
 [% END %]

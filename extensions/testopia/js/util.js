@@ -643,7 +643,7 @@ Testopia.Util.error = function(f, a){
             msg: a.response.responseText,
             buttons: Ext.Msg.OK,
             icon: Ext.MessageBox.ERROR,
-            minWidth: 400
+            minWidth: 450
         };
     }
     else {
@@ -652,7 +652,10 @@ Testopia.Util.error = function(f, a){
             msg: a.result.message,
             buttons: Ext.Msg.OK,
             icon: Ext.MessageBox.ERROR,
-            minWidth: 400
+            prompt: true,
+            value: a.result.message,
+            multiline: true,
+            minWidth: 450
         };
     }
     Ext.Msg.show(message);
@@ -835,3 +838,20 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
     });
 }
 Ext.extend(Testopia.Util.PlanSelector, Ext.Panel);
+
+Testopia.Util.DisableTools = function(tbar, ex){
+    if (typeof ex != 'object'){
+        ex = [];
+    }
+    for (var i in tbar.items.items) {
+        if (ex.indexOf(tbar.items.items[i].id) != -1) {
+            continue;
+        }
+        try {
+            tbar.items.items[i].disable();
+        }
+        catch (e) {
+            
+        }
+    }
+}

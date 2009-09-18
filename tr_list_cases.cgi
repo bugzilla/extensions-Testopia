@@ -304,7 +304,7 @@ else{
     $cgi->param('distinct', '1');
     my $search = Testopia::Search->new($cgi);
     my $table = Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi, undef, $search->query);
-    
+    $vars->{'table'} = $table;
     if ($cgi->param('ctype') eq 'json'){
         Bugzilla->error_mode(ERROR_MODE_AJAX);
         print $cgi->header;

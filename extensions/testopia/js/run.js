@@ -642,6 +642,11 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.EditorGridPanel, {
                     handler: function(){
                         window.open('tr_list_cases.cgi?run_id=' + grid.store.getAt(grid.selindex).get('run_id'));
                     }
+                },{
+                    text: 'Export Results as CSV',
+                    handler: function(){
+                        window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&run_id=' + Testopia.Util.getSelectedObjects(grid, 'run_id');
+                    }
                 }]
             });
         }

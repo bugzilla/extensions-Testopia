@@ -354,7 +354,17 @@ Testopia.TestCaseRun.List = function(params, cfg){
             return 'x-grid3-row-expanded';
         }
     });
-    this.tbar = [new Ext.Toolbar.Fill(), {
+    this.tbar = [new Ext.Toolbar.Fill(), 
+    {
+        xtype: 'button',
+        id: 'caserun_grid_tocsv',
+        icon: 'extensions/testopia/img/csv.png',
+        iconCls: 'img_button_16x',
+        tooltip: 'Export Results to CSV',
+        handler: function(){
+            window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery( Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams, '', ['viewall', 'ctype']);
+        }
+    },{
         xtype: 'button',
         id: 'save_caserun_list_btn',
         icon: 'extensions/testopia/img/save.png',
@@ -833,7 +843,17 @@ Testopia.TestCaseRun.Grid = function(params, run){
         }, ' ', '-', 'Update Bugs: ', new Ext.form.Checkbox({
             id: 'update_bugs',
             disabled: true
-        }), ' ', '-', ' ', buildCombo, ' ', envCombo, new Ext.Toolbar.Fill(), {
+        }), ' ', '-', ' ', buildCombo, ' ', envCombo, new Ext.Toolbar.Fill(), 
+        {
+            xtype: 'button',
+            id: 'caserun_grid_tocsv',
+            icon: 'extensions/testopia/img/csv.png',
+            iconCls: 'img_button_16x',
+            tooltip: 'Export Results to CSV',
+            handler: function(){
+                window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&run_id=' + run.run_id;
+            }
+        }, {
             xtype: 'button',
             id: 'add_case_to_run_btn',
             tooltip: "Add cases to this run",
@@ -1396,7 +1416,7 @@ Testopia.TestCaseRun.Info = function(){
         Ext.getCmp('effect_editor').setValue(r[0].get('results'));
         Ext.getCmp('setup_editor').setValue(r[0].get('setup'));
         Ext.getCmp('breakdown_editor').setValue(r[0].get('breakdown'));
-        Ext.getCmp('summary_tb').items.items[7].td.innerHTML = '<span class="ytb-text">' + 'Case ' + r[0].get('case_id') + ' - ' + r[0].get('summary');
+        Ext.getCmp('caserun_tb_summary').setText('Case ' + r[0].get('case_id') + ' - ' + r[0].get('summary'));
     });
     
     appendNote = function(){
@@ -1538,7 +1558,7 @@ Testopia.TestCaseRun.Info = function(){
                     ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
                 }, Ext.getCmp('caserun_grid'));
             }
-        }), new Ext.Toolbar.TextItem('')]
+        }), new Ext.Toolbar.TextItem({text:'', id:'caserun_tb_summary'})]
     });
     Testopia.TestCaseRun.Info.superclass.constructor.call(this, {
         id: 'case_details_panel',

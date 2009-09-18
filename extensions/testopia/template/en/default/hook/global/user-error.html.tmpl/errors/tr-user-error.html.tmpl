@@ -191,5 +191,9 @@
     Either there was no action specified, or I didn't recognize it.
   [% ELSIF error == "invalid_target" %]
     Target Completion and Pass rates must be a number between 0 and 100 inclusive.
+  [% ELSIF error == "import_parse_error" %]
+    Parsing [% type FILTER html %] Failed!<br/>
+    The error returned was:
+    <pre>[% msg FILTER html %]</pre>
   [% END %]
   

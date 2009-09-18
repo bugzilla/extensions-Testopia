@@ -30,7 +30,7 @@
 [% title = "Test Run $run.id: $run.summary" FILTER html %]
 
 [% PROCESS global/header.html.tmpl %]
-
+<div id="mask"></div>
 <script type="text/javascript">
 var run = [% run.TO_JSON FILTER html_light %];
 var user_login = '[% user.login FILTER html_light %]';
@@ -131,6 +131,14 @@ Ext.onReady(function(){
                    icon: Ext.MessageBox.QUESTION
                 });
             }
+        },{
+            text: 'Export Results to CSV',
+            icon: 'extensions/testopia/img/csv.png',
+            iconCls: 'img_button_16x',
+            handler: function(){
+                window.location = 'tr_list_caseruns.cgi?ctype=csv&run_id=' + run.run_id;
+            }
+
         }]
     });
 
@@ -457,8 +465,10 @@ Ext.onReady(function(){
     Ext.getCmp('run_progress').updateProgress([% run.case_run_count(2) / run.case_run_count %],[% run.case_run_count(3) / run.case_run_count %],[% run.case_run_count(6) / run.case_run_count %], '[% run.percent_complete %]%');
   [% END %]
   [% IF run.stop_date %]
-    Ext.getCmp('caserun_grid_tb').disable();
+    Testopia.Util.DisableTools(Ext.getCmp('caserun_grid_tb'),['caserun_grid_tocsv','run_progress']);
   [% END %]
+  Ext.get('run_overview').show();
+  Ext.get('caserun-filter-div').show();
 });
 </script>
 
@@ -470,7 +480,7 @@ Ext.onReady(function(){
 <form id="attachmentgrideditform"></form>
 
 [%##### Overview #####%]
-<div id="run_overview">
+<div id="run_overview" style="visibility:hidden">
 <div id="run-tb-div"></div>
 <div id="caserun-tb-div"></div>
 <table border="0" cellpadding="1" width="100%">

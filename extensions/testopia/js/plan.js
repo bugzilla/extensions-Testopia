@@ -600,6 +600,24 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                             window.open('tr_show_plan.cgi?plan_id=' + plan_ids[i]);
                         }
                     }
+                },{
+                    text: 'Export',
+                    menu: [{
+                        text: 'Test Results as CSV',
+                        handler: function(){
+                            window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');
+                        }
+                    },{
+                        text: 'Cases as CSV',
+                        handler: function(){
+                            window.location='tr_list_cases.cgi?ctype=csv&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');
+                        }
+                    },{
+                        text: 'Plans as XML',
+                        handler: function(){
+                            window.location='tr_list_plans.cgi?ctype=xml&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');             
+                        }
+                    }]
                 }]
             });
         }
