@@ -68,7 +68,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:#93e751;fill-opacity:1;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#daaed9;fill-opacity:1;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 246.1875 157.9375 C 241.14065 157.9375 237.0625 161.9844 237.0625 167.03125 L 237.0625 454.75 L 82.84375 454.75 L 397.28125 829.9375 L 711.75 454.75 L 557.5 454.75 L 557.5 167.03125 C 557.5 161.9844 553.42185 157.9375 548.375 157.9375 L 246.1875 157.9375 z "
        id="rect3157"
        inkscape:export-filename="/home/ghendricks/workspace/bnc/extensions/testopia/img/xml.png"
@@ -89,6 +89,6 @@
          id="tspan3161"
          x="225.13678"
          y="546.46039"
-         style="font-size:245.23339844px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial Black;-inkscape-font-specification:Arial Black">CSV</tspan></text>
+         style="font-size:245.23339844px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Arial Black;-inkscape-font-specification:Arial Black">XML</tspan></text>
   </g>
 </svg>

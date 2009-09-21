@@ -202,6 +202,7 @@ sub new {
                AND build_id = ?
                AND environment_id = ?", 
              undef, ($case_id, $run_id, $build_id, $env_id));
+         ThrowUserError('invalid-test-id-non-existent', {type => 'case_run'}) unless $param;
     }
     
     unshift @_, $param;

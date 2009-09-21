@@ -99,10 +99,6 @@ sub new {
     my $class = ref($invocant) || $invocant;
     my $param = shift;
     
-    if (ref $param eq 'HASH'){
-        ThrowCodeError('non-empty-hash');
-    }
-    
     unshift @_, $param;
     my $self = $class->SUPER::new(@_);
     

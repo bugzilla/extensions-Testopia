@@ -662,7 +662,7 @@ Testopia.Util.error = function(f, a){
 };
 
 Testopia.Util.loadError = function(dp, errtype, a,o,r,ar,args){
-    var message = 'There was an error loading the data';
+    var message = 'There was an error loading the data: ';
     if (errtype == 'response'){
         message += r.responseText; 
     }
