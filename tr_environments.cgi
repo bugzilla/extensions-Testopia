@@ -121,7 +121,7 @@ elsif ( $action eq 'clone' ) {
       unless Bugzilla->user->in_group('Testers');
 
     my $env = Testopia::Environment->new($env_id);
-    my $id = $env->clone( $cgi->param('name'), $cgi->param('product') );
+    my $id = $env->clone( $cgi->param('name'), $cgi->param('product_id') );
 
     print "{'success': true, 'id': " . $id . "}";
 }
