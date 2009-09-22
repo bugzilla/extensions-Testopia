@@ -9213,6 +9213,9 @@ Testopia.Environment.Store = function(params, auto){
         }, {
             name: "isactive",
             mapping: "isactive"
+        }, {
+            name: "product",
+            mapping: "product_name"
         }],
         remoteSort: true
     });
