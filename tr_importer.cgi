@@ -197,6 +197,11 @@ if ($action eq 'upload') {
             $row->{'components'} = \@comps;
             $row->{'isautomated'} = $row->{'isautomated'} =~ /yes/i ? 1 : 0;
             
+            $row->{'setup'} =~ s/\n/<BR>/g;
+            $row->{'breakdown'} =~ s/\n/<BR>/g;
+            $row->{'action'} =~ s/\n/<BR>/g;
+            $row->{'effect'} =~ s/\n/<BR>/g;
+            
     #        print Data::Dumper::Dumper($row);
             my $case = Testopia::TestCase->new({});
             
