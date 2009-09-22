@@ -10721,7 +10721,7 @@ Testopia.Search.LinkPopup = function(params){
         params.current_tab = 'caserun';
     }
     var file;
-    if (params.report == 1) {
+    if (params.report) {
         file = 'tr_' + params.current_tab + '_reports.cgi';
     }
     else {
