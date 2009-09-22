@@ -1711,11 +1711,15 @@ sub TO_JSON {
     
     
     my @plan_ids;
+    my @comps;
     foreach my $p (@{$self->plans}){
         push @plan_ids, $p->id;
     }
     foreach my $field ($self->DB_COLUMNS){
         $obj->{$field} = $self->{$field};
+    }
+    foreach my $c (@{$self->components}){
+        push @comps, $c->name;
     }
 
     $obj->{'plan_name'}    = ${$self->plans}[0]->name;
@@ -1735,7 +1739,7 @@ sub TO_JSON {
     $obj->{'product_id'}   = $self->plans->[0]->product_id if scalar @{$self->plans};
     $obj->{'blocked'}      = $self->blocked_list;
     $obj->{'dependson'}    = $self->dependson_list;
-    $obj->{'component'}    = $self->components->[0]->name if scalar @{$self->components};
+    $obj->{'component'}    = join(',',@comps);
     $obj->{'modified'}     = format_time($self->last_changed, TIME_FORMAT);
     $obj->{'creation_date'} = format_time($self->{'creation_date'}, TIME_FORMAT);
     $obj->{'average_time'} = $self->calculate_average_time;
