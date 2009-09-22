@@ -2682,6 +2682,9 @@ Testopia.TestCase.ComponentStore = function(params, auto){
         }, {
             name: 'qa',
             mapping: 'qa_contact'
+        }, {
+            name: 'product',
+            mapping: 'product'
         }]
     });
 };
@@ -6468,11 +6471,11 @@ Testopia.TestCase.Components = function(id){
         if (run) {
             product_id = run.plan.product_id;
         }
+    } 
+    catch (err) {
         if (tcase) {
             product_id = tcase.product_id;
         }
-    } 
-    catch (err) {
     }
     this.tcid = tcid;
     this.store = new Ext.data.JsonStore({
@@ -6489,6 +6492,9 @@ Testopia.TestCase.Components = function(id){
         }, {
             name: 'id',
             mapping: 'id'
+        }, {
+            name: 'product',
+            mapping: 'product'
         }]
     });
     var ds = this.store;
@@ -6504,10 +6510,17 @@ Testopia.TestCase.Components = function(id){
         width: 150,
         dataIndex: 'name',
         sortable: true
+    }, {
+        id: 'product',
+        header: "Product",
+        width: 150,
+        dataIndex: 'product',
+        sortable: true
     }];
     
     var pchooser = new Testopia.Product.Combo({
         id: 'comp_product_chooser',
+        mode: 'local',
         value: product_id
     });
     var compchooser = new Testopia.TestCase.ComponentCombo({

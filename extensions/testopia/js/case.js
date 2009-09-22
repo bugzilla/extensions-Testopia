@@ -115,6 +115,9 @@ Testopia.TestCase.ComponentStore = function(params, auto){
         }, {
             name: 'qa',
             mapping: 'qa_contact'
+        }, {
+            name: 'product',
+            mapping: 'product'
         }]
     });
 };

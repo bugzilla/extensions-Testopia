@@ -435,10 +435,20 @@ else{
         my @comps;
         foreach my $c (@{$product->components}){
             if ($cgi->param('query')){
-                push @comps, {'id' => $c->id, 'name' => $c->name, 'qa_contact' => $c->default_qa_contact->login} if ($c->name =~ m/$q/i);
+                push @comps, {
+                    'id' => $c->id, 
+                    'name' => $c->name, 
+                    'qa_contact' => $c->default_qa_contact->login,
+                    'product' => $c->product->name,
+                } if ($c->name =~ m/$q/i);
             }
             else {
-                push @comps, {'id' => $c->id, 'name' => $c->name, 'qa_contact' => $c->default_qa_contact->login};
+                push @comps, {
+                    'id' => $c->id, 
+                    'name' => $c->name, 
+                    'qa_contact' => $c->default_qa_contact->login,
+                    'product' => $c->product->name,
+                };
             }
         }
         my $json = new JSON;

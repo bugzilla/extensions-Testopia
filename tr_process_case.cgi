@@ -202,7 +202,7 @@ elsif($action eq 'getcomponents'){
     ThrowUserError("testopia-permission-denied", {'object' => $case}) unless $case->canview;
     my @comps;
     foreach my $c (@{$case->components}){
-        push @comps, {'id' => $c->id, 'name' => $c->name};
+        push @comps, {'id' => $c->id, 'name' => $c->name, 'product' => $c->product->name};
     }
     my $json = new JSON;
     print "{'comps':" . $json->encode(\@comps) . "}";   
