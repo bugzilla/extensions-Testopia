@@ -426,7 +426,7 @@ sub init {
         push @supptables, "INNER JOIN versions ON versions.value = test_plans.default_product_version";
         push @orderby, 'versions.value';
     }
-    elsif($order eq 'plan_id' && $obj eq 'case_run'){
+    elsif($order eq 'plan_id' && $obj =~ /^case/){
         push @supptables, "INNER JOIN test_case_plans AS case_plans ON test_cases.case_id = case_plans.case_id";
         push @orderby, 'case_plans.plan_id';
     }
