@@ -430,6 +430,11 @@ sub init {
         push @supptables, "INNER JOIN test_case_plans AS case_plans ON test_cases.case_id = case_plans.case_id";
         push @orderby, 'case_plans.plan_id';
     }
+    elsif ($order eq 'plan_name'){
+        push @supptables, "INNER JOIN test_case_plans ON test_case_runs.case_id = test_case_plans.case_id";
+        push @supptables, "LEFT JOIN test_plans AS plan_names ON plan_names.plan_id = test_case_plans.plan_id";
+        push @orderby, 'plan_names.name';
+    }
     elsif($order eq 'requirement' && $obj eq 'case_run'){
         push @supptables, "INNER JOIN test_cases ON test_cases.case_id = test_case_runs.case_id";
         push @orderby, 'test_cases.requirement';

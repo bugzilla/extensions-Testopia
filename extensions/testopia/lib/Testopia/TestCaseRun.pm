@@ -359,6 +359,7 @@ sub TO_JSON {
     $obj->{'bug_list'}     = $bugs;
     $obj->{'close_date'}   = format_time($self->{close_date}, TIME_FORMAT);
     $obj->{'running_date'} = format_time($self->{running_date}, TIME_FORMAT);
+    $obj->{'plan_name'}    = $self->run->plan->name;
     
     return $json->encode($obj); 
 }

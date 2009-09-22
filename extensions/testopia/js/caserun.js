@@ -238,6 +238,9 @@ Testopia.TestCaseRun.List = function(params, cfg){
             }, {
                 name: "bug_list",
                 mapping: "bug_list"
+            }, {
+                name: "plan_name", 
+                mapping:"plan_name"
             }]
         }),
         remoteSort: true,
@@ -327,6 +330,12 @@ Testopia.TestCaseRun.List = function(params, cfg){
         width: 100,
         sortable: true,
         dataIndex: 'component'
+    },{
+        header: "Plan Name",
+        width: 100,
+        sortable: true,
+        hidden: true,
+        dataIndex: 'plan_name'
     }, {
         header: "Bugs In This Build and Environment",
         width: 100,
@@ -539,6 +548,9 @@ Testopia.TestCaseRun.Grid = function(params, run){
             }, {
                 name: "bug_list",
                 mapping: "bug_list"
+            }, {
+                name: "plan_name", 
+                mapping:"plan_name"
             }]
         }),
         remoteSort: true,
@@ -701,6 +713,12 @@ Testopia.TestCaseRun.Grid = function(params, run){
         width: 100,
         sortable: true,
         dataIndex: 'component'
+    }, {
+        header: "Plan Name",
+        width: 100,
+        sortable: true,
+        hidden: true,
+        dataIndex: 'plan_name'
     }, {
         header: "Bugs In This Build and Environment",
         width: 100,
