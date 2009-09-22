@@ -63,7 +63,7 @@ my $disp = "inline";
 # into other programs.
 if ( $format->{'extension'} =~ /(csv|xml)/ ){
     $disp = "attachment";
-    $vars->{'displaycolumns'} = \@Testopia::Constants::TESTCASE_EXPORT;
+    $vars->{'displaycolumns'} = Testopia::TestCase::fields;
     $vars->{'table'} = $plan->test_cases;
 }
 

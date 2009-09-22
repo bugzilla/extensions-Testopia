@@ -89,7 +89,7 @@ else {
     # into other programs.
     if ( $format->{'extension'} =~ /(csv|xml)/ ){
         $disp = "attachment";
-        $vars->{'displaycolumns'} = \@Testopia::Constants::TESTCASE_EXPORT;
+        $vars->{'displaycolumns'} = Testopia::TestCase::fields;
     }
     my @time = localtime(time());
     my $date = sprintf "%04d-%02d-%02d", 1900+$time[5],$time[4]+1,$time[3];

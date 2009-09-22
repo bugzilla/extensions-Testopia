@@ -57,7 +57,7 @@ my $disp = "inline";
 # into other programs.
 if ( $format->{'extension'} eq "csv" || $format->{'extension'} eq "xml" ){
     $disp = "attachment";
-    $vars->{'displaycolumns'} = \@Testopia::Constants::TESTCASE_EXPORT;
+    $vars->{'displaycolumns'} = Testopia::TestCase::fields;
 }
 
 $vars->{'table'} = Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi);

@@ -323,7 +323,7 @@ else{
     # into other programs.
     if ( $format->{'extension'} eq "csv" || $format->{'extension'} eq "xml" ){
         $disp = "attachment";
-        $vars->{'displaycolumns'} = \@Testopia::Constants::TESTCASE_EXPORT;
+        $vars->{'displaycolumns'} = Testopia::TestCase::fields;
     }
 
     # Suggest a name for the bug list if the user wants to save it as a file.

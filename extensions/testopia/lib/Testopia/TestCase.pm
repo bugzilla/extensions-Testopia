@@ -1670,6 +1670,40 @@ sub obliterate {
     return 1;
 }
 
+sub fields {
+    my @fields = qw(
+        product
+        plans
+        summary
+        author_id
+        default_tester_id
+        case_status_id
+        priority_id
+        category_id
+        components
+        requirement
+        estimated_time
+        isautomated
+        script
+        arguments
+        alias
+        tags
+        bugs
+        depends_on
+        blocks
+        runs
+        set_up
+        break_down
+        action
+        expected_results
+        creation_date
+        version
+        case_id
+    );
+    return \@fields;
+
+}
+
 sub TO_JSON {
     my $self = shift;
     my $obj;
