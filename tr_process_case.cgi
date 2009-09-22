@@ -213,8 +213,18 @@ elsif ($action eq 'case_to_bug'){
     
     ThrowUserError("testopia-read-only", {'object' => $case}) unless $case->canedit;
     $case->text;
-    $case->{text}->{action} =~ s/(<br[\s\/>]+|<p.*?>|<li.*?>)/\n\n/g;
-    $case->{text}->{action} =~ s/<.*?>//g;
+    foreach my $field qw(action effect) {
+        $case->{text}->{$field} =~ s/(<br[\s\/>]+|<p.*?>|<li.*?>)/\n/g;
+        $case->{text}->{$field} =~ s/<.*?>//g;
+        # Trivial HTML tag remover
+        $case->{text}->{$field} =~ s/<[^>]*>//g;
+        # And this basically reverses the html filter.
+        $case->{text}->{$field} =~ s/\&#64;/@/g;
+        $case->{text}->{$field} =~ s/\&lt;/</g;
+        $case->{text}->{$field} =~ s/\&gt;/>/g;
+        $case->{text}->{$field} =~ s/\&quot;/\"/g;
+        $case->{text}->{$field} =~ s/\&amp;/\&/g;
+    }
     my $vars;
     $vars->{'caserun'} = Testopia::TestCaseRun->new($cgi->param('caserun_id')) if $cgi->param('caserun_id');
     $vars->{'case'} = $case;
