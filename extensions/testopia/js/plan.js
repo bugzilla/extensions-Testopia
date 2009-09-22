@@ -843,7 +843,8 @@ Testopia.TestPlan.ClonePanel = function(plan){
         mode: 'local',
         hiddenName: 'new_run_env',
         params: {
-            product_id: plan.product_id
+            product_id: plan.product_id,
+            isactive: 1
         }
     });
     pbox.on('select', function(c, r, i){

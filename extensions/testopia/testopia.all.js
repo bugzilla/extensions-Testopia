@@ -827,7 +827,7 @@ Testopia.Util.error = function(f, a){
 };
 
 Testopia.Util.loadError = function(dp, errtype, a,o,r,ar,args){
-    var message = 'There was an error loading the data';
+    var message = 'There was an error loading the data: ';
     if (errtype == 'response'){
         message += r.responseText; 
     }
@@ -2324,7 +2324,8 @@ Testopia.TestPlan.ClonePanel = function(plan){
         mode: 'local',
         hiddenName: 'new_run_env',
         params: {
-            product_id: plan.product_id
+            product_id: plan.product_id,
+            isactive: 1
         }
     });
     pbox.on('select', function(c, r, i){
@@ -6834,7 +6835,8 @@ Testopia.TestRun.Grid = function(params, cfg){
         id: 'run_grid_env',
         mode: 'remote',
         params: {
-            product_id: params.product_id
+            product_id: params.product_id,
+            isactive: 1
         }
     });
     var vcombo = new Testopia.Product.VersionCombo({
@@ -7596,7 +7598,8 @@ Testopia.TestRun.NewRunForm = function(plan){
                         allowBlank: false,
                         typeAhead: true,
                         params: {
-                            product_id: plan.product_id
+                            product_id: plan.product_id,
+                            isactive: 1
                         },
                         emptyText: 'Select or type a new name'
                     }), new Ext.form.NumberField({
@@ -7747,7 +7750,8 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
         mode: 'local',
         hiddenName: 'new_run_env',
         params: {
-            product_id: product_id
+            product_id: product_id,
+            isactive: 1
         }
     });
     
