@@ -1382,10 +1382,10 @@ sub init {
         my @sta = $cgi->param('run_status');
         unless (scalar @sta > 1){
             if ($cgi->param('run_status') == 1){
-                push(@specialchart, ['stop_date', 'isnull', 'null']);
+                push(@specialchart, ['stop_date', 'isnotnull', 'null']);
             }
             else {
-                push(@specialchart, ['stop_date', 'isnotnull', 'null']);
+                push(@specialchart, ['stop_date', 'isnull', 'null']);
             }
         }
     }
