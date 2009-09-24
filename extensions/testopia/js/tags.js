@@ -243,6 +243,7 @@ Ext.extend(Testopia.Tags.ObjectTags, Ext.grid.GridPanel, {
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
                 id: 'tags-ctx-menu',
+                enableScrolling: false,
                 items: [{
                     text: 'Remove Selected Tags',
                     icon: 'extensions/testopia/img/delete.png',
@@ -374,6 +375,7 @@ Ext.extend(Testopia.Tags.ProductTags, Ext.grid.GridPanel, {
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
                 id: 'tags-ctx-menu',
+                enableScrolling: false,
                 items: [{
                     text: 'Refresh',
                     icon: 'extensions/testopia/img/refresh.png',

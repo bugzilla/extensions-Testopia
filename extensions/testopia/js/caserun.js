@@ -1691,7 +1691,7 @@ Testopia.TestCaseRun.Info = function(){
                     loadingText: 'Loading...',
                     tpl: new Ext.XTemplate('<tpl for=".">', '<div id="notesdiv" style="margin: 5px; padding: 5px; border: 1px solid black;"><pre>{notes}</pre></div>', '</tpl>', '<div class="x-clear"><input id="caserun_append_note_fld" ></div>')
                 }],
-                bbar: [new Ext.menu.TextItem('Add a Note: '), {
+                bbar: ['Add a Note: ', {
                     xtype: 'textfield',
                     id: 'caserun_append_note_fld',
                     width: 1000
@@ -2063,7 +2063,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
             icon: 'extensions/testopia/img/delete.png',
             iconCls: 'img_button_16x',
             handler: removebug.createDelegate(this)
-        }, new Ext.Toolbar.Separator(), new Ext.menu.TextItem('This view includes all bugs attached to the selected test case regardless of run')],
+        }, '-', 'This view includes all bugs attached to the selected test case regardless of run'],
         border: false,
         title: 'Bugs',
         id: 'case_bugs_panel',

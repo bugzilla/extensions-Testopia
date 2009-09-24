@@ -85,6 +85,7 @@
             items: [{
                 text: "Archived",
                 id: 'plan_archive_mnu',
+                ignoreParentClicks: true,
                 checked: [% plan.isactive ? 'false' : 'true' %],
                 checkHandler: function(i,c){
                     testopia_form.submit({

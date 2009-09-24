@@ -49,10 +49,10 @@ Testopia.TestPlan.Store = function(params, auto){
             name: "product_id",
             mapping: "product_id"
         }, {
-            name: "default_product_version",
+            name: "prod_version",
             mapping: "default_product_version"
         }, {
-            name: "plan_type",
+            name: "type",
             mapping: "plan_type"
         }, {
             name: "case_count",
@@ -183,6 +183,15 @@ Testopia.TestPlan.Grid = function(params, cfg){
         mode: 'remote',
         params: {
             product_id: params.product_id
+        },
+        listeners: {
+            'startedit': function(){
+                var pid = Ext.getCmp(cfg.id || 'plan_grid').getSelectionModel().getSelected().get('product_id');
+                if (versionbox.store.baseParams.product_id != pid) {
+                    versionbox.store.baseParams.product_id = pid;
+                    versionbox.store.load();
+                }
+            }
         }
     });
     
@@ -202,9 +211,10 @@ Testopia.TestPlan.Grid = function(params, cfg){
         dataIndex: 'name',
         id: "plan_name",
         sortable: true,
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+        editor: {
+            xtype: 'textfield',
             allowBlank: false
-        }))
+        }
     }, {
         header: "Author",
         width: 150,
@@ -226,29 +236,19 @@ Testopia.TestPlan.Grid = function(params, cfg){
         header: "Product Version",
         width: 60,
         sortable: true,
-        dataIndex: 'default_product_version',
-        editor: new Ext.grid.GridEditor(versionbox, {
-            listeners: {
-                'startedit': function(){
-                    var pid = Ext.getCmp(cfg.id || 'plan_grid').getSelectionModel().getSelected().get('product_id');
-                    if (versionbox.store.baseParams.product_id != pid) {
-                        versionbox.store.baseParams.product_id = pid;
-                        versionbox.store.load();
-                    }
-                }
-            }
-        }),
+        dataIndex: 'prod_version',
+        editor: versionbox,
         renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Type",
         width: 60,
         sortable: true,
-        dataIndex: 'plan_type',
-        editor: new Ext.grid.GridEditor(new Testopia.TestPlan.TypesCombo({
+        dataIndex: 'type',
+        editor: new Testopia.TestPlan.TypesCombo({
             id: 'plan_grid_ types_chooser',
             hiddenName: 'type',
             mode: 'remote'
-        })),
+        }),
         renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Cases",
@@ -276,6 +276,10 @@ Testopia.TestPlan.Grid = function(params, cfg){
         },
         autoExpandColumn: "plan_name",
         autoScroll: true,
+        plugins: [new Ext.ux.grid.RowEditor({
+            id:'plan_row_editor',
+            saveText: 'Update'
+        })],
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: cfg.single || false,
             listeners: {
@@ -367,16 +371,17 @@ Testopia.TestPlan.Grid = function(params, cfg){
     });
     Ext.apply(this, cfg);
     this.on('rowcontextmenu', this.onContextClick, this);
-    this.on('afteredit', this.onGridEdit, this);
     this.on('activate', this.onActivate, this);
+    Ext.getCmp('plan_row_editor').on('afteredit', this.onGridEdit, this);
 };
 
-Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
         grid.selindex = index;
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
                 id: 'plan-ctx-menu',
+                enableScrolling: false,
                 items: [{
                     text: 'Create a New Test Plan',
                     id: 'plan_menu_new_plan',
@@ -395,6 +400,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                     text: 'Edit',
                     id: 'plan_grid_edit_mnu',
                     menu: {
+                        enableScrolling: false,
                         items: [{
                             text: 'Type',
                             handler: function(){
@@ -444,6 +450,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
                 }, {
                     text: "Reports",
                     menu: {
+                        enableScrolling: false,
                         items: [{
                             text: 'New Status Report',
                             handler: function(){
@@ -637,24 +644,10 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.EditorGridPanel, {
         Testopia.TestCase.NewCasePopup(Testopia.Util.getSelectedObjects(this, 'plan_id'), this.getSelectionModel().getSelected().get('product_id'));
     },
     
-    onGridEdit: function(gevent){
-        var myparams = {
-            action: "edit",
-            plan_id: gevent.record.get('plan_id')
-        };
+    onGridEdit: function(e){
         var ds = this.store;
-        switch (gevent.field) {
-            case 'default_product_version':
-                myparams.prod_version = gevent.value;
-                break;
-            case 'plan_type':
-                myparams.type = gevent.value;
-                break;
-            case 'name':
-                myparams.name = gevent.value;
-                break;
-                
-        }
+        var myparams = e.record.data;
+        myparams.action = 'edit';
         this.form.submit({
             url: "tr_process_plan.cgi",
             params: myparams,

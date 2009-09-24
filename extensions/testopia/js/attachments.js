@@ -37,7 +37,7 @@ Testopia.Attachment.Grid = function(object){
         },
         id: 'attach_id',
         fields: [{
-            name: "id",
+            name: "attach_id",
             mapping: "attachment_id"
         }, {
             name: "submitter",
@@ -46,7 +46,7 @@ Testopia.Attachment.Grid = function(object){
             name: "caserun_id",
             mapping: "caserun_id"
         }, {
-            name: "name",
+            name: "filename",
             mapping: "filename"
         }, //editable
         {
@@ -80,7 +80,7 @@ Testopia.Attachment.Grid = function(object){
         header: "ID",
         width: 20,
         sortable: true,
-        dataIndex: 'id',
+        dataIndex: 'attach_id',
         renderer: attachlink
     }, {
         header: "Created",
@@ -98,7 +98,9 @@ Testopia.Attachment.Grid = function(object){
     }, {
         header: "Name",
         width: 50,
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({})),
+        editor: {
+            xtype: 'textfield'
+        },
         sortable: true,
         dataIndex: 'name'
     }, {
@@ -109,15 +111,18 @@ Testopia.Attachment.Grid = function(object){
     }, {
         header: "Type",
         width: 30,
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({})),
+        editor: {
+            xtype: 'textfield'
+        },
         sortable: true,
         dataIndex: 'mimetype'
     }, {
         header: "Description",
         width: 120,
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+        editor: {
+            xtype: 'textfield',
             value: 'description'
-        })),
+        },
         sortable: true,
         dataIndex: 'description'
     }, {
@@ -140,8 +145,12 @@ Testopia.Attachment.Grid = function(object){
         },
         autoExpandColumn: "Name",
         autoScroll: true,
+        plugins: [new Ext.ux.grid.RowEditor({
+            id:'attachment_row_editor',
+            saveText: 'Update'
+        })],
         enableColumnHide: true,
-        tbar: [new Ext.Toolbar.Fill(), {
+        tbar: ['->', {
             xtype: 'button',
             id: 'edit_attachment_btn',
             icon: 'extensions/testopia/img/edit.png',
@@ -192,16 +201,17 @@ Testopia.Attachment.Grid = function(object){
     });
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('activate', this.onActivate, this);
-    this.on('afteredit', this.onGridEdit, this);
+    Ext.getCmp('attachment_row_editor').on('afteredit', this.onGridEdit, this);
 };
 
-Ext.extend(Testopia.Attachment.Grid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.Attachment.Grid, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
         var sm = this.selectionModel;
         var object = this.object;
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
                 id: 'AttachGrid-ctx-menu',
+                enableScrolling: false,
                 items: [{
                     text: "Delete Selected Attachments",
                     id: 'attach_delete_mnu',
@@ -229,25 +239,11 @@ Ext.extend(Testopia.Attachment.Grid, Ext.grid.EditorGridPanel, {
         }
         this.menu.showAt(e.getXY());
     },
-    onGridEdit: function(gevent){
-        var myparams = {
-            action: "edit",
-            ctype: "json",
-            attach_id: this.store.getAt(gevent.row).get('id')
-        };
+    onGridEdit: function(e){
+        var myparams = e.record.data;
         var ds = this.store;
-        switch (gevent.field) {
-            case 'name':
-                myparams.filename = gevent.value;
-                break;
-            case 'mime_type':
-                myparams.mime_type = gevent.value;
-                break;
-            case 'description':
-                myparams.description = gevent.value;
-                break;
-                
-        }
+        myparams.ctype = 'json';
+        myparams.action = 'edit';
         this.form.submit({
             url: "tr_attachment.cgi",
             params: myparams,

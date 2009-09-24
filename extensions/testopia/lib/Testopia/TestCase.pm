@@ -111,10 +111,6 @@ use constant VALIDATORS => {
     
 };
 
-use constant UPDATE_VALIDATORS => {
-    category_id       => \&_check_category,
-};
-
 use constant ALIAS_MAX_LENGTH => 255;
 use constant REQUIREMENT_MAX_LENGTH => 255;
 use constant SUMMARY_MAX_LENGTH => 255;
@@ -447,7 +443,6 @@ sub _check_bugs {
 ####       Mutators        ####
 ###############################
 sub set_case_status        { $_[0]->set('case_status_id', $_[1]); }
-sub set_category           { $_[0]->set('category_id', $_[1]); }
 sub set_priority           { $_[0]->set('priority_id', $_[1]); }
 sub set_default_tester     { $_[0]->set('default_tester_id', $_[1]); }
 sub set_sortkey            { $_[0]->set('sortkey', $_[1]); }
@@ -460,6 +455,12 @@ sub set_alias              { $_[0]->set('alias', $_[1]); }
 sub set_estimated_time     { $_[0]->set('estimated_time', $_[1]); }
 sub set_dependson          { $_[0]->set('dependson', $_[1]); }
 sub set_blocks             { $_[0]->set('blocks', $_[1]); }
+
+sub set_category {
+    my ($self, $value) = @_;
+    $value = $self->_check_category($value, $self->plans->[0]->product);
+    $self->set('category_id', $value); 
+}
 
 sub new {
     my $invocant = shift;

@@ -274,11 +274,23 @@ Testopia.TestCase.Grid = function(params, cfg){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
     params.current_tab = 'case';
     this.params = params;
-    categoryCombo = new Testopia.Category.Combo({
+    var categoryCombo = new Testopia.Category.Combo({
         id: 'case_grid_cateogy_chooser',
         hiddenName: 'category',
         mode: 'remote',
-        params: {}
+        params: {
+            product_id: params.product_id
+        },
+        listeners: {
+            'startedit': function(){
+                var pid = Ext.getCmp(cfg.id || 'case_grid').getSelectionModel().getSelected().get('product_id');
+                if (categoryCombo.store.baseParams.product_id != pid) {
+                    categoryCombo.store.baseParams.product_id = pid;
+                    categoryCombo.store.load();
+                }
+            }
+        }
+
     });
     
     this.store = new Ext.data.GroupingStore({
@@ -379,11 +391,12 @@ Testopia.TestCase.Grid = function(params, cfg){
         width: 50,
         sortable: true,
         dataIndex: 'sortkey',
-        editor: new Ext.grid.GridEditor(new Ext.form.NumberField({
+        editor: {
+            xtype: 'numberfield',
             allowBlank: true,
             allowDecimals: false,
             allowNegative: false
-        })),
+        },
         id: "sortkey"
     }, {
         header: "Summary",
@@ -391,9 +404,10 @@ Testopia.TestCase.Grid = function(params, cfg){
         dataIndex: 'summary',
         id: "case_summary",
         sortable: true,
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+        editor: {
+            xtype: 'textfield',
             allowBlank: false
-        }))
+        }
     }, {
         header: "Author",
         width: 150,
@@ -405,9 +419,9 @@ Testopia.TestCase.Grid = function(params, cfg){
         width: 150,
         sortable: true,
         dataIndex: 'tester',
-        editor: new Ext.grid.GridEditor(new Testopia.User.Lookup({
+        editor: new Testopia.User.Lookup({
             hiddenName: 'tester'
-        })),
+        }),
         renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Created",
@@ -426,27 +440,17 @@ Testopia.TestCase.Grid = function(params, cfg){
         width: 100,
         sortable: true,
         dataIndex: 'priority',
-        editor: new Ext.grid.GridEditor(new Testopia.TestCase.PriorityCombo({
+        editor: new Testopia.TestCase.PriorityCombo({
             hiddenName: 'priority',
             mode: 'remote'
-        })),
+        }),
         renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Category",
         width: 100,
         sortable: true,
         dataIndex: 'category',
-        editor: new Ext.grid.GridEditor(categoryCombo, {
-            listeners: {
-                'startedit': function(){
-                    var pid = Ext.getCmp(cfg.id || 'case_grid').getSelectionModel().getSelected().get('product_id');
-                    if (categoryCombo.store.baseParams.product_id != pid) {
-                        categoryCombo.store.baseParams.product_id = pid;
-                        categoryCombo.store.load();
-                    }
-                }
-            }
-        }),
+        editor: categoryCombo,
         renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Component",
@@ -458,7 +462,7 @@ Testopia.TestCase.Grid = function(params, cfg){
         width: 100,
         sortable: true,
         dataIndex: 'status',
-        editor: new Ext.grid.GridEditor(new Testopia.TestCase.StatusListCombo('status')),
+        editor: new Testopia.TestCase.StatusListCombo('status'),
         renderer: Testopia.Util.ComboRenderer.createDelegate(this)
     }, {
         header: "Requirement",
@@ -466,14 +470,18 @@ Testopia.TestCase.Grid = function(params, cfg){
         sortable: true,
         dataIndex: 'requirement',
         hidden: true,
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+        editor: {
+            xtype: 'textfield',
             name: 'requirement'
-        }))
+        }
     }, {
         header: "Estimated Time",
         width: 60,
         sortable: true,
         dataIndex: 'estimated_time',
+        editor: {
+            xtype: 'textfield'
+        },
         hidden: true
     }, {
         header: "Average Time",
@@ -516,6 +524,10 @@ Testopia.TestCase.Grid = function(params, cfg){
         region: 'center',
         autoExpandColumn: "case_summary",
         autoScroll: true,
+        plugins: [new Ext.ux.grid.RowEditor({
+            id:'case_row_editor',
+            saveText: 'Update'
+        })],
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: false,
             listeners: {
@@ -615,10 +627,10 @@ Testopia.TestCase.Grid = function(params, cfg){
     
     this.on('activate', this.onActivate, this);
     this.on('rowcontextmenu', this.onContextClick, this);
-    this.on('afteredit', this.onGridEdit, this);
+    Ext.getCmp('case_row_editor').on('afteredit', this.onGridEdit, this);
 };
 
-Ext.extend(Testopia.TestCase.Grid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
     onContextClick: function(grid, index, e){
         grid.selindex = index;
         if (!this.menu) { // create context menu on first right click
@@ -632,11 +644,13 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.EditorGridPanel, {
             
             this.menu = new Ext.menu.Menu({
                 id: 'case_list_ctx_menu',
+                enableScrolling: false,
                 items: [{
                     text: 'Modify Selected Test Cases',
                     icon: 'extensions/testopia/img/edit.png',
                     iconCls: 'img_button_16x',
                     menu: {
+                        enableScrolling: false,
                         items: [{
                             text: 'Requirements',
                             handler: function(){
@@ -965,44 +979,27 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.EditorGridPanel, {
         }
         this.menu.showAt(e.getXY());
     },
-    onGridEdit: function(gevent){
-        var myparams = {
-            action: "edit",
-            case_id: gevent.record.get('case_id')
-        };
+    onGridEdit: function(e){
         var ds = this.store;
-        var display_value = '';
-        switch (gevent.field) {
-            case 'sortkey':
-                myparams.sortkey = gevent.value;
-                break;
-            case 'summary':
-                myparams.summary = gevent.value;
-                break;
-            case 'tester':
-                myparams.tester = gevent.value;
-                break;
-            case 'priority':
-                myparams.priority = gevent.value;
-                break;
-            case 'status':
-                myparams.status = gevent.value;
-                break;
-            case 'category':
-                myparams.category = gevent.value;
-                break;
-            case 'requirement':
-                myparams.requirement = gevent.value;
-                break;
+        var myparams = e.record.data;
+        myparams.action = 'edit';
+        var tester;
+        if (!myparams.tester.match('@')){
+            tester = myparams.tester;
+            delete myparams.tester;
         }
         this.form.submit({
             url: "tr_process_case.cgi",
             params: myparams,
             success: function(f, a){
+                if (tester)
+                    myparams.tester = tester;
                 ds.commitChanges();
             },
             failure: function(f, a){
                 Testopia.Util.error(f, a);
+                if (tester)
+                    myparams.tester = tester;
                 ds.rejectChanges();
             }
         });
@@ -1293,7 +1290,7 @@ Testopia.TestCase.NewCaseForm = function(plan_ids, product_id, run_id){
                 sm: new Ext.grid.RowSelectionModel({
                     singleSelect: false
                 }),
-                tbar: [new Ext.menu.TextItem('Product'), new Ext.Toolbar.Spacer(), new Testopia.Product.Combo({
+                tbar: ['Product', ' ', new Testopia.Product.Combo({
                     mode: 'local',
                     value: product_id,
                     id: 'comp_product_combo'
@@ -1734,10 +1731,6 @@ Testopia.TestCase.clonePopup = function(product_id, cases){
     });
     win.show(this);
     
-    var items = pg.getTopToolbar().items.items;
-    for (var i = 0; i < items.length; i++) {
-        items[i].destroy();
-    }
     var pchooser = new Testopia.Product.Combo({
         id: 'case_clone_win_product_chooser',
         mode: 'local',
@@ -1757,7 +1750,8 @@ Testopia.TestCase.clonePopup = function(product_id, cases){
         Ext.getCmp('case_clone_product_id').setValue(r.get('id'));
         pg.store.load();
     });
-    pg.getTopToolbar().add(new Ext.menu.TextItem('Product: '), pchooser);
+    pg.getTopToolbar().removeAll();
+    pg.getTopToolbar().add('Product: ', pchooser);
     pg.getSelectionModel().un('rowselect', pg.getSelectionModel().events['rowselect'].listeners[0].fn);
     pg.getSelectionModel().un('rowdeselect', pg.getSelectionModel().events['rowdeselect'].listeners[0].fn);
     pg.store.load();

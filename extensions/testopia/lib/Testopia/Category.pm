@@ -164,11 +164,14 @@ sub create {
 ###############################
 sub check_case_category {
     my ($name, $product) = @_;
+    my $pid = ref $product ? $product->id : $product;
     my $dbh = Bugzilla->dbh;
+    trick_taint($pid);
+    trick_taint($name);
     my $is = $dbh->selectrow_array(
         "SELECT category_id FROM test_case_categories 
          WHERE name = ? AND product_id = ?",
-         undef, $name, $product->id);
+         undef, $name, $pid);
     return $is;
 }
 

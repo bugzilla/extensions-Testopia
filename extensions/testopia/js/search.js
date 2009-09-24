@@ -684,6 +684,7 @@ Ext.extend(Testopia.Search.SavedReportsList, Ext.grid.GridPanel, {
         }
         this.menu = new Ext.menu.Menu({
             id:'run-ctx-menu',
+            enableScrolling: false,
             items: [{
                 text: 'Open in a new tab', 
                 disabled: d ? false : true,

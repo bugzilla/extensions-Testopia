@@ -19,12 +19,13 @@
  *                 Ryan Hamilton <rhamilton@novell.com>
  *                 Daniel Parker <dparker1@novell.com>
  */
-
 Testopia.Environment.Store = function(params, auto){
     params.ctype = 'json';
     Testopia.Environment.Store.superclass.constructor.call(this, {
         url: 'tr_list_environments.cgi',
-        listeners: { 'exception': Testopia.Util.loadError },
+        listeners: {
+            'exception': Testopia.Util.loadError
+        },
         root: 'Result',
         baseParams: params,
         totalProperty: 'totalResultsAvailable',
@@ -142,6 +143,9 @@ Testopia.Environment.Grid = function(params, cfg){
         },
         autoExpandColumn: "env_name_col",
         autoScroll: true,
+        plugins: [new Ext.ux.grid.RowEditor({
+            saveText: 'Update'
+        })],
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: true,
             listeners: {
@@ -200,6 +204,7 @@ Ext.extend(Testopia.Environment.Grid, Ext.grid.EditorGridPanel, {
     onContextClick: function(grid, index, e){
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
+                enableScrolling: false,
                 id: 'run-ctx-menu',
                 items: [{
                     text: 'Create a new environment',

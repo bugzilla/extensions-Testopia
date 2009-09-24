@@ -30,7 +30,7 @@ Testopia.Build.Store = function(params, auto){
         id: 'build_id',
         autoLoad: auto,
         fields: [{
-            name: "id",
+            name: "build_id",
             mapping: "build_id"
         }, {
             name: "name",
@@ -62,7 +62,7 @@ Testopia.Build.Combo = function(cfg){
         store: cfg.transform ? false : new Testopia.Build.Store(cfg.params, cfg.mode == 'local' ? true : false),
         loadingText: 'Looking up builds...',
         displayField: 'name',
-        valueField: 'id',
+        valueField: 'build_id',
         typeAhead: true,
         triggerAction: 'all',
         minListWidth: 300,
@@ -87,6 +87,15 @@ Testopia.Build.Grid = function(product_id){
         mode: 'remote',
         params: {
             product_id: product_id
+        },
+        listeners: {
+            'startedit': function(){
+                var pid = Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id;
+                if (mbox.store.baseParams.product_id != pid) {
+                    mbox.store.baseParams.product_id = pid;
+                    mbox.store.load();
+                }
+            }
         }
     });
     this.columns = [{
@@ -94,49 +103,38 @@ Testopia.Build.Grid = function(product_id){
         width: 80,
         sortable: true,
         dataIndex: 'name',
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+        editor: {
+            xtype: 'textfield',
             value: 'name',
             allowBlank: false
-        }), {
-            completeOnEnter: true,
-            listeners: {
-                'beforecomplete': function(e, v){
-                    if (!e.getValue()) {
-                        return false;
-                    }
-                }
-            }
-        })
+        }
+    }, {
+        header: "Description",
+        width: 120,
+        editor: {
+            xtype: 'textfield'
+        },
+        sortable: true,
+        dataIndex: 'description'
     }, {
         header: "Milestone",
         width: 120,
         sortable: true,
         dataIndex: 'milestone',
-        editor: new Ext.grid.GridEditor(mbox, {
-            listeners: {
-                'startedit': function(){
-                    var pid = Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id;
-                    if (mbox.store.baseParams.product_id != pid) {
-                        mbox.store.baseParams.product_id = pid;
-                        mbox.store.load();
-                    }
-                }
-            }
-        })
+        editor: mbox
     }, {
-        header: "Description",
-        width: 120,
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField()),
-        sortable: true,
-        dataIndex: 'description'
-    }, new Ext.grid.CheckColumn({
         header: 'Active',
         dataIndex: 'isactive',
-        editor: new Ext.grid.GridEditor(new Ext.form.Checkbox({
+        trueText: 'Yes',
+        falseText: 'No',
+        sortable: true,
+        xtype: 'booleancolumn',
+        editor:{
+            xtype: 'checkbox',
             value: 'isactive'
-        })),
+        },
         width: 25
-    })];
+    }];
     
     this.form = new Ext.form.BasicForm('testopia_helper_frm');
     
@@ -148,6 +146,10 @@ Testopia.Build.Grid = function(product_id){
         },
         autoExpandColumn: "build_name",
         autoScroll: true,
+        plugins: [new Ext.ux.grid.RowEditor({
+            id:'build_row_editor',
+            saveText: 'Update'
+        })],
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: true
         }),
@@ -174,9 +176,9 @@ Testopia.Build.Grid = function(product_id){
     });
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('activate', this.onActivate, this);
-    this.on('afteredit', this.onGridEdit, this);
+    Ext.getCmp('build_row_editor').on('afteredit', this.onGridEdit, this);
 };
-Ext.extend(Testopia.Build.Grid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.Build.Grid, Ext.grid.GridPanel, {
     newRecord: function(){
         NewBuild = Ext.data.Record.create([{
             name: 'name',
@@ -198,15 +200,17 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.EditorGridPanel, {
         });
         var g = Ext.getCmp('build_grid');
         g.store.insert(0, b);
-        g.startEditing(0, 0);
+        Ext.getCmp('build_row_editor').startEditing(0);
     },
     onContextClick: function(grid, index, e){
         grid.getSelectionModel().selectRow(index);
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
                 id: 'build-ctx-menu',
+                enableScrolling: false,
                 items: [{
                     text: "Reports",
+                    enableScrolling: false,
                     menu: {
                         items: [{
                             text: 'New Completion Report',
@@ -255,42 +259,21 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.EditorGridPanel, {
         this.menu.showAt(e.getXY());
     },
     onGridEdit: function(e){
-        var bid = e.record.get('id');
-        var myparams = {
-            product_id: this.product_id,
-            build_id: bid
-        };
+        var myparams = e.record.data;
         var ds = this.store;
-        
-        if (bid) {
+        myparams.product_id = this.product_id;
+        if (myparams.build_id) {
             myparams.action = "edit";
-            switch (e.field) {
-                case 'name':
-                    myparams.name = e.value;
-                    break;
-                case 'description':
-                    myparams.description = e.value;
-                    break;
-                case 'isactive':
-                    myparams.isactive = e.value;
-                    break;
-                case 'milestone':
-                    myparams.milestone = e.value;
-                    break;
-            }
         }
         else {
             myparams.action = "add";
-            myparams.name = e.value;
-            myparams.milestone = Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().attributes.attributes.defaultmilestone;
-            myparams.isactive = 1;
         }
         this.form.submit({
             url: "tr_builds.cgi",
             params: myparams,
             success: function(f, a){
                 if (a.result.build_id) {
-                    e.record.set('id', a.result.build_id);
+                    e.record.set('build_id', a.result.build_id);
                 }
                 ds.commitChanges();
             },

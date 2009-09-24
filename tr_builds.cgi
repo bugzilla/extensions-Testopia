@@ -60,7 +60,7 @@ if ($action eq 'add'){
                   name        => $cgi->param('name') || '',
                   description => $cgi->param('desc') || $cgi->param('description') || '',
                   milestone   => $cgi->param('milestone') || '---',
-                  isactive    => $cgi->param('isactive') ? 1 : 0,
+                  isactive    => $cgi->param('isactive') =~ /(1|true)/ ? 1 : 0,
     });
 
    print "{success: true, build_id: ". $build->id . "}";

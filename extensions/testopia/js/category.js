@@ -77,26 +77,19 @@ Testopia.Category.Grid = function(product_id){
         width: 120,
         sortable: true,
         dataIndex: 'name',
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+        editor: {
+            xtype: 'textfield',
             value: 'name',
             allowBlank: false
-        }), {
-            completeOnEnter: true,
-            listeners: {
-                'beforecomplete': function(e, v){
-                    if (!e.getValue()) {
-                        return false;
-                    }
-                }
-            }
-        })
+        } 
     }, {
         header: "Description",
         width: 120,
         id: 'category_desc_column',
-        editor: new Ext.grid.GridEditor(new Ext.form.TextField({
+        editor: {
+            xtype: 'textfield',
             value: 'description'
-        })),
+        },
         sortable: true,
         dataIndex: 'description'
     }];
@@ -111,6 +104,10 @@ Testopia.Category.Grid = function(product_id){
         },
         autoExpandColumn: "category_desc_column",
         autoScroll: true,
+        plugins: [new Ext.ux.grid.RowEditor({
+            id:'category_row_editor',
+            saveText: 'Update'
+        })],
         enableColumnHide: true,
         sm: new Ext.grid.RowSelectionModel({
             singleSelect: true
@@ -152,10 +149,10 @@ Testopia.Category.Grid = function(product_id){
     });
     this.on('rowcontextmenu', this.onContextClick, this);
     this.on('activate', this.onActivate, this);
-    this.on('afteredit', this.onGridEdit, this);
+    Ext.getCmp('category_row_editor').on('afteredit', this.onGridEdit, this);
     
 };
-Ext.extend(Testopia.Category.Grid, Ext.grid.EditorGridPanel, {
+Ext.extend(Testopia.Category.Grid, Ext.grid.GridPanel, {
     newRecord: function(){
         NewCategory = Ext.data.Record.create([{
             name: 'name',
@@ -170,13 +167,14 @@ Ext.extend(Testopia.Category.Grid, Ext.grid.EditorGridPanel, {
         });
         var g = Ext.getCmp('category_grid');
         g.store.insert(0, b);
-        g.startEditing(0, 0);
+        Ext.getCmp('category_row_editor').startEditing(0);
     },
     onContextClick: function(grid, index, e){
         grid.getSelectionModel().selectRow(index);
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
                 id: 'category-ctx-menu',
+                enableScrolling: false,
                 items: [{
                     text: 'Add a Category',
                     icon: 'extensions/testopia/img/add.png',
@@ -203,27 +201,14 @@ Ext.extend(Testopia.Category.Grid, Ext.grid.EditorGridPanel, {
         this.menu.showAt(e.getXY());
     },
     onGridEdit: function(e){
-        var bid = e.record.get('category_id');
-        var myparams = {
-            product_id: this.product_id,
-            category_id: bid
-        };
+        var myparams = e.record.data;
         var ds = this.store;
-        
-        if (bid) {
+        myparams.product_id = this.product_id;
+        if (myparams.build_id) {
             myparams.action = "edit";
-            switch (e.field) {
-                case 'name':
-                    myparams.name = e.value;
-                    break;
-                case 'description':
-                    myparams.description = e.value;
-                    break;
-            }
         }
         else {
             myparams.action = "add";
-            myparams.name = e.value;
         }
         this.form.submit({
             url: "tr_categories.cgi",

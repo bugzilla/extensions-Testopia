@@ -75,6 +75,11 @@ Ext.override(Ext.form.Field, {
     }
 });// End Override
 
+Ext.override(Ext.menu.Menu, {
+    ignoreParentClicks: true,
+    enableScrolling: false
+});
+
 //check column widget
 Ext.grid.CheckColumn = function(config){
     Ext.apply(this, config);

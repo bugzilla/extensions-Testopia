@@ -336,6 +336,7 @@ Ext.extend(Testopia.Util.HistoryList, Ext.grid.GridPanel, {
         if (!this.menu) { // create context menu on first right click
             this.menu = new Ext.menu.Menu({
                 id: 'history-ctx-menu',
+                enableScrolling: false,
                 items: [{
                     text: 'Refresh',
                     icon: 'extensions/testopia/img/refresh.png',
@@ -690,18 +691,14 @@ Testopia.Util.getSelectedObjects = function(grid, field){
 };
 
 Testopia.Util.editFirstSelection = function(grid){
-    if (grid.getSelectionModel().getCount() === 0) {
+    if (grid.store.getCount() === 0) {
         return;
     }
-    var cols = grid.getColumnModel();
-    var count = grid.getColumnModel().getColumnCount();
     var row = grid.store.indexOf(grid.getSelectionModel().getSelected());
-    for (var col = 0; col < count - 1; col++) {
-        if (cols.isCellEditable(col, row)) {
-            grid.startEditing(row, col);
-            return;
-        }
+    if (row == -1){
+        row = 0;
     }
+    grid.plugins[0].startEditing(row);
 };
 
 Testopia.Util.urlQueryToJSON = function(url){
@@ -831,7 +828,7 @@ Testopia.Util.PlanSelector = function(product_id, cfg){
         for (var i = 0; i < items.length; i++) {
             items[i].destroy();
         }
-        pg.getTopToolbar().add(new Ext.menu.TextItem('Product: '), pchooser);
+        pg.getTopToolbar().add('Product: ', pchooser);
         pg.getSelectionModel().un('rowselect', pg.getSelectionModel().events['rowselect'].listeners[0].fn);
         pg.getSelectionModel().un('rowdeselect', pg.getSelectionModel().events['rowdeselect'].listeners[0].fn);
         pg.store.load();

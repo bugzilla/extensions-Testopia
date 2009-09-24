@@ -101,11 +101,6 @@ use constant VALIDATORS => {
     target_completion => \&_check_target,
 };
 
-use constant UPDATE_VALIDATORS => {
-    environment_id    => \&_check_env,
-    build_id          => \&_check_build,
-};
-
 ###############################
 ####       Validators      ####
 ###############################
@@ -215,8 +210,6 @@ sub _check_target {
 ###############################
 ####       Mutators        ####
 ###############################
-sub set_environment        { $_[0]->set('environment_id', $_[1]); }
-sub set_build              { $_[0]->set('build_id', $_[1]); }
 sub set_summary            { $_[0]->set('summary', $_[1]); }
 sub set_manager            { $_[0]->set('manager_id', $_[1]); }
 sub set_plan_text_version  { $_[0]->set('plan_text_version', $_[1]); }
@@ -224,6 +217,18 @@ sub set_notes              { $_[0]->set('notes', $_[1]); }
 sub set_stop_date          { $_[0]->set('stop_date', $_[1]); }
 sub set_target_pass        { $_[0]->set('target_pass', $_[1]); }
 sub set_target_completion  { $_[0]->set('target_completion', $_[1]); }
+
+sub set_environment {
+    my ($self, $value) = @_;
+    $value = $self->_check_env($value, $self->plan->product); 
+    $self->set('environment_id', $value); 
+}
+
+sub set_build {
+    my ($self, $value) = @_;
+    $value = $self->_check_build($value, $self->plan->product);
+    $self->set('build_id', $value); 
+}
 
 sub set_product_version    { 
     my ($self, $value) = @_;

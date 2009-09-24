@@ -189,11 +189,14 @@ sub create {
 ###############################
 sub check_build {
     my ($name, $product, $throw) = @_;
+    my $pid = ref $product ? $product->id : $product;
     my $dbh = Bugzilla->dbh;
+    trick_taint($name);
+    trick_taint($pid);
     my $is = $dbh->selectrow_array(
         "SELECT build_id FROM test_builds 
          WHERE name = ? AND product_id = ?",
-         undef, $name, $product->id);
+         undef, $name, $pid);
     if ($throw){
         ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $name}) unless $is;
         return Testopia::Build->new($is);
@@ -212,6 +215,7 @@ sub TO_JSON {
     foreach my $field ($self->DB_COLUMNS){
         $obj->{$field} = $self->{$field};
     }
+    $obj->{isactive} = $self->{isactive} ? JSON::true : JSON::false;
         
     return $json->encode($obj); 
 }

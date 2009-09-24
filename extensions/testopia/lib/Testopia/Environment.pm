@@ -575,6 +575,8 @@ sub check_environment{
     my ($name, $product, $throw) = (@_);
     my $pid = ref $product ? $product->id : $product;
     my $dbh = Bugzilla->dbh;
+    trick_taint($name);
+    trick_taint($pid);
     my ($used) = $dbh->selectrow_array(
         "SELECT environment_id 
            FROM test_environments

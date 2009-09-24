@@ -56,7 +56,7 @@ if ($action eq 'add'){
     my $category = Testopia::Category->create({
                           product_id  => $product->id,
                           name        => $cgi->param('name'),
-                          description => $cgi->param('desc'),
+                          description => $cgi->param('description'),
                    });
 
     print "{success: true, category_id: ". $category->id . "}";
