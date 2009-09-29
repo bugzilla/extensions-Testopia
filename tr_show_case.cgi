@@ -60,8 +60,6 @@ if ( $format->{'extension'} eq "csv" || $format->{'extension'} eq "xml" ){
     $vars->{'displaycolumns'} = Testopia::TestCase::fields;
 }
 
-$vars->{'table'} = Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi);
-
 # Suggest a name for the file if the user wants to save it as a file.
 my @time = localtime(time());
 my $date = sprintf "%04d-%02d-%02d", 1900+$time[5],$time[4]+1,$time[3];
