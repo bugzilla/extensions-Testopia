@@ -1653,7 +1653,7 @@ sub obliterate {
     my $dbh = Bugzilla->dbh;
 
     foreach my $obj (@{$self->attachments}){
-        $obj->obliterate;
+        $obj->unlink_case($self->id);
     }
     foreach my $obj (@{$self->caseruns}){
         $obj->obliterate;

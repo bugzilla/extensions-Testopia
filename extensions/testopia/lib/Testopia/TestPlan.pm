@@ -870,7 +870,7 @@ sub obliterate {
     my $total = scalar @{$self->test_cases} + scalar @{$self->test_runs};
 
     foreach my $obj (@{$self->attachments}){
-        $obj->obliterate;
+        $obj->unlink_plan($self->id);
     }
     foreach my $obj (@{$self->test_runs}){
         $obj->obliterate($cgi, $template);
