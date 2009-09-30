@@ -100,7 +100,7 @@ elsif ($action eq 'delete_filter'){
     ThrowUserError('query_name_missing') unless $cgi->param('query_name');
     ThrowUserError("testopia-read-only", {'object' => $run}) unless $run->canedit;
     
-    $run->delete_query($cgi->param('query_name'));
+    $run->delete_filter($cgi->param('query_name'));
     
     print "{'success':true}";
 }

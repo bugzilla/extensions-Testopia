@@ -157,6 +157,7 @@ Testopia.TestCaseRun.Filter = function(){
                 ds.load({
                     callback: function(){
                         Ext.getCmp('caserun_filtered_txt').hide();
+                        Ext.getCmp('run_filter_grid').getSelectionModel().clearSelections();
                         if (Ext.getCmp('caserun_grid').getSelectionModel().getCount() < 1) {
                             Ext.getCmp('caserun-panel').caserun.disable();
                         }
