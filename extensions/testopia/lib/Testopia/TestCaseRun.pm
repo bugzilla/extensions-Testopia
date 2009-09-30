@@ -516,13 +516,14 @@ sub set_assignee {
     my ($user_id) = @_;
 
     my $assignee = $self->_check_assignee($user_id);
-    my $oldassignee = $self->assignee->login;
+    my $oldassignee = $self->assignee->login || '--unassigned--';
     my $newassignee = Bugzilla::User->new($assignee);
+    my $newassignee_name = $newassignee->id ? $newassignee->login : '--unassigned--';
     
     $self->_update_fields({'assignee' => $assignee});
     $self->{'assignee'} = $assignee;
     
-    my $note = "Assignee changed from $oldassignee to ". $newassignee->login;
+    my $note = "Assignee changed from $oldassignee to ". $newassignee_name;
     $note   .= " by ". Bugzilla->user->login;
     $note   .= " for build '". $self->build->name;
     $note   .= "' and environment '". $self->environment->name;

@@ -113,8 +113,10 @@ elsif ($action eq 'update_note'){
 elsif ($action eq 'update_assignee'){
     print $cgi->header;
     ThrowUserError("testopia-read-only", {'object' => $caserun}) unless $caserun->canedit;
-    
-    my $assignee_id = login_to_id(trim($cgi->param('assignee')),'THROW_ERROR');
+    my $assignee_id;
+    if ($cgi->param('assignee')){
+        $assignee_id = login_to_id(trim($cgi->param('assignee')),'THROW_ERROR');
+    }
 
     $caserun->set_assignee($assignee_id);
     

@@ -1428,6 +1428,7 @@ sub init {
     foreach my $profile ("author", "manager", "default_tester", 
                          "assignee", "testedby"){
         $t = $cgi->param($profile . "_type") || '';
+        $t = "isnull" if ($cgi->param($profile) eq '--unassigned--');
         if ($t eq "exact"  || $t eq '') {
             $t = "anyexact";
             if ($cgi->param($profile)){
