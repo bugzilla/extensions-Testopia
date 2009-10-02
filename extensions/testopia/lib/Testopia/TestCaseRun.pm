@@ -339,7 +339,12 @@ sub TO_JSON {
     foreach my $b (@{$self->bugs}){
         push @bugs, { bug_id => $b->bug_id, closed => Bugzilla::Bug::is_open_state($b->{'bug_status'}) ? JSON::false : JSON::true};
     }
+    my @casebugs;
+    foreach my $b (@{$self->case->bugs}){
+        push @casebugs, { bug_id => $b->bug_id, closed => Bugzilla::Bug::is_open_state($b->{'bug_status'}) ? JSON::false : JSON::true};
+    }
     my $bugs = { bugs => \@bugs };
+    my $casebugs = { bugs => \@casebugs };
     
     $obj->{'assignee_name'}  = $self->assignee->login if $self->assignee;
     $obj->{'requirement'}  = $self->case->requirement if $self->case;
@@ -357,6 +362,7 @@ sub TO_JSON {
     $obj->{'id'}           = $self->id;
     $obj->{'sortkey'}      = $self->sortkey;
     $obj->{'bug_list'}     = $bugs;
+    $obj->{'case_bug_list'} = $casebugs;
     $obj->{'close_date'}   = format_time($self->{close_date}, TIME_FORMAT);
     $obj->{'running_date'} = format_time($self->{running_date}, TIME_FORMAT);
     $obj->{'plan_name'}    = $self->run->plan->name;
