@@ -4564,6 +4564,9 @@ Testopia.TestCaseRun.List = function(params, cfg){
                 name: "bug_list",
                 mapping: "bug_list"
             }, {
+                name: "case_bug_list",
+                mapping: "case_bug_list"
+            }, {
                 name: "plan_name", 
                 mapping:"plan_name"
             }]
@@ -4665,6 +4668,23 @@ Testopia.TestCaseRun.List = function(params, cfg){
         header: "Bugs In This Build and Environment",
         width: 100,
         dataIndex: "bug_list",
+        sortable: false,
+        hideable: true,
+        renderer: function(v){
+            var bugs = v.bugs;
+            var rets = '';
+            for (var i = 0; i < bugs.length; i++) {
+                if (typeof bugs[i] != 'function') {
+                    rets = rets + '<a href="show_bug.cgi?id=' + bugs[i].bug_id + '" ' + (bugs[i].closed ? 'class="bz_closed"' : '') + '>' + bugs[i].bug_id + '</a>, ';
+                }
+                
+            }
+            return rets;
+        }
+    }, {
+        header: "Bugs In All Builds and Environments",
+        width: 100,
+        dataIndex: "case_bug_list",
         sortable: false,
         hideable: true,
         renderer: function(v){
@@ -4874,6 +4894,9 @@ Testopia.TestCaseRun.Grid = function(params, run){
                 name: "bug_list",
                 mapping: "bug_list"
             }, {
+                name: "case_bug_list",
+                mapping: "case_bug_list"
+            }, {
                 name: "plan_name", 
                 mapping:"plan_name"
             }]
@@ -5048,6 +5071,23 @@ Testopia.TestCaseRun.Grid = function(params, run){
         header: "Bugs In This Build and Environment",
         width: 100,
         dataIndex: "bug_list",
+        sortable: false,
+        hideable: true,
+        renderer: function(v){
+            var bugs = v.bugs;
+            var rets = '';
+            for (var i = 0; i < bugs.length; i++) {
+                if (typeof bugs[i] != 'function') {
+                    rets = rets + '<a href="show_bug.cgi?id=' + bugs[i].bug_id + '" ' + (bugs[i].closed ? 'class="bz_closed"' : '') + '>' + bugs[i].bug_id + '</a>, ';
+                }
+                
+            }
+            return rets;
+        }
+    }, {
+        header: "Bugs In All Builds and Environments",
+        width: 100,
+        dataIndex: "case_bug_list",
         sortable: false,
         hideable: true,
         renderer: function(v){
