@@ -1890,6 +1890,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                                     split: true,
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('plan_type_win_types_combo').focus('',10)}},
                                     width: 350,
                                     height: 150,
                                     items: [new Ext.FormPanel({
@@ -2191,6 +2192,7 @@ Testopia.TestPlan.NewPlanForm = function(product_id){
                 items: [{
                     xtype: 'textfield',
                     fieldLabel: '<b>Plan Name</b>',
+                    id: 'new_plan_name',
                     name: 'plan_name',
                     anchor: '95%',
                     allowBlank: false
@@ -3264,9 +3266,11 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     id: 'status-win',
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('case_status_update').focus('',10)}},
                                     width: 300,
                                     height: 150,
                                     items: [new Testopia.TestCase.StatusListCombo({
+                                        id:'case_status_update',
                                         fieldLabel: 'Status'
                                     })],
                                     buttons: [{
@@ -3296,10 +3300,12 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     layout: 'form',
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('case_priority_update').focus('',10)}},
                                     width: 300,
                                     height: 150,
                                     labelWidth: 30,
                                     items: [new Testopia.TestCase.PriorityCombo({
+                                        id: 'case_priority_update',
                                         fieldLabel: 'Priority'
                                     })],
                                     buttons: [{
@@ -3330,6 +3336,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     plain: true,
                                     shadow: false,
                                     split: true,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('tester_update').focus('',10)}},
                                     width: 350,
                                     height: 150,
                                     items: [new Ext.FormPanel({
@@ -3365,6 +3372,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                 var chbx = new Ext.form.Checkbox({
                                     checked: false,
                                     name: 'isautomated',
+                                    id: 'isautomated_update',
                                     fieldLabel: 'Enable Automation'
                                 });
                                 
@@ -3399,6 +3407,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     layout: 'form',
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('isautomated_update').focus('',10)}},
                                     width: 350,
                                     height: 250,
                                     items: [{
@@ -6517,9 +6526,12 @@ Testopia.TestCase.Components = function(id){
         }
     } 
     catch (err) {
-        if (tcase) {
-            product_id = tcase.product_id;
+        try{
+            if (tcase) {
+                product_id = tcase.product_id;
+            }
         }
+        catch (e) {}
     }
     this.tcid = tcid;
     this.store = new Ext.data.JsonStore({
@@ -6742,6 +6754,7 @@ Testopia.TestCase.Bugs.update = function(grid){
         split: true,
         plain: true,
         shadow: false,
+        listeners: {'afterlayout':function(){Ext.getCmp('bug_field').focus('',10)}},
         width: 350,
         height: 150,
         items: [new Ext.FormPanel({
@@ -7312,6 +7325,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                                     split: true,
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('manager_update').focus('',10)}},
                                     width: 350,
                                     height: 150,
                                     items: [new Ext.FormPanel({
@@ -7355,6 +7369,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                                     split: true,
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('target_completion').focus('',10)}},
                                     width: 350,
                                     height: 150,
                                     items: [new Ext.FormPanel({
@@ -11199,11 +11214,13 @@ Testopia.Tags.update = function(type, grid){
         plain: true,
         shadow: false,
         width: 350,
+        listeners: {'afterlayout':function(){Ext.getCmp('tags_update').focus('',10)}},
         height: 150,
         items: [new Ext.FormPanel({
             labelWidth: '40',
             bodyStyle: 'padding: 5px',
             items: [new Testopia.Tags.Lookup({
+                id: 'tags_update',
                 fieldLabel: 'Tags'
             })]
         })],

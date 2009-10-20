@@ -425,11 +425,13 @@ Testopia.Tags.update = function(type, grid){
         plain: true,
         shadow: false,
         width: 350,
+        listeners: {'afterlayout':function(){Ext.getCmp('tags_update').focus('',10)}},
         height: 150,
         items: [new Ext.FormPanel({
             labelWidth: '40',
             bodyStyle: 'padding: 5px',
             items: [new Testopia.Tags.Lookup({
+                id: 'tags_update',
                 fieldLabel: 'Tags'
             })]
         })],

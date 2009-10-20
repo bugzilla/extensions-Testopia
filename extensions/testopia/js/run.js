@@ -527,6 +527,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                                     split: true,
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('manager_update').focus('',10)}},
                                     width: 350,
                                     height: 150,
                                     items: [new Ext.FormPanel({
@@ -570,6 +571,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                                     split: true,
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('target_completion').focus('',10)}},
                                     width: 350,
                                     height: 150,
                                     items: [new Ext.FormPanel({

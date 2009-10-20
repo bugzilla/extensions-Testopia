@@ -706,9 +706,11 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     id: 'status-win',
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('case_status_update').focus('',10)}},
                                     width: 300,
                                     height: 150,
                                     items: [new Testopia.TestCase.StatusListCombo({
+                                        id:'case_status_update',
                                         fieldLabel: 'Status'
                                     })],
                                     buttons: [{
@@ -738,10 +740,12 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     layout: 'form',
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('case_priority_update').focus('',10)}},
                                     width: 300,
                                     height: 150,
                                     labelWidth: 30,
                                     items: [new Testopia.TestCase.PriorityCombo({
+                                        id: 'case_priority_update',
                                         fieldLabel: 'Priority'
                                     })],
                                     buttons: [{
@@ -772,6 +776,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     plain: true,
                                     shadow: false,
                                     split: true,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('tester_update').focus('',10)}},
                                     width: 350,
                                     height: 150,
                                     items: [new Ext.FormPanel({
@@ -807,6 +812,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                 var chbx = new Ext.form.Checkbox({
                                     checked: false,
                                     name: 'isautomated',
+                                    id: 'isautomated_update',
                                     fieldLabel: 'Enable Automation'
                                 });
                                 
@@ -841,6 +847,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                     layout: 'form',
                                     plain: true,
                                     shadow: false,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('isautomated_update').focus('',10)}},
                                     width: 350,
                                     height: 250,
                                     items: [{

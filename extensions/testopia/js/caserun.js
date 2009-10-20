@@ -2193,9 +2193,12 @@ Testopia.TestCase.Components = function(id){
         }
     } 
     catch (err) {
-        if (tcase) {
-            product_id = tcase.product_id;
+        try{
+            if (tcase) {
+                product_id = tcase.product_id;
+            }
         }
+        catch (e) {}
     }
     this.tcid = tcid;
     this.store = new Ext.data.JsonStore({
@@ -2418,6 +2421,7 @@ Testopia.TestCase.Bugs.update = function(grid){
         split: true,
         plain: true,
         shadow: false,
+        listeners: {'afterlayout':function(){Ext.getCmp('bug_field').focus('',10)}},
         width: 350,
         height: 150,
         items: [new Ext.FormPanel({
