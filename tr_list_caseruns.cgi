@@ -117,13 +117,44 @@ elsif ($action eq 'delete'){
     }
     my @uneditable;
     foreach my $id (@case_ids){
-        my $case = Testopia::TestCaseRun->new($id);
-        unless ($case->candelete){
-            push @uneditable, $case->id;
-            next;
+        my $obj;
+        if ($cgi->param('deltype') eq 'cr'){
+            $obj = Testopia::TestCaseRun->new($id);
+            unless ($obj->candelete){
+                push @uneditable, $obj->id;
+                next;
+            }
+            $obj->obliterate('single');
         }
-        
-        $case->obliterate($cgi->param('single'));
+        elsif ($cgi->param('deltype') eq 'cr_all'){
+            $obj = Testopia::TestCaseRun->new($id);
+            unless ($obj->candelete){
+                push @uneditable, $obj->id;
+                next;
+            }
+            $obj->obliterate();            
+        }
+        elsif ($cgi->param('deltype') eq 'plan_single'){
+            my $cr = Testopia::TestCaseRun->new($id);
+            $obj = $cr->case;
+            unless ($obj->can_unlink_plan($cr->run->plan_id)){
+                push @uneditable, $obj->id;
+                next;
+            }
+            $obj->unlink_plan($cr->run->plan_id)
+        }
+        elsif ($cgi->param('deltype') eq 'all_plans'){
+            my $cr = Testopia::TestCaseRun->new($id);
+            $obj = $cr->case;
+            unless ($obj->candelete){
+                push @uneditable, $obj->id;
+                next;
+            }
+            $obj->obliterate();
+        }
+        else{
+            print "{'success': false}";
+        }
     }
 
     ThrowUserError('testopia-delete-failed', {'object' => 'case-run', 'list' => join(',',@uneditable)}) if (scalar @uneditable);

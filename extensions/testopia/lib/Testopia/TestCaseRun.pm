@@ -785,15 +785,26 @@ sub obliterate {
     my $single = shift;
     my $dbh = Bugzilla->dbh;
     my $sth = $dbh->prepare_cached("DELETE FROM test_case_bugs WHERE case_run_id = ?");
-    foreach my $id (@{$self->get_case_run_list}){
-        $sth->execute($id);
-    }
     
     if ($single){
+        $sth->execute($self->id);
         $dbh->do("DELETE FROM test_case_runs WHERE case_run_id = ?", 
               undef, ($self->id));
+        
+        my $ref = $dbh->selectcol_arrayref(
+            "SELECT case_run_id FROM test_case_runs
+             WHERE case_id = ? AND run_id = ? ORDER BY close_date DESC", undef,
+             ($self->{'case_id'}, $self->{'run_id'}));
+        
+        if (scalar @{$ref}){
+            my $cr = new Testopia::TestCaseRun(@{$ref}[0]);
+            $cr->set_as_current;
+        }
     }
     else {
+        foreach my $id (@{$self->get_case_run_list}){
+            $sth->execute($id);
+        }
         $dbh->do("DELETE FROM test_case_runs WHERE case_id = ? AND run_id = ?", 
                   undef, ($self->case_id, $self->run_id));
     }

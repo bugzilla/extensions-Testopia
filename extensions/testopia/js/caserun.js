@@ -452,6 +452,7 @@ Ext.extend(Testopia.TestCaseRun.List, Ext.grid.GridPanel, {
                         params: {
                             caserun_ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id'),
                             action: 'delete',
+                            deltype: 'cr',
                             single: true,
                             ctype: 'json'
                         },
@@ -1075,6 +1076,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                     shadow: false,
                                     width: 320,
                                     height: 150,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('multi_build').focus('',10)}},
                                     layout: 'form',
                                     bodyStyle: 'padding: 5px',
                                     items: [new Testopia.Build.Combo({
@@ -1119,6 +1121,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                     shadow: false,
                                     width: 320,
                                     height: 150,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('multi_env').focus('',10)}},
                                     layout: 'form',
                                     bodyStyle: 'padding: 5px',
                                     items: [new Testopia.Environment.Combo({
@@ -1163,6 +1166,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                     shadow: false,
                                     width: 320,
                                     height: 150,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('multi_priority').focus('',10)}},
                                     layout: 'form',
                                     bodyStyle: 'padding: 5px',
                                     items: [new Testopia.TestCase.PriorityCombo({
@@ -1199,8 +1203,10 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                     shadow: false,
                                     width: 300,
                                     height: 150,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('multi_category').focus('',10)}},
                                     items: [new Testopia.Category.Combo({
                                         fieldLabel: 'Category',
+                                        id: 'multi_category',
                                         params: {
                                             product_id: run.product_id
                                         }
@@ -1233,6 +1239,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                     shadow: false,
                                     width: 320,
                                     height: 150,
+                                    listeners: {'afterlayout':function(){Ext.getCmp('multi_assignee').focus('',10)}},
                                     layout: 'form',
                                     bodyStyle: 'padding: 5px',
                                     items: [new Testopia.User.Lookup({
@@ -1396,20 +1403,62 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
         if (grid.getSelectionModel().getCount() < 1) {
             return;
         }
-        Ext.Msg.show({
+        var win = new Ext.Window({
             title: 'Confirm Delete?',
-            msg: CASERUN_DELETE_WARNING,
-            buttons: Ext.Msg.YESNO,
-            animEl: 'caserun-delete-btn',
-            icon: Ext.MessageBox.QUESTION,
-            fn: function(btn){
-                if (btn == 'yes') {
+            id: 'case_delete_win',
+            plain: true,
+            shadow: false,
+            width: 520,
+            height: 250,
+            layout: 'table',
+            bodyStyle: 'padding: 5px',
+            layoutConfig: {
+                columns: 1,
+                width: '100%'
+            },
+            items: [{
+                html: CASERUN_DELETE_WARNING,
+                bodyStyle: 'padding: 5px; font-weight:bold; color: red'
+            }, {
+                xtype: 'fieldset',
+                items:[{
+                    xtype: 'radio',
+                    name: 'delete_cases_options',
+                    id: 'delete_cases_radio_group',
+                    inputValue: 'cr_all',
+                    checked: true,
+                    boxLabel: 'Remove case from this run for all builds and environments',
+                    hideLabel: true
+                }, {
+                    xtype: 'radio',
+                    name: 'delete_cases_options',
+                    inputValue: 'cr',
+                    boxLabel: 'Remove case from this run for SELECTED build and environment only',
+                    hideLabel: true
+                }, {
+                    xtype: 'radio',
+                    name: 'delete_cases_options',
+                    inputValue: 'plan_single',
+                    boxLabel: 'Remove case from this run and from this test plan',
+                    hideLabel: true
+                }, {
+                    xtype: 'radio',
+                    name: 'delete_cases_options',
+                    inputValue: 'all_plans',
+                    boxLabel: 'Delete this case completely (remove from all test plans)',
+                    hideLabel: true
+                }]
+            }],
+            buttons: [{
+                text: 'Submit',
+                handler: function(){
                     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
                     testopia_form.submit({
                         url: 'tr_list_caseruns.cgi',
                         params: {
                             caserun_ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id'),
                             action: 'delete',
+                            deltype: Ext.getCmp('delete_cases_radio_group').getGroupValue(),
                             ctype: 'json'
                         },
                         success: function(data){
@@ -1425,9 +1474,16 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                             grid.store.reload();
                         }
                     });
+                    win.close();
                 }
-            }
+            }, {
+                text: 'Cancel',
+                handler: function(){
+                    win.close();
+                }
+            }]
         });
+        win.show(this);
     },
     onActivate: function(event){
         if (!this.store.getCount()) {
