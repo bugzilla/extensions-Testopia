@@ -24,9 +24,12 @@ package extensions::testopia::lib::Testopia::WebService::Testopia;
 use strict;
 
 use base qw(Bugzilla::WebService);
+use lib qw(./extensions/testopia/lib);
 
 use Bugzilla::Error;
 use Bugzilla::Constants;
+
+use Testopia::Constants;
 
 sub api_version {
     my $self = shift;
@@ -35,7 +38,7 @@ sub api_version {
 
 sub testopia_version {
     my $self = shift;
-    return "2.0-RC2";
+    return TESTOPIA_VERSION;
 }
 
 1;
@@ -44,7 +47,7 @@ __END__
 
 =head1 NAME
 
-extensions::testopia::lib::Testopia::Webservice::Testopia
+Testopia::Webservice::Testopia
 
 =head1 EXTENDS
 

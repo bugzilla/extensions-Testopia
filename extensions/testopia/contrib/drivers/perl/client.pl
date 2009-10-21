@@ -58,9 +58,6 @@ use HTTP::Cookies;
 use Carp;
 use Data::Dumper;
 
-use lib '../../../..';
-use Testopia::Product;
-
 my $help;
 my $Bugzilla_uri;
 my $Bugzilla_login;
@@ -145,6 +142,7 @@ if (defined($Bugzilla_login)) {
     }
 }
 
+$soapresult = $proxy->call('Testopia.testopia_version');
 #$soapresult = $proxy->call('Testopia.api_version');
 
 #####################
@@ -273,6 +271,7 @@ if (defined($Bugzilla_login)) {
 #$soapresult = $proxy->call('TestPlan.get_product', 74);
 #$soapresult = $proxy->call('TestPlan.get_tags', 74);
 #$soapresult = $proxy->call('TestPlan.get_test_cases', 74);
+#$soapresult = $proxy->call('TestPlan.get_case_tags', 74);
 #$soapresult = $proxy->call('TestPlan.get_test_runs', 74);
 #$soapresult = $proxy->call('TestPlan.get_text', 74, 3);
 #$soapresult = $proxy->call('TestPlan.list', {product_id=>2, name=> 'selenium'});
@@ -294,6 +293,7 @@ if (defined($Bugzilla_login)) {
 #$soapresult = $proxy->call('TestRun.get_tags', 501);
 #$soapresult = $proxy->call('TestRun.get_test_case_runs', 501);
 #$soapresult = $proxy->call('TestRun.get_test_cases', 501);
+#$soapresult = $proxy->call('TestRun.get_case_tags', 501);
 #$soapresult = $proxy->call('TestRun.get_test_plan', 501);
 #$soapresult = $proxy->call('TestRun.list', {plan => 97});
 #$soapresult = $proxy->call('TestRun.remove_tag', 501, 'fish' );

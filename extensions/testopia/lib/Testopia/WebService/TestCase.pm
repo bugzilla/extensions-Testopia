@@ -23,16 +23,17 @@ package extensions::testopia::lib::Testopia::WebService::TestCase;
 
 use strict;
 
+use base qw(Bugzilla::WebService);
+use lib qw(./extensions/testopia/lib);
+
 use Bugzilla::User;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 
-use extensions::testopia::lib::Testopia::TestCase;
-use extensions::testopia::lib::Testopia::Category;
-use extensions::testopia::lib::Testopia::Search;
-use extensions::testopia::lib::Testopia::Table;
-
-use base qw(Bugzilla::WebService);
+use Testopia::TestCase;
+use Testopia::Category;
+use Testopia::Search;
+use Testopia::Table;
 
 sub get {
     my $self = shift;
@@ -40,7 +41,7 @@ sub get {
 
     Bugzilla->login(LOGIN_REQUIRED);
 
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -69,8 +70,8 @@ sub list {
     }
     $cgi->param('distinct', 1);
     
-    my $search = extensions::testopia::lib::Testopia::Search->new($cgi);
-    return extensions::testopia::lib::Testopia::Table->new('case','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list();
+    my $search = Testopia::Search->new($cgi);
+    return Testopia::Table->new('case','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list();
 }
 
 sub list_count {
@@ -88,8 +89,8 @@ sub list_count {
     }
     $cgi->param('distinct', 1);
     
-    my $search = extensions::testopia::lib::Testopia::Search->new($cgi);
-    return extensions::testopia::lib::Testopia::Table->new('case','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list_count();
+    my $search = Testopia::Search->new($cgi);
+    return Testopia::Table->new('case','tr_xmlrpc.cgi',$cgi,undef,$search->query())->list_count();
 }
 
 sub create {
@@ -123,7 +124,7 @@ sub create {
         my @plans;
         eval{
             foreach my $id (@plan_ids){
-                my $plan = extensions::testopia::lib::Testopia::TestPlan->new($id);
+                my $plan = Testopia::TestPlan->new($id);
                 ThrowUserError("invalid-test-id-non-existent", {'id' => $id, 'type' => 'Plan'}) unless $plan;
                 ThrowUserError("testopia-create-denied", {'object' => 'Test Case', 'plan' => $plan}) unless $plan->canedit;
                 push @plans, $plan;
@@ -171,7 +172,7 @@ sub create {
         
         my $case;
         eval{
-            $case = extensions::testopia::lib::Testopia::TestCase->create($new_values);
+            $case = Testopia::TestCase->create($new_values);
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -190,7 +191,7 @@ sub update {
 
     Bugzilla->login(LOGIN_REQUIRED);
 
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($ids);
+    my @ids = Testopia::Util::process_list($ids);
     
     my @dependson;
     if (ref $new_values->{'dependson'} eq 'ARRAY'){
@@ -205,7 +206,7 @@ sub update {
 
     my @cases;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         unless ($case){
             ThrowUserError("invalid-test-id-non-existent", {'id' => $id, 'type' => 'Case'}) if scalar @ids == 1;
             push @cases, {ERROR => "TestCase $id does not exist"};
@@ -263,7 +264,7 @@ sub get_text {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -278,7 +279,7 @@ sub store_text {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     $author_id ||= Bugzilla->user->id;
     if ($author_id !~ /^\d+$/){
@@ -300,7 +301,7 @@ sub get_plans {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -314,10 +315,10 @@ sub attach_bug {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($case_ids);
+    my @ids = Testopia::Util::process_list($case_ids);
     my @results;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         unless ($case){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
@@ -343,7 +344,7 @@ sub detach_bug {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-read-only', {'object' => $case}) unless $case->canedit;
@@ -360,7 +361,7 @@ sub get_bugs {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -375,10 +376,10 @@ sub add_component {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($case_ids);
+    my @ids = Testopia::Util::process_list($case_ids);
     my @results;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         unless ($case){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
@@ -404,10 +405,10 @@ sub remove_component {
 
     Bugzilla->login(LOGIN_REQUIRED);
 
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($case_ids);
+    my @ids = Testopia::Util::process_list($case_ids);
     my @results;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         unless ($case){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
@@ -433,7 +434,7 @@ sub get_components {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -448,10 +449,10 @@ sub add_tag {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($case_ids);
+    my @ids = Testopia::Util::process_list($case_ids);
     my @results;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         unless ($case){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
@@ -477,10 +478,10 @@ sub remove_tag {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($case_ids);
+    my @ids = Testopia::Util::process_list($case_ids);
     my @results;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         unless ($case){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
@@ -506,7 +507,7 @@ sub get_tags {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -528,16 +529,16 @@ sub link_plan {
         $plan_ids = join(',', @$plan_ids);
     }
     foreach my $id (split(',', $plan_ids)){
-        my $plan = extensions::testopia::lib::Testopia::TestPlan->new($id);
+        my $plan = Testopia::TestPlan->new($id);
         ThrowUserError("testopia-read-only", {'object' => $plan}) unless $plan->canedit;
         push @plans, $plan;
     }
     ThrowUserError('missing-plans-list') unless scalar @plans;
     
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($case_ids);
+    my @ids = Testopia::Util::process_list($case_ids);
     my @results;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         foreach my $plan (@plans){
             eval {
                 $case->link_plan($plan->id);
@@ -558,7 +559,7 @@ sub unlink_plan {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError("testopia-read-only", {'object' => 'case'}) unless ($case->can_unlink_plan($plan_id));
@@ -575,10 +576,10 @@ sub add_to_run {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = extensions::testopia::lib::Testopia::Util::process_list($case_ids);
+    my @ids = Testopia::Util::process_list($case_ids);
     my @results;
     foreach my $id (@ids){
-        my $case = new extensions::testopia::lib::Testopia::TestCase($id);
+        my $case = new Testopia::TestCase($id);
         unless ($case){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
@@ -608,7 +609,7 @@ sub get_case_run_history {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -623,7 +624,7 @@ sub get_change_history {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -638,7 +639,7 @@ sub calculate_average_time {
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new extensions::testopia::lib::Testopia::TestCase($case_id);
+    my $case = new Testopia::TestCase($case_id);
 
     ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
@@ -698,7 +699,7 @@ __END__
 
 =head1 NAME
 
-extensions::testopia::lib::Testopia::Webservice::TestCase
+Testopia::Webservice::TestCase
 
 =head1 EXTENDS
 
@@ -834,7 +835,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
  Params:      $id - Integer/String: An integer representing the ID in the database
                     or a string representing the unique alias for this case.
 
- Returns:     A blessed extensions::testopia::lib::Testopia::TestCase object hash
+ Returns:     A blessed Testopia::TestCase object hash
 
 =item C<get_bugs($case_id)>
 
@@ -1137,7 +1138,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
 =head1 SEE ALSO
 
-L<extensions::testopia::lib::Testopia::TestCase>
+L<Testopia::TestCase>
 L<Bugzilla::Webservice> 
 
 =head1 AUTHOR

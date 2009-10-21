@@ -931,6 +931,20 @@ sub get_environments {
     return $ref;
 }
 
+sub get_case_tags {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    my $tags = $dbh->selectcol_arrayref(
+             "SELECT DISTINCT test_tags.tag_id, test_tags.tag_name AS name FROM test_case_tags
+          INNER JOIN test_tags ON test_case_tags.tag_id = test_tags.tag_id 
+               WHERE test_case_tags.tag_id IN (". $self->case_id_list . ")");
+    my @tags;
+    foreach my $id (@$tags){
+        push @tags, Testopia::TestTag->new($id);
+    }
+    return \@tags;
+}
+
 sub get_filters {
     my $self = shift;
     my $dbh = Bugzilla->dbh;

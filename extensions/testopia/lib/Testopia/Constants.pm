@@ -23,6 +23,8 @@ use strict;
 use base qw(Exporter);
 
 @Testopia::Constants::EXPORT = qw(
+TESTOPIA_VERSION
+
 PROPOSED
 CONFIRMED
 DISABLED
@@ -59,6 +61,8 @@ TIME_FORMAT
 
 
 @Bugzilla::Constants::EXPORT_OK = qw(contenttypes);
+
+use constant TESTOPIA_VERSION => "2.3";
 
 # Test Case Status
 use constant PROPOSED  => 1;

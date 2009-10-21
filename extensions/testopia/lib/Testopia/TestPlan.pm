@@ -963,6 +963,21 @@ sub get_user_rights {
     return $perms || 0;
 }
 
+sub get_case_tags {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    
+    my $tags = $dbh->selectcol_arrayref(
+             "SELECT DISTINCT test_tags.tag_id, test_tags.tag_name AS name FROM test_case_tags
+          INNER JOIN test_tags ON test_case_tags.tag_id = test_tags.tag_id 
+               WHERE test_case_tags.tag_id IN (". join(',', @{$self->case_ids}) . ")");
+    my @tags;
+    foreach my $id (@$tags){
+        push @tags, Testopia::TestTag->new($id);
+    }
+    return \@tags;
+}
+
 sub TO_JSON {
     my $self = shift;
     my $obj;
@@ -1190,6 +1205,20 @@ sub product {
     return $self->{'product'};
 }
 
+sub case_ids {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    return $self->{'case_ids'} if exists $self->{'case_ids'};
+    
+    my $ref = $dbh->selectcol_arrayref(
+        "SELECT case_id FROM test_case_plans
+         WHERE plan_id = ?", undef,
+         $self->id);
+    
+    $self->{'case_ids'} = $ref;
+    return $self->{'case_ids'};
+}
+
 =head2 test_cases
 
 Returns a reference to a list of Testopia::TestCase objects linked
@@ -1212,7 +1241,7 @@ sub test_cases {
     foreach my $id (@{$caseids}){
         push @cases, Testopia::TestCase->new($id);
     }
-
+    $self->{'case_list'} = join(',', @{$caseids});
     $self->{'test_cases'} = \@cases;
     return $self->{'test_cases'};
 }
