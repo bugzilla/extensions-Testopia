@@ -816,7 +816,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
     var vbox = new Testopia.Product.VersionCombo({
         id: 'plan_clone_version_chooser',
         hiddenName: 'prod_version',
-        fieldLabel: 'Product Version',
+        fieldLabel: '<b>Product Version</b>',
         params: {
             product_id: plan.product_id
         },
@@ -977,12 +977,10 @@ Testopia.TestPlan.ClonePanel = function(plan){
                                 if (checked === true) {
                                     Ext.getCmp('copy_cases_keep_author').enable();
                                     Ext.getCmp('copy_cases_keep_tester').enable();
-                                    Ext.getCmp('copy_run_cases_cbox').disable();
                                 }
                                 else {
                                     Ext.getCmp('copy_cases_keep_author').disable();
                                     Ext.getCmp('copy_cases_keep_tester').disable();
-                                    Ext.getCmp('copy_run_cases_cbox').enable();
                                 }
                             }
                         }
@@ -1035,7 +1033,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
                         name: 'copy_run_cases',
                         id: 'copy_run_cases_cbox',
                         checked: true,
-                        boxLabel: 'Link cases in copied run to original test cases (unchecking will produce an empty test run)',
+                        boxLabel: 'Include test cases (unchecking will produce an empty test run)',
                         hideLabel: true
                     }, bbox, ebox]
                 }]

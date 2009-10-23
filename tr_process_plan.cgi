@@ -69,6 +69,7 @@ elsif ($action eq 'clone'){
     my $plan_name = $cgi->param('plan_name');
     my $product_id = $cgi->param('product_id');
     my $version = $cgi->param('prod_version');
+    my %case_lookup;
     my $product = Testopia::Product->new($product_id);
     $product ||= $plan->product;
     
@@ -153,7 +154,7 @@ elsif ($action eq 'clone'){
                 
                 my $caseid = $case->copy($case_author, $case_tester, 1, $category->id);
                 my $newcase = Testopia::TestCase->new($caseid);
-                
+                $case_lookup{$case->id} = $caseid;
                 $newcase->link_plan($newplan->id, $caseid);
                 
                 foreach my $tag (@{$case->tags}){
@@ -190,8 +191,17 @@ elsif ($action eq 'clone'){
                 }
             }
             if($cgi->param('copy_run_cases')){
-                foreach my $cr (@{$run->current_caseruns}){
-                    $newrun->add_case_run($cr->case_id, $cr->sortkey);
+                if ($cgi->param('make_copy')){
+                    foreach my $cr (@{$run->current_caseruns}){
+                        if ($case_lookup{$cr->case_id}){
+                            $newrun->add_case_run($case_lookup{$cr->case_id}, $cr->sortkey);
+                        }
+                    }
+                }
+                else {
+                    foreach my $cr (@{$run->current_caseruns}){
+                        $newrun->add_case_run($cr->case_id, $cr->sortkey);
+                    }
                 }
             }
         }
