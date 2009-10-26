@@ -235,13 +235,13 @@ sub create {
     my ($class, $params) = @_;
     
     $class->SUPER::check_required_create_fields($params);
+    my $case = Testopia::TestCase->new($params->{case_id});
+    
+    unless ($params->{priority_id}){
+        $params->{priority_id} = $case->{priority_id};
+    }    
+    
     my $field_values = $class->run_create_validators($params);
-    
-    my $case = Testopia::TestCase->new($field_values->{case_id});
-    
-    unless ($field_values->{priority_id}){
-        $field_values->{priority_id} = $case->{priority_id};
-    }
     
     $field_values->{case_text_version} ||= $case->version;
     $field_values->{iscurrent} ||= 1;
