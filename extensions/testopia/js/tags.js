@@ -438,13 +438,13 @@ Testopia.Tags.update = function(type, grid){
         buttons: [{
             text: 'Add Tag',
             handler: function(){
-                commitTag('addtag', Ext.getCmp('tag_lookup').getRawValue(), grid);
+                commitTag('addtag', Ext.getCmp('tags_update').getRawValue(), grid);
                 win.close();
             }
         }, {
             text: 'Remove Tag',
             handler: function(){
-                commitTag('removetag', Ext.getCmp('tag_lookup').getRawValue(), grid);
+                commitTag('removetag', Ext.getCmp('tags_update').getRawValue(), grid);
                 win.close();
             }
         }, {
