@@ -31,6 +31,11 @@
 [% javascript_urls.push("extensions/testopia/extjs/examples/ux/PortalColumn.js") %]
 [% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portlet.js") %]
 
+[% IF report %]
+  [% title = "Roll Up Report" %]
+[% ELSE %]
+  [% title = "Test Results List" %]
+[% END %]
 [% PROCESS global/header.html.tmpl %]
 
 <script type="text/javascript">
@@ -96,8 +101,15 @@ Ext.onReady(function(){
             }
         });
     });
+[% IF report %]
+    Ext.getCmp('caserun_list_grid').store.remoteSort = false;
+    Ext.getCmp('caserun_list_grid').getBottomToolbar().remove('caserun_paging_filter');
+[% END %]
 }); 
 
 </script>
+[% IF report %]
+<h3>This is a Roll up report. Displayed are the most recent test results for each test case for run(s) [% " $run_ids" IF run_ids %] [% "in plan(s) $plan_ids" IF plan_ids %]. </h3>
+[% END %]
 <div id="list_div" style="height:650px"></div>
 [% PROCESS global/footer.html.tmpl %]

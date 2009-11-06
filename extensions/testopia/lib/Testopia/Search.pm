@@ -127,6 +127,12 @@ sub init {
                        FROM test_case_plans 
                       WHERE case_id NOT IN (SELECT case_id FROM test_case_runs) 
                         AND plan_id IN ($plans)";
+        if(defined $start){
+            $query .= " LIMIT $limit OFFSET $start";
+        }
+        elsif (defined $page){
+            $query .= " LIMIT $pagesize OFFSET ". $page*$pagesize;
+        }
         $self->{'sql'} = $query;
         return;
     }
@@ -135,10 +141,38 @@ sub init {
                 INNER JOIN test_cases on test_case_plans.case_id = test_cases.case_id
                 WHERE test_cases.default_tester_id = " . Bugzilla->user->id .
               " UNION SELECT plan_id FROM test_plan_permissions WHERE userid = " . Bugzilla->user->id;
+        if(defined $start){
+            $query .= " LIMIT $limit OFFSET $start";
+        }
+        elsif (defined $page){
+            $query .= " LIMIT $pagesize OFFSET ". $page*$pagesize;
+        }
+
         $self->{'sql'} = $query;
         return;
     }
-    
+    if ($cgi->param('report_type') && $cgi->param('report_type') eq 'rollup'){
+        my @r = $cgi->param('run_ids');
+        my @p = $cgi->param('plan_ids');
+        
+        my ($runs, $run_ids) = get_runs(\@p, \@r);
+
+        my $query = 
+        "SELECT test_case_runs.case_run_id 
+           FROM (SELECT MAX(close_date) AS cd, t.case_id FROM test_case_runs t
+                  WHERE t.run_id IN (" . join(',', @$run_ids) . ") GROUP BY t.case_id) a
+          INNER JOIN test_case_runs 
+             ON test_case_runs.case_id = a.case_id 
+            AND test_case_runs.close_date = a.cd";
+        if(defined $start){
+            $query .= " LIMIT $limit OFFSET $start";
+        }
+        elsif (defined $page){
+            $query .= " LIMIT $pagesize OFFSET ". $page*$pagesize;
+        }
+        $self->{'sql'} = $query;
+        return;
+    }
     my $distinct = $cgi->param('distinct') ? 'DISTINCT' : '';
     
     my @specialchart;

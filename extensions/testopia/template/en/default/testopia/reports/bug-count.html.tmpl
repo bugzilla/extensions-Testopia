@@ -27,15 +27,25 @@
 [% PROCESS global/header.html.tmpl %]
 [% END %]
 <h1>[% qname FILTER html %]</h1>
+<h4>Bug Report for Runs: 
+[% FOREACH r IN runs.split(',') %]
+ <a href="tr_show_run.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
+[% END %] 
+[% IF plans %]
+ <br>In Plans: 
+ [% FOREACH r IN plans.split(',') %]
+   <a href="tr_show_plan.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
+ [% END %] 
+[% END %]</h4>
 
-<div id="bug_count_report[% uid FILTER html IF qname %]"></div>
+<div id="bug_count_report[% uid FILTER html %]"></div>
 <script type="text/javascript">
     
     var bug_list = new Testopia.BugReport({
             run_ids: '[% runs || 0 FILTER js %]',
             plan_ids: '[% plans || 0 FILTER js %]'
         });
-    bug_list.render('bug_count_report[% uid FILTER js IF qname %]');
+    bug_list.render('bug_count_report[% uid FILTER js %]');
     bug_list.store.load();
 
 </script>

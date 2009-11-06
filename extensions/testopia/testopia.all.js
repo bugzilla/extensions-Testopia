@@ -2065,9 +2065,35 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                                 });
                             }
                         }, {
+                            text: 'Worst Offender Report',
+                            handler: function(){
+                                Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                
+                                var newPortlet = new Ext.ux.Portlet({
+                                    title: 'Worst Offender Report',
+                                    closable: true,
+                                    autoScroll: true,
+                                    tools: PortalTools
+                                });
+                                newPortlet.url = 'tr_run_reports.cgi?type=worst&plan_ids=' + Testopia.Util.getSelectedObjects(grid, 'plan_id') + '&noheader=1';
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                Ext.getCmp('dashboard_leftcol').doLayout();
+                                newPortlet.load({
+                                    scripts: true,
+                                    url: newPortlet.url
+                                });
+                                
+                            }
+                        }, {
                             text: 'Missing Cases Report',
                             handler: function(){
                                 window.open('tr_list_cases.cgi?report_type=missing&plan_ids=' + Testopia.Util.getSelectedObjects(grid, 'plan_id'));
+                            }
+                        }, {
+                            text: 'Case Roll-up Report',
+                            handler: function(){
+                                window.open('tr_list_caseruns.cgi?report_type=rollup&plan_ids=' + Testopia.Util.getSelectedObjects(grid, 'plan_id'));
                             }
                         }]
                     }
@@ -7363,6 +7389,32 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                                     scripts: true,
                                     url: newPortlet.url
                                 });
+                            }
+                        }, {
+                            text: 'Worst Offender Report',
+                            handler: function(){
+                                Ext.getCmp('object_panel').setActiveTab('dashboardpanel');
+                                
+                                var newPortlet = new Ext.ux.Portlet({
+                                    title: 'Worst Offender Report',
+                                    closable: true,
+                                    autoScroll: true,
+                                    tools: PortalTools
+                                });
+                                newPortlet.url = 'tr_run_reports.cgi?type=worst&run_ids=' + Testopia.Util.getSelectedObjects(grid, 'run_id') + '&noheader=1';
+                                Testopia.Search.dashboard_urls.push(newPortlet.url);
+                                Ext.getCmp('dashboard_leftcol').add(newPortlet);
+                                Ext.getCmp('dashboard_leftcol').doLayout();
+                                newPortlet.load({
+                                    scripts: true,
+                                    url: newPortlet.url
+                                });
+                                
+                            }
+                        }, {
+                            text: 'Case Roll-up Report',
+                            handler: function(){
+                                window.open('tr_list_caseruns.cgi?report_type=rollup&run_ids=' + Testopia.Util.getSelectedObjects(grid, 'run_id'));
                             }
                         }]
                     }

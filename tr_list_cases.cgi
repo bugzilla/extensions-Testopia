@@ -299,7 +299,10 @@ elsif ($action eq 'update_bugs'){
 
 else{
     $vars->{'qname'} = $cgi->param('qname') if $cgi->param('qname');
-    
+    $vars->{'report'} = $cgi->param('report_type') if $cgi->param('report_type');
+    $vars->{'plan_ids'} = $cgi->param('plan_ids') if $cgi->param('plan_ids');
+    $vars->{'run_ids'} = $cgi->param('run_ids') if $cgi->param('run_ids');
+
     $cgi->param('current_tab', 'case');
     $cgi->param('distinct', '1');
     my $search = Testopia::Search->new($cgi);

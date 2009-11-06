@@ -34,39 +34,13 @@ use Testopia::Report;
 use Testopia::TestRun;
 use Testopia::Search;
 
+use JSON;
+
 my $vars = {};
 my $template = Bugzilla->template;
 my $cgi = Bugzilla->cgi;
 
 Bugzilla->login(LOGIN_REQUIRED);
-
-sub get_runs {
-    my ($plan_ids, $run_ids) = @_;
-    my @runs;
-    foreach my $g (@$plan_ids){
-        foreach my $id (split(',', $g)){
-            my $obj = Testopia::TestPlan->new($id);
-            push @runs, @{$obj->test_runs} if $obj && $obj->canview;
-        }
-    }
-    foreach my $g (@$run_ids){
-        foreach my $id (split(',', $g)){
-            my $obj = Testopia::TestRun->new($id);
-            push @runs, $obj if $obj && $obj->canview;
-        }
-    }
-    
-    unless (scalar @runs){
-        print "<b>No runs found</b>";
-        exit;
-    }
-    
-    my @run_ids;
-    foreach my $r (@runs){
-        push @run_ids, $r->id;
-    }
-    return (\@runs,\@run_ids);
-}
 
 my $type = $cgi->param('type') || '';
 $vars->{'qname'} = $cgi->param('qname');
@@ -321,6 +295,48 @@ elsif ($type eq 'priority'){
        || ThrowTemplateError($template->error());
     exit;
 
+}
+elsif ($type eq 'worst'){
+    my $dbh = Bugzilla->dbh;
+    my @r = $cgi->param('run_ids');
+    my @plans = $cgi->param('plan_ids');
+    
+    my ($runs, $run_ids) = get_runs(\@plans, \@r);
+    my @runs = @$runs;
+    my @run_ids = @$run_ids;
+    my $json = new JSON;
+
+    my $query = 
+       "SELECT COUNT(case_id) AS top, case_id 
+          FROM test_case_runs 
+         WHERE run_id IN (". join(',', @$run_ids) .") 
+           AND case_run_status_id = ?
+      GROUP BY case_id 
+      ORDER BY top DESC 
+      LIMIT ?";
+    my $ref = $dbh->selectall_arrayref($query, {'Slice' =>{}}, (FAILED, 10));
+    foreach my $row (@$ref){
+        $row->{top} = int($row->{top});
+    }
+
+    $vars->{'stripheader'} = 1 if $cgi->param('noheader');
+    $vars->{'uid'} = int(rand(10000));
+    $vars->{'data'} = $json->encode($ref); 
+    $vars->{'runs'} = join(',',@run_ids);
+    $vars->{'plans'} = join(',',@plans);
+    
+    print $cgi->header;
+    $template->process("testopia/reports/bar.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+    exit;    
+      
+}
+elsif ($type eq 'changed'){
+    my $query = 
+    "SELECT case_run_id, case_run_status_id, close_date, from test_case_runs t
+      INNER JOIN test_runs on test_runs.run_id = t.run_id 
+      WHERE test_runs.plan_id = ?
+      ORDER BY case_id, close_date DESC";
 }
 
 $cgi->param('current_tab', 'run');

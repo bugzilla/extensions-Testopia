@@ -1,0 +1,123 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Testopia System.
+  #
+  # The Initial Developer of the Original Code is Greg Hendricks.
+  # Portions created by Greg Hendricks are Copyright (C) 2001
+  # Novell. All Rights Reserved.
+  #
+  # Contributor(s): Greg Hendricks <ghendricks@novell.com>
+  #%]
+
+[%# INTERFACE:
+  # ...
+  #%]
+  
+[% PROCESS testopia/style.none.tmpl %]
+[% UNLESS stripheader %]
+[% title = "Worst Offender Report" %]
+[% PROCESS global/header.html.tmpl %]
+[% END %]
+<h1>[% qname FILTER html %]</h1>
+<h4>Worst Offender Report for Runs: 
+[% FOREACH r IN runs.split(',') %]
+ <a href="tr_show_run.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
+[% END %] 
+[% IF plans %]
+ <br>In Plans: 
+ [% FOREACH r IN plans.split(',') %]
+   <a href="tr_show_plan.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
+ [% END %] 
+[% END %]</h4>
+<div id="chart_report[% uid FILTER html %]"></div>
+<script type="text/javascript">
+[% UNLESS stripheader %]
+Ext.onReady(function(){
+[% END %]
+    var store = new Ext.data.JsonStore({
+        id: 'chart_store',
+        fields:['top', 'case_id'],
+        data: [% data FILTER none %]
+    });
+    var chart = new Ext.Panel({
+            run_ids: '[% runs || 0 FILTER js %]',
+            plan_ids: '[% plans || 0 FILTER js %]',
+            id: 'bar_chart[% uid FILTER js %]',
+            height: 300,
+            layout: 'fit',
+            yAxis: new Ext.chart.NumericAxis({
+                displayName: 'Failures',
+                labelRenderer : Ext.util.Format.numberRenderer('0,0')
+            }),
+
+            items: {
+                xtype: 'columnchart',
+                store: store,
+                xField: 'case_id',
+                series:[{
+                    type:'column',
+                    displayName: "Worst Offenders",
+                    yField: 'top',
+                    color: '0xee0000'
+                }],
+                tipRenderer : function(chart, record, index, series){
+                    return Ext.util.Format.number(record.data.top, '0,0') + ' Failures for case ' + record.data.case_id;
+                },
+                chartStyle: {
+                    padding: 10,
+                    animationEnabled: true,
+                    font: {
+                        name: 'Tahoma',
+                        color: 0x444444,
+                        size: 11
+                    },
+                    dataTip: {
+                        padding: 5,
+                        border: {
+                            color: 0x99bbe8,
+                            size:1
+                        },
+                        background: {
+                            color: 0xDAE7F6,
+                            alpha: .9
+                        },
+                        font: {
+                            name: 'Tahoma',
+                            color: 0x15428B,
+                            size: 10,
+                            bold: true
+                        }
+                    },
+                    xAxis: {
+                        color: 0x69aBc8,
+                        majorTicks: {color: 0x69aBc8, length: 4},
+                        minorTicks: {color: 0x69aBc8, length: 2},
+                        majorGridLines: {size: 1, color: 0xeeeeee}
+                    },
+                    yAxis: {
+                        color: 0x69aBc8,
+                        majorTicks: {color: 0x69aBc8, length: 4},
+                        minorTicks: {color: 0x69aBc8, length: 2},
+                        majorGridLines: {size: 1, color: 0xdfe8f6}
+                    }
+                },
+            },
+        });
+    chart.render('chart_report[% uid FILTER js %]');
+[% UNLESS stripheader %]
+});
+[% END %]
+</script>
+
+[% UNLESS stripheader %]
+[% PROCESS global/footer.html.tmpl %]
+[% END %]

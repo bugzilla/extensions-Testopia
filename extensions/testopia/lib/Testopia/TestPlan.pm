@@ -968,9 +968,10 @@ sub get_case_tags {
     my $dbh = Bugzilla->dbh;
     
     my $tags = $dbh->selectcol_arrayref(
-             "SELECT DISTINCT test_tags.tag_id, test_tags.tag_name AS name FROM test_case_tags
+             "SELECT DISTINCT test_tags.tag_id FROM test_case_tags
           INNER JOIN test_tags ON test_case_tags.tag_id = test_tags.tag_id 
-               WHERE test_case_tags.tag_id IN (". join(',', @{$self->case_ids}) . ")");
+          INNER JOIN test_case_plans on test_case_plans.case_id = test_case_tags.case_id 
+               WHERE test_case_plans.plan_id = ?", undef, $self->id);
     my @tags;
     foreach my $id (@$tags){
         push @tags, Testopia::TestTag->new($id);

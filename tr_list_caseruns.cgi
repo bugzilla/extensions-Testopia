@@ -165,6 +165,9 @@ else {
     my $format = $template->get_format("testopia/caserun/list", scalar $cgi->param('format'), scalar $cgi->param('ctype'));
     
     $vars->{'qname'} = $cgi->param('qname') if $cgi->param('qname');
+    $vars->{'report'} = $cgi->param('report_type') if $cgi->param('report_type');
+    $vars->{'plan_ids'} = $cgi->param('plan_ids') if $cgi->param('plan_ids');
+    $vars->{'run_ids'} = $cgi->param('run_ids') if $cgi->param('run_ids');
     
     # Take the search from the URL params and convert it to SQL
     $cgi->param('current_tab', 'case_run');

@@ -30,8 +30,12 @@
 [% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portal.js") %]
 [% javascript_urls.push("extensions/testopia/extjs/examples/ux/PortalColumn.js") %]
 [% javascript_urls.push("extensions/testopia/extjs/examples/ux/Portlet.js") %]
+[% IF report %]
+    [% title = "Missing Cases Report" %]
+[% ELSE %]
+    [% title = "Test Case List" %]
+[% END %]
 
-[% title = "Test Case List" %]
 [% PROCESS global/header.html.tmpl %]
 
 <script type="text/javascript">
@@ -94,8 +98,16 @@ Ext.onReady(function(){
             }
         });
     });
+[% IF report %]
+    Ext.getCmp('case_grid').store.remoteSort = false;
+    Ext.getCmp('case_grid').getBottomToolbar().remove('case_paging_filter');
+[% END %]
+
 }); 
 
 </script>
+[% IF report %]
+    <h3>This is a missing cases report. Displayed are cases in plan(s) [% plan_ids FILTER html %] that do not appear in any runs.</h3>
+[% END %]
 <div id="list_div" style="height:650px"></div>
 [% PROCESS global/footer.html.tmpl %]

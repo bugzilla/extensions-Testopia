@@ -39,7 +39,7 @@ use base qw(Exporter);
 @Testopia::Util::EXPORT = qw(get_test_field_id get_time_stamp 
                                        validate_test_id validate_selection
                                        support_server_push process_list
-                                       percentage);
+                                       percentage get_runs);
 
 use Bugzilla;
 use Bugzilla::Config;
@@ -217,6 +217,34 @@ sub process_list {
     }
     
     return @ids;
+}
+
+sub get_runs {
+    my ($plan_ids, $run_ids) = @_;
+    my @runs;
+    foreach my $g (@$plan_ids){
+        foreach my $id (split(',', $g)){
+            my $obj = Testopia::TestPlan->new($id);
+            push @runs, @{$obj->test_runs} if $obj && $obj->canview;
+        }
+    }
+    foreach my $g (@$run_ids){
+        foreach my $id (split(',', $g)){
+            my $obj = Testopia::TestRun->new($id);
+            push @runs, $obj if $obj && $obj->canview;
+        }
+    }
+    
+    unless (scalar @runs){
+        print "<b>No runs found</b>";
+        exit;
+    }
+    
+    my @run_ids;
+    foreach my $r (@runs){
+        push @run_ids, $r->id;
+    }
+    return (\@runs,\@run_ids);
 }
 
 =head1 AUTHOR
