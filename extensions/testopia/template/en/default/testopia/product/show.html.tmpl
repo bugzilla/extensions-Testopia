@@ -111,6 +111,10 @@ Ext.onReady(function(){
             menu: [{
                 text: 'Test Plans from XML',
                 handler: function(){
+                    if(!product_id){
+                        alert('Please select a product first!');
+                        return;
+                    }
                     Testopia.TestPlan.Import({product_id: Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id});             
                 }
             }]
@@ -119,6 +123,10 @@ Ext.onReady(function(){
             menu: [{
                 text: 'Test Plans as XML',
                 handler: function(){
+                    if(!product_id){
+                        alert('Please select a product first!');
+                        return;
+                    }
                     window.location = 'tr_list_plans.cgi?ctype=xml&viewall=1&product_id=' + Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id;             
                 }
             }]
