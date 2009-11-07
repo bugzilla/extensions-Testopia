@@ -1,0 +1,14 @@
+This directory contains drivers for the XMLRPC interface to Testopia. These
+drivers can be used as stand-alone accessors to the XMLRPC or provide an 
+example for proper access in their respective languages.
+
+With the exception of the Perl driver, each has been contributed generously
+by members of the community. Thus, the Testopia developers cannot provide
+support for any driver except the Perl driver (client.pl). Where contact 
+information is provided, you may contact the original developers for support.
+
+As changes are made to the XMLRPC interface, the drivers tend to lag behind 
+(with the noted exception of the Perl driver which is used by the developers 
+to test the interface and is therefore kept current). Please check that the 
+driver you choose is up to date with the current version of the API. If it is 
+not, we welcome you to help bring it up to date by providing patches.

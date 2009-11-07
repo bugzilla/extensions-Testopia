@@ -100,16 +100,7 @@ elsif ($action eq 'clone'){
     ThrowUserError('missing-plans-list') unless scalar keys %planseen;
     
     my $dbh = Bugzilla->dbh;
-    my $summary = $cgi->param('new_run_summary');
-    my $build = $cgi->param('new_run_build');
-    my $env = $cgi->param('new_run_environment');
     
-    trick_taint($summary) if $cgi->param('new_run_summary');
-    detaint_natural($build) if $cgi->param('new_run_build');
-    detaint_natural($env) if $cgi->param('new_run_environment');
-    validate_test_id($build, 'build') if $cgi->param('new_run_build');
-    validate_test_id($env, 'environment') if $cgi->param('new_run_environment');
-
     my @newruns;
     my @failures;
     foreach my $run_id (@run_ids){
@@ -118,9 +109,15 @@ elsif ($action eq 'clone'){
         
         my $manager = $cgi->param('keep_run_manager') ? $run->manager->id : Bugzilla->user->id;
         
-        $summary ||= $run->summary;
-        $build   ||= $run->build->id;
-        $env     ||= $run->environment->id;
+        my $summary = $cgi->param('new_run_summary') || $run->summary;
+        my $build = $cgi->param('new_run_build') || $run->build->id;
+        my $env = $cgi->param('new_run_environment') || $run->environment->id;
+
+        trick_taint($summary) if $cgi->param('new_run_summary');
+        detaint_natural($build) if $cgi->param('new_run_build');
+        detaint_natural($env) if $cgi->param('new_run_environment');
+        validate_test_id($build, 'build') if $cgi->param('new_run_build');
+        validate_test_id($env, 'environment') if $cgi->param('new_run_environment');
 
         my @caseruns;
         if ($cgi->param('copy_cases')){
