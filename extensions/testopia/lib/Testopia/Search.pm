@@ -1090,10 +1090,10 @@ sub init {
              $term = $dbh->sql_position(lc($q), "LOWER($ff)") . " = 0";
          },
          ",regexp" => sub {
-             $term = "$ff " . $dbh->sql_regexp() . " $q";
+             $term = $dbh->sql_regexp($$ff,$$q);
          },
          ",notregexp" => sub {
-             $term = "$ff " . $dbh->sql_not_regexp() . " $q";
+             $term = $dbh->sql_not_regexp($$ff,$$q);
          },
          ",lessthan" => sub {
              $term = "$ff < $q";
@@ -1831,7 +1831,6 @@ sub SqlifyDate {
     return time2str("%Y-%m-%d %H:%M:%S", $date);
 }
 
-
 sub GetByWordList {
     my ($field, $strs) = (@_);
     my @list;
@@ -1841,12 +1840,9 @@ sub GetByWordList {
         my $word = $w;
         if ($word ne "") {
             $word =~ tr/A-Z/a-z/;
-            $word = $dbh->quote(quotemeta($word));
+            $word = $dbh->quote('(^|[^a-z0-9])' . quotemeta($word) . '($|[^a-z0-9])');
             trick_taint($word);
-            $word =~ s/^'//;
-            $word =~ s/'$//;
-            $word = '(^|[^a-z0-9])' . $word . '($|[^a-z0-9])';
-            push(@list, "$field " . $dbh->sql_regexp() . " '$word'");
+            push(@list, $dbh->sql_regexp($field, $word));
         }
     }
 
@@ -1858,12 +1854,14 @@ sub GetByWordListSubstr {
     my ($field, $strs) = (@_);
     my @list;
     my $dbh = Bugzilla->dbh;
+    my $sql_word;
 
     foreach my $word (split(/[\s,]+/, $strs)) {
-        next if $word eq "";
-        $word = $dbh->quote($word);
-        trick_taint($word);
-        push(@list, $dbh->sql_position(lc($word), "LOWER($field)") . " > 0");
+        if ($word ne "") {
+            $sql_word = $dbh->quote($word);
+            trick_taint($sql_word);
+            push(@list, $dbh->sql_iposition($sql_word, $field) . " > 0");
+        }
     }
 
     return \@list;
