@@ -52,7 +52,7 @@
         [% FOREACH a = plan.attachments %]
             [%+ PROCESS testopia/attachment/show.xml.tmpl %]
         [% END %]
-    </tr:testplan>
-[% IF NOT table %]
+    </tr:testplan>  
+[% IF show_footer %]
     [% PROCESS testopia/export/xml.footer.tmpl %]
 [% END %]

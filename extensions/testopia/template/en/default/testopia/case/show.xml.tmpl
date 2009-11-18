@@ -23,7 +23,6 @@
 [% IF NOT header_done %]
     [% PROCESS global/variables.none.tmpl %]
     [% PROCESS testopia/export/xml.header.tmpl %]
-    [% SET header_done = 1 %]
 [% END %]
 
         <tr:testcase id="[% case.id FILTER xml %]">
@@ -78,6 +77,6 @@
                 [%+ PROCESS testopia/attachment/show.xml.tmpl %]
             [% END %]
         </tr:testcase>
-[% IF NOT (plan OR table) %]
+[% IF NOT header_done %]
     [% PROCESS testopia/export/xml.footer.tmpl %]
 [% END %]

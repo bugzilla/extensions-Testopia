@@ -65,6 +65,7 @@ if ( $format->{'extension'} =~ /(csv|xml)/ ){
     $disp = "attachment";
     $vars->{'displaycolumns'} = Testopia::TestCase::fields;
     $vars->{'table'} = $plan->test_cases;
+    $vars->{'show_footer'} = 1;
 }
 
 # Suggest a name for the file if the user wants to save it as a file.
