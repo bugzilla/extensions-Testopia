@@ -1791,7 +1791,10 @@ Testopia.TestCaseRun.Info = function(){
                 bbar: ['Add a Note: ', {
                     xtype: 'textfield',
                     id: 'caserun_append_note_fld',
-                    width: 1000
+                    listeners: {'afterrender': function(){
+                        this.setWidth(Ext.getCmp('caserun_notes_panel').container.getWidth() - 150)
+                    }},
+                    width: 650
                 }, {
                     xtype: 'button',
                     text: 'Append Note',
