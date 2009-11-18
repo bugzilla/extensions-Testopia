@@ -321,9 +321,9 @@ sub switch {
               $note .= "'. Resetting to IDLE.";
            $self->append_note($note);
        }
-       $self->set_as_current;
    }
-    
+   $self->set_as_current;
+
    return $self;
 }
 
