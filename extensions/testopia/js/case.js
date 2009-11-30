@@ -752,7 +752,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                         text: 'Submit',
                                         handler: function(){
                                             Testopia.Util.updateFromList('case', {
-                                                priority: Ext.getCmp('priority_combo').getValue(),
+                                                priority: Ext.getCmp('case_priority_update').getValue(),
                                                 ids: Testopia.Util.getSelectedObjects(grid, 'case_id')
                                             }, grid);
                                             win.close();

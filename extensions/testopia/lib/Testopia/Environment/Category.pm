@@ -234,9 +234,9 @@ sub get_env_product_list {
         $query .=
           "AND group_control_map.membercontrol = " . CONTROLMAPMANDATORY . " ";
     }
-    if ( %{ Bugzilla->user->groups } ) {
+    if ( Bugzilla->user->groups ) {
         $query .= "AND group_id NOT IN("
-          . join( ',', values( %{ Bugzilla->user->groups } ) ) . ") ";
+          . join( ',', Bugzilla->user->groups_as_string ) . ") ";
     }
 
     $query .= "LEFT OUTER JOIN test_environment_category AS tec
