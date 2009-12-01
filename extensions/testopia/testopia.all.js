@@ -5536,9 +5536,9 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                                             params = {
                                                 run_id: grid.run.run_id,
                                                 priority: Ext.getCmp('multi_priority').getValue(),
-                                                ids: Testopia.Util.getSelectedObjects(grid, 'case_id')
+                                                ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id')
                                             };
-                                            Testopia.Util.updateFromList('case', params, grid);
+                                            Testopia.Util.updateFromList('caserun', params, grid);
                                             win.close();
                                         }
                                     }, {

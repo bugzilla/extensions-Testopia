@@ -89,6 +89,8 @@ if ($action eq 'update'){
         $cr = $cr->switch($cr->build->id, $cgi->param('env_id')) if $cgi->param('env_id');
         $cr->set_status($status_id, $cgi->param('update_bug') eq 'true' ? 1 : 0) if $status_id;
         $cr->set_assignee($assignee_id) if $assignee_id;
+        $cr->set_priority($cgi->param('priority')) if $cgi->param('priority');
+        $cr->update();
         $cr->append_note($note);
     }
 
