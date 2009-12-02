@@ -1482,9 +1482,8 @@ sub case_run_count_by_priority {
     my $query = 
            "SELECT COUNT(*) 
               FROM test_case_runs
-        INNER JOIN test_cases on test_case_runs.case_id = test_cases.case_id 
              WHERE run_id IN (" . $run_ids .") 
-               AND test_cases.priority_id = ?
+               AND test_case_runs.priority_id = ?
                AND iscurrent = 1";
     $query .= " AND case_run_status_id = ?" if $status_id;
 
