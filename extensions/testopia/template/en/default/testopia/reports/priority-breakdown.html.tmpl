@@ -97,14 +97,14 @@
           [% FOREACH p = priorities.keys.sort %]
           <tr>
             <td style="border-right: 2px solid black; font-weight: bold; text-align: left;">[% p FILTER no_break %]</td>
-            <td class="idle_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=IDLE" target="_blank">[% priorities.$p.idle FILTER none %]</a></td>
-            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=PASSED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.passed FILTER none %]</a></td>
-            <td class="failed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=FAILED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.failed FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=BLOCKED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.blocked FILTER none %]</a></td>
-            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=RUNNING&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.running FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=PAUSED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.paused FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=ERROR&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.error FILTER none %]</a></td>
-            <td align="center"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1" target="_blank">[% priorities.$p.total FILTER none %]</a></td>
+            <td class="idle_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=IDLE" target="_blank">[% priorities.$p.idle FILTER none %]</a></td>
+            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=PASSED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.passed FILTER none %]</a></td>
+            <td class="failed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=FAILED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.failed FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=BLOCKED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.blocked FILTER none %]</a></td>
+            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=RUNNING&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.running FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=PAUSED&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.paused FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=ERROR&priority=[% p FILTER url_quote %]" target="_blank">[% priorities.$p.error FILTER none %]</a></td>
+            <td align="center"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0" target="_blank">[% priorities.$p.total FILTER none %]</a></td>
           </tr>
           [% END %]
         </table>

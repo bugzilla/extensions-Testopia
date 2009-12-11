@@ -94,14 +94,14 @@
             <th class="report_header">Total</th>
           </tr>
           <tr>
-            <td class="idle_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=IDLE" target="_blank">[% idle FILTER none %]</a></td>
-            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=PASSED" target="_blank">[% passed FILTER none %]</a></td>
-            <td class="failed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=FAILED" target="_blank">[% failed FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=BLOCKED" target="_blank">[% blocked FILTER none %]</a></td>
-            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=RUNNING" target="_blank">[% running FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=PAUSED" target="_blank">[% paused FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1&case_run_status=ERROR" target="_blank">[% error FILTER none %]</a></td>
-            <td align="center"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=1" target="_blank">[% total FILTER none %]</a></td>
+            <td class="idle_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=IDLE" target="_blank">[% idle FILTER none %]</a></td>
+            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=PASSED" target="_blank">[% passed FILTER none %]</a></td>
+            <td class="failed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=FAILED" target="_blank">[% failed FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=BLOCKED" target="_blank">[% blocked FILTER none %]</a></td>
+            <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=RUNNING" target="_blank">[% running FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=PAUSED" target="_blank">[% paused FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0&case_run_status=ERROR" target="_blank">[% error FILTER none %]</a></td>
+            <td align="center"><a href="tr_list_caseruns.cgi?run_id=[% runs FILTER url_quote %]&build_id=[% builds FILTER url_quote %]&isactive=0" target="_blank">[% total FILTER none %]</a></td>
           </tr>
         </table>
       [% ELSE %]
