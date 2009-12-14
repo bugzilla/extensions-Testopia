@@ -1304,7 +1304,7 @@ Ext.extend(Testopia.Attachment.Grid, Ext.grid.GridPanel, {
                     testopia_form.submit({
                         url: 'tr_attachment.cgi',
                         params: {
-                            attach_ids: Testopia.Util.getSelectedObjects(Ext.getCmp('attachments_panel'), 'id'),
+                            attach_ids: Testopia.Util.getSelectedObjects(Ext.getCmp('attachments_panel'), 'attach_id'),
                             action: 'remove',
                             ctype: 'json',
                             object: object.type,
