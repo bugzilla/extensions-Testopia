@@ -59,7 +59,7 @@ use Testopia::Environment::Property;
 use JSON;
 
 use base qw(Exporter Bugzilla::Object);
-@Bugzilla::Bug::EXPORT = qw(check_environment);
+@Testopia::Environment::EXPORT = qw(check_environment);
 
 ###############################
 ####    Initialization     ####

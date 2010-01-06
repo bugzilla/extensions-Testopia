@@ -59,10 +59,7 @@ SAVED_DASHBORD
 TIME_FORMAT
 );
 
-
-@Bugzilla::Constants::EXPORT_OK = qw(contenttypes);
-
-use constant TESTOPIA_VERSION => "2.3";
+use constant TESTOPIA_VERSION => "2.3.1";
 
 # Test Case Status
 use constant PROPOSED  => 1;
