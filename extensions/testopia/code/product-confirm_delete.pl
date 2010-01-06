@@ -20,7 +20,11 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
+use lib qw(. lib extensions/testopia/lib);
+
 use Testopia::Product;
+use Testopia::TestPlan;
+use Testopia::TestRun;
 
 my $vars = Bugzilla->hook_args->{vars};
 
