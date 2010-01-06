@@ -9089,7 +9089,7 @@ Ext.extend(Testopia.Category.Grid, Ext.grid.GridPanel, {
         var myparams = e.record.data;
         var ds = this.store;
         myparams.product_id = this.product_id;
-        if (myparams.build_id) {
+        if (myparams.category_id) {
             myparams.action = "edit";
         }
         else {
