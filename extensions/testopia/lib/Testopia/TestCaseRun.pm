@@ -376,6 +376,7 @@ sub fields {
         case_id
         case_summary
         run_id
+        plan_id
         build_id
         environment_id
         status_id
