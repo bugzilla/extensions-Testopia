@@ -4980,7 +4980,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
     });
     buildCombo.on('select', function(c, r, i){
         params = {
-            build_id: r.get('id'),
+            build_id: r.get('build_id'),
             ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')
         };
         Testopia.Util.updateFromList('caserun', params, Ext.getCmp('caserun_grid'));
