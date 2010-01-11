@@ -1090,10 +1090,10 @@ sub init {
              $term = $dbh->sql_position(lc($q), "LOWER($ff)") . " = 0";
          },
          ",regexp" => sub {
-             $term = $dbh->sql_regexp($$ff,$$q);
+             $term = $dbh->sql_regexp($ff,$q);
          },
          ",notregexp" => sub {
-             $term = $dbh->sql_not_regexp($$ff,$$q);
+             $term = $dbh->sql_not_regexp($ff,$q);
          },
          ",lessthan" => sub {
              $term = "$ff < $q";
