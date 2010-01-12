@@ -452,7 +452,7 @@ sub init {
         push @supptables, "INNER JOIN test_environments AS env ON env.environment_id = test_". $obj ."s.environment_id";
         push @orderby, 'env.name';
     }
-    elsif ($order eq 'plan_type') {        
+    elsif ($order eq 'type' && $obj eq 'plan') {        
         push @supptables, "INNER JOIN test_plan_types AS ptype ON ptype.type_id = test_plans.type_id";
         push @orderby, 'ptype.name';
     }
