@@ -1654,12 +1654,13 @@ Testopia.TestCase.Clone = function(product_id, cases){
         buttons: [{
             text: 'Submit',
             handler: function(){
-                Ext.getCmp('case_copy_plan_ids').setValue(Testopia.Util.getSelectedObjects(Ext.getCmp('plan_clone_grid'), 'plan_id'));
                 var form = Ext.getCmp('case_clone_frm').getForm();
                 var params = form.getValues();
                 form.baseParams = {};
                 form.baseParams.action = 'clone';
                 form.baseParams.ids = cases;
+                form.baseParams.plan_ids = Testopia.Util.getSelectedObjects(Ext.getCmp('plan_clone_grid'), 'plan_id');
+                form.baseParams.product_id = Ext.getCmp('case_clone_win_product_chooser').getValue();
                 form.submit({
                     url: 'tr_list_cases.cgi',
                     success: function(form, data){
