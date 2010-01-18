@@ -1232,19 +1232,18 @@ Testopia.TestCase.NewCaseForm = function(plan_ids, product_id, run_id){
                             scrollable: true,
                             listeners: {
                                 'initialize': function(h){
-                                    if (!h.getValue()) {
-                                        var httpRequest = new Ext.data.Connection();
-                                        httpRequest.request({
-                                            url: 'tr_quicksearch.cgi',
-                                            params: {
-                                                action: 'get_action'
-                                            },
-                                            success: function(d){
-                                                h.setValue(d.responseText);
-                                            },
-                                            failure: Testopia.Util.error
-                                        });
-                                    }
+                                    var httpRequest = new Ext.data.Connection();
+                                    httpRequest.request({
+                                        url: 'tr_quicksearch.cgi',
+                                        params: {
+                                            action: 'get_action',
+                                            bug_id: Ext.urlDecode(location.search.substring(1)).bug
+                                        },
+                                        success: function(d){
+                                            h.setValue(d.responseText);
+                                        },
+                                        failure: Testopia.Util.error
+                                    });
                                 }
                             }
                         }]
@@ -1261,19 +1260,18 @@ Testopia.TestCase.NewCaseForm = function(plan_ids, product_id, run_id){
                             scrollable: true,
                             listeners: {
                                 'initialize': function(h){
-                                    if (!h.getValue()) {
-                                        var httpRequest = new Ext.data.Connection();
-                                        httpRequest.request({
-                                            url: 'tr_quicksearch.cgi',
-                                            params: {
-                                                action: 'get_effect'
-                                            },
-                                            success: function(d){
-                                                h.setValue(d.responseText);
-                                            },
-                                            failure: Testopia.Util.error
-                                        });
-                                    }
+                                    var httpRequest = new Ext.data.Connection();
+                                    httpRequest.request({
+                                        url: 'tr_quicksearch.cgi',
+                                        params: {
+                                            action: 'get_effect',
+                                            bug_id: Ext.urlDecode(location.search.substring(1)).bug
+                                        },
+                                        success: function(d){
+                                            h.setValue(d.responseText);
+                                        },
+                                        failure: Testopia.Util.error
+                                    });
                                 }
                             }
                         }]

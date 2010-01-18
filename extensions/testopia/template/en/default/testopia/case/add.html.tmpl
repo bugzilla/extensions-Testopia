@@ -49,8 +49,6 @@ Ext.onReady(function(){
     [% IF bugs %]
     Ext.getCmp('ncf-bugs').setValue('[% bugs FILTER js %]');
     [% END %]
-    Ext.getCmp('ncf-action').setValue('[% tc.text.action FILTER js %]');
-    Ext.getCmp('ncf-effect').setValue('[% tc.text.effect FILTER js %]');
 });
 </script>
 

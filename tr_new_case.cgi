@@ -171,31 +171,17 @@ else {
         my $short_desc = $bug->short_desc; 
         
         $summary   = Bugzilla->params->{"bug-to-test-case-summary"};
-        my $action = Bugzilla->params->{"bug-to-test-case-action"};
-        my $effect = Bugzilla->params->{"bug-to-test-case-results"};
         
         $summary =~ s/%id%/$bug_id/g;
         $summary =~ s/%summary%/$short_desc/g;
         
-        $action  =~ s/%id%/<a href="show_bug.cgi?id=$bug_id">$bug_id<\/a>/g;
-        $action  =~ s/%description%/$description/g;
-        
-        $effect  =~ s/%id%/<a href="show_bug.cgi?id=$bug_id">$bug_id<\/a>/g;
-        
-        $text = {'action' => $action, 'effect' => $effect};
-        
         $vars->{'bugs'} = $bug->bug_id;
-    }
-    else {
-        $text = {'action' => Bugzilla->params->{"new-case-action-template"}, 
-                 'effect' => Bugzilla->params->{"new-case-results-template"}};
     }
         
     my $case = Testopia::TestCase->new(
                         {'plans' => join(',', @plan_ids),
                          'category' => {name => '--default--'}, 
                          'summary' =>  $summary,
-                         'text' => $text,
     });
     
     $vars->{'tc'} = $case;

@@ -456,11 +456,32 @@ else{
         exit;
     }
     elsif ($action eq 'get_action'){
-        print Bugzilla->params->{'new-case-action-template'};
+        if( $cgi->param('bug_id')){
+            my $bug = Bugzilla::Bug->new($cgi->param('bug'),Bugzilla->user->id);
+            my $tcaction = Bugzilla->params->{"bug-to-test-case-action"};
+            
+            my $bug_id = $bug->bug_id;
+            my $description = '<br><pre>' . wrap_comment(@{Bugzilla::Bug::GetComments($bug_id,'oldest_to_newest')}[0]->{'body'}) . '</pre>';
+            
+            $tcaction  =~ s/%id%/<a href="show_bug.cgi?id=$bug_id">$bug_id<\/a>/g;
+            $tcaction  =~ s/%description%/$description/g;
+            
+            print $tcaction;
+        }
+        else {
+            print Bugzilla->params->{'new-case-action-template'};
+        }
     }
     elsif ($action eq 'get_effect'){
-        print Bugzilla->params->{'new-case-results-template'};
-        
+        if( $cgi->param('bug_id')){
+            my $effect = Bugzilla->params->{"bug-to-test-case-results"};
+            my $bug_id = $cgi->param('bug_id');        
+            $effect  =~ s/%id%/<a href="show_bug.cgi?id=$bug_id">$bug_id<\/a>/g;
+            print $effect;
+        }
+        else{
+            print Bugzilla->params->{'new-case-results-template'};
+        }
     }
 
 # If neither is true above, display the quicksearch form and explanation.
