@@ -25,6 +25,6 @@ CASE_DELETE_WARNING = 'You are about to delete the selected test cases including
 PLAN_DELETE_WARNING = 'You are about to delete the selected test plans including all children and history. This action cannot be undone. Are you sure you want to continue?';
 RUN_DELETE_WARNING = 'You are about to delete the selected test runs including all children and history. This action cannot be undone. Are you sure you want to continue?';
 CASERUN_DELETE_WARNING = 'You are about to remove the selected test cases from this run including all history. This action cannot be undone. Are you sure you want to continue?';
-ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environment including associated test case data. This action cannot be undone. Are you sure you want to continue?';
+ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environment including associated test run data. This action cannot be undone. Are you sure you want to continue?';
 PRODUCT_PLAN_IMPORT = 'Accepts XML files under 2 MB in size. <br> See <a href="extensions/testopia/testopia.xsd" target="_blank">testopia.xsd</a> for proper format.';
 PLAN_CASES_IMPORT = 'Accepts CSV and XML files under 2 MB in size. <br> See <a href="extensions/testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="extensions/testopia/testopia.xsd" target="_blank">testopia.xsd</a> for proper format.';
