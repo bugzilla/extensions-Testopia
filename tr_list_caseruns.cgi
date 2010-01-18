@@ -59,7 +59,7 @@ if ($action eq 'update'){
 
     trick_taint($note) if $note;
     
-    if ($cgi->param('applyall') eq 'true'){
+    if ($cgi->param('applyall') && $cgi->param('applyall') eq 'true'){
         my $run = Testopia::TestRun->new($cgi->param('run_id'));
         exit if $run->stop_date;
         @caseruns = @{$run->current_caseruns()} if $run->canedit; 

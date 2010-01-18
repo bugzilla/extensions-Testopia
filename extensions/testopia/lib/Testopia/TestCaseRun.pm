@@ -748,28 +748,22 @@ sub update_bugs {
         next if ($status eq 'VERIFIED' && $oldstatus ne 'RESOLVED');
         next if ($status eq 'REOPENED' && $oldstatus !~ /(RESOLVED|VERIFIED|CLOSED)/);
         next if $oldresolution eq 'DUPLICATE';
+        
         if ($status eq 'REOPENED'){
             $resolution = '';
         }
         else{
             $resolution = $oldresolution;
         }
+        
         my $comment  = "Status updated by Testopia:  ". Bugzilla->params->{"urlbase"};
            $comment .= "tr_show_case.cgi?case_id=" . $self->case->id;
           
         $dbh->bz_start_transaction();
-        $dbh->do("UPDATE bugs 
-                     SET bug_status = ?,
-                        resolution = ?,
-                         delta_ts = ?
-                     WHERE bug_id = ?", 
-                     undef,($status, $resolution, $timestamp, $bug->bug_id));
-        LogActivityEntry($bug->bug_id, 'bug_status', $oldstatus, 
-                         $status, Bugzilla->user->id, $timestamp);
-        LogActivityEntry($bug->bug_id, 'resolution', $bug->resolution, '', 
-                         Bugzilla->user->id, $timestamp) if ($status eq 'REOPENED');
-        AppendComment($bug->bug_id, Bugzilla->user->id, $comment, 
-                      !Bugzilla->user->in_group(Bugzilla->params->{'insidergroup'}), $timestamp);
+        
+        $bug->add_comment($comment);
+        $bug->set_status($status, {resolution => $resolution});
+        $bug->update();
         
         $dbh->bz_commit_transaction();
     }
