@@ -457,7 +457,7 @@ else{
     }
     elsif ($action eq 'get_action'){
         if( $cgi->param('bug_id')){
-            my $bug = Bugzilla::Bug->new($cgi->param('bug'),Bugzilla->user->id);
+            my $bug = Bugzilla::Bug->new($cgi->param('bug_id'),Bugzilla->user->id);
             my $tcaction = Bugzilla->params->{"bug-to-test-case-action"};
             
             my $bug_id = $bug->bug_id;
