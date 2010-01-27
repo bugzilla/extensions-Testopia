@@ -75,7 +75,7 @@
                 });
             }
         };
-        var cgrid = new Testopia.TestCase.Grid({plan_id: plan.plan_id },{id: 'plan_case_grid'});
+        var cgrid = new Testopia.TestCase.Grid({plan_id: plan.plan_id, product_id: plan.product_id },{id: 'plan_case_grid'});
         var rgrid = new Testopia.TestRun.Grid({plan_id: plan.plan_id },{id: 'plan_run_grid'});
         var tgrid = new Testopia.Tags.ObjectTags('plan', plan.plan_id);
         var attachGrid = new Testopia.Attachment.Grid(plan);
