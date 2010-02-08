@@ -741,7 +741,7 @@ sub update_bugs {
     my $resolution;
     my $dbh = Bugzilla->dbh;
     my $timestamp = Testopia::Util::get_time_stamp();
-    foreach my $bug (@{$self->bugs}){
+    foreach my $bug (@{$self->case->bugs}){
         my $oldstatus = $bug->bug_status;
         my $oldresolution = $bug->resolution;
         
