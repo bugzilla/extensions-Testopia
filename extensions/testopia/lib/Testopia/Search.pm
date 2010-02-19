@@ -515,7 +515,12 @@ sub init {
         }
     }
     elsif ($order eq 'created') {
-        push @orderby, 'test_'. $obj .'s.creation_date';
+        push @orderby, 'test_'. $obj .'s.default_product_version';
+    }
+    elsif ($order eq 'prod_version') {
+        if ($obj eq 'plan'){
+            push @orderby, 'test_'. $obj .'s.creation_date';
+        }
     }
     elsif ($order eq 'modified') {
         push @supptables, "INNER JOIN test_". $obj ."_activity ON test_". $obj ."_activity.". $obj ."_id = test_". $obj ."s.". $obj ."_id";
