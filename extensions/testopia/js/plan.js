@@ -426,7 +426,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                                         text: 'Update Type',
                                         handler: function(){
                                             var params = {
-                                                plan_type: Ext.getCmp('plan_type_combo').getValue(),
+                                                plan_type: Ext.getCmp('plan_type_win_types_combo').getValue(),
                                                 ids: Testopia.Util.getSelectedObjects(grid, 'plan_id')
                                             };
                                             Testopia.Util.updateFromList('plan', params, grid);

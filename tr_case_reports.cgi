@@ -44,6 +44,7 @@ if ($type eq 'status-breakdown'){
     my $case_id = trim(Bugzilla->cgi->param('case_id') || '');
     
     unless ($case_id){
+      print $cgi->header;
       $vars->{'form_action'} = 'tr_case_reports.cgi';
       $template->process("testopia/case/choose.html.tmpl", $vars) 
           || ThrowTemplateError($template->error());

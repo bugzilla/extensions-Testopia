@@ -295,6 +295,7 @@ elsif ($action eq 'update_bugs'){
             }
         } 
     }
+    print "{'success': true}";
 }
 
 else{

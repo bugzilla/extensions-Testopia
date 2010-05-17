@@ -167,7 +167,10 @@ else{
         trick_taint($search);
         my @ids;
         foreach my $id (split(',', $prod_ids)){
-            push @ids, $id if detaint_natural($id);
+            detaint_natural($id);
+            my $product = new Bugzilla::Product($id);
+            next unless $product;
+            push @ids, $id if Bugzilla->user->can_see_product($product->name);
         }
         unless (scalar @ids > 0){
             print "{}";
@@ -262,7 +265,10 @@ else{
         my $search = $cgi->param('search');
         my @product_ids;
         foreach my $id (split(",", $cgi->param('product_id'))){
-            push @product_ids, $id if detaint_natural($id);
+            detaint_natural($id);
+            my $product = new Bugzilla::Product($id);
+            next unless $product;
+            push @product_ids, $id if Bugzilla->user->can_see_product($product->name);
         }
         my $product_ids = join(",". @product_ids);
         

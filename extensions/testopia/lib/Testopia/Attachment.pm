@@ -379,25 +379,27 @@ sub unlink_case {
 sub canview {
     my $self = shift;
     return 1 if Bugzilla->user->in_group('Testers');
+    my $retval = 0;
     foreach my $i (@{$self->cases}){
-        return 0 unless $i->canview;
+        $retval = 1 if $i->canview;
     }
     foreach my $i (@{$self->plans}){
-        return 0 unless $i->canview;
+        $retval = 1 if $i->canview;
     }
-    return 1;
+    return $retval;
 }
 
 sub canedit {
     my $self = shift;
     return 1 if Bugzilla->user->in_group('Testers');
+    my $retval = 0;
     foreach my $i (@{$self->cases}){
-        return 0 unless $i->canedit;
+        $retval = 1 if $i->canview;
     }
     foreach my $i (@{$self->plans}){
-        return 0 unless $i->canedit;
+        $retval = 1 if $i->canview;
     }
-    return 1;
+    return $retval;
 }
 
 sub candelete {

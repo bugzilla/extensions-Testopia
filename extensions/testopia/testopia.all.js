@@ -906,11 +906,11 @@ Testopia.Util.JSONToURLQuery = function(params, searchStr, drops){
         }
         if (typeof params[key] == 'object') {
             for (i = 0; i < params[key].length; i++) {
-                searchStr = searchStr + key + '=' + escape(params[key][i]) + '&';
+                searchStr = searchStr + key + '=' + encodeURIComponent(params[key][i]) + '&';
             }
         }
         else {
-            searchStr = searchStr + key + '=' + escape(params[key]) + '&';
+            searchStr = searchStr + key + '=' + encodeURIComponent(params[key]) + '&';
         }
     }
     if (searchStr.lastIndexOf('&') == searchStr.length - 1) {
@@ -1905,7 +1905,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                                         text: 'Update Type',
                                         handler: function(){
                                             var params = {
-                                                plan_type: Ext.getCmp('plan_type_combo').getValue(),
+                                                plan_type: Ext.getCmp('plan_type_win_types_combo').getValue(),
                                                 ids: Testopia.Util.getSelectedObjects(grid, 'plan_id')
                                             };
                                             Testopia.Util.updateFromList('plan', params, grid);

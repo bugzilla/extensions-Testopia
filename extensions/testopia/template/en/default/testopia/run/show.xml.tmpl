@@ -39,12 +39,14 @@
        [% IF run.stop_date %]
        <tr:stop_date>[% run.stop_date.replace(' ','T') FILTER xml %]</tr:stop_date>
        [% END %]
+       [% IF run.last_changed %]
        <tr:last_changed>[% run.last_changed.replace(' ','T') FILTER xml %]</tr:last_changed>
-       <tr:case_count>[% run.case_count FILTER xml %]</tr:case_count>
-       <tr:total_time>[% run.total_time FILTER xml %]</tr:total_time>
-       <tr:target_pass_rate>[% run.target_pass FILTER xml %]</tr:target_pass_rate>
-       <tr:target_completion_rate>[% run.target_completion FILTER xml %]</tr:target_completion_rate>
-       <tr:percent_complete>[% run.percent_complete FILTER xml %]</tr:percent_complete>
+       [% END %]
+       <tr:case_count>[% run.case_count || 0 FILTER xml %]</tr:case_count>
+       <tr:total_time>[% run.total_time || 0 FILTER xml %]</tr:total_time>
+       <tr:target_pass_rate>[% run.target_pass || 0 FILTER xml %]</tr:target_pass_rate>
+       <tr:target_completion_rate>[% run.target_completion || 0 FILTER xml %]</tr:target_completion_rate>
+       <tr:percent_complete>[% run.percent_complete || 0 FILTER xml %]</tr:percent_complete>
        <tr:percent_passed>[% run.percent_of_finished(2) FILTER xml %]</tr:percent_passed>
        <tr:percent_failed>[% run.percent_of_finished(3) FILTER xml %]</tr:percent_failed>
        <tr:percent_blocked>[% run.percent_of_finished(6) FILTER xml %]</tr:percent_blocked>

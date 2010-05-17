@@ -425,23 +425,27 @@ Ext.onReady(function(){
                     checkBoxName: 'isautomated',
                     collapsed: tcase.isautomated == 1 ? false : true,
                     items: [{
-                        xtype:'textfield',
+                        xtype:'textarea',
                         fieldLabel: 'Scripts',
                         id:'ncf-scripts',
                         name: 'script',
-                        value: tcase.script
+                        value: tcase.script,
+                        height: 100,
+                        width : 500
                     },{
                         xtype:'textfield',
                         fieldLabel: 'Arguments',
                         id:'ncf-arguments',
                         name: 'arguments',
-                        value: tcase.arguments
+                        value: tcase.arguments,
+			   width : 500
                     },{
                         xtype:'textfield',
                         fieldLabel: 'Alias',
                         id:'case_alias',
                         name: 'alias',
-                        value: tcase.alias
+                        value: tcase.alias,
+			   width : 500
                     }]
                 }]
             }]

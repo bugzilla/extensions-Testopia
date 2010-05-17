@@ -174,6 +174,7 @@ elsif ($action eq 'list') {
     elsif ($item eq 'caserun'){
         $obj = Testopia::TestCaseRun->new($item_id);
     }
+    ThrowUserError("testopia-read-only", {'object' => $obj}) unless $obj->canview;
     
     my @attachments = @{$obj->attachments};
     
@@ -201,6 +202,7 @@ else {
     my $attachment = Testopia::Attachment->new($attach_id);
     
     ThrowUserError("attachment_removed") if $attachment->datasize == 0;
+    ThrowUserError('testopia-permission-denied', {'object' => $attachment}) unless $attachment->canview;
     
     my $filename = $attachment->filename;
     $filename =~ s/\\/\\\\/g; # escape backslashes

@@ -736,11 +736,11 @@ Testopia.Util.JSONToURLQuery = function(params, searchStr, drops){
         }
         if (typeof params[key] == 'object') {
             for (i = 0; i < params[key].length; i++) {
-                searchStr = searchStr + key + '=' + escape(params[key][i]) + '&';
+                searchStr = searchStr + key + '=' + encodeURIComponent(params[key][i]) + '&';
             }
         }
         else {
-            searchStr = searchStr + key + '=' + escape(params[key]) + '&';
+            searchStr = searchStr + key + '=' + encodeURIComponent(params[key]) + '&';
         }
     }
     if (searchStr.lastIndexOf('&') == searchStr.length - 1) {
