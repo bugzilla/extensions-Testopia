@@ -275,7 +275,7 @@ else{
         trick_taint($search);
         $search = "%$search%";
         my $dbh = Bugzilla->dbh;
-        my $ref;
+        my $ref = {};
         my $run_id = $cgi->param('run_id');
         if ($product_ids){
             $ref = $dbh->selectall_arrayref(
@@ -301,13 +301,15 @@ else{
                   {'Slice' =>{}}, ($search,$search,$search));
         }
         else {
-            $ref = $dbh->selectall_arrayref(
-                "SELECT tag_name, tag_id 
-                   FROM test_tags 
-                  WHERE tag_name like ?
-                  ORDER BY tag_name
-                  LIMIT 20",
-                  {'Slice' =>{}}, $search);
+            if (Bugzilla->user->in_group('Testers')){
+                $ref = $dbh->selectall_arrayref(
+                    "SELECT tag_name, tag_id 
+                       FROM test_tags 
+                      WHERE tag_name like ?
+                      ORDER BY tag_name
+                      LIMIT 20",
+                      {'Slice' =>{}}, $search);
+            }
         }
         print "{'tags':" . to_json($ref) . "}";  
     }

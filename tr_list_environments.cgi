@@ -42,6 +42,7 @@ Bugzilla->login(LOGIN_REQUIRED);
 my $vars = {};
 my $template = Bugzilla->template;
 my $cgi = Bugzilla->cgi;
+Bugzilla->error_mode(ERROR_MODE_AJAX) if ($cgi->param('ctype') eq 'json');
 
 my $format = $template->get_format("testopia/case/list", scalar $cgi->param('format'), scalar $cgi->param('ctype'));
 my $action = $cgi->param('action') || '';
@@ -50,6 +51,20 @@ $vars->{'qname'} = $cgi->param('qname') if $cgi->param('qname');
 
 $cgi->param('current_tab', 'environment');
 $cgi->param('distinct', '1');
+
+# We have to do this until we have product level permission checks in place
+my $product_id = $cgi->param('product_id');
+unless ($product_id){
+    print $cgi->header;
+    ThrowUserError("testopia-missing-parameter", {param => "product_id"});
+}
+
+my $product = Testopia::Product->new($product_id);
+unless ($product && $product->canview){
+    print $cgi->header;
+    ThrowUserError('testopia-read-only', {'object' => $product});
+}
+
 my $search = Testopia::Search->new($cgi);
 my $table = Testopia::Table->new('environment', 'tr_list_environments.cgi', $cgi, undef, $search->query);
 

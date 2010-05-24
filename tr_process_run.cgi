@@ -45,10 +45,8 @@ print $cgi->header;
 
 my $action = $cgi->param('action') || '';
 my $run = Testopia::TestRun->new($cgi->param('run_id'));
-unless ($run){
-    print $cgi->header;
-    ThrowUserError('testopia-missing-object',{object => 'run'});
-}
+
+ThrowUserError("invalid-test-id-non-existent", {'type' => 'run', id => $cgi->param('run_id')}) unless $run;
 
 if ($action eq 'edit'){
     ThrowUserError("testopia-read-only", {'object' => $run}) unless $run->canedit;
@@ -111,7 +109,6 @@ elsif ($action eq 'getfilters'){
 }
 
 else {
-    print $cgi->header;
     ThrowUserError("testopia-no-action");
 }
     

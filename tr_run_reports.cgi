@@ -297,6 +297,7 @@ elsif ($type eq 'priority'){
 
 }
 elsif ($type eq 'worst'){
+    print $cgi->header;
     my $dbh = Bugzilla->dbh;
     my @r = $cgi->param('run_ids');
     my @plans = $cgi->param('plan_ids');
@@ -325,7 +326,6 @@ elsif ($type eq 'worst'){
     $vars->{'runs'} = join(',',@run_ids);
     $vars->{'plans'} = join(',',@plans);
     
-    print $cgi->header;
     $template->process("testopia/reports/bar.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
     exit;    

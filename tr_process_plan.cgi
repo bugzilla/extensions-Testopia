@@ -46,7 +46,7 @@ my $plan = Testopia::TestPlan->new($cgi->param('plan_id'));
 
 unless ($plan){
     print $cgi->header;
-    ThrowUserError('testopia-missing-object',{object => 'plan'});
+    ThrowUserError("invalid-test-id-non-existent", {'type' => 'plan', id => $cgi->param('plan_id')}) unless $plan;
 }
 
 ### Archive or Unarchive ###

@@ -160,7 +160,6 @@ sub display {
         $vars->{'viewall'} = 1;
     }
 
-    
     $vars->{'user_tags'} = get_user_tags();
     $vars->{'user_name'} = $cgi->param('user') ? $cgi->param('user') : Bugzilla->user->login;
 
@@ -208,11 +207,20 @@ sub display {
 
 sub get_user_tags {
     my $user;
+    my $userid;
     my $dbh = Bugzilla->dbh;
-    $user = login_to_id($cgi->param('user')) if $cgi->param('user');
     
-    my $userid = $user ? $user : Bugzilla->user->id;
-    ThrowUserError("invalid_username", { name => $cgi->param('user') }) unless $userid;        
+    return unless $cgi->param('user');
+    
+    $userid = login_to_id($cgi->param('user')) if $cgi->param('user');
+    $user = Bugzilla::User->new($userid);
+    
+    ThrowUserError("invalid_username", { name => $cgi->param('user') }) unless $userid;     
+    ThrowUserError('auth_failure', {reason => "not_visible",
+                                    action => "not_visible",
+                                    object => "user"}) 
+        unless Bugzilla->user->can_see_user($user);
+       
     my $user_tags = $dbh->selectcol_arrayref(
              "(SELECT test_tags.tag_id, test_tags.tag_name AS name FROM test_case_tags
           INNER JOIN test_tags ON test_case_tags.tag_id = test_tags.tag_id 

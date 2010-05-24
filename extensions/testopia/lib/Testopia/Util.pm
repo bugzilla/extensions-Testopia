@@ -236,6 +236,7 @@ sub get_runs {
     }
     
     unless (scalar @runs){
+        print Bugzilla->cgi->header;
         print "<b>No runs found</b>";
         exit;
     }

@@ -29,12 +29,15 @@ print $cgi->header;
 my $obj;
 if ($cgi->param('object') eq 'plan'){
     $obj = Testopia::TestPlan->new($cgi->param('object_id'));
+    ThrowUserError("invalid-test-id-non-existent", {'type' => 'plan', id => $cgi->param('object_id')}) unless $obj;
 }
 elsif ($cgi->param('object') eq 'case'){
     $obj = Testopia::TestCase->new($cgi->param('object_id'));
+    ThrowUserError("invalid-test-id-non-existent", {'type' => 'case', id => $cgi->param('object_id')}) unless $obj;
 }
 elsif ($cgi->param('object') eq 'run'){
     $obj = Testopia::TestRun->new($cgi->param('object_id'));
+    ThrowUserError("invalid-test-id-non-existent", {'type' => 'run', id => $cgi->param('object_id')}) unless $obj;
 }
 else{
     ThrowUserError("testopia-unknown-type", {'object' => $obj});

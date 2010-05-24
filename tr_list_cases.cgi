@@ -97,7 +97,7 @@ if ($action eq 'update'){
         next unless $case;
         
         unless ($case->canedit){
-            push @uneditable, $case;
+            push @uneditable, $case->id;
             next;
         }
 
@@ -123,7 +123,7 @@ if ($action eq 'update'){
         $case->attach_bugs(\@bugs) if $cgi->param('bugs_action') eq 'add';
         $case->detach_bugs(\@bugs) if $cgi->param('bugs_action') eq 'remove'; 
     }
-    ThrowUserError('testopia-update-failed', {'object' => 'plan', 'list' => join(',',@uneditable)}) if (scalar @uneditable);
+    ThrowUserError('testopia-update-failed', {'object' => 'case', 'list' => join(',',@uneditable)}) if (scalar @uneditable);
     print "{'success': true}";    
 
 }
@@ -239,8 +239,9 @@ elsif ($action eq 'delete'){
     my @uneditable;
     foreach my $id (@case_ids){
         my $case = Testopia::TestCase->new($id);
+        next unless $case;
         unless ($case->candelete){
-            push @uneditable, $case;
+            push @uneditable, $case->id;
             next;
         }
         

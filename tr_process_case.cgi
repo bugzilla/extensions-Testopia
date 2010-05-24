@@ -48,7 +48,7 @@ my $case = Testopia::TestCase->new($cgi->param('case_id'));
 
 unless ($case){
     print $cgi->header;
-    ThrowUserError('testopia-missing-object',{object => 'case'});
+    ThrowUserError("invalid-test-id-non-existent", {'type' => 'case', id => $cgi->param('case_id')}) unless $case;
 }
 
 if ($action eq 'edit'){
@@ -117,7 +117,7 @@ elsif ($action eq 'unlink'){
     print $cgi->header;
     my $plan_id = $cgi->param('plan_id');
     validate_test_id($plan_id, 'plan');
-    ThrowUserError("testopia-read-only", {'object' => 'case'}) unless ($case->can_unlink_plan($plan_id));
+    ThrowUserError("testopia-read-only", {'object' => $case}) unless ($case->can_unlink_plan($plan_id));
     $case->unlink_plan($plan_id);
     
     print "{'success': true}";
@@ -210,8 +210,10 @@ elsif($action eq 'getcomponents'){
 }
 
 elsif ($action eq 'case_to_bug'){
-    
-    ThrowUserError("testopia-read-only", {'object' => $case}) unless $case->canedit;
+    unless ($case->canview){
+        print $cgi->header;
+        ThrowUserError("testopia-read-only", {'object' => $case});
+    }
     $case->text;
     foreach my $field qw(action effect) {
         $case->{text}->{$field} =~ s/(<br[\s\/>]+|<p.*?>|<li.*?>)/\n/g;
@@ -223,6 +225,7 @@ elsif ($action eq 'case_to_bug'){
         $case->{text}->{$field} =~ s/\&lt;/</g;
         $case->{text}->{$field} =~ s/\&gt;/>/g;
         $case->{text}->{$field} =~ s/\&quot;/\"/g;
+        $case->{text}->{$field} =~ s/\&nbsp;/ /g;
         $case->{text}->{$field} =~ s/\&amp;/\&/g;
     }
     my $vars;
