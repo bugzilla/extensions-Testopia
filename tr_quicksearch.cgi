@@ -491,6 +491,16 @@ else{
             print Bugzilla->params->{'new-case-results-template'};
         }
     }
+    elsif ($action eq 'check_plan_rights'){
+        Bugzilla->error_mode(ERROR_MODE_AJAX);
+        my @plan_id = split(',', $cgi->param('plan_id'));
+        foreach my $id (@plan_id){
+            my $plan = Testopia::TestPlan->new($id);
+            if ($plan){
+                ThrowUserError("testopia-create-denied", {'object' => 'Test Case', 'plan' => $plan}) unless $plan->canedit;
+            }
+        }
+    }
 
 # If neither is true above, display the quicksearch form and explanation.
     else{

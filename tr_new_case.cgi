@@ -56,6 +56,8 @@ Bugzilla->login(LOGIN_REQUIRED);
 my $cgi = Bugzilla->cgi;
 my $template = Bugzilla->template;
 
+Bugzilla->error_mode(ERROR_MODE_AJAX) if $cgi->referer() && $cgi->referer() !~ /tr_new_case/;
+
 print $cgi->header;
 
 my $action = $cgi->param('action') || '';

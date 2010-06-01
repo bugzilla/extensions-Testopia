@@ -53,6 +53,7 @@ my $template = Bugzilla->template;
 
 Bugzilla->login(LOGIN_REQUIRED);
 my $cgi = Bugzilla->cgi;
+Bugzilla->error_mode(ERROR_MODE_AJAX) if $cgi->referer() && $cgi->referer() !~ /tr_new_run/;
 print $cgi->header;
 
 my $action = $cgi->param('action') || '';
@@ -73,7 +74,6 @@ my $plan = Testopia::TestPlan->new($plan_id);
 ThrowUserError("testopia-create-denied", {'object' => 'Test Run', 'plan' => $plan}) unless ($plan->canedit);
 
 if ($action eq 'add'){
-    Bugzilla->error_mode(ERROR_MODE_AJAX);
     my $prod_version = $cgi->param('prod_version') ? $cgi->param('prod_version') : $plan->product_version();
     my $build    = trim($cgi->param('build'));
     my $env      = trim($cgi->param('environment'));

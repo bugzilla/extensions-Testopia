@@ -664,11 +664,36 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
     newPlan: function(){
         Testopia.TestPlan.NewPlanPopup(this.params.product_id);
     },
-    newRun: function(){
-        Testopia.TestRun.NewRunPopup(this.getSelectionModel().getSelected());
+    newRun: function(a,b,c,d){
+        var form = new Ext.form.BasicForm('testopia_helper_frm', {});
+        var p = {plan_id: Testopia.Util.getSelectedObjects(this, 'plan_id'), action: 'check_plan_rights'};
+        var records = this.getSelectionModel().getSelected();
+        form.submit({
+            url: 'tr_quicksearch.cgi',
+            params: p,
+            success: function(f,a){
+                Testopia.TestRun.NewRunPopup(records);
+            },
+            failure: function(f, a){
+                Testopia.Util.error(f, a);
+            }
+        });
     },
     newCase: function(){
-        Testopia.TestCase.NewCasePopup(Testopia.Util.getSelectedObjects(this, 'plan_id'), this.getSelectionModel().getSelected().get('product_id'));
+        var form = new Ext.form.BasicForm('testopia_helper_frm', {});
+        var p = {plan_id: Testopia.Util.getSelectedObjects(this, 'plan_id'), action: 'check_plan_rights'};
+        var records = this.getSelectionModel().getSelected();
+        var prod = this.getSelectionModel().getSelected().get('product_id'); 
+        form.submit({
+            url: 'tr_quicksearch.cgi',
+            params: p,
+            success: function(f,a){
+                Testopia.TestCase.NewCasePopup(records, prod);
+            },
+            failure: function(f, a){
+                Testopia.Util.error(f, a);
+            }
+        });
     },
     
     onGridEdit: function(e){
