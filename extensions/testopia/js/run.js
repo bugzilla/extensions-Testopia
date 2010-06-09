@@ -693,6 +693,8 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
         var ds = this.store;
         var myparams = e.record.data;
         myparams.action = 'edit';
+        status = myparams.status;
+        delete myparams.status;
         var manager;
         if (!myparams.manager.match('@')){
             manager = myparams.manager;
@@ -703,6 +705,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
             params: myparams,
             success: function(f, a){
                 myparams.manager = manager;
+                myparams.status = status;
                 ds.commitChanges();
             },
             failure: function(f, a){

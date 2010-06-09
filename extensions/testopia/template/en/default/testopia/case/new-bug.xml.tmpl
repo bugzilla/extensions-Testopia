@@ -6,8 +6,7 @@
     <version>[% caserun ? caserun.run.plan.product_version : case.plans.0.product_version FILTER xml %]</version>
     <component>[% case.components.0.name FILTER xml %]</component>
     <short_desc><![CDATA[[Test Case [% case.id FILTER none %]] [% case.summary FILTER none %]]]></short_desc>
-    <comment><![CDATA[[% IF caserun %] 
-STATUS: [% caserun.status %]
+    <comment><![CDATA[[% IF caserun %]STATUS: [% caserun.status %]
 BUILD: [% caserun.build.name FILTER none %]
 ENVIRONMENT: [% caserun.environment.name FILTER none %][% END %]
 STEPS TO REPRODUCE: [% case.text.action FILTER none %]

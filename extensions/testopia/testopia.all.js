@@ -6459,12 +6459,35 @@ Testopia.TestCase.Bugs.Grid = function(id){
         });
         store.load();
         store.on('load', function(){
-            var url = 'enter_bug.cgi?';
+//            var url = 'enter_bug.cgi?';
+            var f = document.createElement("form");
+            f.setAttribute("method", "post");
+            f.setAttribute("action", "enter_bug.cgi");
+            f.setAttribute("target", "_blank");
+
             for (var i = 0; i < store.fields.keys.length; i++) {
-                url = url + store.fields.keys[i] + '=' + escape(store.getAt(0).get(store.fields.keys[i])) + '&';
+//                url = url + store.fields.keys[i] + '=' + escape(store.getAt(0).get(store.fields.keys[i])) + '&';
+                if (store.fields.keys[i] == 'comment'){
+                    h = document.createElement("textarea");
+                    h.setAttribute("name", store.fields.keys[i]);
+                    h.value = store.getAt(0).get(store.fields.keys[i]);
+                }
+                else {
+                    h = document.createElement("input");
+                    h.setAttribute("name", store.fields.keys[i]);
+                    txt = store.getAt(0).get(store.fields.keys[i]).replace(/\n/,'&#10');
+                    h.setAttribute("value", store.getAt(0).get(store.fields.keys[i]));
+                }
+                f.appendChild(h);
             }
-            url = url + 'caserun_id=' + caserun_id;
-            window.open(url);
+            h = document.createElement("input");
+            h.setAttribute("name", "caserun_id");
+            h.setAttribute("value", caserun_id);
+            f.appendChild(h);
+            document.body.appendChild(f);
+            f.submit();
+//            url = url + 'caserun_id=' + caserun_id;
+//            window.open(url);
         });
     };
     var ds = this.store;
@@ -7598,6 +7621,8 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
         var ds = this.store;
         var myparams = e.record.data;
         myparams.action = 'edit';
+        status = myparams.status;
+        delete myparams.status;
         var manager;
         if (!myparams.manager.match('@')){
             manager = myparams.manager;
@@ -7608,6 +7633,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
             params: myparams,
             success: function(f, a){
                 myparams.manager = manager;
+                myparams.status = status;
                 ds.commitChanges();
             },
             failure: function(f, a){
