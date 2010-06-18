@@ -37,21 +37,26 @@ sub user_visible_products {
     my $dbh = Bugzilla->dbh;
 
     if (!$self->{'products'}) {
-    my $query = "SELECT id FROM products " .
-                "LEFT JOIN group_control_map " .
-                "ON group_control_map.product_id = products.id ";
-    if (Bugzilla->params->{'useentrygroupdefault'}) {
-       $query .= "AND group_control_map.entry != 0 ";
-    } else {
-       $query .= "AND group_control_map.membercontrol = " .
-              CONTROLMAPMANDATORY . " ";
-    }
-    if (Bugzilla->user->groups) {
-       $query .= "AND group_id NOT IN(" . Bugzilla->user->groups_as_string . ") ";
-    }
-    $query .= "WHERE group_id IS NULL AND products.classification_id= ? ORDER BY products.name";
-            
-        my $product_ids = $dbh->selectcol_arrayref($query, undef, $self->id);
+        my $query = "SELECT id, name AS pname FROM products " .
+                    "LEFT JOIN group_control_map " .
+                    "ON group_control_map.product_id = products.id ";
+        if (Bugzilla->params->{'useentrygroupdefault'}) {
+           $query .= "AND group_control_map.entry != 0 ";
+        } else {
+           $query .= "AND group_control_map.membercontrol = " .
+                  CONTROLMAPMANDATORY . " ";
+        }
+        if (Bugzilla->user->groups) {
+           $query .= "AND group_id NOT IN(" . Bugzilla->user->groups_as_string . ") ";
+        }
+        $query .= "WHERE group_id IS NULL AND products.classification_id= ? ";
+        $query .= "UNION (SELECT id, products.name AS pname FROM products ".
+                  "INNER JOIN test_plans ON products.id = test_plans.product_id ".
+                  "INNER JOIN test_plan_permissions ON test_plan_permissions.plan_id = test_plans.plan_id ".
+                  "WHERE test_plan_permissions.userid = ?)";
+        
+        $query .= "ORDER BY pname ";                
+        my $product_ids = $dbh->selectcol_arrayref($query, undef, $self->id, Bugzilla->user->id);
  
         my @products;
         foreach my $product_id (@$product_ids) {
