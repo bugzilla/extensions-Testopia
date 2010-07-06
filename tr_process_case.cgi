@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Bug;
@@ -28,13 +28,16 @@ use Bugzilla::Util;
 use Bugzilla::User;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Testopia::Util;
-use Testopia::TestCase;
-use Testopia::Category;
-use Testopia::TestCaseRun;
-use Testopia::TestTag;
-use Testopia::Attachment;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::Category;
+use Bugzilla::Extension::Testopia::TestCaseRun;
+use Bugzilla::Extension::Testopia::TestTag;
+use Bugzilla::Extension::Testopia::Attachment;
+use Bugzilla::Extension::Testopia::Constants;
 use JSON;
 
 Bugzilla->error_mode(ERROR_MODE_AJAX);
@@ -44,7 +47,7 @@ my $cgi = Bugzilla->cgi;
 
 my $action = $cgi->param('action') || '';
 
-my $case = Testopia::TestCase->new($cgi->param('case_id'));
+my $case = Bugzilla::Extension::Testopia::TestCase->new($cgi->param('case_id'));
 
 unless ($case){
     print $cgi->header;
@@ -98,7 +101,7 @@ elsif ($action eq 'link') {
     print $cgi->header;      
     my @plans;      
     foreach my $id (split(',', $cgi->param('plan_ids'))){      
-        my $plan = Testopia::TestPlan->new($id);      
+        my $plan = Bugzilla::Extension::Testopia::TestPlan->new($id);      
         ThrowUserError("testopia-read-only", {'object' => $plan}) unless $plan->canedit;      
         push @plans, $plan;      
     }      
@@ -229,7 +232,7 @@ elsif ($action eq 'case_to_bug'){
         $case->{text}->{$field} =~ s/\&amp;/\&/g;
     }
     my $vars;
-    $vars->{'caserun'} = Testopia::TestCaseRun->new($cgi->param('caserun_id')) if $cgi->param('caserun_id');
+    $vars->{'caserun'} = Bugzilla::Extension::Testopia::TestCaseRun->new($cgi->param('caserun_id')) if $cgi->param('caserun_id');
     $vars->{'case'} = $case;
 
     print $cgi->header(-type => 'text/xml');

@@ -24,24 +24,27 @@
 #                 Andrew Nelson <anelson@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Testopia::Search;
-use Testopia::Table;
-use Testopia::Util;
-use Testopia::TestRun;
-use Testopia::Product;
-use Testopia::Classification;
-use Testopia::Environment;
-use Testopia::Environment::Element;
-use Testopia::Environment::Category;
-use Testopia::Environment::Property;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::Product;
+use Bugzilla::Extension::Testopia::Classification;
+use Bugzilla::Extension::Testopia::Environment;
+use Bugzilla::Extension::Testopia::Environment::Element;
+use Bugzilla::Extension::Testopia::Environment::Category;
+use Bugzilla::Extension::Testopia::Environment::Property;
+use Bugzilla::Extension::Testopia::Constants;
 use Data::Dumper;
 use JSON;
 
@@ -74,7 +77,7 @@ if ( $action eq 'add' ) {
     my $name    = $cgi->param('name');
     my $product = $cgi->param('product_id');
 
-    my $env = Testopia::Environment->create(
+    my $env = Bugzilla::Extension::Testopia::Environment->create(
         {
             name       => $name,
             product_id => $product,
@@ -85,7 +88,7 @@ if ( $action eq 'add' ) {
 }
 
 elsif ( $action eq 'delete' ) {
-    my $env = Testopia::Environment->new($env_id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
     ThrowUserError( 'testopia-no-delete', { 'object' => $env } )
       unless $env->candelete;
 
@@ -95,7 +98,7 @@ elsif ( $action eq 'delete' ) {
 }
 
 elsif ( $action eq 'toggle' ) {
-    my $env = Testopia::Environment->new($env_id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
     ThrowUserError( 'testopia-read-only', { 'object' => $env } )
       unless $env->canedit;
 
@@ -105,7 +108,7 @@ elsif ( $action eq 'toggle' ) {
 }
 
 elsif ( $action eq 'rename' ) {
-    my $env = Testopia::Environment->new($env_id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
     ThrowUserError( "testopia-read-only", { 'object' => $env } )
       unless $env->canedit;
 
@@ -120,7 +123,7 @@ elsif ( $action eq 'clone' ) {
         { 'object' => 'Test Environment' } )
       unless Bugzilla->user->in_group('Testers');
 
-    my $env = Testopia::Environment->new($env_id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
     my $id = $env->clone( $cgi->param('name'), $cgi->param('product_id') );
 
     print "{'success': true, 'id': " . $id . "}";
@@ -173,7 +176,7 @@ elsif ( $action eq 'getChildren' ) {
 }
 
 elsif ( $action eq 'remove_env_node' ) {
-    my $env = Testopia::Environment->new($env_id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
     ThrowUserError( "testopia-read-only", { 'object' => $env } ) unless $env->canedit;
     
     foreach my $element_id (split(',', $cgi->param('element_ids'))){
@@ -225,10 +228,10 @@ elsif ( $action eq 'set_selected' ) {
         detaint_natural($property_id);
         trick_taint($value);
 
-        my $env = Testopia::Environment->new($env_id);
+        my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
         ThrowUserError( "testopia-read-only", { 'object' => $env } ) unless $env->canedit;
 
-        my $property = Testopia::Environment::Property->new($property_id);
+        my $property = Bugzilla::Extension::Testopia::Environment::Property->new($property_id);
         my $elmnt_id = $property->element_id();
         my $old = $env->get_value_selected( $env->id, $elmnt_id, $property->id );
         $old = undef if $old eq $value;
@@ -243,12 +246,12 @@ elsif ( $action eq 'set_selected' ) {
 elsif ( $action eq 'apply_element' ) {
     my $id     = $cgi->param('id');
     my $type   = $cgi->param('type');
-    my $env = Testopia::Environment->new($env_id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
     ThrowUserError( "testopia-read-only", { 'object' => $env } ) unless $env->canedit;
     
     detaint_natural($id);
     if ( $type eq "element" ) {
-        my $element = Testopia::Environment::Element->new($id);
+        my $element = Bugzilla::Extension::Testopia::Environment::Element->new($id);
         
         my $properties = $element->get_properties;
         if ( scalar @$properties == 0 ) {
@@ -260,7 +263,7 @@ elsif ( $action eq 'apply_element' ) {
     }
     #incoming type is a category
     else {
-        my $category = Testopia::Environment::Category->new($id);
+        my $category = Bugzilla::Extension::Testopia::Environment::Category->new($id);
 
         foreach my $element (@{$category->get_parent_elements}) {
             $env->store_property_value( 0, $element->id, "" );
@@ -276,11 +279,11 @@ else {
 sub display {
     detaint_natural($env_id);
     validate_test_id( $env_id, 'environment' );
-    my $env = Testopia::Environment->new($env_id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
 
     if ( !defined($env) ) {
         my $env =
-          Testopia::Environment->new( { 'environment_id' => 0 } );
+          Bugzilla::Extension::Testopia::Environment->new( { 'environment_id' => 0 } );
         $vars->{'environment'} = $env;
         $vars->{'action'}      = 'do_add';
         $template->process( "testopia/environment/add.html.tmpl", $vars )
@@ -290,7 +293,7 @@ sub display {
     ThrowUserError( "testopia-read-only", { 'object' => $env } )
       unless $env->canview;
     my $category =
-      Testopia::Environment::Category->new( { 'id' => 0 } );
+      Bugzilla::Extension::Testopia::Environment::Category->new( { 'id' => 0 } );
     if ( Bugzilla->params->{'useclassification'} ) {
         $vars->{'allhaschild'} = $category->get_all_child_count;
         $vars->{'toplevel'}    = Bugzilla->user->get_selectable_classifications;
@@ -318,7 +321,7 @@ sub get_root {
     
     detaint_natural($product_id);
     if ($product_id){
-        my $product = Testopia::Product->new($product_id);
+        my $product = Bugzilla::Extension::Testopia::Product->new($product_id);
         return unless $product->canedit;
         push @products,
           {
@@ -350,16 +353,16 @@ sub get_categories {
     # Handle the special GLOBAL ATTRIBUTES product
     $product_id = $product_id eq 'GLOBAL' ? 0 : $product_id; 
     if ($product_id) {
-        my $product = Testopia::Product->new($product_id);
+        my $product = Bugzilla::Extension::Testopia::Product->new($product_id);
         return unless Bugzilla->user->can_see_product( $product->name );
     }
-    my $category = Testopia::Environment::Category->new( {} );
+    my $category = Bugzilla::Extension::Testopia::Environment::Category->new( {} );
     print $category->product_categories_to_json( $product_id );
 }
 
 sub get_category_element_json {
     my ($id) = (@_);
-    my $category = Testopia::Environment::Category->new($id);
+    my $category = Bugzilla::Extension::Testopia::Environment::Category->new($id);
     return unless $category->canview;
     my $fish = $category->elements_to_json("TRUE");
     print $fish;
@@ -367,28 +370,28 @@ sub get_category_element_json {
 
 sub get_element_children {
     my ( $id, $draggable ) = (@_);
-    my $element = Testopia::Environment::Element->new($id);
+    my $element = Bugzilla::Extension::Testopia::Environment::Element->new($id);
     return unless $element->canview;
     print $element->children_to_json($draggable);
 }
 
 sub get_env_categories {
     my ($id) = (@_);
-    my $env = Testopia::Environment->new($id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($id);
     return unless $env->canview;
     print $env->categories_to_json();
 }
 
 sub get_mapped_category_elements {
     my ( $id, $cat_id ) = (@_);
-    my $env = Testopia::Environment->new($id);
+    my $env = Bugzilla::Extension::Testopia::Environment->new($id);
     return unless $env->canview;
     print $env->mapped_category_elements_to_json($cat_id);
 }
 
 sub get_validexp_json {
     my ( $id, $env_id ) = (@_);
-    my $property = Testopia::Environment::Property->new($id);
+    my $property = Bugzilla::Extension::Testopia::Environment::Property->new($id);
     return unless $property->canview;
     print $property->value_to_json($env_id);
 }
@@ -408,7 +411,7 @@ sub edit_category {
     my $name       = $cgi->param('text');
     trick_taint($name);
     
-    my $category = Testopia::Environment::Category->new($id);
+    my $category = Bugzilla::Extension::Testopia::Environment::Category->new($id);
     ThrowUserError( "testopia-read-only", { 'object' => $category } ) unless $category->canedit;
 
     unless ( $category->set_name($name) ) {
@@ -424,7 +427,7 @@ sub edit_element {
     my $name = $cgi->param('text');
     trick_taint($name);
     
-    my $element = Testopia::Environment::Element->new($id);
+    my $element = Bugzilla::Extension::Testopia::Environment::Element->new($id);
     ThrowUserError( "testopia-read-only", { 'object' => $element } ) unless $element->canedit;
 
     ThrowUserError('testopia-element-in-use') if ( $element->is_mapped() );
@@ -441,7 +444,7 @@ sub edit_property {
     my $name       = $cgi->param('text');
     trick_taint($name);
     
-    my $property = Testopia::Environment::Property->new($id);
+    my $property = Bugzilla::Extension::Testopia::Environment::Property->new($id);
     ThrowUserError( "testopia-read-only", { 'object' => $property } ) unless $property->canedit;
     
     ThrowUserError('testopia-element-in-use') if ( $property->is_mapped() );
@@ -456,7 +459,7 @@ sub edit_property {
 sub edit_validexp {
     my ($id) = (@_);
 
-    my $property = Testopia::Environment::Property->new($id);
+    my $property = Bugzilla::Extension::Testopia::Environment::Property->new($id);
     
     ThrowUserError( "testopia-read-only", { 'object' => $property } ) unless $property->canedit;
     
@@ -497,9 +500,9 @@ sub edit_validexp {
 ###################################
 sub add_category {
     my ($id) = (@_);
-    my $category = Testopia::Environment::Category->new( {} );
+    my $category = Bugzilla::Extension::Testopia::Environment::Category->new( {} );
     if ($id) {
-        my $product = Testopia::Product->new($id);
+        my $product = Bugzilla::Extension::Testopia::Product->new($id);
         ThrowUserError( "testopia-read-only", { 'object' => $product } ) unless $product->canedit;
     }
     $category->{'product_id'} = $id;
@@ -524,18 +527,18 @@ sub add_category {
 
 sub add_element {
     my ( $id, $ischild ) = (@_);
-    my $element = Testopia::Environment::Element->new( {} );
+    my $element = Bugzilla::Extension::Testopia::Environment::Element->new( {} );
 
     # If we are adding this element as a child, $id is the parent element's id
     if ($ischild) {
-        my $parent = Testopia::Environment::Element->new($id);
+        my $parent = Bugzilla::Extension::Testopia::Environment::Element->new($id);
         ThrowUserError( "testopia-read-only", { 'object' => $parent } ) unless $parent->canedit;
         $element->{'env_category_id'} = $parent->env_category_id;
     }
 
     # Otherwise $id is the catagory id
     else {
-        my $parent = Testopia::Environment::Category->new($id);
+        my $parent = Bugzilla::Extension::Testopia::Environment::Category->new($id);
         ThrowUserError( "testopia-read-only", { 'object' => $parent } ) unless $parent->canedit;
         $element->{'env_category_id'} = $id;
     }
@@ -563,9 +566,9 @@ sub add_property {
     my ($id) = (@_);
 
     #add new property to element with id=$id
-    my $property = Testopia::Environment::Property->new( {} );
+    my $property = Bugzilla::Extension::Testopia::Environment::Property->new( {} );
 
-    my $parent = Testopia::Environment::Element->new($id);
+    my $parent = Bugzilla::Extension::Testopia::Environment::Element->new($id);
     ThrowUserError( "testopia-read-only", { 'object' => $parent } ) unless $parent->canedit;
 
     $property->{'element_id'} = $id;
@@ -591,7 +594,7 @@ sub add_property {
 
 sub add_validexp {
     my ($id) = (@_);
-    my $property = Testopia::Environment::Property->new($id);
+    my $property = Bugzilla::Extension::Testopia::Environment::Property->new($id);
     ThrowUserError( "testopia-read-only", { 'object' => $property } ) unless $property->canedit;
 
     my $exp = $property->validexp;
@@ -618,7 +621,7 @@ sub add_validexp {
 #############################
 sub delete_category {
     my ($id) = (@_);
-    my $category = Testopia::Environment::Category->new($id);
+    my $category = Bugzilla::Extension::Testopia::Environment::Category->new($id);
 
     ThrowUserError( "testopia-read-only", { 'object' => $category } ) unless $category->candelete;
     ThrowUserError('testopia-element-in-use') if ( $category->is_mapped() );
@@ -630,7 +633,7 @@ sub delete_category {
 
 sub delete_element {
     my ($id) = (@_);
-    my $element = Testopia::Environment::Element->new($id);
+    my $element = Bugzilla::Extension::Testopia::Environment::Element->new($id);
     
     ThrowUserError( "testopia-read-only", { 'object' => $element } ) unless $element->candelete;
     ThrowUserError('testopia-element-in-use') if ( $element->is_mapped() );
@@ -642,7 +645,7 @@ sub delete_element {
 
 sub delete_property {
     my ($id) = (@_);
-    my $property = Testopia::Environment::Property->new($id);
+    my $property = Bugzilla::Extension::Testopia::Environment::Property->new($id);
     
     ThrowUserError( "testopia-read-only", { 'object' => $property } ) unless $property->candelete;
     ThrowUserError('testopia-element-in-use') if ( $property->is_mapped() );
@@ -654,7 +657,7 @@ sub delete_property {
 
 sub delete_validexp {
     my ($id) = (@_);
-    my $property = Testopia::Environment::Property->new($id);
+    my $property = Bugzilla::Extension::Testopia::Environment::Property->new($id);
     
     ThrowUserError( "testopia-read-only", { 'object' => $property } ) unless $property->candelete;
     

@@ -20,21 +20,24 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Testopia::Search;
-use Testopia::Table;
-use Testopia::Util;
-use Testopia::TestRun;
-use Testopia::Environment;
-use Testopia::Environment::Element;
-use Testopia::Environment::Category;
-use Testopia::Environment::Property;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::Environment;
+use Bugzilla::Extension::Testopia::Environment::Element;
+use Bugzilla::Extension::Testopia::Environment::Category;
+use Bugzilla::Extension::Testopia::Environment::Property;
+use Bugzilla::Extension::Testopia::Constants;
 
 Bugzilla->login(LOGIN_REQUIRED);
 
@@ -59,14 +62,14 @@ unless ($product_id){
     ThrowUserError("testopia-missing-parameter", {param => "product_id"});
 }
 
-my $product = Testopia::Product->new($product_id);
+my $product = Bugzilla::Extension::Testopia::Product->new($product_id);
 unless ($product && $product->canview){
     print $cgi->header;
     ThrowUserError('testopia-read-only', {'object' => $product});
 }
 
-my $search = Testopia::Search->new($cgi);
-my $table = Testopia::Table->new('environment', 'tr_list_environments.cgi', $cgi, undef, $search->query);
+my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
+my $table = Bugzilla::Extension::Testopia::Table->new('environment', 'tr_list_environments.cgi', $cgi, undef, $search->query);
 
 if ($cgi->param('ctype') eq 'json'){
     print $cgi->header;

@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -28,11 +28,13 @@ use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::User;
 
-use Testopia::Util;
-use Testopia::Constants;
-use Testopia::Report;
-use Testopia::TestRun;
-use Testopia::Search;
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::Report;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::Search;
 
 use JSON;
 
@@ -131,13 +133,13 @@ elsif ($type eq 'execution'){
 
     foreach my $g (@plan_ids){
         foreach my $id (split(',', $g)){
-            my $obj = Testopia::TestPlan->new($id);
+            my $obj = Bugzilla::Extension::Testopia::TestPlan->new($id);
             push @runs, @{$obj->test_runs} if $obj && $obj->canview;
         }
     }
     foreach my $g (@run_ids){
         foreach my $id (split(',', $g)){
-            my $obj = Testopia::TestRun->new($id);
+            my $obj = Bugzilla::Extension::Testopia::TestRun->new($id);
             push @runs, $obj if $obj && $obj->canview;
         }
     }
@@ -160,8 +162,8 @@ elsif ($type eq 'execution'){
     
     trick_taint($chfieldfrom);
     trick_taint($chfieldto);
-    my $sql_chfrom = Testopia::Search::SqlifyDate($chfieldfrom);
-    my $sql_chto   = Testopia::Search::SqlifyDate($chfieldto);
+    my $sql_chfrom = Bugzilla::Extension::Testopia::Search::SqlifyDate($chfieldfrom);
+    my $sql_chto   = Bugzilla::Extension::Testopia::Search::SqlifyDate($chfieldto);
     
     my $total = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, undef, $tester, \@runs);
     my $passed = $runs[0]->case_run_count_by_date($sql_chfrom, $sql_chto, PASSED, $tester, \@runs);
@@ -218,13 +220,13 @@ elsif ($type eq 'bug'){
      
     foreach my $g (@plan_ids){
         foreach my $id (split(',', $g)){
-            my $obj = Testopia::TestPlan->new($id);
+            my $obj = Bugzilla::Extension::Testopia::TestPlan->new($id);
             push @runs, @{$obj->test_runs} if $obj && $obj->canview;
         }
     }
     foreach my $g (@run_ids){
         foreach my $id (split(',', $g)){
-            my $obj = Testopia::TestRun->new($id);
+            my $obj = Bugzilla::Extension::Testopia::TestRun->new($id);
             push @runs, $obj if $obj && $obj->canview;
         }
     }
@@ -341,7 +343,7 @@ elsif ($type eq 'changed'){
 
 $cgi->param('current_tab', 'run');
 $cgi->param('viewall', 1);
-my $report = Testopia::Report->new('run', 'tr_list_runs.cgi', $cgi);
+my $report = Bugzilla::Extension::Testopia::Report->new('run', 'tr_list_runs.cgi', $cgi);
 $vars->{'report'} = $report;
 
 ### From Bugzilla report.cgi by Gervase Markham

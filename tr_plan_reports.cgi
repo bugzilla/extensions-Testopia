@@ -20,15 +20,18 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::Util;
-use Testopia::Report;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Report;
+use Bugzilla::Extension::Testopia::Constants;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -51,7 +54,7 @@ if ($type eq 'build_coverage'){
     }
     validate_test_id($plan_id, 'plan');
     my $action = $cgi->param('action') || '';
-    my $plan = Testopia::TestPlan->new($plan_id);
+    my $plan = Bugzilla::Extension::Testopia::TestPlan->new($plan_id);
     ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
     my $report = {};
     my %buildseen;
@@ -100,7 +103,7 @@ elsif ($type eq 'bugcounts'){
       exit;
     }
     validate_test_id($plan_id, 'plan');
-    my $plan = Testopia::TestPlan->new($plan_id);
+    my $plan = Bugzilla::Extension::Testopia::TestPlan->new($plan_id);
     ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
     
     my $dbh = Bugzilla->dbh;
@@ -131,7 +134,7 @@ elsif ($type eq 'untested'){
       exit;
     }
     validate_test_id($plan_id, 'plan');
-    my $plan = Testopia::TestPlan->new($plan_id);
+    my $plan = Bugzilla::Extension::Testopia::TestPlan->new($plan_id);
     ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
     
     my $dbh = Bugzilla->dbh;
@@ -157,7 +160,7 @@ elsif ($type eq 'untested'){
 else{
     $cgi->param('current_tab', 'plan');
     $cgi->param('viewall', 1);
-    my $report = Testopia::Report->new('plan', 'tr_list_plans.cgi', $cgi);
+    my $report = Bugzilla::Extension::Testopia::Report->new('plan', 'tr_list_plans.cgi', $cgi);
     $vars->{'report'} = $report;
     $vars->{'qname'} = $cgi->param('qname');
     

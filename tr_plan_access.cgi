@@ -20,17 +20,20 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::User;
-use Testopia::Util;
-use Testopia::Product;
-use Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Product;
+use Bugzilla::Extension::Testopia::TestPlan;
 
 use vars qw($vars);
 
@@ -53,7 +56,7 @@ unless (detaint_natural($plan_id)){
 }
 
 validate_test_id($plan_id, 'plan');
-local our $plan = Testopia::TestPlan->new($plan_id);
+local our $plan = Bugzilla::Extension::Testopia::TestPlan->new($plan_id);
 
 if ($action eq 'edit'){
     ThrowUserError('testopia-plan-acl-denied', {plan_id => $plan->id}) unless ($plan->canadmin);

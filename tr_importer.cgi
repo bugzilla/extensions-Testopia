@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
@@ -29,12 +29,14 @@ use Bugzilla::Error;
 use Bugzilla::Product;
 use Bugzilla::Token;
 
-use Testopia::Util;
-use Testopia::Constants;
-use Testopia::TestPlan;
-use Testopia::TestCase;
-use Testopia::Category;
-use Testopia::Importer;
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::Category;
+use Bugzilla::Extension::Testopia::Importer;
 
 use XML::Twig;
 use Text::CSV;
@@ -168,7 +170,7 @@ if ($action eq 'upload') {
             }
             my @plans;
             foreach my $id (split(/[\s,]+/, $row->{'plans'})){
-                my $plan = Testopia::TestPlan->new($id);
+                my $plan = Bugzilla::Extension::Testopia::TestPlan->new($id);
                 ThrowUserError("invalid-test-id-non-existent", {'id' => $id, 'type' => 'Plan'}) unless $plan;
                 ThrowUserError("testopia-create-denied", {'object' => 'Test Case', 'plan' => $plan}) unless $plan->canedit;
                 push @plans, $plan;
@@ -178,7 +180,7 @@ if ($action eq 'upload') {
             my $category = $row->{'category_id'};
             trick_taint($category);
             if (trim($category) =~ /^\d+$/){
-                $row->{'category_id'} = Testopia::Util::validate_selection($row->{'category_id'}, 'category_id', 'test_case_categories');
+                $row->{'category_id'} = Bugzilla::Extension::Testopia::Util::validate_selection($row->{'category_id'}, 'category_id', 'test_case_categories');
             }
             else {
                 $category = check_case_category($category, $product);
@@ -203,7 +205,7 @@ if ($action eq 'upload') {
             $row->{'effect'} =~ s/\n/<BR>/g;
             
     #        print Data::Dumper::Dumper($row);
-            my $case = Testopia::TestCase->new({});
+            my $case = Bugzilla::Extension::Testopia::TestCase->new({});
             
             $case->check_required_create_fields($row);
             $case->run_create_validators($row);
@@ -213,7 +215,7 @@ if ($action eq 'upload') {
         # OK, if we are here, all the fields passed validation. Time to create
         my @case_ids;
         foreach my $row (@validated){
-            my $case = Testopia::TestCase->create($row);
+            my $case = Bugzilla::Extension::Testopia::TestCase->create($row);
             push @case_ids, $case->id;
         }
         if ($ctype eq 'json'){

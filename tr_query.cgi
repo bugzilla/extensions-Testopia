@@ -22,22 +22,25 @@
 #                 Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 use Bugzilla::Field;
-use Testopia::Constants;
-use Testopia::Util;
-use Testopia::Classification;
-use Testopia::TestPlan;
-use Testopia::TestRun;
-use Testopia::TestCase;
-use Testopia::Environment::Category;
-use Testopia::Environment::Element;
-use Testopia::Environment::Property;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Classification;
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::Environment::Category;
+use Bugzilla::Extension::Testopia::Environment::Element;
+use Bugzilla::Extension::Testopia::Environment::Property;
 use JSON;
 
 local our $vars = {};
@@ -136,7 +139,7 @@ if ($action eq 'getversions'){
     
     foreach my $value (@values){
         if ($type eq 'classification'){
-            $obj = Testopia::Classification->new({name => $value});
+            $obj = Bugzilla::Extension::Testopia::Classification->new({name => $value});
             next unless ($obj && scalar(grep {$_->name eq $obj->name} @{Bugzilla->user->get_selectable_classifications}));
             push @products, @{$obj->user_visible_products()};
             my @prod_names;
@@ -183,7 +186,7 @@ elsif ($action eq 'get_products'){
     if (Bugzilla->params->{'useclassification'}){
         my @classes = $cgi->param('class_ids');
         foreach my $id (@classes){
-            my $class = Testopia::Classification->new($id);
+            my $class = Bugzilla::Extension::Testopia::Classification->new($id);
             push @prod, @{$class->user_visible_products};
         }
     }
@@ -206,7 +209,7 @@ elsif ($action eq 'get_categories'){
     
     foreach my $prod_id (@prod_ids){
         detaint_natural($prod_id);
-        my $cat = Testopia::Environment::Category->new({});
+        my $cat = Bugzilla::Extension::Testopia::Environment::Category->new({});
         my $cats_ref = $cat->get_element_categories_by_product($prod_id);
         
         foreach my $e (@{$cats_ref}){
@@ -225,11 +228,11 @@ elsif ($action eq 'get_elements'){
     foreach my $cat_id (@cat_ids){
         detaint_natural($cat_id);
         
-        my $cat = Testopia::Environment::Category->new($cat_id);
+        my $cat = Bugzilla::Extension::Testopia::Environment::Category->new($cat_id);
         my $elmnts_ref = $cat->get_elements_by_category($cat->{'name'});
         
         foreach my $e (@{$elmnts_ref}){
-            push @elmnts, Testopia::Environment::Element->new($e->{'element_id'});
+            push @elmnts, Bugzilla::Extension::Testopia::Environment::Element->new($e->{'element_id'});
         }
     }
     
@@ -248,7 +251,7 @@ elsif ($action eq 'get_properties'){
     foreach my $elmnt_id (@elmnt_ids){
         detaint_natural($elmnt_id);
         
-        my $elmnt = Testopia::Environment::Element->new($elmnt_id);
+        my $elmnt = Bugzilla::Extension::Testopia::Environment::Element->new($elmnt_id);
         my $props = $elmnt->get_properties();
         
         foreach my $e (@{$props}){
@@ -266,7 +269,7 @@ elsif ($action eq 'get_valid_exp'){
     foreach my $prop_id (@prop_ids){
         detaint_natural($prop_id);
         
-        my $prop = Testopia::Environment::Property->new($prop_id);
+        my $prop = Bugzilla::Extension::Testopia::Environment::Property->new($prop_id);
         my $exp = $prop->validexp;
     
         my @exps = split /\|/, $exp;
@@ -356,13 +359,13 @@ else{
     #TODO: Support default query
     my $tab = $cgi->param('current_tab') || '';
     if ($tab eq 'plan'){
-        $vars->{'plan'} = Testopia::TestPlan->new({});
+        $vars->{'plan'} = Bugzilla::Extension::Testopia::TestPlan->new({});
         $vars->{'title'} = "Search For Test Plans";
         $vars->{'versions'} = get_searchable_objects('versions');
     }
     elsif ($tab eq 'run'){
         $vars->{'title'}        = "Search For Test Runs";
-        $vars->{'run'}          = Testopia::TestRun->new({});;
+        $vars->{'run'}          = Bugzilla::Extension::Testopia::TestRun->new({});;
         $vars->{'versions'}     = get_searchable_objects('versions');
         $vars->{'milestones'}   = get_searchable_objects('milestones');
         $vars->{'builds'}       = get_searchable_objects('builds');
@@ -372,13 +375,13 @@ else{
         $vars->{'title'} = "Search For Test Run Environments";
         $vars->{'classifications'} = Bugzilla->user->get_selectable_classifications;
         $vars->{'products'} = Bugzilla->user->get_selectable_products;
-        $vars->{'env'} = Testopia::Environment->new({});
+        $vars->{'env'} = Bugzilla::Extension::Testopia::Environment->new({});
     }
     elsif ($tab eq 'case_run'){
         $vars->{'title'} = "Search For Test Case-Runs";
-        $vars->{'case'} = Testopia::TestCase->new({});
-        $vars->{'run'} = Testopia::TestRun->new({});
-        $vars->{'caserun'} = Testopia::TestCaseRun->new({});
+        $vars->{'case'} = Bugzilla::Extension::Testopia::TestCase->new({});
+        $vars->{'run'} = Bugzilla::Extension::Testopia::TestRun->new({});
+        $vars->{'caserun'} = Bugzilla::Extension::Testopia::TestCaseRun->new({});
 
         $vars->{'versions'}     = get_searchable_objects('versions');
         $vars->{'milestones'}   = get_searchable_objects('milestones');
@@ -395,7 +398,7 @@ else{
     }
     elsif ($tab eq 'case') {
         $tab = 'case';
-        my $case = Testopia::TestCase->new({ 'case_id' => 0 });
+        my $case = Bugzilla::Extension::Testopia::TestCase->new({ 'case_id' => 0 });
         $vars->{'title'} = "Search For Test Cases";
         $vars->{'case'} = $case;
         $vars->{'components'}   = get_searchable_objects('components');

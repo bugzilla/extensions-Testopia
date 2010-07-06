@@ -38,15 +38,18 @@ a html textarea.
 #************************************************** Uses ****************************************************#
 use strict;
 use CGI;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Testopia::Util;
-use Testopia::Environment;
-use Testopia::Environment::Xml;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Environment;
+use Bugzilla::Extension::Testopia::Environment::Xml;
 
 #************************************ Variable Declarations/Initialization **********************************#
 my $vars = {}; 
@@ -57,9 +60,9 @@ my $env_id = $cgi->param('env_id');
 
 #*********************************************   UI Logic    ************************************************#
 print $cgi->header;
-my $env = Testopia::Environment->new($env_id);
+my $env = Bugzilla::Extension::Testopia::Environment->new($env_id);
 ThrowUserError("testopia-read-only", {'object' => $env}) unless $env->canview;
-my $xml = Testopia::Environment::Xml->export($env_id);
+my $xml = Bugzilla::Extension::Testopia::Environment::Xml->export($env_id);
 if (!defined($xml)) {
     $vars->{'tr_error'} .= "Exporting XML Environment Failed.  Please try again.<BR/>";
 }

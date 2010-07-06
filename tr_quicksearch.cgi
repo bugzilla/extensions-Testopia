@@ -20,19 +20,22 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Config;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::Util;
-use Testopia::Search;
-use Testopia::Table;
-use Testopia::TestRun;
-use Testopia::Classification;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::Classification;
+use Bugzilla::Extension::Testopia::Constants;
 
 use JSON;
 
@@ -72,8 +75,8 @@ if ($term){
                 $cgi->param('name_type', 'anywordssubstr');
                 $cgi->param('name', $text);
                 
-                my $search = Testopia::Search->new($cgi);
-                my $table = Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
+                my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
+                my $table = Bugzilla::Extension::Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
                 if ($table->list_count == 1){
                     print "Location: " . Bugzilla->params->{'urlbase'} . "tr_show_plan.cgi?plan_id=" . ${$table->list}[0]->id . "\n\n";
                 }
@@ -94,8 +97,8 @@ if ($term){
                 $cgi->param('summary_type', 'anywordssubstr');
                 $cgi->param('summary', $text);
                 
-                my $search = Testopia::Search->new($cgi);
-                my $table = Testopia::Table->new('run', 'tr_list_runs.cgi', $cgi, undef, $search->query);
+                my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
+                my $table = Bugzilla::Extension::Testopia::Table->new('run', 'tr_list_runs.cgi', $cgi, undef, $search->query);
                 if ($table->list_count == 1){
                     print "Location: " . Bugzilla->params->{'urlbase'} . "tr_show_run.cgi?run_id=" . ${$table->list}[0]->id . "\n\n";
                 }
@@ -116,8 +119,8 @@ if ($term){
                 $cgi->param('name_type', 'anywordssubstr');
                 $cgi->param('name', $text);
                 
-                my $search = Testopia::Search->new($cgi);
-                my $table = Testopia::Table->new('environment', 'tr_list_runs.cgi', $cgi, undef, $search->query);
+                my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
+                my $table = Bugzilla::Extension::Testopia::Table->new('environment', 'tr_list_runs.cgi', $cgi, undef, $search->query);
                 if ($table->list_count == 1){
                     print "Location: " . Bugzilla->params->{'urlbase'} . "tr_environments.cgi?env_id=" . ${$table->list}[0]->id . "\n\n";
                 }
@@ -138,8 +141,8 @@ if ($term){
                 $cgi->param('summary_type', 'anywordssubstr');
                 $cgi->param('summary', $term);
                 
-                my $search = Testopia::Search->new($cgi);
-                my $table = Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi, undef, $search->query);
+                my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
+                my $table = Bugzilla::Extension::Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi, undef, $search->query);
                 if ($table->list_count == 1){
                     print "Location: " . Bugzilla->params->{'urlbase'} . "tr_show_case.cgi?case_id=" . ${$table->list}[0]->id . "\n\n";
                 }
@@ -314,7 +317,7 @@ else{
         print "{'tags':" . to_json($ref) . "}";  
     }
     elsif ($action eq 'getversions'){
-        my $plan = Testopia::TestPlan->new({});
+        my $plan = Bugzilla::Extension::Testopia::TestPlan->new({});
         my $prod_id = $cgi->param("product_id");
         my @versions;
         if ($prod_id && $prod_id == -1){
@@ -328,7 +331,7 @@ else{
                 print '{ERROR:"You do not have permission to view this product"}';
                 exit;
             }
-            my $product = Testopia::Product->new($prod_id);
+            my $product = Bugzilla::Extension::Testopia::Product->new($prod_id);
             @versions = @{$product->versions};
         }
         my $json = new JSON;
@@ -338,7 +341,7 @@ else{
         print "}";
     }
     elsif ($action eq 'getmilestones'){
-        my $product = Testopia::Product->new($cgi->param("product_id"));
+        my $product = Bugzilla::Extension::Testopia::Product->new($cgi->param("product_id"));
         exit unless $product->canedit;
         my $json = new JSON;
         print "{milestones:";
@@ -346,28 +349,28 @@ else{
         print "}";
     }
     elsif ($action eq 'getplantypes'){
-        my $plan = Testopia::TestPlan->new({});
+        my $plan = Bugzilla::Extension::Testopia::TestPlan->new({});
         my $json = new JSON;
         print "{types:";
         print $json->encode($plan->get_plan_types());
         print "}";
     }
     elsif ($action eq 'getpriorities'){
-        my $plan = Testopia::TestCase->new({});
+        my $plan = Bugzilla::Extension::Testopia::TestCase->new({});
         my $json = new JSON;
         print "{priorities:";
         print $json->encode($plan->get_priority_list());
         print "}";
     }
     elsif ($action eq 'getcasestatus'){
-        my $plan = Testopia::TestCase->new({});
+        my $plan = Bugzilla::Extension::Testopia::TestCase->new({});
         my $json = new JSON;
         print "{statuses:";
         print $json->encode($plan->get_status_list());
         print "}";
     }
     elsif ($action eq 'getcaserunstatus'){
-        my $plan = Testopia::TestCaseRun->new({});
+        my $plan = Bugzilla::Extension::Testopia::TestCaseRun->new({});
         my $json = new JSON;
         print "{statuses:";
         print $json->encode($plan->get_status_list());
@@ -380,7 +383,7 @@ else{
         my $json = new JSON;
         
         if ($cgi->param('class_id')){
-            my $class = Testopia::Classification->new($cgi->param('class_id'));
+            my $class = Bugzilla::Extension::Testopia::Classification->new($cgi->param('class_id'));
             $products = $class->user_visible_products;
         }
         else{
@@ -404,7 +407,7 @@ else{
         if ($node && $node ne 'classes'){
             $node =~ s/\D*//;
             my @products;
-            my $classification = Testopia::Classification->new($node);
+            my $classification = Bugzilla::Extension::Testopia::Classification->new($node);
             foreach my $p (@{$classification->user_visible_products}){
                 push @products, {
                     id => $p->id, 
@@ -428,7 +431,7 @@ else{
     }
     # For use in new_case and show_case since new_plan does not require an id
     elsif ($action eq 'getcomponents'){
-        my $plan = Testopia::TestPlan->new({});
+        my $plan = Bugzilla::Extension::Testopia::TestPlan->new({});
         my $product_id = $cgi->param('product_id');
         my $q = $cgi->param('query'); 
     
@@ -438,7 +441,7 @@ else{
             print '{ERROR:"You do not have permission to view this product"}';
             exit;
         }
-        my $product = Testopia::Product->new($product_id);
+        my $product = Bugzilla::Extension::Testopia::Product->new($product_id);
         
         my @comps;
         foreach my $c (@{$product->components}){
@@ -495,7 +498,7 @@ else{
         Bugzilla->error_mode(ERROR_MODE_AJAX);
         my @plan_id = split(',', $cgi->param('plan_id'));
         foreach my $id (@plan_id){
-            my $plan = Testopia::TestPlan->new($id);
+            my $plan = Bugzilla::Extension::Testopia::TestPlan->new($id);
             if ($plan){
                 ThrowUserError("testopia-create-denied", {'object' => 'Test Case', 'plan' => $plan}) unless $plan->canedit;
             }

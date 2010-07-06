@@ -22,16 +22,19 @@
 #                 Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::Util;
-use Testopia::Table;
-use Testopia::Constants;
-use Testopia::TestPlan;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::TestPlan;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -50,11 +53,11 @@ unless ($plan_id){
   exit;
 }
 
-my $plan = Testopia::TestPlan->new($plan_id);
+my $plan = Bugzilla::Extension::Testopia::TestPlan->new($plan_id);
 ThrowUserError("invalid-test-id-non-existent", {'type' => 'plan', id => $plan_id}) unless $plan;
 ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
 
-$vars->{'table'} = Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi);
+$vars->{'table'} = Bugzilla::Extension::Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi);
 $vars->{'plan'} = $plan;
 
 my $format = $template->get_format("testopia/plan/show", scalar $cgi->param('format'), scalar $cgi->param('ctype'));
@@ -63,7 +66,7 @@ my $disp = "inline";
 # into other programs.
 if ( $format->{'extension'} =~ /(csv|xml)/ ){
     $disp = "attachment";
-    $vars->{'displaycolumns'} = Testopia::TestCase::fields;
+    $vars->{'displaycolumns'} = Bugzilla::Extension::Testopia::TestCase::fields;
     $vars->{'table'} = $plan->test_cases;
     $vars->{'show_footer'} = 1;
 }

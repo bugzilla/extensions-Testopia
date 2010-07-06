@@ -21,22 +21,25 @@
 #                 Jeff Dayley <jedayley@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::User;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Testopia::Search;
-use Testopia::Util;
-use Testopia::Category;
-use Testopia::TestCase;
-use Testopia::TestCaseRun;
-use Testopia::TestPlan;
-use Testopia::TestTag;
-use Testopia::Table;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Category;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::TestCaseRun;
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::TestTag;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::Constants;
 
 my $vars = {};
 
@@ -71,7 +74,7 @@ if ($action eq 'update'){
     
     foreach my $runid (split(/[\s,]+/, $cgi->param('addruns'))){
         validate_test_id($runid, 'run');
-        push @runs, Testopia::TestRun->new($runid);
+        push @runs, Bugzilla::Extension::Testopia::TestRun->new($runid);
     }
 
     foreach my $bugid (split(/[\s,]+/, $cgi->param('bugs'))){
@@ -93,7 +96,7 @@ if ($action eq 'update'){
     }
     
     foreach my $p (@case_ids){
-        my $case = Testopia::TestCase->new($p);
+        my $case = Bugzilla::Extension::Testopia::TestCase->new($p);
         next unless $case;
         
         unless ($case->canedit){
@@ -138,14 +141,14 @@ elsif ($action eq 'clone'){
     my %planseen;
     foreach my $planid (split(",", $cgi->param('plan_ids'))){
         validate_test_id($planid, 'plan');
-        my $plan = Testopia::TestPlan->new($planid);
+        my $plan = Bugzilla::Extension::Testopia::TestPlan->new($planid);
         ThrowUserError("testopia-read-only", {'object' => $plan}) unless $plan->canedit;
         $planseen{$planid} = 1;
     }
     
     ThrowUserError('missing-plans-list') unless scalar keys %planseen;
     
-    my $product = Testopia::Product->new($cgi->param('product_id'));
+    my $product = Bugzilla::Extension::Testopia::Product->new($cgi->param('product_id'));
     ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $cgi->param('product_id')}) unless $product;
     
     if ($cgi->param('copy_category')){
@@ -154,7 +157,7 @@ elsif ($action eq 'clone'){
     
     my @newcases;
     foreach my $id (@case_ids){
-        my $case = Testopia::TestCase->new($id);
+        my $case = Bugzilla::Extension::Testopia::TestCase->new($id);
         next unless $case;
         next unless ($case->canview);
     
@@ -167,14 +170,14 @@ elsif ($action eq 'clone'){
             if ($cgi->param('copy_category')){
                 my $category_id = check_case_category($case->category->name, $product);
                 if (! $category_id){
-                    $category = Testopia::Category->create({
+                    $category = Bugzilla::Extension::Testopia::Category->create({
                         product_id  => $product->id,
                         name        => $case->category->name,
                         description => $case->category->description,
                     });
                 }
                 else {
-                   $category = Testopia::Category->new($category_id); 
+                   $category = Bugzilla::Extension::Testopia::Category->new($category_id); 
                 }
             }
             else {
@@ -184,7 +187,7 @@ elsif ($action eq 'clone'){
                 else{
                     my @categories = @{$product->categories};
                     if (scalar @categories < 1){
-                        $category = Testopia::Category->create({
+                        $category = Bugzilla::Extension::Testopia::Category->create({
                             product_id  => $product->id,
                             name        => '--default--',
                             description => 'Default product category for test cases',
@@ -198,7 +201,7 @@ elsif ($action eq 'clone'){
             }
 
             my $caseid = $case->copy($case_author, $case_tester, $cgi->param('copy_doc') eq 'on' ? 1 : 0, $category->id);
-            my $newcase = Testopia::TestCase->new($caseid);
+            my $newcase = Bugzilla::Extension::Testopia::TestCase->new($caseid);
             push @newcases,  $newcase->id;
             
             foreach my $plan_id (keys %planseen){
@@ -238,7 +241,7 @@ elsif ($action eq 'delete'){
     my @case_ids = split(",", $cgi->param('case_ids'));
     my @uneditable;
     foreach my $id (@case_ids){
-        my $case = Testopia::TestCase->new($id);
+        my $case = Bugzilla::Extension::Testopia::TestCase->new($id);
         next unless $case;
         unless ($case->candelete){
             push @uneditable, $case->id;
@@ -258,7 +261,7 @@ elsif ($action eq 'unlink'){
     my $plan_id = $cgi->param('plan_id');
     validate_test_id($plan_id, 'plan');
     foreach my $id (split(",", $cgi->param('case_ids'))){
-        my $case = Testopia::TestCase->new($id);
+        my $case = Bugzilla::Extension::Testopia::TestCase->new($id);
         if (scalar @{$case->plans} == 1){
             ThrowUserError("testopia-read-only", {'object' => 'case'}) unless ($case->candelete);
             $case->obliterate();
@@ -279,7 +282,7 @@ elsif ($action eq 'update_bugs'){
     my @objs;
     foreach my $id (split(",", $cgi->param('ids'))){
         if ($cgi->param('type') eq 'case'){
-            my $case = Testopia::TestCase->new($id);
+            my $case = Bugzilla::Extension::Testopia::TestCase->new($id);
             if ($cgi->param('bug_action') eq 'attach'){
                 $case->attach_bug($cgi->param('bugs')) if $case->canedit;
             }
@@ -287,7 +290,7 @@ elsif ($action eq 'update_bugs'){
                 $case->detach_bug($cgi->param('bugs')) if $case->canedit;
             }
         } elsif($cgi->param('type') eq 'caserun'){
-            my $caserun = Testopia::TestCaseRun->new($id);
+            my $caserun = Bugzilla::Extension::Testopia::TestCaseRun->new($id);
             if ($cgi->param('bug_action') eq 'attach'){
                 $caserun->attach_bug($cgi->param('bugs'), $id) if $caserun->canedit;
             }
@@ -307,8 +310,8 @@ else{
 
     $cgi->param('current_tab', 'case');
     $cgi->param('distinct', '1');
-    my $search = Testopia::Search->new($cgi);
-    my $table = Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi, undef, $search->query);
+    my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
+    my $table = Bugzilla::Extension::Testopia::Table->new('case', 'tr_list_cases.cgi', $cgi, undef, $search->query);
     $vars->{'table'} = $table;
     if ($cgi->param('ctype') eq 'json'){
         Bugzilla->error_mode(ERROR_MODE_AJAX);
@@ -328,7 +331,7 @@ else{
     # into other programs.
     if ( $format->{'extension'} eq "csv" || $format->{'extension'} eq "xml" ){
         $disp = "attachment";
-        $vars->{'displaycolumns'} = Testopia::TestCase::fields;
+        $vars->{'displaycolumns'} = Bugzilla::Extension::Testopia::TestCase::fields;
     }
 
     # Suggest a name for the bug list if the user wants to save it as a file.

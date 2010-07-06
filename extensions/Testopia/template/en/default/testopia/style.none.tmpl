@@ -1,0 +1,62 @@
+[%# 1.0@bugzilla.org %]
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Test Runner System.
+  #
+  # The Initial Developer of the Original Code is Maciej Maczynski.
+  # Portions created by Maciej Maczynski are Copyright (C) 2001
+  # Maciej Maczynski. All Rights Reserved.
+  #
+  # Contributor(s): Ed Fuentetaja <efuentetaja@acm.org>
+  #%]
+[%
+  debug_ext = Param('testopia-debug') == 'ON' 
+      ? "extensions/Testopia/extjs/ext-all-debug.js" 
+      : "extensions/Testopia/extjs/ext-all.js"
+  
+  debug_ext_base = Param('testopia-debug') == 'ON'
+      ? "extensions/Testopia/extjs/adapter/ext/ext-base-debug.js"
+      : "extensions/Testopia/extjs/adapter/ext/ext-base.js"
+  
+  debug_testopia = Param('testopia-debug') == 'ON' 
+      ? "extensions/Testopia/testopia.all.js" : "extensions/Testopia/testopia.all.ycomp.js"
+  
+  style_urls = ["extensions/Testopia/extjs/resources/css/ext-all.css",
+                "extensions/Testopia/extjs/examples/ux/css/xtheme-gray-extend.css",
+                "extensions/Testopia/extjs/examples/grid/grid-examples.css"]
+%]
+[% IF Param('testopia-debug') == 'Developer' %]  
+    [%  javascript_urls = [
+    
+                       "extensions/Testopia/extjs/adapter/ext/ext-base-debug.js",
+                       "extensions/Testopia/extjs/ext-all-debug.js",
+                       "extensions/Testopia/extjs/examples/ux/RowEditor.js",
+                       "extensions/Testopia/js/strings.js",
+                       "extensions/Testopia/js/vars.js",
+                       "extensions/Testopia/js/util.js",
+                       "extensions/Testopia/js/attachments.js",
+                       "extensions/Testopia/js/plan.js",
+                       "extensions/Testopia/js/case.js",
+                       "extensions/Testopia/js/caserun.js",
+                       "extensions/Testopia/js/run.js",
+                       "extensions/Testopia/js/build.js",
+                       "extensions/Testopia/js/category.js",
+                       "extensions/Testopia/js/diff-tabs.js",
+                       "extensions/Testopia/js/environment.js",
+                       "extensions/Testopia/js/product.js",
+                       "extensions/Testopia/js/search.js",
+                       "extensions/Testopia/js/tags.js",
+                      ]
+    %]
+
+[% ELSE %]
+    [%  javascript_urls = [debug_ext_base, debug_ext, debug_testopia, "extensions/Testopia/extjs/examples/ux/RowEditor.js"] %]
+[% END %]

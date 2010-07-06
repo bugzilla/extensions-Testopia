@@ -20,20 +20,23 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::Util;
-use Testopia::Constants;
-use Testopia::Table;
-use Testopia::TestPlan;
-use Testopia::TestTag;
-use Testopia::Category;
-use Testopia::Build;
-use Testopia::Attachment;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::TestTag;
+use Bugzilla::Extension::Testopia::Category;
+use Bugzilla::Extension::Testopia::Build;
+use Bugzilla::Extension::Testopia::Attachment;
 use JSON;
 
 Bugzilla->error_mode(ERROR_MODE_AJAX);
@@ -42,7 +45,7 @@ Bugzilla->login(LOGIN_REQUIRED);
 my $cgi = Bugzilla->cgi;
 my $action = $cgi->param('action') || '';
 
-my $plan = Testopia::TestPlan->new($cgi->param('plan_id'));
+my $plan = Bugzilla::Extension::Testopia::TestPlan->new($cgi->param('plan_id'));
 
 unless ($plan){
     print $cgi->header;
@@ -70,7 +73,7 @@ elsif ($action eq 'clone'){
     my $product_id = $cgi->param('product_id');
     my $version = $cgi->param('prod_version');
     my %case_lookup;
-    my $product = Testopia::Product->new($product_id);
+    my $product = Bugzilla::Extension::Testopia::Product->new($product_id);
     $product ||= $plan->product;
     
     trick_taint($plan_name);
@@ -85,7 +88,7 @@ elsif ($action eq 'clone'){
     }    
     my $author = $cgi->param('keep_plan_author') ? $plan->author->id : Bugzilla->user->id;
     my $newplanid = $plan->clone($plan_name, $author, $product_id, $version, $cgi->param('copy_doc'));
-    my $newplan = Testopia::TestPlan->new($newplanid);
+    my $newplan = Bugzilla::Extension::Testopia::TestPlan->new($newplanid);
 
     if ($cgi->param('copy_tags')){
         foreach my $tag (@{$plan->tags}){
@@ -121,14 +124,14 @@ elsif ($action eq 'clone'){
                 if ($cgi->param('copy_categories')){
                     my $category_id = check_case_category($case->category->name, $product);
                     if (! $category_id){
-                        $category = Testopia::Category->create({
+                        $category = Bugzilla::Extension::Testopia::Category->create({
                             product_id  => $product->id,
                             name        => $case->category->name,
                             description => $case->category->description,
                         });
                     }
                     else {
-                       $category = Testopia::Category->new($category_id); 
+                       $category = Bugzilla::Extension::Testopia::Category->new($category_id); 
                     }
                     
                 }
@@ -139,7 +142,7 @@ elsif ($action eq 'clone'){
                     else{
                         my @categories = @{$product->categories};
                         if (scalar @categories < 1){
-                            $category = Testopia::Category->create({
+                            $category = Bugzilla::Extension::Testopia::Category->create({
                                 product_id  => $product->id,
                                 name        => '--default--',
                                 description => 'Default product category for test cases',
@@ -153,7 +156,7 @@ elsif ($action eq 'clone'){
                 }
                 
                 my $caseid = $case->copy($case_author, $case_tester, 1, $category->id);
-                my $newcase = Testopia::TestCase->new($caseid);
+                my $newcase = Bugzilla::Extension::Testopia::TestCase->new($caseid);
                 $case_lookup{$case->id} = $caseid;
                 $newcase->link_plan($newplan->id, $caseid);
                 
@@ -175,12 +178,12 @@ elsif ($action eq 'clone'){
         foreach my $run (@{$plan->test_runs}){
             my $manager = $cgi->param('keep_run_managers') ? $run->manager->id : Bugzilla->user->id;
             
-            my $build = Testopia::Build->new($cgi->param('new_run_build'));
-            my $env = Testopia::Build->new($cgi->param('new_run_env'));
+            my $build = Bugzilla::Extension::Testopia::Build->new($cgi->param('new_run_build'));
+            my $env = Bugzilla::Extension::Testopia::Build->new($cgi->param('new_run_env'));
             
             my $run_id = $run->clone($run->summary, $manager, $newplan->id, $build->id, $env->id);
             
-            my $newrun = Testopia::TestRun->new($run_id);
+            my $newrun = Bugzilla::Extension::Testopia::TestRun->new($run_id);
             
             $newrun->set_product_version($cgi->param('prod_version'));
             $newrun->update();
@@ -243,7 +246,7 @@ elsif ($action eq 'edit'){
 
 elsif ($action eq 'getfilter'){
     my $vars;
-    $vars->{'case'} = Testopia::TestCase->new({});
+    $vars->{'case'} = Bugzilla::Extension::Testopia::TestCase->new({});
     $vars->{'plan'} = $plan;
 
     print $cgi->header;

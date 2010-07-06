@@ -43,11 +43,14 @@ BEGIN {
 }
 
 chdir $::path;
-use lib ( $::path, "extensions/testopia/lib" );
+use lib ( $::path, "extensions/Testopia/lib" );
 
 use Bugzilla;
 use Bugzilla::Constants;
-use Testopia::Importer;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Importer;
 
 use XML::Twig;
 use Getopt::Long;

@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
@@ -29,10 +29,12 @@ use Bugzilla::Error;
 use Bugzilla::Util;
 use JSON;
 
-use Testopia::Util;
-use Testopia::TestPlan;
-use Testopia::Product;
-use Testopia::Constants;
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::Product;
+use Bugzilla::Extension::Testopia::Constants;
 
 ###############################################################################
 # tr_new_plan.cgi
@@ -70,7 +72,7 @@ if ($action eq 'add'){
     Bugzilla->error_mode(ERROR_MODE_AJAX);
     ThrowUserError("testopia-create-denied", {'object' => 'Test Plan'}) unless Bugzilla->user->in_group('Testers');
     
-    my $plan = Testopia::TestPlan->create({
+    my $plan = Bugzilla::Extension::Testopia::TestPlan->create({
             'product_id' => $cgi->param('product_id'),
             'author_id'  => Bugzilla->user->id,
             'type_id'    => $cgi->param('type'),
@@ -92,7 +94,7 @@ if ($action eq 'add'){
 
         Bugzilla->error_mode(ERROR_MODE_DIE);
         eval {
-            my $attachment = Testopia::Attachment->create({
+            my $attachment = Bugzilla::Extension::Testopia::Attachment->create({
                                 plan_id      => $plan->id,
                                 submitter_id => Bugzilla->user->id,
                                 description  => $cgi->param("file_desc$i") || 'Attachment',
@@ -116,13 +118,13 @@ if ($action eq 'add'){
 else {
     my $product;
     if ($cgi->param('product_id')){
-        $product = Testopia::Product->new($cgi->param('product_id'));
+        $product = Bugzilla::Extension::Testopia::Product->new($cgi->param('product_id'));
         ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
         $vars->{'product'} = $product;
     }
     
     ThrowUserError("testopia-create-denied", {'object' => 'Test Plan'}) unless Bugzilla->user->in_group('Testers');
-    $vars->{'plan'} = Testopia::TestPlan->new({});
+    $vars->{'plan'} = Bugzilla::Extension::Testopia::TestPlan->new({});
     $template->process("testopia/plan/add.html.tmpl", $vars) ||
         ThrowTemplateError($template->error());
 }

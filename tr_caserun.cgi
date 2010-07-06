@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Bug;
@@ -28,13 +28,16 @@ use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::User;
-use Testopia::Util;
-use Testopia::Search;
-use Testopia::Table;
-use Testopia::TestRun;
-use Testopia::TestCase;
-use Testopia::TestCaseRun;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::TestCaseRun;
+use Bugzilla::Extension::Testopia::Constants;
 
 use JSON;
 
@@ -50,10 +53,10 @@ my $caserun;
 my $action = $cgi->param('action') || '';
 
 if ($cgi->param('caserun_id')){
-    $caserun = Testopia::TestCaseRun->new($cgi->param('caserun_id'));
+    $caserun = Bugzilla::Extension::Testopia::TestCaseRun->new($cgi->param('caserun_id'));
 }
 elsif ($cgi->param('run_id')){
-    $caserun = Testopia::TestCaseRun->new($cgi->param('run_id'),
+    $caserun = Bugzilla::Extension::Testopia::TestCaseRun->new($cgi->param('run_id'),
                                                        $cgi->param('case_id'),
                                                        $cgi->param('build_id'),
                                                        $cgi->param('env_id'));

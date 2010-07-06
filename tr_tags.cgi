@@ -20,7 +20,7 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
@@ -28,12 +28,15 @@ use Bugzilla::User;
 use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
-use Testopia::Util;
-use Testopia::TestTag;
-use Testopia::TestPlan;
-use Testopia::TestRun;
-use Testopia::TestCase;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::TestTag;
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::Constants;
 
 use JSON;
 
@@ -53,7 +56,7 @@ $vars->{'type'} = $type;
 if ($action eq 'delete'){
     my $tag_id   = $cgi->param('tagid');
     validate_test_id($tag_id, 'tag');
-    my $tag = Testopia::TestTag->new($tag_id);
+    my $tag = Bugzilla::Extension::Testopia::TestTag->new($tag_id);
     ThrowUserError("testopia-no-delete", {'object' => $tag}) unless $tag->candelete;
     $tag->obliterate;
     $vars->{'tr_message'} = "Tag " . $tag->name . " deleted";
@@ -69,11 +72,11 @@ elsif ($action eq 'addtag' || $action eq 'removetag'){
     my $obj;
     foreach my $id (split(/,/, $cgi->param('id'))){
         if ($type eq 'plan'){
-            $obj = Testopia::TestPlan->new($id);
+            $obj = Bugzilla::Extension::Testopia::TestPlan->new($id);
         } elsif ($type eq 'case'){
-            $obj = Testopia::TestCase->new($id);
+            $obj = Bugzilla::Extension::Testopia::TestCase->new($id);
         } elsif($type eq 'run'){
-            $obj = Testopia::TestRun->new($id);
+            $obj = Bugzilla::Extension::Testopia::TestRun->new($id);
         }
 
         ThrowUserError("unknown-type", {type => $type}) unless ($obj);
@@ -107,7 +110,7 @@ elsif ($action eq 'gettags'){
         $tags = get_user_tags();
     }
     elsif ($cgi->param('type') eq 'product'){
-        my $product = Testopia::Product->new($cgi->param('product_id'));
+        my $product = Bugzilla::Extension::Testopia::Product->new($cgi->param('product_id'));
         $tags = $product->tags if $product->canedit;
     }
     else {
@@ -115,11 +118,11 @@ elsif ($action eq 'gettags'){
         my $id = $cgi->param('id');
         my $obj;
         if ($type eq 'plan'){
-            $obj = Testopia::TestPlan->new($id);
+            $obj = Bugzilla::Extension::Testopia::TestPlan->new($id);
         } elsif ($type eq 'case'){
-            $obj = Testopia::TestCase->new($id);
+            $obj = Bugzilla::Extension::Testopia::TestCase->new($id);
         } elsif($type eq 'run'){
-            $obj = Testopia::TestRun->new($id);
+            $obj = Bugzilla::Extension::Testopia::TestRun->new($id);
         }
 
         ThrowUserError("unkown-type", {type => $type}) unless ($obj);
@@ -155,7 +158,7 @@ sub display {
                 "SELECT tag_id FROM test_tags 
                  ORDER BY tag_name");
         foreach my $t (@{$tags}){
-            push @tags, Testopia::TestTag->new($t);
+            push @tags, Bugzilla::Extension::Testopia::TestTag->new($t);
         }
         $vars->{'viewall'} = 1;
     }
@@ -166,22 +169,22 @@ sub display {
     if ($cgi->param('case_id')){
         my $case_id = $cgi->param('case_id');
         detaint_natural($case_id);
-        $vars->{'case'} = Testopia::TestCase->new($case_id);
+        $vars->{'case'} = Bugzilla::Extension::Testopia::TestCase->new($case_id);
     }
     if ($cgi->param('plan_id')){
         my $plan_id = $cgi->param('plan_id');
         detaint_natural($plan_id);
-        $vars->{'plan'} = Testopia::TestPlan->new($plan_id);
+        $vars->{'plan'} = Bugzilla::Extension::Testopia::TestPlan->new($plan_id);
     }
     if ($cgi->param('run_id')){
         my $run_id = $cgi->param('run_id');
         detaint_natural($run_id);
-        $vars->{'run'} = Testopia::TestRun->new($run_id);
+        $vars->{'run'} = Bugzilla::Extension::Testopia::TestRun->new($run_id);
     }
     
     my @products;
     foreach my $id (split(",", $cgi->param('product'))){
-        my $product = Testopia::Product->new($id);
+        my $product = Bugzilla::Extension::Testopia::Product->new($id);
         push @products, $product if  Bugzilla->user->can_see_product($product->name);
     }
     $vars->{'products'} = \@products;
@@ -190,13 +193,13 @@ sub display {
     
     foreach my $id (@tagids){
         detaint_natural($id);
-        push @tags, Testopia::TestTag->new($id);
+        push @tags, Bugzilla::Extension::Testopia::TestTag->new($id);
     }
     
     if ($cgi->param('tag')){
         my $name = trim($cgi->param('tag'));
         trick_taint($name);
-        push @tags, Testopia::TestTag->new($name);
+        push @tags, Bugzilla::Extension::Testopia::TestTag->new($name);
     }
     
     $vars->{'tags'} = \@tags;
@@ -234,7 +237,7 @@ sub get_user_tags {
                ORDER BY name", undef, ($userid, $userid, $userid)); 
     my @user_tags;
     foreach my $id (@$user_tags){
-        push @user_tags, Testopia::TestTag->new($id);
+        push @user_tags, Bugzilla::Extension::Testopia::TestTag->new($id);
     }
     return \@user_tags;
 }

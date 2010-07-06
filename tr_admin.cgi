@@ -20,15 +20,18 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::TestPlan;
-use Testopia::Util;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Constants;
 
 local our $template = Bugzilla->template;
 my $dbh = Bugzilla->dbh;
@@ -41,7 +44,7 @@ Bugzilla->login(LOGIN_REQUIRED);
 print $cgi->header;
 ThrowUserError("testopia-read-only", {'object' => {'type' => 'Testopia administration'}}) unless Bugzilla->user->in_group('admin');   
 
-local our $plan = Testopia::TestPlan->new({});
+local our $plan = Bugzilla::Extension::Testopia::TestPlan->new({});
 my $action = $cgi->param('action') || '';
 my $item = $cgi->param('item') || '';
 

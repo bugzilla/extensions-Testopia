@@ -21,19 +21,22 @@
 #                 Joel Smith <jsmith@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Constants;
-use Testopia::Constants;
-use Testopia::Util;
-use Testopia::TestRun;
-use Testopia::TestCaseRun;
-use Testopia::TestCase;
-use Testopia::Search;
-use Testopia::Table;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::TestCaseRun;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Table;
 
 use JSON;
 
@@ -44,7 +47,7 @@ my $cgi = Bugzilla->cgi;
 print $cgi->header;
 
 my $action = $cgi->param('action') || '';
-my $run = Testopia::TestRun->new($cgi->param('run_id'));
+my $run = Bugzilla::Extension::Testopia::TestRun->new($cgi->param('run_id'));
 
 ThrowUserError("invalid-test-id-non-existent", {'type' => 'run', id => $cgi->param('run_id')}) unless $run;
 

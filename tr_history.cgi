@@ -2,15 +2,18 @@
 
 use strict;
 
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::TestPlan;
-use Testopia::TestCase;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::TestPlan;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::Constants;
 use JSON;
 
 local our $vars = {};
@@ -28,15 +31,15 @@ print $cgi->header;
 
 my $obj;
 if ($cgi->param('object') eq 'plan'){
-    $obj = Testopia::TestPlan->new($cgi->param('object_id'));
+    $obj = Bugzilla::Extension::Testopia::TestPlan->new($cgi->param('object_id'));
     ThrowUserError("invalid-test-id-non-existent", {'type' => 'plan', id => $cgi->param('object_id')}) unless $obj;
 }
 elsif ($cgi->param('object') eq 'case'){
-    $obj = Testopia::TestCase->new($cgi->param('object_id'));
+    $obj = Bugzilla::Extension::Testopia::TestCase->new($cgi->param('object_id'));
     ThrowUserError("invalid-test-id-non-existent", {'type' => 'case', id => $cgi->param('object_id')}) unless $obj;
 }
 elsif ($cgi->param('object') eq 'run'){
-    $obj = Testopia::TestRun->new($cgi->param('object_id'));
+    $obj = Bugzilla::Extension::Testopia::TestRun->new($cgi->param('object_id'));
     ThrowUserError("invalid-test-id-non-existent", {'type' => 'run', id => $cgi->param('object_id')}) unless $obj;
 }
 else{
@@ -53,7 +56,7 @@ if ($action eq 'diff')
     {
         print $cgi->header;
         
-        my $plan = Testopia::TestPlan->new($id);
+        my $plan = Bugzilla::Extension::Testopia::TestPlan->new($id);
         
         ThrowUserError("testopia-permission-denied", {'object' => $plan}) unless $plan->canview;
         

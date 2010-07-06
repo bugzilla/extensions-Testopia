@@ -20,18 +20,21 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
 use Bugzilla::User;
-use Testopia::Util;
-use Testopia::TestCase;
-use Testopia::Search;
-use Testopia::Table;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::TestCase;
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::Constants;
 use JSON;
 
 ###############################################################################
@@ -64,7 +67,7 @@ my $action = $cgi->param('action') || '';
 my @plan_id = split(',', $cgi->param('plan_id'));
 
 unless ($plan_id[0]){
-  $vars->{'product'} = Testopia::Product->new({'name' => $cgi->param('product')}) if ($cgi->param('product'));
+  $vars->{'product'} = Bugzilla::Extension::Testopia::Product->new({'name' => $cgi->param('product')}) if ($cgi->param('product'));
   $vars->{'bug_id'} = $cgi->param('bug');
   $vars->{'form_action'} = 'tr_new_case.cgi';
   $vars->{'type'} = "Case";
@@ -89,7 +92,7 @@ foreach my $entry (@plan_id){
 # Users need write permission on the plan in order to create a test case against
 # that plan. See tr_plan_access.cgi
 foreach my $id (keys %seen){
-    my $plan = Testopia::TestPlan->new($id);
+    my $plan = Bugzilla::Extension::Testopia::TestPlan->new($id);
     ThrowUserError("testopia-create-denied", {'object' => 'Test Case', 'plan' => $plan}) unless $plan->canedit;
     push @plan_ids, $id;
     push @plans, $plan;
@@ -101,7 +104,7 @@ ThrowUserError('testopia-create-category', {'plan' => $plans[0] }) if scalar @ca
 if ($action eq 'add'){
     Bugzilla->error_mode(ERROR_MODE_AJAX);
     my @comps = split(',', $cgi->param("components"));
-    my $case = Testopia::TestCase->create({
+    my $case = Bugzilla::Extension::Testopia::TestCase->create({
             'alias'          => $cgi->param('alias') || '',
             'case_status_id' => $cgi->param('status') || '',
             'category_id'    => $cgi->param('category') || '',
@@ -141,7 +144,7 @@ if ($action eq 'add'){
         Bugzilla->error_mode(ERROR_MODE_DIE);
         eval {
             $data || ThrowUserError("zero_length_file");
-            my $attachment = Testopia::Attachment->create({
+            my $attachment = Bugzilla::Extension::Testopia::Attachment->create({
                                 case_id      => $case->id,
                                 submitter_id => Bugzilla->user->id,
                                 description  => $cgi->param("file_desc$i") || 'Attachment',
@@ -180,7 +183,7 @@ else {
         $vars->{'bugs'} = $bug->bug_id;
     }
         
-    my $case = Testopia::TestCase->new(
+    my $case = Bugzilla::Extension::Testopia::TestCase->new(
                         {'plans' => join(',', @plan_ids),
                          'category' => {name => '--default--'}, 
                          'summary' =>  $summary,

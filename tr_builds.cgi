@@ -20,16 +20,19 @@
 # Contributor(s): Greg Hendricks <ghendricks@novell.com>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Util;
 use Bugzilla::Constants;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Constants;
 use Bugzilla::Error;
-use Testopia::Build;
-use Testopia::TestRun;
-use Testopia::Util;
+use Bugzilla::Extension::Testopia::Build;
+use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Extension::Testopia::Util;
 
 use JSON;
 #TODO: Add a way to filter name 
@@ -48,14 +51,14 @@ print $cgi->header;
 
 ThrowUserError("testopia-missing-parameter", {param => "product_id"}) unless $product_id;
 
-my $product = Testopia::Product->new($product_id);
+my $product = Bugzilla::Extension::Testopia::Product->new($product_id);
 
 ######################
 ### Create a Build ###
 ######################
 if ($action eq 'add'){
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
-    my $build = Testopia::Build->create({
+    my $build = Bugzilla::Extension::Testopia::Build->create({
                   product_id  => $product->id,
                   name        => $cgi->param('name') || '',
                   description => $cgi->param('desc') || $cgi->param('description') || '',
@@ -72,7 +75,7 @@ if ($action eq 'add'){
 elsif ($action eq 'edit'){
     
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
-    my $build = Testopia::Build->new($cgi->param('build_id'));
+    my $build = Bugzilla::Extension::Testopia::Build->new($cgi->param('build_id'));
     
     $build->set_name($cgi->param('name')) if $cgi->param('name');
     $build->set_description($cgi->param('description')) if $cgi->param('description');
@@ -88,7 +91,7 @@ elsif ($action eq 'list'){
     my $json = new JSON;
     my @builds;
     my $activeonly = $cgi->param('activeonly');
-    my $current = Testopia::Build->new($cgi->param('current_build') || {});
+    my $current = Bugzilla::Extension::Testopia::Build->new($cgi->param('current_build') || {});
     my $out;
     
     trick_taint($activeonly) if $activeonly;
@@ -118,7 +121,7 @@ elsif ($action eq 'report'){
     
     foreach my $g (@build_ids){
         foreach my $id (split(',', $g)){
-            my $obj = Testopia::Build->new($id);
+            my $obj = Bugzilla::Extension::Testopia::Build->new($id);
             push @builds, $obj if $obj->product->canview;
             $obj->bugs;
             push @bug_ids, $obj->{'bug_list'};

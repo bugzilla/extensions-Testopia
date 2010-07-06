@@ -22,15 +22,18 @@
 # Portions taken from Bugzilla reports by Gervase Markham <gerv@gerv.net>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::Util;
-use Testopia::Constants;
-use Testopia::Report;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::Report;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -52,11 +55,11 @@ if ($type eq 'status-breakdown'){
     }
     validate_test_id($case_id, 'case');
     
-    my $case = Testopia::TestCase->new($case_id);
+    my $case = Bugzilla::Extension::Testopia::TestCase->new($case_id);
     exit unless $case->canview;
     
     my @data;
-    my $caserun = Testopia::TestCaseRun->new({});
+    my $caserun = Bugzilla::Extension::Testopia::TestCaseRun->new({});
     
     my @names;
     my @values;
@@ -79,7 +82,7 @@ if ($type eq 'status-breakdown'){
 else{
     $cgi->param('current_tab', 'case');
     $cgi->param('viewall', 1);
-    my $report = Testopia::Report->new('case', 'tr_list_cases.cgi', $cgi);
+    my $report = Bugzilla::Extension::Testopia::Report->new('case', 'tr_list_cases.cgi', $cgi);
     $vars->{'report'} = $report;
     $vars->{'qname'} = $cgi->param('qname');
     

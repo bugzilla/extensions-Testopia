@@ -22,15 +22,18 @@
 # Portions taken from Bugzilla reports by Gervase Markham <gerv@gerv.net>
 
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
-use Testopia::Util;
-use Testopia::Constants;
-use Testopia::Report;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::Report;
 
 my $vars = {};
 my $template = Bugzilla->template;
@@ -45,7 +48,7 @@ if ($type eq 'status-breakdown'){
 else{
     $cgi->param('current_tab', 'case_run');
     $cgi->param('viewall', 1);
-    my $report = Testopia::Report->new('caserun', 'tr_list_caseruns.cgi', $cgi);
+    my $report = Bugzilla::Extension::Testopia::Report->new('caserun', 'tr_list_caseruns.cgi', $cgi);
     $vars->{'report'} = $report;
     $vars->{'qname'} = $cgi->param('qname');
 

@@ -21,17 +21,20 @@
 #                 Jeff Dayley <jedayley@novell.com>
  
 use strict;
-use lib qw(. lib extensions/testopia/lib);
+use lib qw(. lib);
 
 use Bugzilla;
 use Bugzilla::Config;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 use Bugzilla::Util;
-use Testopia::Util;
-use Testopia::Search;
-use Testopia::Table;
-use Testopia::Constants;
+
+BEGIN { Bugzilla->extensions }
+
+use Bugzilla::Extension::Testopia::Util;
+use Bugzilla::Extension::Testopia::Search;
+use Bugzilla::Extension::Testopia::Table;
+use Bugzilla::Extension::Testopia::Constants;
 
 my $vars = {};
 
@@ -56,7 +59,7 @@ if ($action eq 'update'){
     my $total = scalar @plan_ids;
     my @uneditable;
     foreach my $p (@plan_ids){
-        my $plan = Testopia::TestPlan->new($p);
+        my $plan = Bugzilla::Extension::Testopia::TestPlan->new($p);
         next unless $plan;
         
         unless ($plan->canedit){
@@ -82,14 +85,14 @@ else {
     $cgi->param('current_tab', 'plan');
     $cgi->param('distinct', '1');
     
-    my $search = Testopia::Search->new($cgi);
-    my $table = Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
+    my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
+    my $table = Bugzilla::Extension::Testopia::Table->new('plan', 'tr_list_plans.cgi', $cgi, undef, $search->query);
     my $disp = "inline";
     # We set CSV files to be downloaded, as they are designed for importing
     # into other programs.
     if ( $format->{'extension'} =~ /(csv|xml)/ ){
         $disp = "attachment";
-        $vars->{'displaycolumns'} = Testopia::TestCase::fields;
+        $vars->{'displaycolumns'} = Bugzilla::Extension::Testopia::TestCase::fields;
     }
     my @time = localtime(time());
     my $date = sprintf "%04d-%02d-%02d", 1900+$time[5],$time[4]+1,$time[3];
