@@ -140,11 +140,9 @@ sub new {
     # We want to be able to supply an empty object to the templates for numerous
     # lists etc. This is much cleaner than exporting a bunch of subroutines and
     # adding them to $vars one by one. Probably just Laziness shining through.
-    if (ref $param eq 'HASH'){
-        if (!keys %$param || $param->{PREVALIDATED}){
-            bless($param, $class);
-            return $param;
-        }
+    if (ref $param eq 'HASH' && !keys %$param){
+        bless($param, $class);
+        return $param;
     }
 
     unshift @_, $param;

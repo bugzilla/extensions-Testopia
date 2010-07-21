@@ -470,17 +470,18 @@ sub new {
     # We want to be able to supply an empty object to the templates for numerous
     # lists etc. This is much cleaner than exporting a bunch of subroutines and
     # adding them to $vars one by one. Probably just Laziness shining through.
-    if (ref $param eq 'HASH'){
+    if (ref $param eq 'HASH' && !keys %$param){
         bless($param, $class);
         return $param;
     }
+
     if (!defined $param || (!ref($param) && $param !~ /^\d+$/)) {
         $param = { name => $param };
     }
     
     unshift @_, $param;
     my $self = $class->SUPER::new(@_);
-    
+
     return $self; 
 }
 
@@ -579,6 +580,7 @@ sub update {
 sub lookup_status {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
+    trick_taint($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT name 
                FROM test_case_status
@@ -589,6 +591,7 @@ sub lookup_status {
 
 sub lookup_status_by_name {
     my ($name) = @_;
+    trick_taint($name);
     my $dbh = Bugzilla->dbh;
     my ($value) = $dbh->selectrow_array(
             "SELECT case_status_id 
@@ -601,6 +604,7 @@ sub lookup_status_by_name {
 sub lookup_category {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
+    trick_taint($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT name 
                FROM test_case_categories
@@ -611,7 +615,7 @@ sub lookup_category {
 
 sub lookup_category_by_name {
     my ($name) = @_;
-    trick_taint $name;
+    trick_taint($name);
     my $dbh = Bugzilla->dbh;
     my ($value) = $dbh->selectrow_array(
             "SELECT category_id 
@@ -624,6 +628,7 @@ sub lookup_category_by_name {
 sub lookup_priority {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
+    trick_taint($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT value 
                FROM priority
@@ -635,6 +640,7 @@ sub lookup_priority {
 sub lookup_priority_by_value {
     my ($value) = @_;
     my $dbh = Bugzilla->dbh;
+    trick_taint($value);
     my ($id) = $dbh->selectrow_array(
             "SELECT id 
                FROM priority
@@ -646,6 +652,7 @@ sub lookup_priority_by_value {
 sub lookup_default_tester {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
+    trick_taint($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT login_name 
                FROM profiles
@@ -1216,6 +1223,7 @@ sub store_text {
     trick_taint($effect) if $effect;
     trick_taint($breakdown) if $breakdown;
     trick_taint($setup) if $setup;
+    detaint_natural($key);
     
     my $version = $reset_version ? 0 : $self->version || 0;
     $dbh->do("INSERT INTO test_case_texts 
@@ -1275,6 +1283,9 @@ sub unlink_plan {
     my $self = shift;
     my $dbh = Bugzilla->dbh;
     my ($plan_id) = @_;
+    
+    detaint_natural($plan_id);
+    
     my $plan = Bugzilla::Extension::Testopia::TestPlan->new($plan_id);
 
     if (scalar @{$self->plans} == 1){

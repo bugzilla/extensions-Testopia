@@ -174,13 +174,11 @@ sub new {
     # We want to be able to supply an empty object to the templates for numerous
     # lists etc. This is much cleaner than exporting a bunch of subroutines and
     # adding them to $vars one by one. Probably just Laziness shining through.
-    if (ref $param eq 'HASH'){
-        if (!keys %$param || $param->{PREVALIDATED}){
-            bless($param, $class);
-            return $param;
-        }
+    if (ref $param eq 'HASH' && !keys %$param){
+        bless($param, $class);
+        return $param;
     }
-    
+
     unshift @_, $param;
     my $self = $class->SUPER::new(@_);
     
@@ -216,8 +214,12 @@ my $modified_environment_structure = 0;
 
 sub create_full {
     my $self = shift;
+#    print STDERR Data::Dumper::Dumper(\@_);
     my ($env_basename, $prod_id, $environment) = @_;
-
+    
+    trick_taint($env_basename);
+    detaint_natural($prod_id);
+    
     # first, get ALL rows to add to test_environment_map table
     # and store them in @environment_map array
     foreach my $key (keys(%{$environment})){
@@ -243,14 +245,17 @@ sub create_full {
             foreach my $hash (@environment_map) {
                 my $env_id_conditions = "environment_id = " . pop @envmatch;
                 foreach(@envmatch){$env_id_conditions .= " OR environment_id = $_";}
-            
+                   trick_taint($hash->{value_selected});
                    @envmatch = @{$dbh->selectcol_arrayref(
                                     "SELECT environment_id 
                                         FROM test_environment_map
                                         WHERE ( $env_id_conditions ) AND
-                                        property_id = $hash->{prop_id} AND
-                                        element_id = $hash->{elem_id} AND
-                                        value_selected = '$hash->{value_selected}'")};
+                                        property_id = ? AND
+                                        element_id = ? AND
+                                        value_selected = ?", 
+                                        undef, ($hash->{prop_id}, 
+                                        $hash->{elem_id}, 
+                                        $hash->{value_selected}))};
                 last if (!scalar(@envmatch));
             }
 
@@ -299,6 +304,7 @@ sub _parseElementsRecursively {
             my $elem = Bugzilla::Extension::Testopia::Environment::Element->new({});
             # get exising element OR create new one
             my ($elem_id) = $elem->check_element($key, $callerid);
+            print STDERR "ELEMENTID $elem_id"; 
             if(!$elem_id){
                 $elem->{'env_category_id'} = ($callertype eq 'category') ? $callerid : $categoryid;
                 $elem->{'name'} = $key;
@@ -310,6 +316,7 @@ sub _parseElementsRecursively {
             }
             _parseElementsRecursively($hash->{$key}, $elem_id, 'element', $categoryid);
         } else {
+            trick_taint($hash->{$key});
             require Bugzilla::Extension::Testopia::Environment::Property;
             my $prop = Bugzilla::Extension::Testopia::Environment::Property->new({});
             my ($prop_id) = $prop->check_property($key, $callerid);
@@ -620,6 +627,7 @@ sub store_property_value {
     return 0 if ($self->check_value_selected($prop_id, $elem_id, $value_selected));
         
     my $dbh = Bugzilla->dbh;
+    trick_taint $value_selected;
     $dbh->do("INSERT INTO test_environment_map (environment_id,property_id,element_id,value_selected)
              VALUES (?,?,?,?)",undef, ($self->{'environment_id'}, $prop_id, $elem_id,$value_selected));          
     return 1;

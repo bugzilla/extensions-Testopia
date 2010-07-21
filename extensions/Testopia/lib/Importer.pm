@@ -418,3 +418,19 @@ sub parse {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Bugzilla::Extension::Testopia::Importer
+
+=head1 DESCRIPTION
+
+Importer is responsible for importing test plans, cases, and runs from XML.  
+
+=head1 SEE ALSO
+
+See tr_importxml.pl for usage.
+See testopia.xsd for format
+

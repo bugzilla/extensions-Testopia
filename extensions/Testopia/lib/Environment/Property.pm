@@ -222,7 +222,7 @@ Serializes the new property to the database
 
 sub store {
     my $self = shift;
-
+    
     # Exclude the auto-incremented field from the column list.
     my $columns = join( ", ", grep { $_ ne 'property_id' } DB_COLUMNS );
     my $timestamp = Bugzilla::Extension::Testopia::Util::get_time_stamp();

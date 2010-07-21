@@ -327,12 +327,18 @@ else{
         else{
             detaint_natural($prod_id);
             my $prod = $plan->lookup_product($prod_id);
-            unless (Bugzilla->user->can_see_product($prod)){
+            if ($prod && !Bugzilla->user->can_see_product($prod)){
                 print '{ERROR:"You do not have permission to view this product"}';
                 exit;
             }
-            my $product = Bugzilla::Extension::Testopia::Product->new($prod_id);
-            @versions = @{$product->versions};
+            
+            if ($prod){
+                my $product = Bugzilla::Extension::Testopia::Product->new($prod_id);
+                @versions = @{$product->versions};
+            }
+            else {
+                @versions = [];
+            }
         }
         my $json = new JSON;
         
@@ -472,7 +478,7 @@ else{
             my $tcaction = Bugzilla->params->{"bug-to-test-case-action"};
             
             my $bug_id = $bug->bug_id;
-            my $description = '<br><pre>' . wrap_comment(@{Bugzilla::Bug::GetComments($bug_id,'oldest_to_newest')}[0]->{'body'}) . '</pre>';
+            my $description = '<br><pre>' . wrap_comment(@{$bug->comments({order => 'oldest_to_newest'})}[0]->{'thetext'}) . '</pre>';
             
             $tcaction  =~ s/%id%/<a href="show_bug.cgi?id=$bug_id">$bug_id<\/a>/g;
             $tcaction  =~ s/%description%/$description/g;

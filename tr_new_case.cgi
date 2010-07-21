@@ -172,7 +172,7 @@ else {
         $bug = Bugzilla::Bug->new($cgi->param('bug'),Bugzilla->user->id);
         
         my $bug_id = $bug->bug_id;
-        my $description = '<br><pre>' . wrap_comment(@{Bugzilla::Bug::GetComments($bug_id,'oldest_to_newest')}[0]->{'body'}) . '</pre>';
+        my $description = '<br><pre>' . wrap_comment(@{$bug->comments({order => 'oldest_to_newest'})}[0]->{'thetext'}) . '</pre>';
         my $short_desc = $bug->short_desc; 
         
         $summary   = Bugzilla->params->{"bug-to-test-case-summary"};
@@ -183,11 +183,10 @@ else {
         $vars->{'bugs'} = $bug->bug_id;
     }
         
-    my $case = Bugzilla::Extension::Testopia::TestCase->new(
-                        {'plans' => join(',', @plan_ids),
-                         'category' => {name => '--default--'}, 
-                         'summary' =>  $summary,
-    });
+    my $case = {'plans' => join(',', @plan_ids),
+                'category' => {name => '--default--'}, 
+                'summary' =>  $summary,
+                };
     
     $vars->{'tc'} = $case;
     $vars->{'product_id'} = $plans[0]->product_id;

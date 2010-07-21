@@ -33,7 +33,7 @@ use Bugzilla::Extension::Testopia::Constants;
 
 sub api_version {
     my $self = shift;
-    return "2.0";
+    return "2.1";
 }
 
 sub testopia_version {
@@ -61,11 +61,11 @@ Provides information about this installation.
 
 =over
 
-=item C<api_version()>
+=item C<api_version>
 
  Description: Returns the API version.
 
-=item C<testopia_version()>
+=item C<testopia_version>
 
  Description: Returns the version of Testopia on this server.
 

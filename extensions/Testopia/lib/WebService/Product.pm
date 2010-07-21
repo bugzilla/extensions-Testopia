@@ -32,18 +32,13 @@ use Bugzilla::Constants;
 use Bugzilla::Extension::Testopia::Product;
 
 sub _validate {
-    my ($product) = @_;
+    my ($params) = @_;
+    
     Bugzilla->login(LOGIN_REQUIRED);
     
-    if ($product =~ /^\d+$/){
-        $product = Bugzilla::Extension::Testopia::Product->new($product);
-    }
-    else {
-        $product = Bugzilla::Product::check_product($product);
-        $product = Bugzilla::Extension::Testopia::Product->new($product->id);
-    }
+    my $product = Bugzilla::Extension::Testopia::Product->new($params);
     
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $product}) unless $product;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $params}) unless $product;
     ThrowUserError('testopia-permission-denied', {'object' => $product}) if $product && !$product->canedit;
 
     return $product;
@@ -75,37 +70,55 @@ sub check_product {
 
 sub check_category {
     my $self = shift;
-    my ($name, $product) = @_;
+    my ($params) = @_;
+    
+    if (!ref $params){
+        $params = {};
+        $params->{name} = shift;
+        $params->{product} = shift;
+    }
     
     Bugzilla->login(LOGIN_REQUIRED);
     
-    $product = _validate($product);
+    my $product = _validate($params->{product});
     
     ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
     require Bugzilla::Extension::Testopia::Category;
-    return Bugzilla::Extension::Testopia::Category->new(Testopia::Category::check_case_category($name, $product));
+    return Bugzilla::Extension::Testopia::Category->new(Bugzilla::Extension::Testopia::Category::check_case_category($params));
 }
 
 sub check_component {
     my $self = shift;
-    my ($name, $product) = @_;
+    my ($params) = @_;
+    
+    if (!ref $params){
+        $params = {};
+        $params->{name} = shift;
+        $params->{product} = shift;
+    }
     
     Bugzilla->login(LOGIN_REQUIRED);
     
-    $product = _validate($product);
+    my $product = _validate($params->{product});
     
-    ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
+    ThrowUserError('testopia-read-only', {'object' => $params->{product}}) unless $product->canedit;
     require Bugzilla::Component;
-    return Bugzilla::Component->check({product => $product, name => $name});
+    return Bugzilla::Component->check($params);
 }
 
 sub get_builds {
     my $self = shift;
-    my ($product, $active) = @_;
+    my ($params) = @_;
     
-    $product = _validate($product);
+    if (!ref $params){
+        $params = {};
+        $_[0] =~ /^\d+$/ ? $params->{id} = $_[0] : $params->{name} = $_[0]; 
+        $params->{active} = $_[1];
+    }
     
-    return $product->builds($active);
+    my $product = _validate($params);
+    
+    return $product->builds($params->{active});
     
 }
 
@@ -129,14 +142,28 @@ sub get_category {
 
 sub get_component {
     my $self = shift;
-    my ($id) = @_;
+    my ($params) = @_;
+    
+    if (!ref $params){
+        $params = {};
+        $_[0] =~ /^\d+$/ ? $params->{id} = $_[0] : $params->{name} = $_[0]; 
+        $params->{product} = $_[1];
+    }
     
     Bugzilla->login(LOGIN_REQUIRED);
     
     require Bugzilla::Component;
-    my $component = Bugzilla::Component->new($id); 
     
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Component', id => $id}) unless $component;
+    my $component;
+    if ($params->{product}){
+        $params->{product} = Bugzilla::Product->new({name => $params->{product}});
+        $component = Bugzilla::Component->new($params);
+    }
+    else {
+        $component = Bugzilla::Component->new($params->{id});
+    }
+    
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Component', id => $params}) unless $component;
     
     my $product = Bugzilla::Extension::Testopia::Product->new($component->product_id);
     
@@ -227,13 +254,6 @@ sub get_versions {
 
 }
 
-sub lookup_name_by_id {
-    return {ERROR=> 'This method id deprecated. Use Product::get instead.'};
-}
-sub lookup_id_by_name {
-    return {ERROR=> 'This method id deprecated. Use Product::check_product instead.'};
-}
-
 1;
 
 __END__
@@ -250,11 +270,16 @@ Bugzilla::Webservice
 
 Provides methods for automated scripts to expose Testopia Product data.
 
+NOTE: In most cases where and id is required, a name attribute can be used instead
+provided it is unique. For example, Build.get({id => integer}) can substitute 
+Build.get({name => string})
+
+
 =head1 METHODS
 
 =over
 
-=item C<check_category($name, $product)>
+=item C<check_category>
 
  Description: Looks up and returns a category by name.
 
@@ -265,7 +290,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Hash: Matching Category object hash or error if not found.
 
-=item C<check_component($name, $product)>
+=item C<check_component>
 
  Description: Looks up and returns a component by name.
 
@@ -276,7 +301,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Hash: Matching component object hash or error if not found.
 
-=item C<check_product($name, $product)>
+=item C<check_product>
 
  Description: Looks up and returns a validated product.
 
@@ -284,7 +309,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Hash: Matching Product object hash or error if not found.
 
-=item C<get($id)>
+=item C<get>
 
  Description: Used to load an existing product from the database.
 
@@ -292,7 +317,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     A blessed Bugzilla::Extension::Testopia::Product object hash
 
-=item C<get_builds($product, $active)>
+=item C<get_builds>
 
  Description: Get the list of builds associated with this product.
 
@@ -303,7 +328,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Build objects.
 
-=item C<get_cases($product)>
+=item C<get_cases>
 
  Description: Get the list of cases associated with this product.
 
@@ -313,7 +338,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of TestCase objects.
 
-=item C<get_categories($product)>
+=item C<get_categories>
 
  Description: Get the list of categories associated with this product.
 
@@ -323,7 +348,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Case Category objects.
 
-=item C<get_category($id)>
+=item C<get_category>
 
  Description: Get the category matching the given id.
 
@@ -331,7 +356,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Hash: Category object hash.
 
-=item C<get_component($id)>
+=item C<get_component>
 
  Description: Get the component matching the given id.
 
@@ -339,7 +364,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Hash: Component object hash.
 
-=item C<get_components($product)>
+=item C<get_components>
 
  Description: Get the list of components associated with this product.
 
@@ -349,7 +374,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Component objects.
 
-=item C<get_environments($product)>
+=item C<get_environments>
 
  Description: Get the list of environments associated with this product.
 
@@ -359,7 +384,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Environment objects.
 
-=item C<get_milestones($product)>
+=item C<get_milestones>
 
  Description: Get the list of milestones associated with this product.
 
@@ -369,7 +394,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Milestone objects.
 
-=item C<get_plans($product)>
+=item C<get_plans>
 
  Description: Get the list of plans associated with this product.
 
@@ -379,7 +404,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Test Plan objects.
 
-=item C<get_runs($product)>
+=item C<get_runs>
 
  Description: Get the list of runs associated with this product.
 
@@ -389,7 +414,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Test Run objects.
 
-=item C<get_tags($product)>
+=item C<get_tags>
 
  Description: Get the list of tags associated with this product.
 
@@ -399,7 +424,7 @@ Provides methods for automated scripts to expose Testopia Product data.
 
  Returns:     Array: Returns an array of Tags objects.
 
-=item C<get_versions($product)>
+=item C<get_versions>
 
  Description: Get the list of versions associated with this product.
 
@@ -408,10 +433,6 @@ Provides methods for automated scripts to expose Testopia Product data.
                          String: Product name
 
  Returns:     Array: Returns an array of Version objects.
-
-=item C<lookup_name_by_id> B<DEPRECATED> Use Product::get instead
-
-=item C<lookup_id_by_name> B<DEPRECATED - CONSIDERED HARMFUL> Use Product::check_product instead
 
 =back
 

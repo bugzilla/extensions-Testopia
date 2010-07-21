@@ -2525,7 +2525,7 @@ Testopia.TestCaseRun.Info = function(){
                     loadingText: 'Loading...',
                     tpl: new Ext.XTemplate('<tpl for=".">', '<div id="notesdiv" style="margin: 5px; padding: 5px; border: 1px solid black;"><pre>{notes}</pre></div>', '</tpl>', '<div class="x-clear"><input id="caserun_append_note_fld" ></div>')
                 }],
-                bbar: ['Add a Note: ', {
+                tbar: ['Add a Note: ', {
                     xtype: 'textfield',
                     id: 'caserun_append_note_fld',
                     listeners: {'afterrender': function(){

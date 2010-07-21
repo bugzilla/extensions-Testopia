@@ -47,7 +47,7 @@ sub get {
     # Result is a run object hash
     my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run->{run_id};
     ThrowUserError('testopia-permission-denied', {'object' => $run}) unless $run->canview;
         
     $run->{'case_count'} = $run->case_count();
@@ -131,7 +131,7 @@ sub create {
     
     foreach my $c (@cases){
         my $case = Bugzilla::Extension::Testopia::TestCase->new($c);
-        $run->add_case_run($case->id, $case->sortkey) if $case;
+        $run->add_case_run($case->id, $case->sortkey) if $case->{case_id};
     }
     
     return $run;
@@ -139,15 +139,21 @@ sub create {
 
 sub add_cases {
     my $self = shift;
-    my ($case_ids, $run_ids) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{run_ids} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
         }
@@ -156,7 +162,7 @@ sub add_cases {
             next;
         }
         eval {
-            $case->add_to_run($run_ids);
+            $case->add_to_run($params->{run_ids});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -168,13 +174,18 @@ sub add_cases {
 
 sub update {
     my $self =shift;
-    my ($run_id, $new_values) = @_;
+    my ($new_values) = @_;
 
+    if(ref $new_values ne 'HASH'){
+        $new_values = $_[1];
+        $new_values->{id} = $_[0];
+    }
+    
     Bugzilla->login(LOGIN_REQUIRED);
 
-    my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
+    my $run = new Bugzilla::Extension::Testopia::TestRun($new_values->{id});
     
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $new_values->{id}}) unless $run->{run_id};
     ThrowUserError('testopia-read-only', {'object' => $run}) unless $run->canedit;
 
     $new_values->{'manager_id'} ||= $new_values->{'manager'};
@@ -226,7 +237,7 @@ sub get_change_history {
     
     my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $run_id}) unless $run->{run_id};
     ThrowUserError('testopia-permission-denied', {'object' => $run}) unless $run->canview;
 
     # Result list of changes otherwise an exception will be thrown
@@ -242,7 +253,7 @@ sub get_test_cases {
     # Result is a run object hash
     my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run->{run_id};
     ThrowUserError('testopia-permission-denied', {'object' => $run}) unless $run->canview;
         
     # Result is list of test cases for the given test run
@@ -258,7 +269,7 @@ sub get_case_tags {
     # Result is a run object hash
     my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run->{run_id};
     ThrowUserError('testopia-permission-denied', {'object' => $run}) unless $run->canview;
         
     # Result is list of test cases for the given test run
@@ -267,18 +278,24 @@ sub get_case_tags {
 
 sub get_test_case_runs {
     my $self = shift;
-    my ($run_id, $current) = @_;
+    my ($params) = @_;
     
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{id} = shift;
+        $params->{current} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
     
     # Result is a run object hash
-    my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
+    my $run = new Bugzilla::Extension::Testopia::TestRun($params->{id});
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $params->{id} }) unless $run->{run_id};
     ThrowUserError('testopia-permission-denied', {'object' => $run}) unless $run->canview;
         
     # Result is list of test cases for the given test run
-    return $run->current_caseruns if $current;
+    return $run->current_caseruns if $params->{current};
     return $run->caseruns;
 }
 
@@ -291,32 +308,30 @@ sub get_test_plan {
     # Result is a run object hash
     my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $run_id}) unless $run->{run_id};
     ThrowUserError('testopia-permission-denied', {'object' => $run}) unless $run->canview;
         
     # Result is list of test cases for the given test run
     return $run->plan;
 }
 
-sub lookup_environment_id_by_name {
-    return { ERROR => 'This method is considered harmful and has been deprecated. Please use Environment::check_environment instead'};
-}
-
-sub lookup_environment_name_by_id {
-    return { ERROR => 'This method has been deprecated. Please use Environment::get instead'};
-}
-
 sub add_tag {
     my $self = shift;
-    my ($run_ids, $tags) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{run_ids} = shift;
+        $params->{tags} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($run_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{run_ids});
     my @results;
     foreach my $id (@ids){
         my $run = new Bugzilla::Extension::Testopia::TestRun($id);
-        unless ($run){
+        unless ($run->{run_id}){
             push @results, {ERROR => "TestRun $id does not exist"};
             next;
         }
@@ -325,7 +340,7 @@ sub add_tag {
             next;
         }
         eval {
-            $run->add_tag($tags);
+            $run->add_tag($params->{tags});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -337,16 +352,22 @@ sub add_tag {
 
 sub remove_tag {
     my $self = shift;
-    my ($run_id, $tag_name) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{run_id} = shift;
+        $params->{tag} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
+    my $run = new Bugzilla::Extension::Testopia::TestRun($params->{run_id});
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $params->{run_id}}) unless $run->{run_id};
     ThrowUserError('testopia-read-only', {'object' => $run}) unless $run->canedit;
 
-    $run->remove_tag($tag_name);
+    $run->remove_tag($params->{tag});
 
     # Result 0 on success, otherwise an exception will be thrown
     return 0;
@@ -360,7 +381,7 @@ sub get_tags {
     
     my $run = new Bugzilla::Extension::Testopia::TestRun($run_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $run_id}) unless $run;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Run', id => $run_id}) unless $run->{run_id};
     ThrowUserError('testopia-permission-denied', {'object' => $run}) unless $run->canview;
 
     my @results;
@@ -373,21 +394,17 @@ sub get_tags {
 
 sub get_completion_report {
     my $self = shift;
-    my ($runs) = @_;
+    my ($params) = @_;
     my $vars;
     
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{runs} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @run_ids;
-    if (ref $runs eq 'ARRAY'){
-        push @run_ids, @$runs
-    }
-    elsif ($runs =~ /,/){
-        push @run_ids, split(/[\s,]+/, $runs);
-    }
-    else{
-        push @run_ids, $runs;
-    }
+    my @run_ids = Bugzilla::Extension::Testopia::Util::process_list($params->{runs});
     
     my @runs;
     foreach my $g (@run_ids){
@@ -430,10 +447,15 @@ sub get_completion_report {
 
 sub get_bugs {
     my $self = shift;
-    my ($runs) = @_;
+    my ($params) = @_;
     my $dbh = Bugzilla->dbh;
     
-    my @run_ids = Bugzilla::Extension::Testopia::Util::process_list($runs);
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{runs} = shift;
+    } 
+
+    my @run_ids = Bugzilla::Extension::Testopia::Util::process_list($params->{runs});
 
     my $bugs = $dbh->selectcol_arrayref("
         SELECT DISTINCT tcb.bug_id 
@@ -470,7 +492,7 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
 =over
 
-=item C<add_cases($case_ids, $run_ids)>
+=item C<add_cases>
 
  Description: Add one or more cases to the selected test runs.
 
@@ -483,7 +505,7 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
  Returns:     Array: empty on success or an array of hashes with failure 
               codes if a failure occured.
 
-=item C<add_tag($run_ids, $tags)>
+=item C<add_tag>
 
  Description: Add one or more tags to the selected test runs.
 
@@ -496,7 +518,7 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
  Returns:     Array: empty on success or an array of hashes with failure 
               codes if a failure occured.
 
-=item C<create($values)>
+=item C<create>
 
  Description: Creates a new Test Run object and stores it in the database.
 
@@ -521,7 +543,7 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
  Returns:     The newly created object hash.
 
-=item C<get($run_id)>
+=item C<get>
 
  Description: Used to load an existing test run from the database.
 
@@ -529,7 +551,7 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
  Returns:     Hash: A blessed Bugzilla::Extension::Testopia::TestRun object hash
 
-=item C<get_bugs($runs)>
+=item C<get_bugs>
 
  Description: Get the list of bugs attached to this run.
 
@@ -538,15 +560,15 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
  Returns:     Array: An array of bug object hashes.
 
-=item C<get_change_history($run_id)>
+=item C<get_change_history>
 
  Description: Get the list of changes to the fields of this run.
 
- Params:      $run_id - Integer: An integer representing the ID of the run in the database
+ Params:      $id - Integer: An integer representing the ID of the run in the database
 
  Returns:     Array: An array of hashes with changed fields and their details.
 
-=item C<get_completion_report($runs)>
+=item C<get_completion_report>
 
  Description: Get a report of the current status of the selected runs combined.
 
@@ -557,19 +579,19 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
                     case-runs in the run. Counts only the most recently statused case-run 
                     for a given build and environment. 
 
-=item C<get_tags($run_id)>
+=item C<get_tags>
 
  Description: Get the list of tags attached to this run.
 
- Params:      $run_id - Integer: An integer representing the ID of the run in the database
+ Params:      $id - Integer: An integer representing the ID of the run in the database
 
  Returns:     Array: An array of tags .
 
-=item C<get_test_case_runs($run_id, $current)>
+=item C<get_test_case_runs>
 
  Description: Get the list of cases that this run is linked to.
 
- Params:      $run_id - Integer: An integer representing the ID in the database
+ Params:      $id - Integer: An integer representing the ID in the database
                     for this run.
 
               $current - Boolean: 1 to only include the current set (what is displayed
@@ -577,33 +599,33 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
  Returns:     Array: An array of test case-run object hashes.
 
-=item C<get_test_cases($run_id)>
+=item C<get_test_cases>
 
  Description: Get the list of cases that this run is linked to.
 
- Params:      $run_id - Integer: An integer representing the ID in the database
+ Params:      $id - Integer: An integer representing the ID in the database
                     for this run.
 
  Returns:     Array: An array of test case object hashes.
 
-=item C<get_case_tags($run_id)>
+=item C<get_case_tags>
 
  Description: Get the list of tags associated with the cases in this run.
 
- Params:      $run_id - Integer: An integer representing the ID of the run in the database
+ Params:      $id - Integer: An integer representing the ID of the run in the database
 
  Returns:     Array: An array of tag object hashes.
 
-=item C<get_test_plan($run_id)>
+=item C<get_test_plan>
 
  Description: Get the plan that this run is associated with.
 
- Params:      $run_id - Integer: An integer representing the ID in the database
+ Params:      $id - Integer: An integer representing the ID in the database
                     for this run.
 
  Returns:     Hash: A plan object hash.
 
-=item C<list($query)>
+=item C<list>
 
  Description: Performs a search and returns the resulting list of test runs.
 
@@ -694,7 +716,7 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
  Returns:     Array: Matching test runs are retuned in a list of run object hashes.
 
-=item C<list_count($query)>
+=item C<list_count>
 
  Description: Performs a search and returns the resulting count of runs.
 
@@ -702,7 +724,7 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
  Returns:     Integer - total matching runs.
 
-=item C<remove_tag($run_id, $tag)>
+=item C<remove_tag>
 
  Description: Remove a tag from a run.
 
@@ -712,17 +734,18 @@ Provides methods for automated scripts to manipulate Testopia TestRuns
 
  Returns:     0 on success.
 
-=item C<update($ids, $values)>
+=item C<update>
 
  Description: Updates the fields of the selected test run.
 
- Params:      $ids - Integer: A single TestRun ID.
+ Params:      $id - Integer: A single TestRun ID.
 
               $values - Hash of keys matching TestRun fields and the new values 
               to set each field to. See L<create> for description
                       +-------------------+----------------+
                       | Field             | Type           |
                       +-------------------+----------------+
+                      | id (readonly)     | Integer        |
                       | plan_id           | Integer        |
                       | environment       | Integer/String |
                       | build             | Integer/String |

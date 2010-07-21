@@ -6,10 +6,10 @@ organizations to integrate bug reporting with their test case run results.
 Though it is designed with software testing in mind, it can be used to track 
 testing on virtually anything in the engineering process.
 
-The following installation instructions assume you are installing the latest version of Testopia, currently version 2.3.
+The following installation instructions assume you are installing the latest version of Testopia, currently version 2.4.
 
 === Requirements ===
-* Bugzilla 3.4.3+
+* Bugzilla 3.6+
 * Perl JSON 2.10
 * GD-Graph3d 0.63
 
@@ -17,9 +17,15 @@ Testopia is an extension to Bugzilla. This means that if you have one of the
 supported versions of Bugzilla installed, you are all set to install Testopia.
 Installation instructions for Bugzilla can be found at http://bugzilla.org
 
-'''IMPORTANT NOTE:''' These instructions assume you have installed Bugzilla according to the Bugzilla instructions (from tarball or cvs). Installations from Debian .deb or from some RPM packages may place Bugzilla files in separate directories in which case, these will not work.
+'''IMPORTANT NOTE:''' 
+These instructions assume you have installed Bugzilla according to the Bugzilla 
+instructions (from tarball or cvs). Installations from Debian .deb or from some 
+RPM packages may place Bugzilla files in separate directories in which case, 
+these instructions may not work.
 
-Please make sure that your language of Bugzilla is the same as language of Testopia to  be installed on. If you are not sure, just set language of your Bugzilla to English. You can change it any time later.
+Please make sure that your language of Bugzilla is the same as language of 
+Testopia to  be installed on. If you are not sure, just set language of your 
+Bugzilla to English. You can change it any time later.
 
 === Installation on Linux ===
                                    
@@ -32,16 +38,18 @@ something like this:
   $> cd /path/to/bugzilla
   $> tar xzvf testopia-<version>.tar.gz
 
-Next you need to patch the Bugzilla files. Find the patch file in the extensions/Testopia directory matching your version of Bugzilla.
-For example, if you are running Bugzilla 3.4.3 you will apply the patch-3.4.3 patch file.
+Next you need to patch the Bugzilla files. Find the patch file in the 
+extensions/Testopia directory matching your version of Bugzilla.
+For example, if you are running Bugzilla 3.6.1 you will apply the patch-3.6.1 patch file.
  
-  $> patch -p0 -i extensions/Testopia/patch-3.4.3
+  $> patch -p0 -i extensions/Testopia/patch-3.6.1
  
 Finally, you need to run checksetup.pl
 
   $> ./checksetup.pl
 
-If you are missing any dependencies, checksetup.pl will inform you. See "Installing Dependencies".
+If you are missing any dependencies, checksetup.pl will inform you. 
+See "Installing Dependencies".
   
 
 ''' From CVS: '''
@@ -64,19 +72,23 @@ Bugzilla from CVS, be sure to delete the top level CVS directory first.
   $> rm -rf CVS
   $> tar cvf /tmp/testopia.tar .
 
-Once you have your tarball, follow the tarball instructions above to untar it into your Bugzilla directory  The last step is to install the Ext libraries:
+Once you have your tarball, follow the tarball instructions above to untar 
+it into your Bugzilla directory  The last step is to install the Ext libraries:
 
   $> cd path/to/bugzilla/testopia/
-  $> wget http://extjs.com/deploy/ext-3.0.1.zip
-  $> unzip ext-3.0.1.zip
-  $> mv ext-3.0.1 extjs
+  $> wget http://extjs.com/deploy/ext-3.2.1.zip
+  $> unzip ext-3.2.1.zip
+  $> mv ext-3.2.1 extjs
 
 Congratulations, you should be able to see the Testopia links at the bottom of
 your bugzilla pages. 
 
 === Installation on Windows  ===
 
-Windows installations are not officially supported. By this we mean don't ask the developers for help as we have never tried to install on Windows and don't have any desire to. However, there have been numerous users that have managed to do so on their own. Here are some pointers: 
+Windows installations are not officially supported. By this we mean don't ask 
+the developers for help as we have never tried to install on Windows and don't 
+have any desire to. However, there have been numerous users that have managed 
+to do so on their own. Here are some pointers: 
 
 *Add a .txt file extension to your corresponding patch file (\bugzilla\testopia\patch-3.0[.x]). 
 *Edit the above patch file to remove *nix line feed characters, and putting in classic DOS/Windows carriage returns.<br>You can do this manually, or with WordPad (write.exe) or numerous utilities such as unix2dos or tofrodos. 

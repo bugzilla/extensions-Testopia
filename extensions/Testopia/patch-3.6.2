@@ -1,7 +1,7 @@
 === modified file 'Bugzilla/Bug.pm'
---- Bugzilla/Bug.pm	2010-04-06 03:21:50 +0000
-+++ Bugzilla/Bug.pm	2010-07-21 15:58:46 +0000
-@@ -3044,6 +3044,14 @@
+--- Bugzilla/Bug.pm	2010-05-14 12:25:20 +0000
++++ Bugzilla/Bug.pm	2010-07-21 16:12:01 +0000
+@@ -3046,6 +3046,14 @@
          "SELECT bug_id FROM bugs WHERE alias = ?", undef, $alias);
  }
  
@@ -18,8 +18,8 @@
  #####################################################################
 
 === modified file 'Bugzilla/Constants.pm'
---- Bugzilla/Constants.pm	2010-04-13 04:53:30 +0000
-+++ Bugzilla/Constants.pm	2010-07-21 15:58:46 +0000
+--- Bugzilla/Constants.pm	2010-06-24 23:14:56 +0000
++++ Bugzilla/Constants.pm	2010-07-21 16:12:01 +0000
 @@ -140,6 +140,7 @@
      ERROR_MODE_WEBPAGE
      ERROR_MODE_DIE
@@ -28,7 +28,7 @@
      ERROR_MODE_JSON_RPC
  
      INSTALLATION_MODE_INTERACTIVE
-@@ -420,6 +421,7 @@
+@@ -421,6 +422,7 @@
  use constant ERROR_MODE_WEBPAGE        => 0;
  use constant ERROR_MODE_DIE            => 1;
  use constant ERROR_MODE_DIE_SOAP_FAULT => 2;
@@ -39,7 +39,7 @@
 
 === modified file 'Bugzilla/Error.pm'
 --- Bugzilla/Error.pm	2010-04-01 01:06:03 +0000
-+++ Bugzilla/Error.pm	2010-07-21 15:58:46 +0000
++++ Bugzilla/Error.pm	2010-07-21 16:12:01 +0000
 @@ -32,6 +32,7 @@
  use Bugzilla::WebService::Constants;
  use Bugzilla::Util;
@@ -67,9 +67,9 @@
  }
 
 === modified file 'Bugzilla/Install/Filesystem.pm'
---- Bugzilla/Install/Filesystem.pm	2010-02-20 20:08:38 +0000
-+++ Bugzilla/Install/Filesystem.pm	2010-07-21 15:58:46 +0000
-@@ -122,6 +122,7 @@
+--- Bugzilla/Install/Filesystem.pm	2010-07-13 23:03:47 +0000
++++ Bugzilla/Install/Filesystem.pm	2010-07-21 16:12:01 +0000
+@@ -132,6 +132,7 @@
          'runtests.pl'     => { perms => $owner_executable },
          'testserver.pl'   => { perms => $ws_executable },
          'whine.pl'        => { perms => $ws_executable },
@@ -79,8 +79,8 @@
          'sanitycheck.pl'  => { perms => $ws_executable },
 
 === modified file 'Bugzilla/Search.pm'
---- Bugzilla/Search.pm	2010-03-29 21:17:54 +0000
-+++ Bugzilla/Search.pm	2010-07-21 15:58:46 +0000
+--- Bugzilla/Search.pm	2010-07-05 23:39:24 +0000
++++ Bugzilla/Search.pm	2010-07-21 16:12:01 +0000
 @@ -274,6 +274,12 @@
          push(@supptables, "LEFT JOIN longdescs AS ldtime " .
                            "ON ldtime.bug_id = bugs.bug_id");
@@ -97,7 +97,7 @@
 
 === modified file 'Bugzilla/User.pm'
 --- Bugzilla/User.pm	2010-02-18 00:16:31 +0000
-+++ Bugzilla/User.pm	2010-07-21 15:58:46 +0000
++++ Bugzilla/User.pm	2010-07-21 16:12:01 +0000
 @@ -361,6 +361,16 @@
      return $self->{queries_available};
  }
@@ -179,81 +179,9 @@
  
  sub product_responsibilities {
 
-=== modified file 'Bugzilla/WebService/Server/XMLRPC.pm'
---- Bugzilla/WebService/Server/XMLRPC.pm	2010-03-10 20:53:01 +0000
-+++ Bugzilla/WebService/Server/XMLRPC.pm	2010-07-21 15:58:46 +0000
-@@ -78,7 +78,10 @@
-         $som->{_bz_do_taint} = 1;
-     }
-     bless $som, 'Bugzilla::XMLRPC::SOM';
--    Bugzilla->input_params($som->paramsin || {}); 
-+    my $params = $som->paramsin;
-+    # This allows positional parameters for Testopia.
-+    $params = {} if ref $params ne 'HASH';
-+    Bugzilla->input_params($params);
-     return $som;
- }
- 
-@@ -149,13 +152,15 @@
- 
- sub paramsin {
-     my $self = shift;
--    return $self->{bz_params_in} if $self->{bz_params_in};
--    my $params = $self->SUPER::paramsin(@_);
--    if ($self->{_bz_do_taint}) {
--        taint_data($params);
-+    if (!$self->{bz_params_in}) {
-+        my @params = $self->SUPER::paramsin(@_); 
-+        if ($self->{_bz_do_taint}) {
-+            taint_data(@params);
-+        }
-+        $self->{bz_params_in} = \@params;
-     }
--    $self->{bz_params_in} = $params;
--    return $self->{bz_params_in};
-+    my $params = $self->{bz_params_in};
-+    return wantarray ? @$params : $params->[0];
- }
- 
- 1;
-
-=== modified file 'Bugzilla/WebService/Util.pm'
---- Bugzilla/WebService/Util.pm	2009-11-09 18:27:52 +0000
-+++ Bugzilla/WebService/Util.pm	2010-07-21 15:58:46 +0000
-@@ -52,13 +52,13 @@
- }
- 
- sub taint_data {
--    my $params = shift;
--    return if !$params;
-+    my @params = @_;
-+    return if !@params;
-     # Though this is a private function, it hasn't changed since 2004 and
-     # should be safe to use, and prevents us from having to write it ourselves
-     # or require another module to do it.
--    Test::Taint::_deeply_traverse(\&_delete_bad_keys, $params);
--    Test::Taint::taint_deeply($params);
-+    Test::Taint::_deeply_traverse(\&_delete_bad_keys, \@params);
-+    Test::Taint::taint_deeply(\@params);
- }
- 
- sub _delete_bad_keys {
-@@ -79,6 +79,11 @@
- 
- sub validate  {
-     my ($self, $params, @keys) = @_;
-+
-+    # If $params is defined but not a reference, then we weren't
-+    # sent any parameters at all, and we're getting @keys where
-+    # $params should be.
-+    return ($self, undef) if (defined $params and !ref $params);
-     
-     # If @keys is not empty then we convert any named 
-     # parameters that have scalar values to arrayrefs
-
 === modified file 'template/en/default/global/setting-descs.none.tmpl'
 --- template/en/default/global/setting-descs.none.tmpl	2009-08-19 21:40:07 +0000
-+++ template/en/default/global/setting-descs.none.tmpl	2010-07-21 15:58:46 +0000
++++ template/en/default/global/setting-descs.none.tmpl	2010-07-21 16:12:07 +0000
 @@ -40,6 +40,7 @@
     "never"                            => "Never",
     "cc_unless_role"                   => "Only if I have no role on them",

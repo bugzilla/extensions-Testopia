@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w 
+#!/usr/bin/perl -w
 # -*- Mode: perl; indent-tabs-mode: nil -*-
 #
 # The contents of this file are subject to the Mozilla Public
@@ -11,15 +11,19 @@
 # implied. See the License for the specific language governing
 # rights and limitations under the License.
 #
-# The Original Code is the Bugzilla Bug Tracking System.
+# The Original Code is the Bugzilla Testopia System.
 #
-# The Initial Developer of the Original Code is Netscape Communications
-# Corporation. Portions created by Netscape are
-# Copyright (C) 1998 Netscape Communications Corporation. All
-# Rights Reserved.
+# The Initial Developer of the Original Code is Greg Hendricks.
+# Portions created by Greg Hendricks are Copyright (C) 2006
+# Novell. All Rights Reserved.
 #
-# Contributor(s): Dawn Endico <endico@mozilla.org>
-#                 David Koenig <dkoenig@novell.com>
+# Contributor(s): David Koenig <dkoenig@novell.com>
+
+#################################################################
+### THIS FILE IS DEPRECATED IN FAVOR OF tr_import.cgi         ###
+### and tr_importxml.pl                                       ###
+### Please see the POD for Testopia::Impoter                  ###
+#################################################################
 
 use strict;
 

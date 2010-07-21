@@ -1069,6 +1069,15 @@ Testopia.TestPlan.ClonePanel = function(plan){
                     id: 'copy_runs',
                     title: 'Copy Test Runs',
                     collapsed: true,
+                    listeners: {
+                      'expand': function(){
+                        Ext.getCmp('plan_clone_build_chooser').allowBlank = false;
+                        Ext.getCmp('plan_clone_environment_chooser').allowBlank = false;
+                    },
+                      'collapse':function(){
+                        Ext.getCmp('plan_clone_build_chooser').allowBlank = true;
+                        Ext.getCmp('plan_clone_environment_chooser').allowBlank = true;
+                    }},
                     items: [{
                         xtype: 'checkbox',
                         name: 'keep_run_managers',

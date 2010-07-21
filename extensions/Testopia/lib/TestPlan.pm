@@ -194,18 +194,14 @@ sub new {
     # We want to be able to supply an empty object to the templates for numerous
     # lists etc. This is much cleaner than exporting a bunch of subroutines and
     # adding them to $vars one by one. Probably just Laziness shining through.
-    if (ref $param eq 'HASH'){
-        if (keys %$param){
-            bless($param, $class);
-            return $param;
-        }
+    if (ref $param eq 'HASH' && !keys %$param){
         bless($param, $class);
         return $param;
     }
-    
+
     unshift @_, $param;
     my $self = $class->SUPER::new(@_);
-    
+
     return $self; 
 }
 
@@ -295,6 +291,7 @@ sub store_text {
     }
     $text ||= '';
     trick_taint($text);
+    detaint_natural($key);
 
     my $version = $self->version || 0;
     $dbh->do("INSERT INTO test_plan_texts 
@@ -674,6 +671,7 @@ Takes an ID of the type field and returns the value
 sub lookup_type {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
+    detaint_natural($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT name 
                FROM test_plan_types
@@ -691,6 +689,7 @@ Returns the id of the type name passed.
 sub lookup_type_by_name {
     my ($name) = @_;
     my $dbh = Bugzilla->dbh;
+    trick_taint($name);
     my ($value) = $dbh->selectrow_array(
             "SELECT type_id
              FROM test_plan_types

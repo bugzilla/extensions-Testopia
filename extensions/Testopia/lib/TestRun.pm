@@ -241,16 +241,16 @@ sub new {
     my $class = ref($invocant) || $invocant;
     my $param = shift;
     
+    unshift @_, $param;
+    my $self = $class->SUPER::new(@_);
+    
     # We want to be able to supply an empty object to the templates for numerous
     # lists etc. This is much cleaner than exporting a bunch of subroutines and
     # adding them to $vars one by one. Probably just Laziness shining through.
-    if (ref $param eq 'HASH'){
+    if (!$self && ref $param eq 'HASH'){
         bless($param, $class);
         return $param;
     }
-    
-    unshift @_, $param;
-    my $self = $class->SUPER::new(@_);
     
     return $self; 
 }
@@ -937,7 +937,7 @@ sub get_case_tags {
     my $tags = $dbh->selectcol_arrayref(
              "SELECT DISTINCT test_tags.tag_id FROM test_case_tags
           INNER JOIN test_tags ON test_case_tags.tag_id = test_tags.tag_id 
-          INNER JOIN test_case_runss on test_case_runss.case_id = test_case_tags.case_id 
+          INNER JOIN test_case_runs on test_case_runs.case_id = test_case_tags.case_id 
                WHERE test_case_runs.run_id = ?", undef, $self->id);
     my @tags;
     foreach my $id (@$tags){

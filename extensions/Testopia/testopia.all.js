@@ -3,7 +3,7 @@
 */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/strings.js
+ * START OF FILE - /testopia/extensions/Testopia/js/strings.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -36,11 +36,11 @@ ENVIRONMENT_DELETE_WARNING = 'You are about to delete the selected test environm
 PRODUCT_PLAN_IMPORT = 'Accepts XML files under 2 MB in size. <br> See <a href="extensions/Testopia/testopia.xsd" target="_blank">testopia.xsd</a> for proper format.';
 PLAN_CASES_IMPORT = 'Accepts CSV and XML files under 2 MB in size. <br> See <a href="extensions/Testopia/import_example.csv" target="_blank">import_example.csv</a> and <a href="extensions/Testopia/testopia.xsd" target="_blank">testopia.xsd</a> for proper format.';
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/strings.js
+ * END OF FILE - /testopia/extensions/Testopia/js/strings.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/vars.js
+ * START OF FILE - /testopia/extensions/Testopia/js/vars.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -172,11 +172,11 @@ var imgButtonTpl = new Ext.Template(
 '</tr></tbody></table>');
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/vars.js
+ * END OF FILE - /testopia/extensions/Testopia/js/vars.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/util.js
+ * START OF FILE - /testopia/extensions/Testopia/js/util.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -1034,11 +1034,11 @@ Testopia.Util.DisableTools = function(tbar, ex){
 }
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/util.js
+ * END OF FILE - /testopia/extensions/Testopia/js/util.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/attachments.js
+ * START OF FILE - /testopia/extensions/Testopia/js/attachments.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -1481,11 +1481,11 @@ Testopia.Attachment.NewAttachmentPopup = function(object){
 };
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/attachments.js
+ * END OF FILE - /testopia/extensions/Testopia/js/attachments.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/plan.js
+ * START OF FILE - /testopia/extensions/Testopia/js/plan.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -2558,6 +2558,15 @@ Testopia.TestPlan.ClonePanel = function(plan){
                     id: 'copy_runs',
                     title: 'Copy Test Runs',
                     collapsed: true,
+                    listeners: {
+                      'expand': function(){
+                        Ext.getCmp('plan_clone_build_chooser').allowBlank = false;
+                        Ext.getCmp('plan_clone_environment_chooser').allowBlank = false;
+                    },
+                      'collapse':function(){
+                        Ext.getCmp('plan_clone_build_chooser').allowBlank = true;
+                        Ext.getCmp('plan_clone_environment_chooser').allowBlank = true;
+                    }},
                     items: [{
                         xtype: 'checkbox',
                         name: 'keep_run_managers',
@@ -2613,11 +2622,11 @@ Testopia.TestPlan.ClonePopup = function(plan){
 };
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/plan.js
+ * END OF FILE - /testopia/extensions/Testopia/js/plan.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/case.js
+ * START OF FILE - /testopia/extensions/Testopia/js/case.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -4385,11 +4394,11 @@ Testopia.TestCase.clonePopup = function(product_id, cases){
 };
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/case.js
+ * END OF FILE - /testopia/extensions/Testopia/js/case.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/caserun.js
+ * START OF FILE - /testopia/extensions/Testopia/js/caserun.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -6918,7 +6927,7 @@ Testopia.TestCaseRun.Info = function(){
                     loadingText: 'Loading...',
                     tpl: new Ext.XTemplate('<tpl for=".">', '<div id="notesdiv" style="margin: 5px; padding: 5px; border: 1px solid black;"><pre>{notes}</pre></div>', '</tpl>', '<div class="x-clear"><input id="caserun_append_note_fld" ></div>')
                 }],
-                bbar: ['Add a Note: ', {
+                tbar: ['Add a Note: ', {
                     xtype: 'textfield',
                     id: 'caserun_append_note_fld',
                     listeners: {'afterrender': function(){
@@ -6944,11 +6953,11 @@ Ext.extend(Testopia.TestCaseRun.Info, Ext.Panel, this);
 
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/caserun.js
+ * END OF FILE - /testopia/extensions/Testopia/js/caserun.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/run.js
+ * START OF FILE - /testopia/extensions/Testopia/js/run.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8640,11 +8649,11 @@ Ext.extend(Testopia.TestRun.ProgressBar, Ext.ProgressBar, {
 });
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/run.js
+ * END OF FILE - /testopia/extensions/Testopia/js/run.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/build.js
+ * START OF FILE - /testopia/extensions/Testopia/js/build.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -8951,11 +8960,11 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.GridPanel, {
 });
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/build.js
+ * END OF FILE - /testopia/extensions/Testopia/js/build.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/category.js
+ * START OF FILE - /testopia/extensions/Testopia/js/category.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9242,11 +9251,11 @@ Testopia.Category.remove = function(){
 
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/category.js
+ * END OF FILE - /testopia/extensions/Testopia/js/category.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/diff-tabs.js
+ * START OF FILE - /testopia/extensions/Testopia/js/diff-tabs.js
  */
 Ext.ux.TabCloseMenu = function(){
     var tabs, menu, ctxItem;
@@ -9374,11 +9383,11 @@ Ext.extend(diff_tab_panel, Ext.TabPanel);
 
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/diff-tabs.js
+ * END OF FILE - /testopia/extensions/Testopia/js/diff-tabs.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/environment.js
+ * START OF FILE - /testopia/extensions/Testopia/js/environment.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9797,11 +9806,11 @@ Ext.extend(Testopia.Environment.Grid, Ext.grid.EditorGridPanel, {
 });
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/environment.js
+ * END OF FILE - /testopia/extensions/Testopia/js/environment.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/product.js
+ * START OF FILE - /testopia/extensions/Testopia/js/product.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -9967,11 +9976,11 @@ Testopia.Product.MilestoneCombo = function(cfg){
 Ext.extend(Testopia.Product.MilestoneCombo, Ext.form.ComboBox);
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/product.js
+ * END OF FILE - /testopia/extensions/Testopia/js/product.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/search.js
+ * START OF FILE - /testopia/extensions/Testopia/js/search.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -10964,11 +10973,11 @@ Testopia.Search.LinkPopup = function(params){
 };
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/search.js
+ * END OF FILE - /testopia/extensions/Testopia/js/search.js
  */
 
 /*
- * START OF FILE - /bmo-3.6/extensions/Testopia/js/tags.js
+ * START OF FILE - /testopia/extensions/Testopia/js/tags.js
  */
 /*
  * The contents of this file are subject to the Mozilla Public
@@ -11430,7 +11439,7 @@ Testopia.Tags.update = function(type, grid){
 };
 
 /*
- * END OF FILE - /bmo-3.6/extensions/Testopia/js/tags.js
+ * END OF FILE - /testopia/extensions/Testopia/js/tags.js
  */
 
 /*

@@ -180,21 +180,13 @@ sub new {
     my ($param, $case_id, $build_id, $env_id) = (@_);
     my $dbh = Bugzilla->dbh;
     
-    # We want to be able to supply an empty object to the templates for numerous
-    # lists etc. This is much cleaner than exporting a bunch of subroutines and
-    # adding them to $vars one by one. Probably just Laziness shining through.
-    if (ref $param eq 'HASH'){
-        if (!keys %$param || $param->{PREVALIDATED}){
-            bless($param, $class);
-            return $param;
-        }
-    }
-    elsif ($case_id && detaint_natural($case_id) 
+    if ($case_id && detaint_natural($case_id) 
              && $build_id && detaint_natural($build_id) 
              && $env_id && detaint_natural($env_id)){
                  
          my $run_id = $param;
          detaint_natural($case_id) || return undef;
+         detaint_natural($run_id) || return undef;
          ($param) = $dbh->selectrow_array(
             "SELECT case_run_id FROM test_case_runs
              WHERE case_id = ?
@@ -205,9 +197,17 @@ sub new {
          ThrowUserError('invalid-test-id-non-existent', {type => 'case_run'}) unless $param;
     }
     
+    # We want to be able to supply an empty object to the templates for numerous
+    # lists etc. This is much cleaner than exporting a bunch of subroutines and
+    # adding them to $vars one by one. Probably just Laziness shining through.
+    if (ref $param eq 'HASH' && !keys %$param){
+        bless($param, $class);
+        return $param;
+    }
+
     unshift @_, $param;
     my $self = $class->SUPER::new(@_);
-    
+
     return $self; 
 }
 
@@ -1219,7 +1219,7 @@ Returns the id of the status name passed.
 sub lookup_status_by_name {
     my ($name) = @_;
     my $dbh = Bugzilla->dbh;
-    
+    trick_taint($name);
     my ($value) = $dbh->selectrow_array(
             "SELECT case_run_status_id
              FROM test_case_run_status

@@ -43,7 +43,7 @@ sub get {
 
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
     
     $case->text();
@@ -125,7 +125,7 @@ sub create {
         eval{
             foreach my $id (@plan_ids){
                 my $plan = Bugzilla::Extension::Testopia::TestPlan->new($id);
-                ThrowUserError("invalid-test-id-non-existent", {'id' => $id, 'type' => 'Plan'}) unless $plan;
+                ThrowUserError("invalid-test-id-non-existent", {'id' => $id, 'type' => 'Plan'}) unless $plan->{plan_id};
                 ThrowUserError("testopia-create-denied", {'object' => 'Test Case', 'plan' => $plan}) unless $plan->canedit;
                 push @plans, $plan;
             }
@@ -187,11 +187,16 @@ sub create {
 
 sub update {
     my $self = shift;
-    my ($ids, $new_values) = @_;
-
+    my ($new_values) = @_;
+     
+    if(ref $new_values ne 'HASH'){
+        $new_values = $_[1];
+        $new_values->{ids} = $_[0];
+    }
+    
     Bugzilla->login(LOGIN_REQUIRED);
 
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($new_values->{ids});
     
     my @dependson;
     if (ref $new_values->{'dependson'} eq 'ARRAY'){
@@ -207,7 +212,7 @@ sub update {
     my @cases;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             ThrowUserError("invalid-test-id-non-existent", {'id' => $id, 'type' => 'Case'}) if scalar @ids == 1;
             push @cases, {ERROR => "TestCase $id does not exist"};
             next;
@@ -260,36 +265,52 @@ sub update {
 
 sub get_text {
     my $self = shift;
-    my ($case_id, $version) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_id} = shift;
+        $params->{version} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
+    my $case = new Bugzilla::Extension::Testopia::TestCase($params->{case_id});
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $params->{case_id}}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
 
     #Result is the latest test case doc hash map
-    return $case->text($version);
+    return $case->text($params->{version});
 }
 
 sub store_text {
     my $self = shift;
-    my ($case_id, $action, $effect, $setup, $breakdown, $author_id,) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_id} = shift;
+        $params->{action} = shift;
+        $params->{effect} = shift;
+        $params->{setup} = shift;
+        $params->{breakdown} = shift;
+        $params->{author_id} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
+    my $case = new Bugzilla::Extension::Testopia::TestCase($params->{case_id});
 
-    $author_id ||= Bugzilla->user->id;
-    if ($author_id !~ /^\d+$/){
-        $author_id = Bugzilla::User::login_to_id($author_id, "THROWERROR");
+    $params->{author_id} ||= Bugzilla->user->id;
+    if ($params->{author_id} !~ /^\d+$/){
+        $params->{author_id} = Bugzilla::User::login_to_id($params->{author_id}, "THROWERROR");
     }
-
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $params->{case_id}}) unless $case->{case_id};
     ThrowUserError('testopia-read-only', {'object' => $case}) unless $case->canedit;
 
-    my $version = $case->store_text($case_id, $author_id, $action, $effect, $setup, $breakdown);
+    my $version = $case->store_text($params->{case_id}, $params->{author_id}, $params->{action}, $params->{effect}, $params->{setup}, $params->{breakdown});
     
     # Result is new test case doc version on success, otherwise an exception will be thrown
     return $version;
@@ -303,7 +324,7 @@ sub get_plans {
     
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
     
     return $case->plans();
@@ -311,15 +332,21 @@ sub get_plans {
 
 sub attach_bug {
     my $self = shift;
-    my ($case_ids, $bug_ids) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{bug_ids} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
         }
@@ -328,7 +355,7 @@ sub attach_bug {
             next;
         }
         eval {
-            $case->attach_bug($bug_ids);
+            $case->attach_bug($params->{bug_ids});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -340,16 +367,22 @@ sub attach_bug {
 
 sub detach_bug {
     my $self = shift;
-    my ($case_id, $bugids) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_id} = shift;
+        $params->{bug_ids} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
+    my $case = new Bugzilla::Extension::Testopia::TestCase($params->{case_id});
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $params->{case_id}}) unless $case->{case_id};
     ThrowUserError('testopia-read-only', {'object' => $case}) unless $case->canedit;
 
-    $case->detach_bug($bugids);
+    $case->detach_bug($params->{bug_ids});
 
     # Result 0 on success, otherwise an exception will be thrown
     return 0;
@@ -363,7 +396,7 @@ sub get_bugs {
     
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
     
     # Result is list of bugs for the given test case
@@ -372,15 +405,21 @@ sub get_bugs {
 
 sub add_component {
     my $self = shift;
-    my ($case_ids, $component_ids) = @_;
+    my ($params) = @_;
+    
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{components} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
         }
@@ -389,7 +428,7 @@ sub add_component {
             next;
         }
         eval {
-            $case->add_component($component_ids);
+            $case->add_component($params->{components});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -401,15 +440,21 @@ sub add_component {
 
 sub remove_component {
     my $self = shift;
-    my ($case_ids, $component_id) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{component_id} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
 
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
         }
@@ -418,7 +463,7 @@ sub remove_component {
             next;
         }
         eval {
-            $case->remove_component($component_id);
+            $case->remove_component($params->{component_id});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -436,7 +481,7 @@ sub get_components {
     
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
 
     # Result list of components otherwise an exception will be thrown
@@ -445,15 +490,21 @@ sub get_components {
 
 sub add_tag {
     my $self = shift;
-    my ($case_ids, $tags) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{tags} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
         }
@@ -462,7 +513,7 @@ sub add_tag {
             next;
         }
         eval {
-            $case->add_tag($tags);
+            $case->add_tag($params->{tags});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -474,15 +525,21 @@ sub add_tag {
 
 sub remove_tag {
     my $self = shift;
-    my ($case_ids, $tag_name) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{tag} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
         }
@@ -491,7 +548,7 @@ sub remove_tag {
             next;
         }
         eval {
-            $case->remove_tag($tag_name);
+            $case->remove_tag($params->{tag});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -509,7 +566,7 @@ sub get_tags {
     
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
 
     my @results;
@@ -522,20 +579,29 @@ sub get_tags {
 
 sub link_plan {
     my $self = shift;
-    my ($case_ids, $plan_ids) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{plan_ids} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
+
     my @plans;
-    if (ref $plan_ids eq 'ARRAY'){
-        $plan_ids = join(',', @$plan_ids);
+    if (ref $params->{plan_ids} eq 'ARRAY'){
+        $params->{plan_ids} = join(',', @{$params->{plan_ids}});
     }
-    foreach my $id (split(',', $plan_ids)){
+    foreach my $id (split(',', $params->{plan_ids})){
         my $plan = Bugzilla::Extension::Testopia::TestPlan->new($id);
+        ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $id}) unless $plan->{plan_id};
         ThrowUserError("testopia-read-only", {'object' => $plan}) unless $plan->canedit;
         push @plans, $plan;
     }
     ThrowUserError('missing-plans-list') unless scalar @plans;
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
@@ -555,16 +621,22 @@ sub link_plan {
 
 sub unlink_plan {
     my $self = shift;
-    my ($case_id, $plan_id) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_id} = shift;
+        $params->{plan_id} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
+    my $case = new Bugzilla::Extension::Testopia::TestCase($params->{case_id});
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
-    ThrowUserError("testopia-read-only", {'object' => 'case'}) unless ($case->can_unlink_plan($plan_id));
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $params->{case_id}}) unless $case->{case_id};
+    ThrowUserError("testopia-read-only", {'object' => 'case'}) unless ($case->can_unlink_plan($params->{plan_id}));
     
-    $case->unlink_plan($plan_id);
+    $case->unlink_plan($params->{plan_id});
     
     # Result is list of plans for test case on success, otherwise an exception will be thrown
     return $case->plans;
@@ -572,15 +644,21 @@ sub unlink_plan {
 
 sub add_to_run {
     my $self = shift;
-    my ($case_ids, $run_ids) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{case_ids} = shift;
+        $params->{run_ids} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($case_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{case_ids});
     my @results;
     foreach my $id (@ids){
         my $case = new Bugzilla::Extension::Testopia::TestCase($id);
-        unless ($case){
+        unless ($case->{case_id}){
             push @results, {ERROR => "TestCase $id does not exist"};
             next;
         }
@@ -593,7 +671,7 @@ sub add_to_run {
             next;
         }
         eval {
-            $case->add_to_run($run_ids);
+            $case->add_to_run($params->{run_ids});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -611,7 +689,7 @@ sub get_case_run_history {
     
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
 
     # Result list of caseruns otherwise an exception will be thrown
@@ -626,7 +704,7 @@ sub get_change_history {
     
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
 
     # Result list of changes otherwise an exception will be thrown
@@ -641,56 +719,68 @@ sub calculate_average_time {
     
     my $case = new Bugzilla::Extension::Testopia::TestCase($case_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Case', id => $case_id}) unless $case->{case_id};
     ThrowUserError('testopia-permission-denied', {'object' => $case}) unless $case->canview;
 
     return $case->calculate_average_time;
 }
 
-sub lookup_category_id_by_name {
-    return { ERROR => 'This method is considered harmful and has been deprecated. Please use Bugzilla::Extension::Testopia::Product::check_catagory instead'};
-}
-
-sub lookup_category_name_by_id {
-    return { ERROR => 'This method has been deprecated. Please use Bugzilla::Extension::Testopia::Product::get_category instead'};
-}
-
 sub lookup_priority_id_by_name {
     my $self = shift;
-    my ($name) = @_;
+    my ($params) = @_;
     
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{name} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
 
     # Result is test case priority id for the given test case priority name
-    return lookup_priority_by_value($name);
+    return lookup_priority_by_value($params->{name});
 }
 
 sub lookup_priority_name_by_id {
     my $self = shift;
-    my ($id) = @_;
+    my ($params) = @_;
     
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{id} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
 
-    return lookup_priority($id);
+    return lookup_priority($params->{id});
 }
 
 sub lookup_status_id_by_name {
     my $self = shift;
-    my ($name) = @_;
+    my ($params) = @_;
     
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{name} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
 
     # Result is test case status id for the given test case status name
-    return lookup_status_by_name($name);
+    return lookup_status_by_name($params->{name});
 }
 
 sub lookup_status_name_by_id {
     my $self = shift;
-    my ($id) = @_;
+    my ($params) = @_;
     
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{id} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
      
-    return lookup_status($id);
+    return lookup_status($params->{id});
 }
 
 1;
@@ -713,14 +803,14 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
 =over
 
-=item C<add_component($case_ids, $component_ids)>
+=item C<add_component>
 
  Description: Adds one or more components to the selected test cases.
 
  Params:      $case_ids - Integer/Array/String: An integer or alias representing the ID in the database,
                   an arry of case_ids or aliases, or a string of comma separated case_ids.
 
-              $component_ids - Integer/Array/String - The component ID, an array of Component IDs or
+              $components - Integer/Array/String - The component ID, an array of Component IDs or
                   component hashes (components can be an array of IDs, a comma separated string of IDs,
                   an array of Hashes, or a single hash where the
                   component hash = {component => 'string', product => 'string'},
@@ -729,7 +819,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
  Returns:     Array: empty on success or an array of hashes with failure 
               codes if a failure occured.
 
-=item C<add_tag($case_ids, $tags)>
+=item C<add_tag>
 
  Description: Add one or more tags to the selected test cases.
 
@@ -742,7 +832,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
  Returns:     Array: empty on success or an array of hashes with failure 
               codes if a failure occured.
 
-=item C<add_to_run($case_ids, $run_ids)>
+=item C<add_to_run>
 
  Description: Add one or more cases to the selected test runs.
 
@@ -755,7 +845,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
  Returns:     Array: empty on success or an array of hashes with failure 
               codes if a failure occured.
 
-=item C<attach_bug($case_ids, $bug_ids)>
+=item C<attach_bug>
 
  Description: Add one or more bugs to the selected test cases.
 
@@ -768,15 +858,15 @@ Provides methods for automated scripts to manipulate Testopia TestCases
  Returns:     Array: empty on success or an array of hashes with failure 
               codes if a failure occured.
 
-=item C<calculate_average_time($case_id)>
+=item C<calculate_average_time>
 
  Description: Returns an average time for completion accross all runs.
 
- Params:      $case_id - Integer/String: An integer or alias representing the ID in the database.
+ Params:      $id - Integer/String: An integer or alias representing the ID in the database.
 
  Returns:     String: Time in "HH:MM:SS" format.
 
-=item C<create($values)>
+=item C<create>
 
  Description: Creates a new Test Case object and stores it in the database.
 
@@ -817,7 +907,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
                 an array of objects if more than one was created. If any single case threw an 
                 error during creation, a hash with an ERROR key will be set in its place.
 
-=item C<detach_bug($case_id, $bug_id)>
+=item C<detach_bug>
 
  Description: Remove a bug from a test case.
 
@@ -828,7 +918,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     0 on success.
 
-=item C<get($case_id)>
+=item C<get>
 
  Description: Used to load an existing test case from the database.
 
@@ -837,62 +927,62 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     A blessed Bugzilla::Extension::Testopia::TestCase object hash
 
-=item C<get_bugs($case_id)>
+=item C<get_bugs>
 
  Description: Get the list of bugs that are associated with this test case.
 
- Params:      $case_id - Integer/String: An integer representing the ID in the database
+ Params:      $id - Integer/String: An integer representing the ID in the database
                     or a string representing the unique alias for this case.
 
  Returns:     Array: An array of bug object hashes.
 
-=item C<get_case_run_history($case_id)>
+=item C<get_case_run_history>
 
  Description: Get the list of case-runs for all runs this case appears in.
               To limit this list by build or other attribute, see TestCaseRun::list.
 
- Params:      $case_id - Integer/String: An integer representing the ID in the database
+ Params:      $id - Integer/String: An integer representing the ID in the database
                     or a string representing the unique alias for this case.
 
  Returns:     Array: An array of case-run object hashes.
 
-=item C<get_change_history($case_id)>
+=item C<get_change_history>
 
  Description: Get the list of changes to the fields of this case.
 
- Params:      $case_id - Integer/String: An integer representing the ID in the database
+ Params:      $id - Integer/String: An integer representing the ID in the database
                     or a string representing the unique alias for this case.
 
  Returns:     Array: An array of hashes with changed fields and their details.
 
-=item C<get_components($case_id)>
+=item C<get_components>
 
  Description: Get the list of components attached to this case.
 
- Params:      $case_id - Integer/String: An integer representing the ID in the database
+ Params:      $id - Integer/String: An integer representing the ID in the database
                     or a string representing the unique alias for this case.
 
  Returns:     Array: An array of component object hashes.
 
-=item C<get_plans($case_id)>
+=item C<get_plans>
 
  Description: Get the list of plans that this case is linked to.
 
- Params:      $case_id - Integer/String: An integer representing the ID in the database
+ Params:      $id - Integer/String: An integer representing the ID in the database
                     or a string representing the unique alias for this case.
 
  Returns:     Array: An array of test plan object hashes.
 
-=item C<get_tags($case_id)>
+=item C<get_tags>
 
  Description: Get the list of tags attached to this case.
 
- Params:      $case_id - Integer/String: An integer representing the ID in the database
+ Params:      $id - Integer/String: An integer representing the ID in the database
                     or a string representing the unique alias for this case.
 
  Returns:     Array: An array of tag object hashes.
 
-=item C<get_text($case_id, $version)>
+=item C<get_text>
 
  Description: The associated large text fields: Action, Expected Results, Setup, Breakdown
               for a given version.
@@ -905,7 +995,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     Hash: Text fields and values.
 
-=item C<link_plan($case_ids, $plan_id)>
+=item C<link_plan>
 
  Description: Link test cases to the given plan.
 
@@ -917,7 +1007,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     Array: Array of failure codes or an empty array.
 
-=item C<list($query)>
+=item C<list>
 
  Description: Performs a search and returns the resulting list of test cases.
 
@@ -1018,17 +1108,13 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     Array: Matching test cases are retuned in a list of hashes.
 
-=item C<list_count($query)>
+=item C<list_count>
 
  Description: Performs a search and returns the resulting count of cases.
 
  Params:      $query - Hash: keys must match valid search fields (see list).
 
  Returns:     Integer - total matching cases.
-
-=item C<lookup_category_name_by_id> B<DEPRECATED - CONSIDERED HARMFUL> Use Bugzilla::Extension::Testopia::Product::get_category instead 
-
-=item C<lookup_category_id_by_name> B<DEPRECATED - CONSIDERED HARMFUL> Use Bugzilla::Extension::Testopia::Product::check_category instead
 
 =item C<lookup_priority_name_by_id>
 
@@ -1048,13 +1134,13 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     String: the status name.
 
-=item C<lookup_status_id_by_name> 
+=item C<lookup_status_id_by_name>
 
  Params:      $name - String: the status name. 
 
  Returns:     Integer: ID of the case status.
 
-=item C<remove_component($case_id, $component_id)>
+=item C<remove_component>
 
  Description: Removes selected component from the selected test case.
 
@@ -1065,7 +1151,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     Array: Empty on success.
 
-=item C<remove_tag($case_id, $tag)>
+=item C<remove_tag>
 
  Description: Remove a tag from a case.
 
@@ -1076,7 +1162,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     Array: Empty on success.
 
-=item C<store_text($case_id, $action, $effect, $setup, $breakdown, [$author_id])>
+=item C<store_text>
 
  Description: Update the large text fields of a case.
 
@@ -1087,18 +1173,18 @@ Provides methods for automated scripts to manipulate Testopia TestCases
 
  Returns:     Integer: Version of the stored text
 
-=item C<unlink_plan($case_id, $plan_id)>
+=item C<unlink_plan>
 
  Description: Unlink a test case from the given plan. If only one plan is linked, this will delete
               the test case.
 
- Params:      $case_ids - Integer/String: An integer or alias representing the ID in the database.
+ Params:      $case_id - Integer/String: An integer or alias representing the ID in the database.
 
               $plan_id - Integer: An integer representing the ID in the database.
 
  Returns:     Array: Array of plans still linked if any, empty if not.
 
-=item C<update($ids, $values)>
+=item C<update>
 
  Description: Updates the fields of the selected case or cases.
 
@@ -1118,6 +1204,7 @@ Provides methods for automated scripts to manipulate Testopia TestCases
                       +-------------------+----------------+
                       | Field             | Type           |
                       +-------------------+----------------+
+                      | ids (redonly)     | Integer/String |
                       | status            | Integer/String |
                       | category          | Integer/String |
                       | priority          | Integer/String |

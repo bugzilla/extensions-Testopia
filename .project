@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>testopia-1.0-2.22</name>
+	<name>testopia</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>com.rockstarapps.html.refactoring.WebOptimizer</name>
+			<arguments>
+				<dictionary>
+					<key>extensions/Testopia/testopia.all.js</key>
+					<value>&lt;data&gt;&lt;fileName&gt;extensions/Testopia/testopia.all.js&lt;/fileName&gt;&lt;min&gt;false&lt;/min&gt;&lt;comp&gt;true&lt;/comp&gt;&lt;gZip&gt;false&lt;/gZip&gt;&lt;resolveImports&gt;false&lt;/resolveImports&gt;&lt;urlRewriting&gt;false&lt;/urlRewriting&gt;&lt;autoBuild&gt;true&lt;/autoBuild&gt;&lt;lineLength&gt;-1&lt;/lineLength&gt;&lt;dependencies&gt;&lt;file&gt;extensions/Testopia/js/strings.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/vars.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/util.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/attachments.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/plan.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/case.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/caserun.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/run.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/build.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/category.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/diff-tabs.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/environment.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/product.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/search.js&lt;/file&gt;&lt;file&gt;extensions/Testopia/js/tags.js&lt;/file&gt;&lt;/dependencies&gt;&lt;/data&gt;</value>
+				</dictionary>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>org.epic.perleditor.perlbuilder</name>
 			<arguments>

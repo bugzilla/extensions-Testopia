@@ -44,7 +44,7 @@ sub get {
     # Result is a plan object hash
     my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Plan', id => $plan_id}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
         
     $plan->test_run_count();
@@ -113,13 +113,18 @@ sub create {
 
 sub update {
     my $self =shift;
-    my ($plan_id, $new_values) = @_;
+    my ($new_values) = @_;
 
+    if(ref $new_values ne 'HASH'){
+        $new_values = $_[1];
+        $new_values->{id} = $_[0];
+    }
+    
     Bugzilla->login(LOGIN_REQUIRED);
 
-    my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
+    my $plan = new Bugzilla::Extension::Testopia::TestPlan($new_values->{id});
     
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $new_values->{id}}) unless $plan->{plan_id};
     ThrowUserError('testopia-read-only', {'object' => $plan}) unless $plan->canedit;
 
     $new_values->{'type_id'} ||= $new_values->{'type'};
@@ -127,7 +132,7 @@ sub update {
     $plan->set_name(trim($new_values->{'name'}));
     $plan->set_default_product_version($new_values->{'default_product_version'});
     $plan->set_type($new_values->{'type_id'});
-    $plan->set_isactive($new_values->{'isactive'});
+    $plan->set_isactive($new_values->{'isactive'}) if defined $new_values->{'isactive'};
     
     $plan->update();
     
@@ -137,36 +142,49 @@ sub update {
 
 sub get_text {
     my $self = shift;
-    my ($plan_id, $version) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{plan_id} = shift;
+        $params->{version} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
+    my $plan = new Bugzilla::Extension::Testopia::TestPlan($params->{plan_id});
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $params->{plan_id}}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
 
     #Result is the latest test plan doc hash map
-    return $plan->text($version);
+    return $plan->text($params->{version});
 }
 
 sub store_text {
     my $self = shift;
-    my ($plan_id, $text, $author_id) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{plan_id} = shift;
+        $params->{text} = shift;
+        $params->{author_id} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
+    my $plan = new Bugzilla::Extension::Testopia::TestPlan($params->{plan_id});
     
-    $author_id ||= Bugzilla->user->id;
-    if ($author_id !~ /^\d+$/){
-        $author_id = Bugzilla::User::login_to_id($author_id, "THROWERROR");
+    $params->{author_id} ||= Bugzilla->user->id;
+    if ($params->{author_id} !~ /^\d+$/){
+        $params->{author_id} = Bugzilla::User::login_to_id($params->{author_id}, "THROWERROR");
     }
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $params->{plan_id}}) unless $plan->{plan_id};
     ThrowUserError('testopia-read-only', {'object' => $plan}) unless $plan->canedit;
 
-    my $version = $plan->store_text($plan_id, $author_id, $text);
+    my $version = $plan->store_text($params->{plan_id}, $params->{author_id}, $params->{text});
     
     # Result is new test plan doc version on success, otherwise an exception will be thrown
     return $version;
@@ -181,7 +199,7 @@ sub get_test_cases {
     # Result is a plan object hash
     my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $plan_id}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
         
     # Result is list of test cases for the given test plan
@@ -197,7 +215,7 @@ sub get_case_tags {
     # Result is a plan object hash
     my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Build', id => $plan_id}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
         
     # Result is list of test cases for the given test plan
@@ -213,7 +231,7 @@ sub get_test_runs {
     # Result is a plan object hash
     my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Plan', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Plan', id => $plan_id}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
     
     # Result is list of test runs for the given test plan
@@ -228,7 +246,7 @@ sub get_change_history {
     
     my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
 
     # Result list of changes otherwise an exception will be thrown
@@ -244,7 +262,7 @@ sub get_product {
     # Result is a plan object hash
     my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Product', id => $plan_id}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
         
     # Result is list of test cases for the given test plan
@@ -253,35 +271,51 @@ sub get_product {
 
 sub lookup_type_name_by_id {
     my $self =shift;
-    my ($id) = @_;
+    my ($params) = @_;
     
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{id} = shift;
+    } 
+
     Bugzilla->login(LOGIN_REQUIRED);
 
     # Result is test plan type name for the given test plan type id
-    return lookup_type($id);
+    return lookup_type($params->{id});
 }
 
 sub lookup_type_id_by_name {
     my $self =shift;
-    my ($name) = @_;
+    my ($params) = @_;
+    
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{name} = shift;
+    } 
     
     Bugzilla->login(LOGIN_REQUIRED);
 
     # Result is test plan type id for the given test plan type name
-    return Bugzilla::Extension::Testopia::TestPlan::lookup_type_by_name($name);
+    return Bugzilla::Extension::Testopia::TestPlan::lookup_type_by_name($params->{name});
 }
 
 sub add_tag {
     my $self = shift;
-    my ($plan_ids, $tags) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{plan_ids} = shift;
+        $params->{tags} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my @ids = Bugzilla::Extension::Testopia::Util::process_list($plan_ids);
+    my @ids = Bugzilla::Extension::Testopia::Util::process_list($params->{plan_ids});
     my @results;
     foreach my $id (@ids){
         my $plan = new Bugzilla::Extension::Testopia::TestPlan($id);
-        unless ($plan){
+        unless ($plan->{plan_id}){
             push @results, {ERROR => "TestPlan $id does not exist"};
             next;
         }
@@ -290,7 +324,7 @@ sub add_tag {
             next;
         }
         eval {
-            $plan->add_tag($tags);
+            $plan->add_tag($params->{tags});
         };
         if ($@){
             push @results, {ERROR => $@};
@@ -302,16 +336,22 @@ sub add_tag {
 
 sub remove_tag {
     my $self = shift;
-    my ($plan_id, $tag_name) = @_;
+    my ($params) = @_;
+
+    if (ref $params ne 'HASH'){
+        $params = {};
+        $params->{plan_id} = shift;
+        $params->{tag} = shift;
+    } 
 
     Bugzilla->login(LOGIN_REQUIRED);
     
-    my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
+    my $plan = new Bugzilla::Extension::Testopia::TestPlan($params->{plan_id});
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $params->{plan_id}}) unless $plan->{plan_id};
     ThrowUserError('testopia-read-only', {'object' => $plan}) unless $plan->canedit;
 
-    $plan->remove_tag($tag_name);
+    $plan->remove_tag($params->{tag});
 
     # Result 0 on success, otherwise an exception will be thrown
     return 0;
@@ -325,7 +365,7 @@ sub get_tags {
     
     my $plan = new Bugzilla::Extension::Testopia::TestPlan($plan_id);
 
-    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan;
+    ThrowUserError('invalid-test-id-non-existent', {type => 'Test Plan', id => $plan_id}) unless $plan->{plan_id};
     ThrowUserError('testopia-permission-denied', {'object' => $plan}) unless $plan->canview;
 
     my @results;
@@ -356,7 +396,7 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
 =over
 
-=item C<add_tag($plan_ids, $tags)>
+=item C<add_tag>
 
  Description: Add one or more tags to the selected test plans.
 
@@ -369,7 +409,7 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
  Returns:     Array: empty on success or an array of hashes with failure 
               codes if a failure occured.
 
-=item C<create($values)>
+=item C<create>
 
  Description: Creates a new Test Plan object and stores it in the database.
 
@@ -387,7 +427,7 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
  Returns:     The newly created object hash.
 
-=item C<get($plan_id)>
+=item C<get>
 
  Description: Used to load an existing test plan from the database.
 
@@ -395,55 +435,55 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
  Returns:     Hash: A blessed Bugzilla::Extension::Testopia::TestPlan object hash
 
-=item C<get_change_history($plan_id)>
+=item C<get_change_history>
 
  Description: Get the list of changes to the fields of this plan.
 
- Params:      $plan_id - Integer: An integer representing the ID of this plan in the database
+ Params:      $id - Integer: An integer representing the ID of this plan in the database
 
  Returns:     Array: An array of hashes with changed fields and their details.
 
-=item C<get_product($plan_id)>
+=item C<get_product>
 
  Description: Get the Product the plan is assiciated with.
 
- Params:      $plan_id - Integer: An integer representing the ID of the plan in the database.
+ Params:      $id - Integer: An integer representing the ID of the plan in the database.
 
  Returns:     Hash: A blessed Bugzilla::Extension::Testopia::Product hash.
 
-=item C<get_tags($plan_id)>
+=item C<get_tags>
 
  Description: Get the list of tags attached to this plan.
 
- Params:      $plan_id - Integer An integer representing the ID of this plan in the database
+ Params:      $id - Integer An integer representing the ID of this plan in the database
 
  Returns:     Array: An array of tag object hashes.
 
-=item C<get_test_cases($plan_id)>
+=item C<get_test_cases>
 
  Description: Get the list of cases that this plan is linked to.
 
- Params:      $plan_id - Integer: An integer representing the ID of the plan in the database
+ Params:      $id - Integer: An integer representing the ID of the plan in the database
 
  Returns:     Array: An array of test case object hashes.
 
-=item C<get_case_tags($plan_id)>
+=item C<get_case_tags>
 
  Description: Get the list of tags associated with the cases that this plan is linked to.
 
- Params:      $plan_id - Integer: An integer representing the ID of the plan in the database
+ Params:      $id - Integer: An integer representing the ID of the plan in the database
 
  Returns:     Array: An array of tag object hashes.
 
-=item C<get_test_runs($plan_id)>
+=item C<get_test_runs>
 
  Description: Get the list of runs in this plan.
 
- Params:      $plan_id - Integer: An integer representing the ID of this plan in the database
+ Params:      $id - Integer: An integer representing the ID of this plan in the database
 
  Returns:     Array: An array of test run object hashes.
 
-=item C<get_text($plan_id, $version)>
+=item C<get_text>
 
  Description: The plan document for a given test plan.
 
@@ -454,7 +494,7 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
  Returns:     Hash: Text and author information.
 
-=item C<list($query)>
+=item C<list>
 
  Description: Performs a search and returns the resulting list of test plans.
 
@@ -537,7 +577,7 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
  Returns:     Array: Matching test plans are retuned in a list of plan object hashes.
 
-=item C<list_count($query)>
+=item C<list_count>
 
  Description: Performs a search and returns the resulting count of plans.
 
@@ -545,19 +585,19 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
  Returns:     Integer - total matching plans.
 
-=item C<lookup_type_id_by_name>
+=item lookup_type_id_by_name
 
  Params:      $name - String: the plan type. 
 
  Returns:     Integer: ID of the plan type.
 
-=item C<lookup_type_name_by_id>
+=item lookup_type_name_by_id
 
  Params:      $id - Integer: ID of the plan type to return
 
  Returns:     String: the type name.
 
-=item C<remove_tag($plan_id, $tag)>
+=item C<remove_tag>
 
  Description: Remove a tag from a plan.
 
@@ -567,7 +607,7 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
  Returns:     0 on success.
 
-=item C<store_text($plan_id, $text, [$author_id])>
+=item C<store_text>
 
  Description: Update the document field of a plan.
 
@@ -578,17 +618,18 @@ Provides methods for automated scripts to manipulate Testopia TestPlans
 
  Returns:     Integer: The new text version
 
-=item C<update($ids, $values)>
+=item C<update>
 
  Description: Updates the fields of the selected test plan.
 
- Params:      $ids - Integer: A single TestPlan ID.
+ Params:      $id - Integer: A single TestPlan ID.
 
               $values - Hash of keys matching TestPlan fields and the new values 
               to set each field to.
                       +-------------------------+----------------+
                       | Field                   | Type           |
                       +-------------------------+----------------+
+                      | id (readonly)           | String         |
                       | name                    | String         |
                       | type                    | Integer/String |
                       | default_product_version | String         |

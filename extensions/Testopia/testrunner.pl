@@ -21,9 +21,11 @@
 #                 Jeff Dayley    <jedayley@novell.com>
 use strict;
 
-use lib 't';
-use lib '.';
-use lib '../..';
+use lib qw(. t ../..) ;
+
+use Bugzilla;
+
+BEGIN {Bugzilla->extensions}
 
 use Test::Unit::Debug qw(debug_pkgs);
 use Test::Unit::TestRunner;
