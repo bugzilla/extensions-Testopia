@@ -17,11 +17,18 @@ Testopia is an extension to Bugzilla. This means that if you have one of the
 supported versions of Bugzilla installed, you are all set to install Testopia.
 Installation instructions for Bugzilla can be found at http://bugzilla.org
 
-'''IMPORTANT NOTE:''' 
+'''IMPORTANT NOTES:''' 
 These instructions assume you have installed Bugzilla according to the Bugzilla 
 instructions (from tarball or cvs). Installations from Debian .deb or from some 
 RPM packages may place Bugzilla files in separate directories in which case, 
 these instructions may not work.
+
+If you are upgrading from 2.2 and have made modifications to the Testopia code, 
+please be aware that you will need to merge your changes into the new 
+file locations.
+
+Also be sure to reverse the patch on your existing installation
+before unzipping the package.
 
 Please make sure that your language of Bugzilla is the same as language of 
 Testopia to  be installed on. If you are not sure, just set language of your 
