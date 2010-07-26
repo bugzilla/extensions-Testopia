@@ -136,21 +136,6 @@ sub init {
         $self->{'sql'} = $query;
         return;
     }
-    if ($cgi->param('report_type') && $cgi->param('report_type') eq 'myplans'){
-        my $query = "SELECT plan_id FROM test_case_plans
-                INNER JOIN test_cases on test_case_plans.case_id = test_cases.case_id
-                WHERE test_cases.default_tester_id = " . Bugzilla->user->id .
-              " UNION SELECT plan_id FROM test_plan_permissions WHERE userid = " . Bugzilla->user->id;
-        if(defined $start){
-            $query .= " LIMIT $limit OFFSET $start";
-        }
-        elsif (defined $page){
-            $query .= " LIMIT $pagesize OFFSET ". $page*$pagesize;
-        }
-
-        $self->{'sql'} = $query;
-        return;
-    }
     if ($cgi->param('report_type') && $cgi->param('report_type') eq 'rollup'){
         my @r = $cgi->param('run_ids');
         my @p = $cgi->param('plan_ids');
@@ -384,6 +369,15 @@ sub init {
         }
         
     }
+    # Another major hack. The myplans query needs a union. Find the ids and do a WHERE on them
+    if ($cgi->param('report_type') && $cgi->param('report_type') eq 'myplans'){
+        my $ids = $dbh->selectcol_arrayref("SELECT plan_id FROM test_case_plans
+                INNER JOIN test_cases on test_case_plans.case_id = test_cases.case_id
+                WHERE test_cases.default_tester_id = " . Bugzilla->user->id .
+              " UNION SELECT plan_id FROM test_plan_permissions WHERE userid = " . Bugzilla->user->id);
+        push @wherepart, "plan_id in (" . join (',',@$ids) .")";
+    }
+
     # Set up tables for access control
     unless (Bugzilla->user->in_group('Testers')){
         if ($obj eq 'case'){
@@ -514,13 +508,13 @@ sub init {
             push @orderby, 'test_'. $obj .'s.summary';
         }
     }
-    elsif ($order eq 'created') {
-        push @orderby, 'test_'. $obj .'s.default_product_version';
-    }
     elsif ($order eq 'prod_version') {
         if ($obj eq 'plan'){
-            push @orderby, 'test_'. $obj .'s.creation_date';
+            push @orderby, 'test_'. $obj .'s.default_product_version';
         }
+    }
+    elsif ($order eq 'created') {
+        push @orderby, 'test_'. $obj .'s.creation_date';
     }
     elsif ($order eq 'modified') {
         push @supptables, "INNER JOIN test_". $obj ."_activity ON test_". $obj ."_activity.". $obj ."_id = test_". $obj ."s.". $obj ."_id";
