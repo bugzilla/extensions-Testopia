@@ -34,6 +34,11 @@ Please make sure that your language of Bugzilla is the same as language of
 Testopia to  be installed on. If you are not sure, just set language of your 
 Bugzilla to English. You can change it any time later.
 
+API USERS TAKE NOTE: Positional parameters are now deprecated as of 2.4. All params should now be sent
+in a hash (struct, dict, hashmap or whatever your language of choice calls key, value pairs). Though all attempts
+have been made to provide continuing support for positional parameters, please be aware that 
+some API calls may fail until you make this change. Also, future versions may remove this support completely.
+
 === Installation on Linux ===
                                    
 ''' From the tarball: '''

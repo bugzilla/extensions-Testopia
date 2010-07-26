@@ -19,7 +19,7 @@
 
 %strings = (
   feature_testopia_xml_import => 'XML Importing of test cases and plans',
-  feature_testopia_cvs_import => 'CSV Importing of test cases',
+  feature_testopia_csv_import => 'CSV Importing of test cases',
 );
 
 1;
