@@ -1927,19 +1927,19 @@ sub product_confirm_delete {
 sub webservice {
     my ($self, $args) = @_;
     
-    
     my $dispatch = $args->{dispatch};
     
     $dispatch->{TestPlan}    = "Bugzilla::Extension::Testopia::WebService::TestPlan";
     $dispatch->{TestCase}    = "Bugzilla::Extension::Testopia::WebService::TestCase";
     $dispatch->{TestRun}     = "Bugzilla::Extension::Testopia::WebService::TestRun";
     $dispatch->{TestCaseRun} = "Bugzilla::Extension::Testopia::WebService::TestCaseRun";
-    $dispatch->{Product}     = "Bugzilla::Extension::Testopia::WebService::Product";
     $dispatch->{Environment} = "Bugzilla::Extension::Testopia::WebService::Environment";
     $dispatch->{Build}       = "Bugzilla::Extension::Testopia::WebService::Build";
     $dispatch->{Testopia}    = "Bugzilla::Extension::Testopia::WebService::Testopia";
-    
+    $dispatch->{TestopiaUser} = "Bugzilla::Extension::Testopia::WebService::User";
+    $dispatch->{TestopiaProduct} = "Bugzilla::Extension::Testopia::WebService::Product";
 }
+
 
 
 __PACKAGE__->NAME;
