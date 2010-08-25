@@ -106,6 +106,31 @@ sub check_component {
     return Bugzilla::Component->check($params);
 }
 
+sub create_category {
+    my $self = shift;
+    my ($params) = @_;
+    
+    if (!ref $params){
+        $params = {};
+        $params->{product} = shift;
+        $params->{name} = shift;
+        $params->{description} = shift;
+    }
+    Bugzilla->login(LOGIN_REQUIRED);
+    
+    my $product = _validate($params->{product});
+    
+    $params->{product_id} ||= $params->{product};
+    delete $params->{product};
+    
+    ThrowUserError('testopia-read-only', {'object' => $product}) unless $product->canedit;
+    require Testopia::Category;
+    
+    my $category = Testopia::Category->create($params);
+    
+    return $category;
+}
+
 sub get_builds {
     my $self = shift;
     my ($params) = @_;
@@ -316,6 +341,22 @@ Build.get({name => string})
  Params:      $id - An integer representing the ID in the database
 
  Returns:     A blessed Bugzilla::Extension::Testopia::Product object hash
+
+=item C<create_category($values)>
+
+ Description: Creates a new build object and stores it in the database
+
+ Params:      $values - Hash: A reference to a hash with keys and values  
+              matching the fields of the build to be created. 
+  +-------------+----------------+-----------+------------------------------------+
+  | Field       | Type           | Null      | Description                        |
+  +-------------+----------------+-----------+------------------------------------+
+  | product     | Integer/String | Required  | ID or Name of product              |
+  | name        | String         | Required  |                                    |
+  | description | String         | Optional  |                                    |
+  +-------------+----------------+-----------+------------------------------------+
+
+ Returns:     The newly created object hash.
 
 =item C<get_builds>
 

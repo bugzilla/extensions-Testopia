@@ -204,6 +204,7 @@ if (defined($Bugzilla_login)) {
 #$soapresult = $proxy->call('TestopiaProduct.get_runs', {name => 'TestProduct'});
 #$soapresult = $proxy->call('TestopiaProduct.get_tags', {name => 'TestProduct'});
 #$soapresult = $proxy->call('TestopiaProduct.get_versions', {name => 'TestProduct'});
+#$soapresult = $proxy->call('TestopiaProduct.create_category', {product => 2, name => 'TestCategory', description => 'This is a test'});
 
 ########################
 ### TestCase Methods ###
