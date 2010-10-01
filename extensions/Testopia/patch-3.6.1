@@ -137,7 +137,7 @@
 +                  "INNER JOIN test_plan_permissions ON test_plan_permissions.plan_id = test_plans.plan_id ".
 +                  "WHERE test_plan_permissions.userid = ?)";
 +        
-+        $query .= "ORDER BY pname ";    
++        $query .= " ORDER BY pname ";    
 +
 +        my $prod_ids = Bugzilla->dbh->selectcol_arrayref($query,undef,$self->id);
 +

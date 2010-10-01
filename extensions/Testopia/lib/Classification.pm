@@ -55,7 +55,7 @@ sub user_visible_products {
                   "INNER JOIN test_plan_permissions ON test_plan_permissions.plan_id = test_plans.plan_id ".
                   "WHERE test_plan_permissions.userid = ? AND products.classification_id = ?)";
         
-        $query .= "ORDER BY pname ";                
+        $query .= " ORDER BY pname ";                
         my $product_ids = $dbh->selectcol_arrayref($query, undef, $self->id, Bugzilla->user->id, $self->id);
  
         my @products;
