@@ -365,7 +365,7 @@ else{
     }
     elsif ($tab eq 'run'){
         $vars->{'title'}        = "Search For Test Runs";
-        $vars->{'run'}          = Bugzilla::Extension::Testopia::TestRun->new({});;
+        $vars->{'run'}          = Bugzilla::Extension::Testopia::TestRun->new({});
         $vars->{'versions'}     = get_searchable_objects('versions');
         $vars->{'milestones'}   = get_searchable_objects('milestones');
         $vars->{'builds'}       = get_searchable_objects('builds');
@@ -397,10 +397,8 @@ else{
         $vars->{'resolution'}   = convert_bugzilla_fields('resolution');
     }
     elsif ($tab eq 'case') {
-        $tab = 'case';
-        my $case = Bugzilla::Extension::Testopia::TestCase->new({ 'case_id' => 0 });
         $vars->{'title'} = "Search For Test Cases";
-        $vars->{'case'} = $case;
+        $vars->{'case'} = Bugzilla::Extension::Testopia::TestCase->new({});
         $vars->{'components'}   = get_searchable_objects('components');
         $vars->{'categories'}   = get_searchable_objects('categories');
         $vars->{'bug_status'}   = convert_bugzilla_fields('bug_status');

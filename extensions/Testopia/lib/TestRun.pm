@@ -241,16 +241,16 @@ sub new {
     my $class = ref($invocant) || $invocant;
     my $param = shift;
     
-    unshift @_, $param;
-    my $self = $class->SUPER::new(@_);
-    
     # We want to be able to supply an empty object to the templates for numerous
     # lists etc. This is much cleaner than exporting a bunch of subroutines and
     # adding them to $vars one by one. Probably just Laziness shining through.
-    if (!$self && ref $param eq 'HASH'){
+    if (ref $param eq 'HASH'){
         bless($param, $class);
         return $param;
     }
+    
+    unshift @_, $param;
+    my $self = $class->SUPER::new(@_);
     
     return $self; 
 }

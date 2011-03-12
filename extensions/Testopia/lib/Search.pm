@@ -61,6 +61,8 @@ use Bugzilla::Error;
 use Bugzilla::Extension::Testopia::Util;
 use Bugzilla::Extension::Testopia::TestCase;
 
+use List::MoreUtils qw(firstidx);
+
 use Date::Format;
 use Date::Parse;
 use Data::Dumper;
@@ -1395,7 +1397,8 @@ sub init {
                         "bug_rep_platform","bug_os_sys");
 
     foreach my $field ($cgi->param()) {
-        if (lsearch(\@legal_fields, $field) != -1) {
+    	my $cur_field = firstidx {$_ eq $field} @legal_fields;
+    	if ($cur_field != -1) {
             push(@specialchart, [$field, $cgi->param($field."_type") || "anyexact",
                                  join(',', $cgi->param($field))]);
         }
