@@ -35,12 +35,12 @@
 [% FOREACH tag = tags %]
   <tr class="[% loop.count % 2 == 0 ? "tr_row_odd" : "tr_row_even" %]"> 
     <td width="200">[% tag.name FILTER html %]</td>
-    <td align="center"><a href="tr_list_cases.cgi?tags_type=anyexact&tags=[% tag.name FILTER url_quote %]">[% tag.case_count FILTER html %]</a></td>
-    <td align="center"><a href="tr_list_plans.cgi?tags_type=anyexact&tags=[% tag.name FILTER url_quote %]">[% tag.plan_count FILTER html %]</a></td>
-    <td align="center"><a href="tr_list_runs.cgi?tags_type=anyexact&tags=[% tag.name FILTER url_quote %]">[% tag.run_count FILTER html %]</a></td>
+    <td align="center"><a href="tr_list_cases.cgi?tags_type=anyexact&tags=[% tag.name FILTER uri %]">[% tag.case_count FILTER html %]</a></td>
+    <td align="center"><a href="tr_list_plans.cgi?tags_type=anyexact&tags=[% tag.name FILTER uri %]">[% tag.plan_count FILTER html %]</a></td>
+    <td align="center"><a href="tr_list_runs.cgi?tags_type=anyexact&tags=[% tag.name FILTER uri %]">[% tag.run_count FILTER html %]</a></td>
     <td>
   [% IF item AND item.type != 'product' %]
-      <a href="tr_tags.cgi?tagid=[% tag.id FILTER none %]&action=removetag&id=[% item.id FILTER none %]&type=[% item.type FILTER url_quote %]&method=html">Remove</a>
+      <a href="tr_tags.cgi?tagid=[% tag.id FILTER none %]&action=removetag&id=[% item.id FILTER none %]&type=[% item.type FILTER uri %]&method=html">Remove</a>
   [% END %]
   [% IF user.in_group("admin") %]
       <a href="tr_tags.cgi?tagid=[% tag.id FILTER none %]&action=delete" title="Remove tag from all objects and delete from system">Delete</a>
@@ -55,7 +55,7 @@
   <input name="tag">
   <input type="submit" value="Add">
   <input type="hidden" name="id" value="[% item.id FILTER none %]">
-  <input type="hidden" name="type" value="[% item.type FILTER url_quote %]">
+  <input type="hidden" name="type" value="[% item.type FILTER uri %]">
   <input type="hidden" name="action" value="addtag">
   <input type="hidden" name="method" value="html">
 </form>

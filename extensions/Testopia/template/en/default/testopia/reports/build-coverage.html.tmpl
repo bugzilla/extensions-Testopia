@@ -43,7 +43,7 @@
   <tr>  
     <td>&nbsp;</td>
 [% FOREACH b = report.build_ids %]
-    <td><img src="tr_draw.cgi?text=[% report.builds.$b FILTER url_quote %]"></td>
+    <td><img src="tr_draw.cgi?text=[% report.builds.$b FILTER uri %]"></td>
 [% END %]
   </tr>
 [% FOREACH case = report.keys %]
@@ -74,7 +74,7 @@
     <tr>  
       <td>&nbsp;</td>
   [% FOREACH rb = report.build_ids %]
-      <td><img src="tr_draw.cgi?text=[% report.builds.$rb FILTER url_quote %]"></td>
+      <td><img src="tr_draw.cgi?text=[% report.builds.$rb FILTER uri %]"></td>
   [% END %]
     </tr>
   [% FOREACH case = run_reports.$run.keys %]

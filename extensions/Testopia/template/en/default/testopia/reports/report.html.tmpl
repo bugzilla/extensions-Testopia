@@ -86,14 +86,14 @@
       [% END %]
       
       [% imageurl = BLOCK %][% report.report_loc %]?[% report.imagebase %]&amp;format=
-        [% report.format FILTER url_quote %]&amp;ctype=png&amp;report_action=plot&amp;
+        [% report.format FILTER uri %]&amp;ctype=png&amp;report_action=plot&amp;
         [% IF report.tbl_field %]
           [% IF tbl != "-total-" %]
-            [% report.tbl_field FILTER url_quote %]=[% tbl FILTER url_quote %]&amp;
+            [% report.tbl_field FILTER uri %]=[% tbl FILTER uri %]&amp;
           [% ELSE %]
             [% FOREACH tblname = report.tbl_names %]
               [% IF tblname != "-total-" %]
-                [% report.tbl_field FILTER url_quote %]=[% tblname FILTER url_quote %]&amp;
+                [% report.tbl_field FILTER uri %]=[% tblname FILTER uri %]&amp;
               [% END %]
             [% END %]
           [% END %]

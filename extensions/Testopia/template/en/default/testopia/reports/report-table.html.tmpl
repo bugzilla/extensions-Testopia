@@ -40,8 +40,8 @@
   [% urlbase = BLOCK %]buglist.cgi?[% report.listbase %]
   [% "&amp;$tbl_vals" IF tbl_vals %][% END %]
 [% ELSE %]
-  [% urlbase = BLOCK %][% report.url_loc FILTER url_quote %]?[% report.listbase %]&amp;
-  [% report.tbl_field FILTER url_quote %]=[% tbl FILTER url_quote %][% END %]
+  [% urlbase = BLOCK %][% report.url_loc FILTER uri %]?[% report.listbase %]&amp;
+  [% report.tbl_field FILTER uri %]=[% tbl FILTER uri %][% END %]
 [% END %]
 
 <table>
@@ -111,8 +111,8 @@
         <td class="[% classes.$row_idx.$col_idx %]" align="center">
           [% IF report.data.$tbl.$col.$row AND report.data.$tbl.$col.$row > 0 %]
             <a href="[% urlbase %]&amp;
-              [% report.row_field FILTER url_quote %]=[% row FILTER url_quote %]&amp;
-              [% report.col_field FILTER url_quote %]=[% col FILTER url_quote %]">
+              [% report.row_field FILTER uri %]=[% row FILTER uri %]&amp;
+              [% report.col_field FILTER uri %]=[% col FILTER uri %]">
               [% report.data.$tbl.$col.$row %]</a>
           [% ELSE %]
             .
@@ -121,7 +121,7 @@
       [% END %] 
       <td class="ttotal" align="right">
         <a href="[% urlbase %]&amp;
-          [% report.row_field FILTER url_quote %]=[% row FILTER url_quote %]
+          [% report.row_field FILTER uri %]=[% row FILTER uri %]
           [% "&amp;$col_vals" IF col_vals %]">
         [% row_total %]</a>
         [% grand_total = grand_total + row_total %]
@@ -139,7 +139,7 @@
       
       <td class="ttotal" align="center">
         <a href="[% urlbase %]&amp;
-          [% report.col_field FILTER url_quote %]=[% col FILTER url_quote %]
+          [% report.col_field FILTER uri %]=[% col FILTER uri %]
           [% "&amp;$row_vals" IF row_vals %]">
         [% col_totals.$col %]</a>
       <strong>

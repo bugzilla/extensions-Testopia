@@ -12,5 +12,5 @@
     [% END %]
     </a></li>
 [% END %]
-    <li><a href="tr_new_case.cgi?product=[% bug.product FILTER url_quote %]&bug=[% bug.bug_id %]">Create test case</a></li>
+    <li><a href="tr_new_case.cgi?product=[% bug.product FILTER uri %]&bug=[% bug.bug_id %]">Create test case</a></li>
 </ul>
