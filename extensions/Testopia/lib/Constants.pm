@@ -25,6 +25,8 @@ use base qw(Exporter);
 our @EXPORT = qw(
 TESTOPIA_VERSION
 
+ERROR_MODE_AJAX
+
 PROPOSED
 CONFIRMED
 DISABLED
@@ -59,7 +61,9 @@ SAVED_DASHBORD
 TIME_FORMAT
 );
 
-use constant TESTOPIA_VERSION => "2.3.1";
+use constant TESTOPIA_VERSION => "2.5";
+
+use constant ERROR_MODE_AJAX => 4;
 
 # Test Case Status
 use constant PROPOSED  => 1;

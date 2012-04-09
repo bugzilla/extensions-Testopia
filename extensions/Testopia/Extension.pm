@@ -12,7 +12,33 @@ use Bugzilla::User::Setting;
 use Bugzilla::Util;
 use File::Path;
 
-our $VERSION = '2.3.1';
+BEGIN {
+    *Bugzilla::Bug::get_test_case_count = \&get_test_case_count;
+    *Bugzilla::User::testopia_queries = \&testopia_queries;
+}
+
+our $VERSION = '2.5';
+
+sub WS_EXECUTE { Bugzilla->localconfig->{'webservergroup'} ? 0750 : 0755 };
+
+sub get_test_case_count {
+      my $self = shift;
+      my $dbh = Bugzilla->dbh;
+      my $row_count = $dbh->selectall_arrayref(
+              "SELECT DISTINCT case_id FROM test_case_bugs WHERE bug_id = ?",
+              undef, $self->bug_id);
+      return scalar @$row_count;
+}
+
+sub testopia_queries {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+    my $ref = $dbh->selectall_arrayref(
+        "SELECT name, query FROM test_named_queries
+         WHERE userid = ? AND isvisible = 1",
+         {'Slice' =>{}}, $self->id);
+    return $ref;
+}
 
 sub bug_end_of_update {
     my ($self, $args) = @_;
@@ -1229,6 +1255,11 @@ END
         
         rmtree(@files, 1);
     }
+}
+
+sub install_filesystem {
+    my ($self, $args) = @_;
+    $args->{'files'}->{'tr_importxml.pl'} = { perms => WS_EXECUTE };
 }
 
 sub install_update_db {

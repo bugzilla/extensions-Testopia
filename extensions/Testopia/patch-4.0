@@ -1,42 +1,3 @@
-=== modified file 'Bugzilla/Bug.pm'
---- Bugzilla/Bug.pm	2010-12-13 20:56:46 +0000
-+++ Bugzilla/Bug.pm	2011-03-05 07:36:18 +0000
-@@ -3527,6 +3527,14 @@
-         "SELECT bug_id FROM bugs WHERE alias = ?", undef, $alias);
- }
- 
-+sub get_test_case_count {
-+      my $self = shift;
-+      my $dbh = Bugzilla->dbh;
-+      my $row_count = $dbh->selectall_arrayref(
-+              "SELECT DISTINCT case_id FROM test_case_bugs WHERE bug_id = ?",
-+              undef, $self->bug_id);
-+      return scalar @$row_count;
-+}
- #####################################################################
- # Subroutines
- #####################################################################
-
-=== modified file 'Bugzilla/Constants.pm'
---- Bugzilla/Constants.pm	2011-02-15 18:13:39 +0000
-+++ Bugzilla/Constants.pm	2011-03-05 07:36:18 +0000
-@@ -144,6 +144,7 @@
-     ERROR_MODE_WEBPAGE
-     ERROR_MODE_DIE
-     ERROR_MODE_DIE_SOAP_FAULT
-+    ERROR_MODE_AJAX
-     ERROR_MODE_JSON_RPC
-     ERROR_MODE_TEST
- 
-@@ -464,6 +465,7 @@
- use constant ERROR_MODE_WEBPAGE        => 0;
- use constant ERROR_MODE_DIE            => 1;
- use constant ERROR_MODE_DIE_SOAP_FAULT => 2;
-+use constant ERROR_MODE_AJAX           => 4;
- use constant ERROR_MODE_JSON_RPC       => 3;
- use constant ERROR_MODE_TEST           => 4;
- 
-
 === modified file 'Bugzilla/Error.pm'
 --- Bugzilla/Error.pm	2010-07-07 21:34:25 +0000
 +++ Bugzilla/Error.pm	2011-03-05 07:36:18 +0000
@@ -66,18 +27,6 @@
      exit;
  }
 
-=== modified file 'Bugzilla/Install/Filesystem.pm'
---- Bugzilla/Install/Filesystem.pm	2011-02-17 22:34:25 +0000
-+++ Bugzilla/Install/Filesystem.pm	2011-03-06 04:41:53 +0000
-@@ -150,6 +150,7 @@
-         'importxml.pl'    => { perms => WS_EXECUTE },
-         'testserver.pl'   => { perms => WS_EXECUTE },
-         'whine.pl'        => { perms => WS_EXECUTE },
-+        'tr_importxml.pl' => { perms => WS_EXECUTE },
-         'email_in.pl'     => { perms => WS_EXECUTE },
-         'sanitycheck.pl'  => { perms => WS_EXECUTE },
-         'checksetup.pl'   => { perms => OWNER_EXECUTE },
-
 === modified file 'Bugzilla/Search.pm'
 --- Bugzilla/Search.pm	2011-03-01 13:43:24 +0000
 +++ Bugzilla/Search.pm	2011-03-09 05:26:36 +0000
@@ -99,23 +48,6 @@
 === modified file 'Bugzilla/User.pm'
 --- Bugzilla/User.pm	2011-02-14 21:55:29 +0000
 +++ Bugzilla/User.pm	2011-03-05 07:36:18 +0000
-@@ -508,6 +508,16 @@
-     }
- }
- 
-+sub testopia_queries {
-+    my $self = shift;
-+    my $dbh = Bugzilla->dbh;
-+    my $ref = $dbh->selectall_arrayref(
-+        "SELECT name, query FROM test_named_queries
-+         WHERE userid = ? AND isvisible = 1",
-+         {'Slice' =>{}}, $self->id);
-+    return $ref;
-+}
-+
- sub settings {
-     my ($self) = @_;
- 
 @@ -844,16 +854,23 @@
      my $class_restricted = Bugzilla->params->{'useclassification'} && $class_id;
  
@@ -179,16 +111,4 @@
  }
  
  sub product_responsibilities {
-
-=== modified file 'template/en/default/global/setting-descs.none.tmpl'
---- template/en/default/global/setting-descs.none.tmpl	2010-06-22 02:30:36 +0000
-+++ template/en/default/global/setting-descs.none.tmpl	2011-03-05 07:36:18 +0000
-@@ -40,6 +40,7 @@
-    "never"                            => "Never",
-    "cc_unless_role"                   => "Only if I have no role on them",
-    "lang"                             => "Language used in email",
-+   "view_testopia"                    => "View the Testopia links",
-    "quote_replies"                    => "Quote the associated comment when you click on its reply link",
-    "quoted_reply"                     => "Quote the full comment",
-    "simple_reply"                     => "Reference the comment number only",
 
