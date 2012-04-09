@@ -48,8 +48,8 @@ struct( 'Bugzilla::Extension::Testopia::Importer', {debug => '$'} );
 sub _check_category {
     my ( $twig, $e ) = @_;
     print "Checking categories...\n" if $debug;
-    my $product = Bugzilla::Product::check_product( $e->field('tr:product') );
-    if ( !Testopia::Category::check_case_category( $e->field('tr:name'), $product ) ) {
+    my $product = Bugzilla::Product->check($e->field('tr:product'));
+    if ( !Bugzilla::Extension::Testopia::Category::check_case_category( $e->field('tr:name'), $product ) ) {
         Bugzilla::Extension::Testopia::Category->create(
             {
                 product_id => $product->id,
@@ -63,8 +63,8 @@ sub _check_category {
 sub _check_build {
     my ( $twig, $e ) = @_;
     print "Checking builds...\n" if $debug;
-    my $product = Bugzilla::Product::check_product( $e->field('tr:product') );
-    if ( !Testopia::Build::check_build( $e->field('tr:name'), $product ) ) {
+    my $product = Bugzilla::Product->check($e->field('tr:product'));
+    if ( !Bugzilla::Extension::Testopia::Build::check_build( $e->field('tr:name'), $product ) ) {
         Bugzilla::Extension::Testopia::Build->create(
             {
                 product_id => $product->id,
@@ -78,8 +78,8 @@ sub _check_build {
 sub _check_environment {
     my ( $twig, $e ) = @_;
     print "Checking environments...\n" if $debug;
-    my $product = Bugzilla::Product::check_product( $e->field('tr:product') );
-    if ( !Testopia::Environment::check_environment( $e->field('tr:name'), $product ) ) {
+    my $product = Bugzilla::Product->check($e->field('tr:product'));
+    if ( !Bugzilla::Extension::Testopia::Environment::check_environment( $e->field('tr:name'), $product ) ) {
         Bugzilla::Extension::Testopia::Environment->create(
             {
                 product_id => $product->id,
@@ -93,7 +93,7 @@ sub _check_environment {
 sub _check_milestone {
     my ( $twig, $e ) = @_;
     print "Checking milestones...\n" if $debug;
-    my $product = Bugzilla::Product::check_product( $e->parent->field('tr:product') );
+    my $product = Bugzilla::Product->check($e->parent->field('tr:product'));
     Bugzilla::Milestone->check( { product => $product, name => $e->parent->field('tr:milestone') } );
     return 1;
 }
