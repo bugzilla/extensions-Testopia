@@ -9,11 +9,12 @@
  
  # We cannot use $^S to detect if we are in an eval(), because mod_perl
  # already eval'uates everything, so $^S = 1 in all cases under mod_perl!
-@@ -150,6 +151,16 @@
+@@ -150,6 +151,17 @@
                  $server->response($server->error_response_header);
              }
          }
-+        elsif (Bugzilla->error_mode == ERROR_MODE_AJAX) {
++        # ERROR_MODE_AJAX = 5, but we cannot use ERROR_MODE_AJAX from here.
++        elsif (Bugzilla->error_mode == 5) {
 +            # JSON can't handle strings across lines. 
 +            $message =~ s/\n/ /gm;
 +            my $err;

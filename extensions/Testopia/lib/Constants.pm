@@ -63,7 +63,7 @@ TIME_FORMAT
 
 use constant TESTOPIA_VERSION => "2.5";
 
-use constant ERROR_MODE_AJAX => 4;
+use constant ERROR_MODE_AJAX => 5;
 
 # Test Case Status
 use constant PROPOSED  => 1;
