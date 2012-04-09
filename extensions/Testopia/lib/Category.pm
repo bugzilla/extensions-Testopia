@@ -62,7 +62,7 @@ sub _check_product {
     
     my $product;
     if (trim($product_id) !~ /^\d+$/ ){
-        $product = Bugzilla::Product::check_product($product_id);
+        $product = Bugzilla::Product->check($product_id);
         $product = Bugzilla::Extension::Testopia::Product->new($product->id);
     }
     else {

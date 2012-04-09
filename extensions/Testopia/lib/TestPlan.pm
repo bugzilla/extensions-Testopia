@@ -117,7 +117,7 @@ sub _check_product {
     $product_id = trim($product_id);
     my $product;
     if ($product_id !~ /^\d+$/ ){
-        $product = Bugzilla::Product::check_product($product_id);
+        $product = Bugzilla::Product->check($product_id);
         $product = Bugzilla::Extension::Testopia::Product->new($product->id);
     }
     else {

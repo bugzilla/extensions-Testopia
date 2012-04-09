@@ -117,7 +117,7 @@ sub _check_env{
     $environment = trim($environment);
     my $environment_id;
     if (ref $environment){
-        $product = Bugzilla::Product::check_product($environment->{'product'});
+        $product = Bugzilla::Product->check($environment->{'product'});
         $environment_id = Bugzilla::Extension::Testopia::Environment::check_environment($environment->{'environment'}, $product); 
     }
     elsif ($environment =~ /^\d+$/){
@@ -135,7 +135,7 @@ sub _check_build{
     $build = trim($build);
     my $build_id;
     if (ref $build){
-        $product = Bugzilla::Product::check_product($build->{'product'});
+        $product = Bugzilla::Product->check($build->{'product'});
         $build_id = Bugzilla::Extension::Testopia::Build::check_build($build->{'build'}, $product); 
     }
     elsif ($build =~ /^\d+$/){

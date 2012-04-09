@@ -135,7 +135,7 @@ sub check_property {
     my $dbh = Bugzilla->dbh;
 
     unless ( $name && $element_id ) {
-        return "check_product must be passed a valid name and product_id";
+        return "check() must be passed a valid name and product_id";
     }
 
     my ($used) = $dbh->selectrow_array(

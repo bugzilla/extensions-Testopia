@@ -176,7 +176,7 @@ sub _check_category{
     $category = trim($category);
     my $category_id;
     if (ref $category){
-        $product = Bugzilla::Product::check_product($category->{'product'});
+        $product = Bugzilla::Product->check($category->{'product'});
         $category_id = Bugzilla::Extension::Testopia::Category::check_case_category($category->{'category'}, $product); 
     }
     elsif ($category =~ /^\d+$/){
@@ -371,14 +371,14 @@ sub _check_components {
     my $dbh = Bugzilla->dbh;
     ThrowUserError('testopia-missing-parameter', {param => 'components'}) unless $components;
     if (ref $components eq 'HASH'){
-                my $prod = Bugzilla::Product::check_product($components->{'product'});
+                my $prod = Bugzilla::Product->check($components->{'product'});
                 my $comp = Bugzilla::Component->check({product=> $prod, name => $components->{'component'}});
                 push @comp_ids, $comp->id;
     }
     elsif (ref $components eq 'ARRAY'){
         foreach my $c (@$components){
             if (ref $c){
-                my $prod = Bugzilla::Product::check_product($c->{'product'});
+                my $prod = Bugzilla::Product->check($c->{'product'});
                 my $comp = Bugzilla::Component->check({product => $prod, name => $c->{'component'}});
                 push @comp_ids, $comp->id;
             }

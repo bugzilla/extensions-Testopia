@@ -71,7 +71,7 @@ sub check_environment {
         $product = Bugzilla::Extension::Testopia::Product->new($params->{product});
     }
     else {
-        $product = Bugzilla::Product::check_product($params->{product});
+        $product = Bugzilla::Product->check($params->{product});
         $product = Bugzilla::Extension::Testopia::Product->new($product->id);
     }
 
@@ -114,7 +114,7 @@ sub create {
         $product = Bugzilla::Extension::Testopia::Product->new($new_values->{'product_id'});
     }
     else {
-        $product = Bugzilla::Product::check_product($new_values->{'product_id'});
+        $product = Bugzilla::Product->check($new_values->{'product_id'});
         $product = Bugzilla::Extension::Testopia::Product->new($product->id);
     }
 
@@ -142,7 +142,7 @@ sub create_full {
         $product = Bugzilla::Extension::Testopia::Product->new($params->{product});
     }
     else {
-        $product = Bugzilla::Product::check_product($params->{product});
+        $product = Bugzilla::Product->check($params->{product});
         $product = Bugzilla::Extension::Testopia::Product->new($product->id);
     }
 

@@ -461,7 +461,7 @@ creating new products, see Bugzilla::Product.
  
 =item C<lookup_name_by_id> B<DEPRECATED> Use Product::get instead
               
-=item C<lookup_id_by_name> B<DEPRECATED - CONSIDERED HARMFUL> Use Product::check_product instead
+=item C<lookup_id_by_name> B<DEPRECATED - CONSIDERED HARMFUL> Use Product->check instead
  
 =back
 

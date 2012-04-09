@@ -160,7 +160,7 @@ if ($action eq 'upload') {
         # Validate all the fields ahead of time to ensure that we have an atomic upload
         foreach my $row (@rows){
             next if ($row->{'plans'} =~ /Plans/);
-            my $product = Bugzilla::Product::check_product($row->{'product'});
+            my $product = Bugzilla::Product->check($row->{'product'});
             delete $row->{'product'};
             
             my $import_plan = $cgi->param('plan_id');
