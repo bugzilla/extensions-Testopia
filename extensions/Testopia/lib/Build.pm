@@ -51,6 +51,7 @@ use constant UPDATE_COLUMNS         => qw(name description milestone isactive);
 use constant VALIDATORS => {
     product_id  => \&_check_product,
     isactive    => \&_check_isactive,
+    description => \&_check_description,
 };
 
 ###############################
@@ -105,6 +106,12 @@ sub _check_name {
                    'name' => $name}) if $notunique;
                
     return $name;
+}
+
+sub _check_description {
+    my ($invocant, $description) = @_;
+    $description = trim($description);
+    return $description;
 }
 
 sub _check_milestone {
