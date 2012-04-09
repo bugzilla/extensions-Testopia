@@ -79,6 +79,7 @@ use constant UPDATE_COLUMNS         => qw(product_id type_id default_product_ver
 use constant VALIDATORS => {
     product_id => \&_check_product,
     author_id  => \&_check_author,
+    name       => \&_check_name,
     type_id    => \&_check_type,
     isactive   => \&_check_isactive,
 };
@@ -144,6 +145,13 @@ sub _check_author {
         return $id;
     }
     return $author->id;
+}
+
+sub _check_name {
+    my ($invocant, $name) = @_;
+    $name = trim($name);
+    ThrowUserError('testopia-missing-required-field', {field => 'name'}) unless $name;
+    return $name;
 }
 
 sub _check_type {
