@@ -377,6 +377,7 @@ sub init {
                 INNER JOIN test_cases on test_case_plans.case_id = test_cases.case_id
                 WHERE test_cases.default_tester_id = " . Bugzilla->user->id .
               " UNION SELECT plan_id FROM test_plan_permissions WHERE userid = " . Bugzilla->user->id);
+        $ids = [0] unless scalar @$ids;
         push @wherepart, "plan_id in (" . join (',',@$ids) .")";
     }
 
