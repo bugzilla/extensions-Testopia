@@ -78,19 +78,14 @@ sub bug_end_of_update {
 
 sub buglist_columns {
     my ($self, $args) = @_;
-    
-    
     my $columns = $args->{'columns'};
     $columns->{'test_cases'} = { 'name' => 'tcb.case_id' , 'title' => 'Test Cases' };
 }
 
-sub colchange_columns {
+sub buglist_column_joins {
     my ($self, $args) = @_;
-    
-    
-    
-    my $columns = $args->{'columns'};
-    push (@$columns, "test_cases")
+    my $joins = $args->{column_joins};
+    $joins->{test_cases} = { table => 'test_case_bugs', as => 'tcb' };
 }
 
 sub config_add_panels {
