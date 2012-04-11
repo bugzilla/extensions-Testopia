@@ -42,9 +42,7 @@ sub testopia_queries {
 
 sub bug_end_of_update {
     my ($self, $args) = @_;
-    
-    
-    
+
     my $bug = $args->{'bug'};
     my $timestamp = $args->{'timestamp'};
     my $changes = $args->{'changes'};
