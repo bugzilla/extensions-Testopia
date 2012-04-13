@@ -6,6 +6,7 @@ use Bugzilla::Extension::Testopia::Product;
 use Bugzilla::Extension::Testopia::TestCase;
 use Bugzilla::Extension::Testopia::TestPlan;
 use Bugzilla::Extension::Testopia::TestRun;
+use Bugzilla::Constants;
 use Bugzilla::Group;
 use Bugzilla::Status;
 use Bugzilla::User::Setting;
@@ -15,11 +16,19 @@ use File::Path;
 BEGIN {
     *Bugzilla::Bug::get_test_case_count = \&get_test_case_count;
     *Bugzilla::User::testopia_queries = \&testopia_queries;
+    # We must redefine these two methods.
+    undef &Bugzilla::User::get_selectable_products;
+    undef &Bugzilla::User::derive_regexp_groups;
+    *Bugzilla::User::get_selectable_products = \&get_selectable_products;
+    *Bugzilla::User::derive_regexp_groups =\&derive_regexp_groups;
 }
 
 our $VERSION = '2.5';
 
 sub WS_EXECUTE { Bugzilla->localconfig->{'webservergroup'} ? 0750 : 0755 };
+
+# The subroutines below are used in the BEGIN block above to extend
+# or redefine some methods in Bugzilla::Bug and Bugzilla::User.
 
 sub get_test_case_count {
       my $self = shift;
@@ -39,6 +48,106 @@ sub testopia_queries {
          {'Slice' =>{}}, $self->id);
     return $ref;
 }
+
+sub get_selectable_products {
+    my $self = shift;
+    my $class_id = shift;
+    my $class_restricted = Bugzilla->params->{'useclassification'} && $class_id;
+
+    if (!defined $self->{selectable_products}) {
+        my $query = "(SELECT id, name AS pname " .
+                    "  FROM products " .
+                 "LEFT JOIN group_control_map " .
+                        "ON group_control_map.product_id = products.id " .
+                      " AND group_control_map.membercontrol = " . CONTROLMAPMANDATORY .
+                      " AND group_id NOT IN(" . $self->groups_as_string . ") " .
+                  "   WHERE group_id IS NULL) " ;
+
+        $query .= "UNION (SELECT id, tr_products.name AS pname FROM products AS tr_products ".
+                  "INNER JOIN test_plans ON tr_products.id = test_plans.product_id ".
+                  "INNER JOIN test_plan_permissions ON test_plan_permissions.plan_id = test_plans.plan_id ".
+                  "WHERE test_plan_permissions.userid = ?)";
+
+        $query .= " ORDER BY pname ";
+
+        my $prod_ids = Bugzilla->dbh->selectcol_arrayref($query,undef,$self->id);
+
+        $self->{selectable_products} = Bugzilla::Product->new_from_list($prod_ids);
+    }
+
+    # Restrict the list of products to those being in the classification, if any.
+    if ($class_restricted) {
+        return [grep {$_->classification_id == $class_id} @{$self->{selectable_products}}];
+    }
+    # If we come here, then we want all selectable products.
+    return $self->{selectable_products};
+}
+
+sub derive_regexp_groups {
+    my ($self) = @_;
+
+    my $id = $self->id;
+    return unless $id;
+
+    my $dbh = Bugzilla->dbh;
+
+    my $sth;
+
+    # add derived records for any matching regexps
+
+    $sth = $dbh->prepare("SELECT id, userregexp, user_group_map.group_id
+                            FROM groups
+                       LEFT JOIN user_group_map
+                              ON groups.id = user_group_map.group_id
+                             AND user_group_map.user_id = ?
+                             AND user_group_map.grant_type = ?");
+    $sth->execute($id, GRANT_REGEXP);
+
+    my $group_insert = $dbh->prepare(q{INSERT INTO user_group_map
+                                       (user_id, group_id, isbless, grant_type)
+                                       VALUES (?, ?, 0, ?)});
+    my $group_delete = $dbh->prepare(q{DELETE FROM user_group_map
+                                       WHERE user_id = ?
+                                         AND group_id = ?
+                                         AND isbless = 0
+                                         AND grant_type = ?});
+    while (my ($group, $regexp, $present) = $sth->fetchrow_array()) {
+        if (($regexp ne '') && ($self->login =~ m/$regexp/i)) {
+            $group_insert->execute($id, $group, GRANT_REGEXP) unless $present;
+        } else {
+            $group_delete->execute($id, $group, GRANT_REGEXP) if $present;
+        }
+    }
+    # Now do the same for Testopia test plans.
+    $sth = $dbh->prepare("SELECT test_plan_permissions_regexp.plan_id,
+                                 user_regexp, test_plan_permissions_regexp.permissions,
+                                 test_plan_permissions.plan_id
+                          FROM test_plan_permissions_regexp
+                     LEFT JOIN test_plan_permissions
+                            ON test_plan_permissions_regexp.plan_id = test_plan_permissions.plan_id
+                           AND test_plan_permissions.userid = ?
+                           AND test_plan_permissions.grant_type = ?");
+
+    $sth->execute($id, GRANT_REGEXP);
+    my $plan_insert = $dbh->prepare(q{INSERT INTO test_plan_permissions
+                                       (userid, plan_id, permissions, grant_type)
+                                       VALUES (?, ?, ?, ?)});
+    my $plan_delete = $dbh->prepare(q{DELETE FROM test_plan_permissions
+                                       WHERE userid = ?
+                                         AND plan_id = ?
+                                         AND grant_type = ?});
+
+    while (my ($planid, $regexp, $perms, $present) = $sth->fetchrow_array()) {
+        if (($regexp ne '') && ($self->{login} =~ m/$regexp/i)) {
+            $plan_insert->execute($id, $planid, $perms, GRANT_REGEXP) unless $present;
+        } else {
+            $plan_delete->execute($id, $planid, GRANT_REGEXP) if $present;
+        }
+    }
+}
+
+# End of redefined subroutines.
+
 
 sub bug_end_of_update {
     my ($self, $args) = @_;
