@@ -2,6 +2,7 @@ package Bugzilla::Extension::Testopia;
 use strict;
 use base qw(Bugzilla::Extension);
 
+use Bugzilla::Extension::Testopia::Constants;
 use Bugzilla::Extension::Testopia::Product;
 use Bugzilla::Extension::Testopia::TestCase;
 use Bugzilla::Extension::Testopia::TestPlan;
@@ -11,7 +12,9 @@ use Bugzilla::Group;
 use Bugzilla::Status;
 use Bugzilla::User::Setting;
 use Bugzilla::Util;
+
 use File::Path;
+use JSON;
 
 BEGIN {
     *Bugzilla::Bug::get_test_case_count = \&get_test_case_count;
@@ -1269,6 +1272,21 @@ sub enter_bug_entrydefaultvars {
     
     $vars->{'case_id'} = $cgi->param('case_id');
     $vars->{'caserun_id'} = $cgi->param('caserun_id');
+}
+
+sub error_catch {
+    my ($self, $args) = @_;
+    return unless Bugzilla->error_mode == ERROR_MODE_AJAX;
+
+    # JSON can't handle strings across lines.
+    my $message = ${$args->{message}};
+    $message =~ s/\n/ /gm;
+    my $err = { success => JSON::false,
+                error   => $args->{error},
+                message => $message };
+    my $json = new JSON;
+    print $json->encode($err);
+    exit;
 }
 
 sub install_before_final_checks {
