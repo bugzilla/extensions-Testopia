@@ -52,6 +52,8 @@ something like this:
 
 Next you need to patch the Bugzilla files. Find the patch file in the 
 extensions/Testopia directory matching your version of Bugzilla.
+If you have Bugzilla 4.2.1 or newer, this step is not needed.
+Testopia will work without patching Bugzilla.
 For example, if you are running Bugzilla 3.6.1 you will apply the patch-3.6.1 patch file.
  
   $> patch -p0 -i extensions/Testopia/patch-3.6.1
@@ -64,30 +66,26 @@ If you are missing any dependencies, checksetup.pl will inform you.
 See "Installing Dependencies".
   
 
-''' From CVS: '''
-If you want to install the latest code from CVS you will need to do the 
+''' From Bzr: '''
+If you want to install the latest code from Bzr you will need to do the
 following:
 
-1. Check out the CVS code in a temporary location
+1. Check out the Bzr code in a temporary location
 
-  $> export CVSROOT=:pserver:anonymous@cvs-mirror.mozilla.org:/cvsroot
-  $> cvs login
-  (Logging in to anonymous@cvs-mirror.mozilla.org)
-  CVS password: anonymous
-
-  $> cvs co Testopia
+  $> bzr co bzr://bzr.mozilla.org/bugzilla/extensions/testopia/trunk testopia
 
 2. You will now make a tarball of the source. If you like to update your 
-Bugzilla from CVS, be sure to delete the top level CVS directory first.
+Bugzilla from Bzr, be sure to delete the top level .bzr directory first to
+not conflict with the Bugzilla .bzr directory.
 
-  $> cd mozilla/webtools/testopia
-  $> rm -rf CVS
-  $> tar cvf /tmp/testopia.tar .
+  $> cd testopia/
+  $> rm -rf .bzr
+  $> tar czvf /tmp/testopia.tar.gz .
 
 Once you have your tarball, follow the tarball instructions above to untar 
-it into your Bugzilla directory  The last step is to install the Ext libraries:
+it into your Bugzilla directory. The last step is to install the Ext libraries:
 
-  $> cd path/to/bugzilla/testopia/
+  $> cd path/to/bugzilla/extensions/Testopia/
   $> wget http://extjs.com/deploy/ext-3.2.1.zip
   $> unzip ext-3.2.1.zip
   $> mv ext-3.2.1 extjs
@@ -102,10 +100,13 @@ the developers for help as we have never tried to install on Windows and don't
 have any desire to. However, there have been numerous users that have managed 
 to do so on their own. Here are some pointers: 
 
-*Add a .txt file extension to your corresponding patch file (\bugzilla\testopia\patch-3.0[.x]). 
-*Edit the above patch file to remove *nix line feed characters, and putting in classic DOS/Windows carriage returns.<br>You can do this manually, or with WordPad (write.exe) or numerous utilities such as unix2dos or tofrodos. 
-*Download GNU Patch and install it in a directory in your path.<br>It can be downloaded from http://gnuwin32.sourceforge.net/packages/patch.htm 
-*Change PERL "shebang" paths from native *nix, to a Windows Format. <br>If you have MySQL Server installed, the Replace utility does a great job at this:
+*Add a .txt file extension to your corresponding patch file (\bugzilla\extensions\testopia\patch-3.6[.x]).
+*Edit the above patch file to remove *nix line feed characters, and putting in classic DOS/Windows carriage returns.
+ You can do this manually, or with WordPad (write.exe) or numerous utilities such as unix2dos or tofrodos.
+*Download GNU Patch and install it in a directory in your path.
+ It can be downloaded from http://gnuwin32.sourceforge.net/packages/patch.htm
+*Change PERL "shebang" paths from native *nix, to a Windows Format.
+ If you have MySQL Server installed, the Replace utility does a great job at this:
 
  C:\&lt;apache path&gt;\htdocs\bugzilla&gt; for&nbsp;%i in (*.cgi) do ("&lt;MySQL path&gt;\bin\replace.exe" "#!/usr/bin/perl" "#!C:\perl\bin\perl" --&nbsp;%i)
  C:\&lt;apache path&gt;\htdocs\bugzilla&gt; for&nbsp;%i in (*.pl) do ("&lt;MySQL path&gt;\bin\replace.exe" "#!/usr/bin/perl" "#!C:\perl\bin\perl" --&nbsp;%i)
@@ -139,7 +140,7 @@ Install GD-Graph3d:
 
 In Windows, missing modules are easiest installed by running checksetup.pl and paying attention to the printout: 
 <pre>C:\bugzilla\&gt;checksetup.pl
-* This is Bugzilla 3.2.4 on perl 5.8.9
+* This is Bugzilla 3.6.2 on perl 5.8.9
 * Running on WinXP/.Net Build 2600 (Service Pack 3)
 Checking perl modules...
 ...
@@ -179,10 +180,10 @@ In general, you will need to follow these steps:
 
 # Reverse the old patch by running the patch command you used to install with -R
 # Untar the new files
-# Apply the new patch
+# Apply the new patch (only if running Bugzilla older than 4.2.1!)
 # Run checksetup.pl
 
-'''Upgrading to latest from CVS:'''
+'''Upgrading to latest from CVS (obsolete):'''
 
 Testopia comes with a script to update to the lates checked in version (trunk or tip). 
 WARNING: This should only be done against the latest released version. The tip is 
@@ -206,7 +207,7 @@ Questions can be asked on the mailing list:
     
 or in the IRC channel at: 
     
-    irc://irc.mozilla.org/testopia or irc://irc.mozilla.org/mozwebtools
+    irc://irc.mozilla.org/testopia or irc://irc.mozilla.org/bugzilla
 
 The latest news and info can be found at the project homepage:
 
