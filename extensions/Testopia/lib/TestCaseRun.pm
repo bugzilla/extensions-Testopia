@@ -762,7 +762,7 @@ sub update_bugs {
         $dbh->bz_start_transaction();
         
         $bug->add_comment($comment);
-        $bug->set_status($status, {resolution => $resolution});
+        $bug->set_bug_status($status, {resolution => $resolution});
         $bug->update();
         
         $dbh->bz_commit_transaction();
