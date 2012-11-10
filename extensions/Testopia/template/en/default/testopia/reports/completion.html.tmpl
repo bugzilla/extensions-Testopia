@@ -73,7 +73,7 @@
 [% IF plans %]
  <br>In Plans: 
  [% FOREACH r IN plans.split(',') %]
-   <a href="tr_show_plan.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
+   <a href="tr_show_plan.cgi?plan_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
  [% END %] 
 [% END %]</h4>
 <div id="completion_report">
