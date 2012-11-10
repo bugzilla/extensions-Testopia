@@ -100,7 +100,7 @@ if ($action eq 'upload') {
         # Limit to 1 MB. Anything larger will take way too long to parse.
         ThrowUserError("file_too_large", { filesize => sprintf("%.0f", length($data)/1024) }) if length($data) >  1048576;
          
-        my $importer = new Testopia::Importer;
+        my $importer = new Bugzilla::Extension::Testopia::Importer;
         my $case_ids = $importer->parse($data,$cgi->param('product_id'),$cgi->param('plan_id'));
 
         if ($ctype eq 'json'){
