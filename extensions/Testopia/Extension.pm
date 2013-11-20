@@ -151,6 +151,13 @@ sub derive_regexp_groups {
 
 # End of redefined subroutines.
 
+sub bz_version {
+    BUGZILLA_VERSION =~ /^(\d+\.\d+)(?:(rc|\.)(\d+))?\+?$/;
+
+    # There are no DB schema changes on stable branches so
+    # we don't care about minor releases.
+    return $1;
+}
 
 sub bug_end_of_update {
     my ($self, $args) = @_;
@@ -936,7 +943,7 @@ sub db_schema_abstract_schema {
                 }
             },
             component_id => {
-                TYPE       => 'INT2',
+                TYPE       => bz_version() > 4.4 ? 'INT3' : 'INT2',
                 NOTNULL    => 1,
                 REFERENCES => {
                     TABLE  => 'components',
@@ -1476,6 +1483,13 @@ sub install_update_db {
                     COLUMN => 'case_id',
                     DELETE => 'CASCADE'
                 }});
+        if (bz_version() > 4.4) {
+            $dbh->bz_alter_column('test_case_components', 'component_id', {TYPE => 'INT3', NOTNULL => 1, REFERENCES => {
+                        TABLE  => 'components',
+                        COLUMN => 'id',
+                        DELETE => 'CASCADE'
+                    }});
+        }
         $dbh->bz_alter_column('test_case_dependencies', 'blocked', {TYPE => 'INT4', NOTNULL => 1});
         $dbh->bz_alter_column('test_case_dependencies', 'dependson', {TYPE => 'INT4', NOTNULL => 1});
         $dbh->bz_alter_column('test_case_plans', 'case_id', {TYPE => 'INT4', NOTNULL => 1, REFERENCES => {
