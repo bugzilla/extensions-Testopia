@@ -450,20 +450,12 @@ else{
         my $product = Bugzilla::Extension::Testopia::Product->new($product_id);
         
         my @comps;
-        foreach my $c (@{$product->components}){
-            if ($cgi->param('query')){
+        foreach my $c (@{$product->components}) {
+            if (!$cgi->param('query') || $c->name =~ m/$q/i) {
                 push @comps, {
                     'id' => $c->id, 
                     'name' => $c->name, 
-                    'qa_contact' => $c->default_qa_contact->login,
-                    'product' => $c->product->name,
-                } if ($c->name =~ m/$q/i);
-            }
-            else {
-                push @comps, {
-                    'id' => $c->id, 
-                    'name' => $c->name, 
-                    'qa_contact' => $c->default_qa_contact->login,
+                    'qa_contact' => $c->default_qa_contact ? $c->default_qa_contact->login : '',
                     'product' => $c->product->name,
                 };
             }
