@@ -1092,13 +1092,13 @@ sub tester_regexp {
 sub tester_regexp_permissions { 
     my ($self) = @_;
     my $dbh = Bugzilla->dbh;
-    
-    my ($perms) = $dbh->selectrow_array(
+
+    my $perms = $dbh->selectrow_array(
         "SELECT permissions 
            FROM test_plan_permissions_regexp
-          WHERE plan_id = ?", undef, $self->id);
+          WHERE plan_id = ?", undef, $self->id) || 0;
     my $p;
-    
+
     $p->{'read'}   = $perms >= TR_READ;
     $p->{'write'}  = $perms >= TR_WRITE;
     $p->{'delete'} = $perms >= TR_DELETE;
