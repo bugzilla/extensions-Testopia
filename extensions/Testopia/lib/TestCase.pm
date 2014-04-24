@@ -580,7 +580,7 @@ sub update {
 sub lookup_status {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
-    trick_taint($id);
+    detaint_natural($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT name 
                FROM test_case_status
@@ -604,7 +604,7 @@ sub lookup_status_by_name {
 sub lookup_category {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
-    trick_taint($id);
+    detaint_natural($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT name 
                FROM test_case_categories
@@ -628,7 +628,7 @@ sub lookup_category_by_name {
 sub lookup_priority {
     my ($id) = @_;
     my $dbh = Bugzilla->dbh;
-    trick_taint($id);
+    detaint_natural($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT value 
                FROM priority
@@ -651,8 +651,8 @@ sub lookup_priority_by_value {
 
 sub lookup_default_tester {
     my ($id) = @_;
+    detaint_natural($id) or return '';
     my $dbh = Bugzilla->dbh;
-    trick_taint($id);
     my ($value) = $dbh->selectrow_array(
             "SELECT login_name 
                FROM profiles
