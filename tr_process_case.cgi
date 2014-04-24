@@ -218,7 +218,7 @@ elsif ($action eq 'case_to_bug'){
         ThrowUserError("testopia-read-only", {'object' => $case});
     }
     $case->text;
-    foreach my $field qw(action effect) {
+    foreach my $field (qw(action effect)) {
         $case->{text}->{$field} =~ s/(<br[\s\/>]+|<p.*?>|<li.*?>)/\n/g;
         $case->{text}->{$field} =~ s/<.*?>//g;
         # Trivial HTML tag remover
