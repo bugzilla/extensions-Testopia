@@ -1105,7 +1105,7 @@ Testopia.TestCase.NewCaseForm = function(plan_ids, product_id, run_id){
                     id: 'case_alias',
                     name: 'alias'
                 }, new Testopia.TestCase.PriorityCombo({
-                    fieldLabel: '<b>Priority</b>&nbsp;&nbsp;<img src="images/help.png" id="priority_help" style="cursor:pointer" onclick=\'window.open("testing_priorities.html","Priority Definitions","resizable=no, scrollbars=yes, width=550,height=420");\'/>',
+                    fieldLabel: '<b>Priority</b>&nbsp;&nbsp;<img src="extensions/Testopia/img/help.png" id="priority_help" style="cursor:pointer" onclick=\'window.open("testing_priorities.html","Priority Definitions","resizable=no, scrollbars=yes, width=550,height=420");\'/>',
                     hiddenName: 'priority',
                     mode: 'local',
                     allowBlank: false
