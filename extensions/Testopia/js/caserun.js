@@ -257,7 +257,7 @@ Testopia.TestCase.Bugs.Grid = function(id){
         dataIndex: 'severity',
         sortable: true
     }, {
-        header: "Asignee",
+        header: "Assignee",
         width: 150,
         dataIndex: 'assignee',
         sortable: true
