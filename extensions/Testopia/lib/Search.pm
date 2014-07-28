@@ -86,13 +86,7 @@ sub init {
     my $user = $self->{'user'} || Bugzilla->user;
     $self->{'cgi'} = $cgi;
     $self->{'fields'} = $fields if $fields;
-    my $debug = $cgi->param('debug') || 0;
     my $dbh = Bugzilla->dbh;
-    print $cgi->header if $debug;
-    if ($debug && !$cgi->{'final_separator'}){
-        print "<h3>URL Params</h3>";
-        print '<p>', join('<br>', split('&', $cgi->canonicalise_query)), "</p>";
-    }
     my $page = $cgi->param('page') || 0;
     my $start = $cgi->param('start') || 0;
     my $limit = $cgi->param('limit') || 25;
@@ -1560,18 +1554,10 @@ sub init {
             $cgi->param("field$chart-$row-$col", shift(@$ref));
             $cgi->param("type$chart-$row-$col", shift(@$ref));
             $cgi->param("value$chart-$row-$col", shift(@$ref));
-            if ($debug) {
-                print "field$chart-$row-$col => " . $cgi->param("field$chart-$row-$col") ." | ". "type$chart-$row-$col => " . $cgi->param("type$chart-$row-$col") ." | ". "value$chart-$row-$col => " . $cgi->param("value$chart-$row-$col") . "<br>\n";
-            }
             $col++;
 
         }
         $row++;
-    }
-    if ($debug){
-        foreach my $p ($cgi->param){
-            print "PARAM: $p => " . $cgi->param($p) . "<br>";
-        }
     }
     # get a list of field names to verify the user-submitted chart fields against
     my $ref = $dbh->selectall_arrayref("SELECT name, fieldid FROM test_fielddefs");
@@ -1621,17 +1607,11 @@ sub init {
                 foreach my $key (@funcnames) {
                     if ("$f,$t,$rhs" =~ m/$key/) {
                         my $ref = $funcsbykey{$key};
-                        if ($debug) {
-                            print "<p>$key ($f , $t , $rhs ) => ";
-                        }
                         $ff = $f;
                        if ($f !~ /\./) {
                             $ff = "test_". $obj ."s.$f";
                         }
                         &$ref;
-                        if ($debug) {
-                            print "$f , $t , $v , $term</p>";
-                        }
                         if ($term) {
                             last;
                         }
@@ -1685,11 +1665,6 @@ sub init {
             push(@supptables, $specialorderjoin{$splitfield[0]});
         }
     }
-    if ($debug){
-        print "<pre>";
-        print join("\n", @supptables);
-        print "</pre>";
-    }
     my %suppseen = ("test_". $obj ."s" => 1);
     my $suppstring = "test_". $obj ."s";
     my @supplist = (" ");
@@ -1717,7 +1692,6 @@ sub init {
     
     # Make sure we create a legal SQL query.
     @andlist = ("1 = 1") if !@andlist;
-    print "WHEREPART: " . Data::Dumper::Dumper(\@wherepart) if $debug;
     my $query;
     if ($self->{'fields'}){
         $query = "SELECT $distinct". join(",", @{$self->{'fields'}});
@@ -1774,10 +1748,7 @@ sub init {
     elsif (defined $page){
         $query .= " LIMIT $pagesize OFFSET ". $page*$pagesize;
     }
-    if ($debug) {
-        print "<p><code>" . $query . "</code></p>\n";
-    }
-    
+
     $self->{'sql'} = $query;
 
 }

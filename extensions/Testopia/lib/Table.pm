@@ -105,7 +105,6 @@ sub init {
                                     function => 'Testopia::Table::_init'});
     $self->{'url_loc'} = $url;
     $self->{'cgi'} = $cgi;
-    my $debug = $cgi->param('debug') if $cgi;
     my @list;
     if ($query){
         # For paging we need to know the total number of items
@@ -117,7 +116,6 @@ sub init {
 
         my $count_res = $dbh->selectcol_arrayref($countquery);
         my $count = scalar @$count_res;
-        print "<p> Total rows: $count</p>" if $debug;
 
         $self->{'list_count'} = $count;
         my @ids;
@@ -154,8 +152,6 @@ sub init {
         $self->{'page'} = $cgi->param('page') || 0;
     }
 
-    print $query if $debug;
-    exit if $debug;
 #    elsif (!$query && !$list){
 #        my @list;
 #        foreach my $id (split(",", $self->get_saved_list())){
