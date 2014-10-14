@@ -52,6 +52,7 @@ sub get_param_list {
   {
    name    => 'testopia-default-plan-testers-regexp', 
    type    => 't',
+   default => '',
   },
 
 #  {
