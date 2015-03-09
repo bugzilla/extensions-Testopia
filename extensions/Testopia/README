@@ -6,7 +6,8 @@ organizations to integrate bug reporting with their test case run results.
 Though it is designed with software testing in mind, it can be used to track 
 testing on virtually anything in the engineering process.
 
-The following installation instructions assume you are installing the latest version of Testopia, currently version 2.4.
+The following installation instructions assume you are installing the latest
+version of Testopia, currently version 2.4.
 
 === Requirements ===
 * Bugzilla 3.6+
@@ -34,13 +35,15 @@ Please make sure that your language of Bugzilla is the same as language of
 Testopia to  be installed on. If you are not sure, just set language of your 
 Bugzilla to English. You can change it any time later.
 
-API USERS TAKE NOTE: Positional parameters are now deprecated as of 2.4. All params should now be sent
-in a hash (struct, dict, hashmap or whatever your language of choice calls key, value pairs). Though all attempts
-have been made to provide continuing support for positional parameters, please be aware that 
-some API calls may fail until you make this change. Also, future versions may remove this support completely.
+API USERS TAKE NOTE: Positional parameters are now deprecated as of 2.4. All
+params should now be sent in a hash (struct, dict, hashmap or whatever your
+language of choice calls key, value pairs). Though all attempts have been made
+to provide continuing support for positional parameters, please be aware that 
+some API calls may fail until you make this change. Also, future versions may
+remove this support completely.
 
 === Installation on Linux ===
-                                   
+
 ''' From the tarball: '''
 If you are installing Testopia from the release tarball, simply untar the
 tarball in your bugzilla top level directory. On Linux this would look
@@ -50,36 +53,28 @@ something like this:
   $> cd /path/to/bugzilla
   $> tar xzvf testopia-<version>.tar.gz
 
-Next you need to patch the Bugzilla files. Find the patch file in the 
-extensions/Testopia directory matching your version of Bugzilla.
-If you have Bugzilla 4.2.1 or newer, this step is not needed.
-Testopia will work without patching Bugzilla.
-For example, if you are running Bugzilla 3.6.1 you will apply the patch-3.6.1 patch file.
- 
-  $> patch -p0 -i extensions/Testopia/patch-3.6.1
- 
-Finally, you need to run checksetup.pl
+Then, you need to run checksetup.pl:
 
   $> ./checksetup.pl
 
 If you are missing any dependencies, checksetup.pl will inform you. 
 See "Installing Dependencies".
-  
 
-''' From Bzr: '''
-If you want to install the latest code from Bzr you will need to do the
+
+''' From Git: '''
+If you want to install the latest code from Git you will need to do the
 following:
 
-1. Check out the Bzr code in a temporary location
+1. Check out the Git code in a temporary location
 
-  $> bzr co bzr://bzr.mozilla.org/bugzilla/extensions/testopia/trunk testopia
+  $> git clone https://git.mozilla.org/bugzilla/extensions/Testopia.git testopia
 
 2. You will now make a tarball of the source. If you like to update your 
-Bugzilla from Bzr, be sure to delete the top level .bzr directory first to
-not conflict with the Bugzilla .bzr directory.
+Bugzilla from Git, be sure to delete the top level .git directory first to
+not conflict with the Bugzilla .git directory.
 
   $> cd testopia/
-  $> rm -rf .bzr
+  $> rm -rf .git
   $> tar czvf /tmp/testopia.tar.gz .
 
 Once you have your tarball, follow the tarball instructions above to untar 
@@ -100,11 +95,6 @@ the developers for help as we have never tried to install on Windows and don't
 have any desire to. However, there have been numerous users that have managed 
 to do so on their own. Here are some pointers: 
 
-*Add a .txt file extension to your corresponding patch file (\bugzilla\extensions\testopia\patch-3.6[.x]).
-*Edit the above patch file to remove *nix line feed characters, and putting in classic DOS/Windows carriage returns.
- You can do this manually, or with WordPad (write.exe) or numerous utilities such as unix2dos or tofrodos.
-*Download GNU Patch and install it in a directory in your path.
- It can be downloaded from http://gnuwin32.sourceforge.net/packages/patch.htm
 *Change PERL "shebang" paths from native *nix, to a Windows Format.
  If you have MySQL Server installed, the Replace utility does a great job at this:
 
@@ -112,21 +102,18 @@ to do so on their own. Here are some pointers:
  C:\&lt;apache path&gt;\htdocs\bugzilla&gt; for&nbsp;%i in (*.pl) do ("&lt;MySQL path&gt;\bin\replace.exe" "#!/usr/bin/perl" "#!C:\perl\bin\perl" --&nbsp;%i)
  C:\&lt;apache path&gt;\htdocs\bugzilla\Bugzilla&gt; for&nbsp;%i in (*.pm) do ("&lt;MySQL path&gt;\bin\replace.exe" "#!/usr/bin/perl" "#!C:\perl\bin\perl" --&nbsp;%i)
 
-From here the steps should be fairly identical to those above, meaning patch the files and run checksetup.pl. 
+From here the steps should be fairly identical to those above, meaning run checksetup.pl. 
 
-If you have problems please post questions to the support-webtools list. Do not email the developers directly. 
+If you have problems please post questions to the support-webtools list.
+Do not email the developers directly. 
 
-References: 
-
-*http://wiki.mozilla.org/Bugzilla:Win32Install
-*http://www.bugzilla.org/docs/3.2/en/html/configuration.html#http-iis
-*http://acushen.spaces.live.com/Blog/cns!E3A022289D65B5C0!171.entry
-
-If you find additional pointers, please post them to the Wiki version of this file at http://wiki.mozilla.org/Testopia:README
+If you find additional pointers, please post them to the Wiki version of this
+file at http://wiki.mozilla.org/Testopia:README
 
 === Installing Dependencies  ===
 
-Some of the most common dependencies you'll need to install can be easily installed in both Windows and linux: 
+Some of the most common dependencies you'll need to install can be easily
+installed in both Windows and linux: 
 
 Install JSON: 
 
@@ -138,7 +125,9 @@ Install GD-Graph3d:
      perl-MCPAN -e shell
  install W/WA/WADG/GD-Graph3d-0.63.tar.gz
 
-In Windows, missing modules are easiest installed by running checksetup.pl and paying attention to the printout: 
+In Windows, missing modules are easiest installed by running checksetup.pl and
+paying attention to the printout: 
+
 <pre>C:\bugzilla\&gt;checksetup.pl
 * This is Bugzilla 3.6.2 on perl 5.8.9
 * Running on WinXP/.Net Build 2600 (Service Pack 3)
@@ -169,7 +158,9 @@ COMMANDS:
     ppm install TimeDate
 ...
 </pre> 
-When running checksetup.pl, you will get an "Unable To Locate Component" error related to "OCI.dll" if you do not have the Oracle perl module installed. &nbsp;If you are not using Oracle you can supress this message by running the following command: 
+When running checksetup.pl, you will get an "Unable To Locate Component" error
+related to "OCI.dll" if you do not have the Oracle perl module installed.
+If you are not using Oracle you can supress this message by running the following command: 
 <pre>ppm remove --area perl DBD::Oracle
 </pre> 
 Remember to "ppm install DBD-mysql" if you are using MySQL!<br>
@@ -180,20 +171,8 @@ In general, you will need to follow these steps:
 
 # Reverse the old patch by running the patch command you used to install with -R
 # Untar the new files
-# Apply the new patch (only if running Bugzilla older than 4.2.1!)
 # Run checksetup.pl
 
-'''Upgrading to latest from CVS (obsolete):'''
-
-Testopia comes with a script to update to the lates checked in version (trunk or tip). 
-WARNING: This should only be done against the latest released version. The tip is 
-considered unstable.
-
-    $<path to bugzilla>/testopia/contrib> bash cvs_update.sh /path/to/bugzilla
-
-The script can be modified to checkout a tag or version if you know what you 
-are doing.
-maintenance 
 === Getting Help ===
 
 First you should consult the documentation. You can reach it by clicking the 
