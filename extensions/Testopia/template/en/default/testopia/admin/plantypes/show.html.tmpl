@@ -31,12 +31,12 @@
   [% FOREACH type = plan.get_plan_types %]
   <tr>
     <td>[% type.name FILTER html %]</td>
-    <td><a href="tr_admin.cgi?item=plan_type&action=edit&type_id=[% type.id FILTER none %]">Edit</a></td>
+    <td><a href="page.cgi?id=tr_admin.html&item=plan_type&action=edit&type_id=[% type.id FILTER none %]">Edit</a></td>
   </tr>
   [% END %]
   <tr>
     <td></td>
-    <td><a href="tr_admin.cgi?item=plan_type&action=add">Add</a></td>
+    <td><a href="page.cgi?id=tr_admin.html&item=plan_type&action=add">Add</a></td>
 </table>
 
 [% PROCESS global/footer.html.tmpl %]

@@ -2049,6 +2049,17 @@ sub install_update_db {
     }
 }
 
+sub page_before_template {
+    my ($self, $args) = @_;
+    my $page = $args->{'page_id'};
+    my $vars = $args->{'vars'};
+
+    if ($page eq 'tr_admin.html') {
+        require Bugzilla::Extension::Testopia::Admin;
+        Bugzilla::Extension::Testopia::Admin::report($vars);
+    }
+}
+
 sub post_bug_after_creation {
     my ($self, $args) = @_;
     
