@@ -37,6 +37,25 @@ use Bugzilla::Extension::Testopia::TestRun;
 use Bugzilla::Extension::Testopia::Search;
 use Bugzilla::Extension::Testopia::Table;
 
+use constant PUBLIC_METHODS => qw(
+    get
+    list
+    list_count
+    create
+    add_cases
+    update
+    get_change_history
+    get_test_cases
+    get_case_tags
+    get_test_case_runs
+    get_test_plan
+    add_tag
+    remove_tag
+    get_tags
+    get_completion_report
+    get_bugs
+);
+
 # Utility method called by the list method
 sub get {
     my $self = shift;

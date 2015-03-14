@@ -35,6 +35,26 @@ use Bugzilla::Extension::Testopia::TestPlan;
 use Bugzilla::Extension::Testopia::Search;
 use Bugzilla::Extension::Testopia::Table;
 
+use constant PUBLIC_METHODS => qw(
+    get
+    list
+    list_count
+    create
+    update
+    get_text
+    store_text
+    get_test_cases
+    get_case_tags
+    get_test_runs
+    get_change_history
+    get_product
+    lookup_type_name_by_id
+    lookup_type_id_by_name
+    add_tag
+    remove_tag
+    get_tags
+);
+
 sub get {
     my $self = shift;
     my ($plan_id) = @_;

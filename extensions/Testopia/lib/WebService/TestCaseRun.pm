@@ -37,6 +37,21 @@ use Bugzilla::Extension::Testopia::Table;
 use Bugzilla::Extension::Testopia::TestCaseRun;
 use Bugzilla::Extension::Testopia::Util;
 
+use constant PUBLIC_METHODS => qw(
+    get
+    list
+    list_count
+    create
+    update
+    lookup_status_id_by_name
+    lookup_status_name_by_id
+    get_history
+    attach_bug
+    detach_bug
+    get_bugs
+    get_completion_time
+);
+
 sub get {
     my $self = shift;
     my ($params) = @_;

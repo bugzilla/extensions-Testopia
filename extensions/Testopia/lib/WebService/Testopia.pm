@@ -31,6 +31,11 @@ use Bugzilla::Constants;
 
 use Bugzilla::Extension::Testopia::Constants;
 
+use constant PUBLIC_METHODS => qw(
+    api_version
+    testopia_version
+);
+
 sub api_version {
     my $self = shift;
     return "2.1";

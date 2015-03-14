@@ -35,6 +35,36 @@ use Bugzilla::Extension::Testopia::Category;
 use Bugzilla::Extension::Testopia::Search;
 use Bugzilla::Extension::Testopia::Table;
 
+use constant PUBLIC_METHODS => qw(
+    get
+    list
+    list_count
+    create
+    update
+    get_text
+    store_text
+    get_plans
+    attach_bug
+    detach_bug
+    get_bugs
+    add_component
+    remove_component
+    get_components
+    add_tag
+    remove_tag
+    get_tags
+    link_plan
+    unlink_plan
+    add_to_run
+    get_case_run_history
+    get_change_history
+    calculate_average_time
+    lookup_priority_id_by_name
+    lookup_priority_name_by_id
+    lookup_status_id_by_name
+    lookup_status_name_by_id
+);
+
 sub get {
     my $self = shift;
     my ($case_id) = @_;

@@ -34,6 +34,17 @@ use Bugzilla::Extension::Testopia::Product;
 use Bugzilla::Extension::Testopia::Search;
 use Bugzilla::Extension::Testopia::Table;
 
+use constant PUBLIC_METHODS => qw(
+    get
+    check_environment
+    list
+    create
+    create_full
+    update
+    get_runs
+    get_caseruns
+);
+
 sub get {
     my $self = shift;
     my ($params) = @_;

@@ -31,6 +31,26 @@ use Bugzilla::Constants;
 
 use Bugzilla::Extension::Testopia::Product;
 
+use constant PUBLIC_METHODS => qw(
+    get
+    check_product
+    check_category
+    check_component
+    create_category
+    get_builds
+    get_category
+    get_component
+    get_cases
+    get_categories
+    get_components
+    get_environments
+    get_milestones
+    get_plans
+    get_runs
+    get_tags
+    get_versions
+);
+
 sub _validate {
     my ($params) = @_;
     

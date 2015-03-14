@@ -32,6 +32,15 @@ use Bugzilla::Constants;
 use Bugzilla::Extension::Testopia::Build;
 use Bugzilla::Extension::Testopia::Product;
 
+use constant PUBLIC_METHODS => qw(
+    get
+    check_build
+    create
+    update
+    get_runs
+    get_caseruns
+);
+
 sub get {
     my $self = shift;
     my ($params) = @_;

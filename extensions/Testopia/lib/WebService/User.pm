@@ -28,6 +28,11 @@ use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::User;
 
+use constant PUBLIC_METHODS => qw(
+    lookup_login_by_id
+    lookup_id_by_login
+);
+
 #################
 # User Lookup   #
 #################
