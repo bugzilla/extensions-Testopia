@@ -21,7 +21,7 @@ sub report {
     my $input = Bugzilla->input_params;
     my $template = Bugzilla->template;
     my $plan = Bugzilla::Extension::Testopia::TestPlan->new({});
-    my $vars->{plan} = $plan;
+    $vars->{plan} = $plan;
 
     Bugzilla->login(LOGIN_REQUIRED);
 
