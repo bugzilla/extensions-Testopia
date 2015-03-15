@@ -241,6 +241,7 @@ Testopia.Search.PlansForm = function(params){
                 }
                 catch(err){}
                 if (params.report){
+                    values.id = 'tr_plan_reports.html';
                     Ext.getCmp('object_panel').add(new Ext.Panel({
                         id: 'plan_search' + searchnum, 
                         closable: true,
@@ -248,7 +249,7 @@ Testopia.Search.PlansForm = function(params){
                         autoScroll: true,
                         listeners: { 'render': function(){
                             this.load({
-                                url: 'tr_plan_reports.cgi',
+                                url: 'page.cgi',
                                 params: values
                             });
                         }},

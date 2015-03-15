@@ -19,14 +19,15 @@
   #%]
 
 [% IF report %]
-<form  id="plan_search_form" action="tr_plan_reports.cgi" method="GET">    
+<form id="plan_search_form" action="page.cgi" method="GET">
+  <input type="hidden" name="id" value="tr_plan_reports.html">
 [% PROCESS "testopia/search/report-matrix.html.tmpl" 
    obj = plan
 %]   
 [% ELSE %]
 <form id="plan_search_form" action="tr_list_plans.cgi" method="GET">
 [% END %]
-  <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]" />
+  <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]">
 <fieldset>
     <legend><strong>Product</strong></legend>
 <table>
@@ -85,28 +86,28 @@
     <legend><strong>Attributes</strong></legend>
 <table>
   <tr>
-    <th align="right">Name:</tH>
+    <th align="right">Name:</th>
     <td>
     [% PROCESS select sel = { name => 'name_type',
                               list => query_variants } %]</td>
     <td><input name="name"></td>
   </tr>
   <tr>
-    <th align="right">Text:</tH>
+    <th align="right">Text:</th>
     <td>
     [% PROCESS select sel = { name => 'plan_text_type',
                               list => query_variants } %]</td>
     <td><input name="plan_text"></td>
   </tr>
   <tr>
-    <th align="right">Tags:</tH>
+    <th align="right">Tags:</th>
     <td>
     [% PROCESS select sel = { name => 'tags_type',
                               list => tag_variants } %]</td>
     <td><input name="tags"></td>
   </tr>
   <tr>
-    <th align="right">Author:</tH>
+    <th align="right">Author:</th>
     <td>
     [% PROCESS select sel = { name => 'author_type',
                               list => email_variants } %]</td>
@@ -163,7 +164,7 @@
   <label for="archived">
     Include Archived Plans:
   </label>
-  <input type="checkbox" style="border: none" name="isactive" id="isactive" value="1" />
+  <input type="checkbox" style="border: none" name="isactive" id="isactive" value="1">
 </p>
 
-</form>  
+</form>
