@@ -187,7 +187,7 @@ else{
         $vars->{'data'} = $report->{'image_data'};
     }
     else {
-        ThrowCodeError("unknown_action", {action => $cgi->param('report_action')});
+        ThrowUserError("unknown_action", {action => $cgi->param('report_action')});
     }
 
     my $format = $template->get_format("testopia/reports/report", $formatparam,
