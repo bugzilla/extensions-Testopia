@@ -20,14 +20,15 @@
 
 
 [% IF report %]
-<form id="caserun_search_form" action="tr_caserun_reports.cgi" method="GET"> 
+<form id="caserun_search_form" action="page.cgi" method="GET">
+  <input type="hidden" name="id" value="tr_case_reports.html">
 [% PROCESS "testopia/search/report-matrix.html.tmpl" 
    obj = caserun
 %]   
 [% ELSE %]
 <form id="caserun_search_form" action="tr_list_caseruns.cgi" method="GET">
 [% END %]
-  <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]" />
+  <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]">
 <fieldset>
     <legend><strong>Product</strong></legend>
 <table>
@@ -91,7 +92,7 @@
 
     </td>
     [% END %]
-    <td colspan="3" align="center" >
+    <td colspan="3" align="center">
     [% PROCESS select sel = { name  => 'product',
                               accesskey => 'p', 
                               list      => user.get_selectable_products,
@@ -180,8 +181,8 @@
     </td>
   </tr>
   <tr>
-    <th colspan="2"><input type="radio" style="border: none" name="andor" value="1"/>AND
-      <input type="radio" style="border: none" name="andor" value="0"  checked="checked"/>OR</th>
+    <th colspan="2"><input type="radio" style="border: none" name="andor" value="1">AND
+      <input type="radio" style="border: none" name="andor" value="0"  checked="checked">OR</th>
 
   </tr>
   <tr>
