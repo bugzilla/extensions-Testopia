@@ -310,7 +310,7 @@ sub init {
     
     $self->{'data'} = \%data;
     $self->{'image_data'} = \@image_data;
-    $self->{'report_loc'} = "tr_" . $type . "_reports.cgi";
+    $self->{'report_loc'} = "page.cgi?id=tr_" . $type . "_reports.html";
     if ($cgi->param('debug')) {
         print $cgi->header;
         require Data::Dumper;

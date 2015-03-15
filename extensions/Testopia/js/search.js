@@ -341,6 +341,7 @@ Testopia.Search.CasesForm = function(params){
                 }
                 catch(err){}
                 if (params.report){
+                    values.id = 'tr_case_reports.html';
                     Ext.getCmp('object_panel').add(new Ext.Panel({
                         id: 'case_search' + searchnum, 
                         closable: true,
@@ -348,7 +349,7 @@ Testopia.Search.CasesForm = function(params){
                         autoScroll: true,
                         listeners: { 'render': function(){
                             this.load({
-                                url: 'tr_case_reports.cgi',
+                                url: 'page.cgi',
                                 params: values
                             });
                         }},

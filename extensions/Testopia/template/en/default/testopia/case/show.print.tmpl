@@ -21,7 +21,7 @@
 <html>
   <head>
     <title>Test Case [% case.id FILTER html %] - [% case.summary FILTER html %]</title>
-    <link href="testopia/css/print.css" rel="stylesheet" type="text/css"/>
+    <link href="testopia/css/print.css" rel="stylesheet" type="text/css">
   </head>
 </html>
 <h1>Test Case [% case.id FILTER html %] - [% case.summary FILTER html %]</h1>
@@ -85,7 +85,7 @@
 </table>
 <hr>
 <h3>Statistics</h3>
-<img src="tr_case_reports.cgi?case_id=[% case.id FILTER none %]&type=status-breakdown">
+<img src="page.cgi?id=tr_case_reports.html&case_id=[% case.id FILTER none %]&type=status-breakdown">
 <hr>
 <h3>Setup</h3>
 [% case.text.setup FILTER html_light %]

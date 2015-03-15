@@ -109,8 +109,8 @@
   <table>
     <tr>
       <td>
-        [% formaturl = "$report.report_loc?$report.switchbase&width=$width&height=$height" _ 
-                       "&report_action=data" %]
+        [% formaturl = "$report.report_loc&amp;$report.switchbase&amp;width=$width&amp;height=$height" _ 
+                       "&amp;report_action=data" %]
         <a href="[% formaturl %]&amp;ctype=csv&amp;format=table">Export as CSV</a> 
       </td>
     <tr>
