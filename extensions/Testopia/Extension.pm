@@ -363,45 +363,42 @@ sub page_before_template {
         require Bugzilla::Extension::Testopia::Reports::Product;
         Bugzilla::Extension::Testopia::Reports::Product::report($vars);
     }
+    elsif ($page eq 'tr_run_reports.html') {
+        require Bugzilla::Extension::Testopia::Reports::Run;
+        Bugzilla::Extension::Testopia::Reports::Run::report($vars);
+    }
 }
 
 sub post_bug_after_creation {
     my ($self, $args) = @_;
-    
-    
+
     my $vars = $args->{vars};
     my $cgi = Bugzilla->cgi;
-    
+
     my $caserun_id = $cgi->param('caserun_id');
     my $case_id = $cgi->param('case_id'); 
     if (detaint_natural($caserun_id)) {
         my $caserun = Bugzilla::Extension::Testopia::TestCaseRun->new($cgi->param('caserun_id'));
         ThrowUserError("invalid-test-id-non-existent", {'id' => $caserun_id, 'type' => 'Case-Run'}) unless $caserun;
         ThrowUserError("testopia-read-only", {'object' => $caserun}) unless $caserun->canedit;
-        
+
         $caserun->attach_bug($vars->{'id'});
-    
         $vars->{'caserun'} = $caserun;
     }
     elsif (detaint_natural($case_id)) {
         my $case = Bugzilla::Extension::Testopia::TestCase->new($cgi->param('case_id'));
         ThrowUserError("invalid-test-id-non-existent", {'id' => $case_id, 'type' => 'Case'}) unless $case;
         ThrowUserError("testopia-read-only", {'object' => $case}) unless $case->canedit;
-        
+
         $case->attach_bug($vars->{'id'});
-    
         $vars->{'case'} = $case;
     }
-    
 }
 
 sub product_confirm_delete {
     my ($self, $args) = @_;
-    
-    
-    
+
     my $vars = $args->{vars};
-    
     $vars->{'testopia_product'} = new Bugzilla::Extension::Testopia::Product($vars->{product}->id);
 }
 

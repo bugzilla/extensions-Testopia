@@ -19,7 +19,8 @@
   #%]
 
 [% IF report %]
-<form id="run_search_form" action="tr_run_reports.cgi" method="GET">    
+<form id="run_search_form" action="page.cgi" method="GET">
+  <input type="hidden" name="id" value="tr_run_reports.html"> 
 [% PROCESS "testopia/search/report-matrix.html.tmpl" 
    obj = run 
 %]   
