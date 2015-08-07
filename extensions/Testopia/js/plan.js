@@ -609,7 +609,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                         }, {
                             text: 'Missing Cases Report',
                             handler: function(){
-                                window.open('tr_list_cases.cgi?report_type=missing&plan_ids=' + Testopia.Util.getSelectedObjects(grid, 'plan_id'));
+                                window.open('page.cgi?id=tr_list_cases.html&report_type=missing&plan_ids=' + Testopia.Util.getSelectedObjects(grid, 'plan_id'));
                             }
                         }, {
                             text: 'Case Roll-up Report',
@@ -644,7 +644,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                     },{
                         text: 'Cases as CSV',
                         handler: function(){
-                            window.location='tr_list_cases.cgi?ctype=csv&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');
+                            window.location='page.cgi?id=tr_list_cases.html&ctype=csv&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');
                         }
                     },{
                         text: 'Plans as XML',

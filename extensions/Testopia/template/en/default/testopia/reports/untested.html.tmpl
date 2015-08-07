@@ -27,10 +27,11 @@
      
 <p>There [% case_count FILTER html %] test cases in this plan that do not appear in any runs.</p>
 
-<form action="tr_list_cases.cgi" method="POST">
-    <input type="hidden" name="current_tab" value="case" />
-    <input type="hidden" name="case_id" value="[% case_ids FILTER html %]" />
-    <input type="submit" value="List Cases" />
+<form action="page.cgi" method="POST">
+    <input type="hidden" name="id" value="tr_list_cases.html">
+    <input type="hidden" name="current_tab" value="case">
+    <input type="hidden" name="case_id" value="[% case_ids FILTER html %]">
+    <input type="submit" value="List Cases">
 </form>
 <br/>
 <a href="tr_show_plan.cgi?plan_id=[% plan_id FILTER html %]">Back</a> to test plan.

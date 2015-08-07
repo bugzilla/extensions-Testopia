@@ -27,7 +27,7 @@
 [% PROCESS global/header.html.tmpl %]
 
 [% IF cases %]
-Test cases created. <a href="tr_list_cases.cgi?case_id=[% cases FILTER none %]">LIST</a>
+Test cases created. <a href="page.cgi?id=tr_list_cases.html&case_id=[% cases FILTER none %]">LIST</a>
 [% END %]
 For XML import, Please refer to <a href="extensions/Testopia/testopia.xsd">testopia.xsd</a><br/>
 For CSV import, Please refer to <a href="extensions/Testopia/import_example.csv">import_example.csv</a><br/>

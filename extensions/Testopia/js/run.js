@@ -673,7 +673,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                 }, {
                     text: 'View Run\'s Test Cases in a New Window',
                     handler: function(){
-                        window.open('tr_list_cases.cgi?run_id=' + grid.store.getAt(grid.selindex).get('run_id'));
+                        window.open('page.cgi?id=tr_list_cases.html&run_id=' + grid.store.getAt(grid.selindex).get('run_id'));
                     }
                 },{
                     text: 'Export Results as CSV',
@@ -1088,7 +1088,7 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
                         });
                     }
                     else {
-                        msg = a.result.failures.length > 0 ? a.result.failures.join.length + ' Test cases were not included. They are either DISABLED or PROPOSED. <a href="tr_list_cases.cgi?case_id=' + a.result.failures.join(',') + '">View List</a> <br>' : '';
+                        msg = a.result.failures.length > 0 ? a.result.failures.join.length + ' Test cases were not included. They are either DISABLED or PROPOSED. <a href="page.cgi?id=tr_list_cases.html&case_id=' + a.result.failures.join(',') + '">View List</a> <br>' : '';
                         Ext.Msg.show({
                             title: 'Test Run Copied',
                             msg: msg + a.result.runlist.length + ' Test runs Copied successfully. <a href="tr_list_runs.cgi?run_id=' + a.result.runlist.join(',') + '">View List</a>',
@@ -1372,9 +1372,10 @@ Testopia.TestRun.AddCaseForm = function(run){
             handler: function(){
                 var form = new Ext.form.BasicForm('testopia_helper_frm');
                 form.submit({
-                    url: 'tr_list_cases.cgi',
+                    url: 'page.cgi',
                     params: {
                         action: 'update',
+                        id: 'tr_list_cases.html',
                         addruns: run.run_id,
                         ids: Testopia.Util.getSelectedObjects(casegrid, 'case_id')
                     },

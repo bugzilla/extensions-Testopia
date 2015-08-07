@@ -175,16 +175,16 @@ sub test_load
 {
 	my $self = shift;
 	
-	$sel->open("tr_list_cases.cgi");
+	$sel->open("page.cgi?id=tr_list_cases.html");
     $sel->wait_for_page_to_load(TIMEOUT);
     $sel->pause(5000); # used to let the whole page load 
     $self->assert($sel->is_text_present("Test Cases"),
-    "'tr_list_cases.cgi' failed to display 'Test Cases'");
+    "'page.cgi?id=tr_list_cases.html' failed to display 'Test Cases'");
 }
 
 =item test_update
 
-Tests the update action for tr_list_cases.cgi
+Tests the update action for page.cgi?id=tr_list_cases.html
 
 =cut
 
@@ -193,9 +193,10 @@ sub test_update
 	my $self = shift;
 	
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_PLAN_1 . "," . TEST_PLAN_2
 	    }
 	};
@@ -203,13 +204,13 @@ sub test_update
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 }
 
 =item test_update_addruns
 
-Tests the update action for tr_list_cases.cgi with adding runs
+Tests the update action for page.cgi?id=tr_list_cases.html with adding runs
 
 =cut
 
@@ -218,9 +219,10 @@ sub test_update_addruns
 	my $self = shift;
 	
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_PLAN_1 . "," . TEST_PLAN_2,
 	    	addsruns => TEST_RUN_1
 	    }
@@ -228,13 +230,13 @@ sub test_update_addruns
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 }
 
 =item test_update_requirement
 
-Tests the update action for tr_list_cases.cgi with updating requirement
+Tests the update action for page.cgi?id=tr_list_cases.html with updating requirement
 
 =cut
 
@@ -262,9 +264,10 @@ sub test_update_requirement
 	
 	#Change requirement
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	requirement => TEST_CASE_REQUIREMENT_1
 	    }
@@ -272,7 +275,7 @@ sub test_update_requirement
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -309,7 +312,7 @@ sub test_update_requirement
 
 =item test_update_case_status
 
-Tests the update action for tr_list_cases.cgi with updating case status
+Tests the update action for page.cgi?id=tr_list_cases.html with updating case status
 
 =cut
 
@@ -337,9 +340,10 @@ sub test_update_case_status
 	
 	#Change case status
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	case_status => TEST_CASE_STATUS_1
 	    }
@@ -347,7 +351,7 @@ sub test_update_case_status
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -384,7 +388,7 @@ sub test_update_case_status
 
 =item test_update_priority
 
-Tests the update action for tr_list_cases.cgi with updating priority
+Tests the update action for page.cgi?id=tr_list_cases.html with updating priority
 
 =cut
 
@@ -412,9 +416,10 @@ sub test_update_priority
 	
 	#Change priority
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	priority => TEST_CASE_PRIORITY_1
 	    }
@@ -422,7 +427,7 @@ sub test_update_priority
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -459,7 +464,7 @@ sub test_update_priority
 
 =item test_update_isautomated
 
-Tests the update action for tr_list_cases.cgi with updating isautomated
+Tests the update action for page.cgi?id=tr_list_cases.html with updating isautomated
 
 =cut
 
@@ -495,9 +500,10 @@ sub test_update_isautomated
 	
 	#Change is automated
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	isautomated => $isautomated
 	    }
@@ -505,7 +511,7 @@ sub test_update_isautomated
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -554,7 +560,7 @@ sub test_update_isautomated
 
 =item test_update_script
 
-Tests the update action for tr_list_cases.cgi with updating script
+Tests the update action for page.cgi?id=tr_list_cases.html with updating script
 
 =cut
 
@@ -584,9 +590,10 @@ sub test_update_script
 	
 	#Change script
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	script => $script
 	    }
@@ -594,7 +601,7 @@ sub test_update_script
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -631,7 +638,7 @@ sub test_update_script
 
 =item test_update_arguments
 
-Tests the update action for tr_list_cases.cgi with updating arguments
+Tests the update action for page.cgi?id=tr_list_cases.html with updating arguments
 
 =cut
 
@@ -661,9 +668,10 @@ sub test_update_arguments
 	
 	#Change arguments
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	arguments => $arguments
 	    }
@@ -671,7 +679,7 @@ sub test_update_arguments
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -708,7 +716,7 @@ sub test_update_arguments
 
 =item test_update_category
 
-Tests the update action for tr_list_cases.cgi with updating category
+Tests the update action for page.cgi?id=tr_list_cases.html with updating category
 
 =cut
 
@@ -736,9 +744,10 @@ sub test_update_category
 	
 	#Change category
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	category => TEST_CASE_1_CAT
 	    }
@@ -746,7 +755,7 @@ sub test_update_category
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -783,7 +792,7 @@ sub test_update_category
 
 =item test_update_default_tester
 
-Tests the update action for tr_list_cases.cgi with updating defalut tester
+Tests the update action for page.cgi?id=tr_list_cases.html with updating default tester
 
 =cut
 
@@ -811,9 +820,10 @@ sub test_update_default_tester
 	
 	#Change default tester
     my $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_cases.html",
 	    	ids => TEST_CASE_1 . "," . TEST_CASE_2,
 	    	tester => TEST_TESTER_1
 	    }
@@ -821,7 +831,7 @@ sub test_update_default_tester
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display '{'success': true}'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display '{'success': true}'");
 	
 	#Check to make sure it actually completed the update properly
     $ref = $dbh->selectrow_hashref(
@@ -857,7 +867,7 @@ sub test_update_default_tester
 }
 =item test_delete
 
-Tests the delete and do_delete action for tr_list_cases.cgi
+Tests the delete and do_delete action for page.cgi?id=tr_list_cases.html
 
 =cut
 
@@ -897,9 +907,10 @@ sub test_delete
 
     # Test the actual deletion
     $test = {
-	    url => "tr_list_cases.cgi",
+	    url => "page.cgi",
 	    action => "delete",
 	    params => {
+                id => "tr_list_cases.html",
 	    	case_ids => $del_case
 	    }
 	};
@@ -907,7 +918,7 @@ sub test_delete
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true}"),
-                  "'tr_list_cases.cgi' failed to display" . 
+                  "'page.cgi?id=tr_list_cases.html' failed to display" . 
                   " '{'success': true}'");
 
 
@@ -915,7 +926,7 @@ sub test_delete
 
 =item test_page_select
 
-Tests the select which page from the list to display for tr_list_cases.cgi
+Tests the select which page from the list to display for page.cgi?id=tr_list_cases.html
 
 =cut
 
@@ -923,11 +934,11 @@ sub test_list_tab
 {
 	my $self = shift;
 	
-    $sel->open("tr_list_cases.cgi" . 
-               "?current_tab=case" . 
+    $sel->open("page.cgi?id=tr_list_cases.html" . 
+               "&current_tab=case" . 
                "&page=1");
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("Test Cases"), 
-                  "'tr_list_cases.cgi' failed to display 'Test Cases'");
+                  "'page.cgi?id=tr_list_cases.html' failed to display 'Test Cases'");
 	
 }

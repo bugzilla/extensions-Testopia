@@ -26,9 +26,10 @@
    obj = case 
 %]   
 [% ELSE %]
-<form id="case_search_form" action="tr_list_cases.cgi" method="GET">
+<form id="case_search_form" action="page.cgi" method="GET">
+  <input type="hidden" name="id" value="tr_list_cases.html">
 [% END %]
-  <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]" />
+  <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]">
 <fieldset>
     <legend><strong>Product</strong></legend>
 <table>

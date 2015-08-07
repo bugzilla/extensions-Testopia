@@ -22,8 +22,9 @@
  */
 
 Testopia.TestCase.Store = function(params, auto){
+    params.id = 'tr_list_cases.html';
     Testopia.TestCase.Store.superclass.constructor.call(this, {
-        url: 'tr_list_cases.cgi',
+        url: 'page.cgi',
         baseParams: params,
         listeners: { 'exception': Testopia.Util.loadError },
         totalProperty: 'totalResultsAvailable',
@@ -273,6 +274,7 @@ Ext.extend(Testopia.TestCase.Filter, Ext.Panel);
 Testopia.TestCase.Grid = function(params, cfg){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
     params.current_tab = 'case';
+    params.id = 'tr_list_cases.html';
     this.params = params;
     var categoryCombo = new Testopia.Category.Combo({
         id: 'case_grid_cateogy_chooser',
@@ -294,7 +296,7 @@ Testopia.TestCase.Grid = function(params, cfg){
     });
     
     this.store = new Ext.data.GroupingStore({
-        url: 'tr_list_cases.cgi',
+        url: 'page.cgi',
         baseParams: params,
         reader: new Ext.data.JsonReader({
             totalProperty: 'totalResultsAvailable',
@@ -558,7 +560,7 @@ Testopia.TestCase.Grid = function(params, cfg){
             iconCls: 'img_button_16x',
             tooltip: 'Export Test Cases to CSV',
             handler: function(){
-                window.location = 'tr_list_cases.cgi?ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
+                window.location = 'page.cgi?id=tr_list_cases.html&ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
             }
         },{
             xtype: 'button',
@@ -567,7 +569,7 @@ Testopia.TestCase.Grid = function(params, cfg){
             iconCls: 'img_button_16x',
             tooltip: 'Export Test Cases to XML',
             handler: function(){
-                window.location = 'tr_list_cases.cgi?ctype=xml&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
+                window.location = 'page.cgi?id=tr_list_cases.html&ctype=xml&viewall=1&' + Testopia.Util.JSONToURLQuery(Ext.getCmp(cfg.id || 'case_grid').store.baseParams, '', ['viewall', 'ctype']);
             }
         },{
             xtype: 'button',
@@ -912,10 +914,11 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                                 if (btn == 'yes') {
                                     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
                                     testopia_form.submit({
-                                        url: 'tr_list_cases.cgi',
+                                        url: 'page.cgi',
                                         params: {
                                             case_ids: Testopia.Util.getSelectedObjects(grid, 'case_id'),
                                             action: 'unlink',
+                                            id: 'tr_list_cases.html',
                                             plan_id: plan.plan_id
                                         },
                                         success: function(data){
@@ -1023,9 +1026,10 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                 if (btn == 'yes') {
                     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
                     testopia_form.submit({
-                        url: 'tr_list_cases.cgi',
+                        url: 'page.cgi',
                         params: {
                             case_ids: Testopia.Util.getSelectedObjects(grid, 'case_id'),
+                            id: 'tr_list_cases.html',
                             action: 'delete'
                         },
                         success: function(data){
@@ -1654,13 +1658,14 @@ Testopia.TestCase.Clone = function(product_id, cases){
             handler: function(){
                 var form = Ext.getCmp('case_clone_frm').getForm();
                 var params = form.getValues();
+                params.id = 'tr_list_cases.html';
                 form.baseParams = {};
                 form.baseParams.action = 'clone';
                 form.baseParams.ids = cases;
                 form.baseParams.plan_ids = Testopia.Util.getSelectedObjects(Ext.getCmp('plan_clone_grid'), 'plan_id');
                 form.baseParams.product_id = Ext.getCmp('case_clone_win_product_chooser').getValue();
                 form.submit({
-                    url: 'tr_list_cases.cgi',
+                    url: 'page.cgi',
                     success: function(form, data){
                         if (params.copy_cases) {
                             if (data.result.tclist.length == 1) {
@@ -1679,7 +1684,7 @@ Testopia.TestCase.Clone = function(product_id, cases){
                             else {
                                 Ext.Msg.show({
                                     title: 'Test Case Copied',
-                                    msg: data.result.tclist.length + ' Test cases Copied successfully <a href="tr_list_cases.cgi?case_id=' + data.result.tclist.join(',') + '">View List</a>',
+                                    msg: data.result.tclist.length + ' Test cases Copied successfully <a href="page.cgi?id=tr_list_cases.html&case_id=' + data.result.tclist.join(',') + '">View List</a>',
                                     buttons: Ext.Msg.OK,
                                     icon: Ext.MessageBox.INFO
                                 });
