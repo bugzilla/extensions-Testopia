@@ -36,7 +36,7 @@
   <tr class="[% loop.count % 2 == 0 ? "tr_row_odd" : "tr_row_even" %]"> 
     <td width="200">[% tag.name FILTER html %]</td>
     <td align="center"><a href="page.cgi?id=tr_list_cases.html&tags_type=anyexact&tags=[% tag.name FILTER uri %]">[% tag.case_count FILTER html %]</a></td>
-    <td align="center"><a href="tr_list_plans.cgi?tags_type=anyexact&tags=[% tag.name FILTER uri %]">[% tag.plan_count FILTER html %]</a></td>
+    <td align="center"><a href="page.cgi?id=tr_list_plans.html&tags_type=anyexact&tags=[% tag.name FILTER uri %]">[% tag.plan_count FILTER html %]</a></td>
     <td align="center"><a href="tr_list_runs.cgi?tags_type=anyexact&tags=[% tag.name FILTER uri %]">[% tag.run_count FILTER html %]</a></td>
     <td>
   [% IF item AND item.type != 'product' %]

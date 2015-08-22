@@ -22,7 +22,7 @@
 <div id="tr-links-saved">
   <ul class="links">
     <li><a href="tr_list_runs.cgi?current_tab=run&run_status=0&distinct=1">Current Runs</a></li>
-    <li><span class="separator">| </span><a href="tr_list_plans.cgi?current_tab=plan&report_type=myplans">My Plans</a></li>
+    <li><span class="separator">| </span><a href="page.cgi?id=tr_list_plans.html&current_tab=plan&report_type=myplans">My Plans</a></li>
     <li><span class="separator">| </span><a href="page.cgi?id=tr_list_cases.html&current_tab=case&summary_type=allwordssubstr&summary=&tcaction_type=allwordssubstr&tcaction=&tceffect_type=allwordssubstr&tceffect=&script_type=allwordssubstr&script=&requirement_type=allwordssubstr&requirement=&tag_type=allwords&tags=&author_type=exact&author=&default_tester_type=substring&default_tester=[% user.login FILTER uri %]&case_id=&plan_id=&distinct=1">My Cases</a></li>
     <li><span class="separator">| </span><a href="tr_list_runs.cgi?current_tab=run&summary_type=allwordssubstr&summary=&notes_type=allwordssubstr&notes=&environment_type=allwordssubstr&environment=&tag_type=allwords&tag=&manager_type=substring&manager=[% user.login FILTER uri %]&run_id=&plan_id=&assignee_type=substr&assignee=[% user.login FILTER uri %]&distinct=1&order=run_id&dir=DESC">My Runs</a></li>
   [% FOREACH query = user.testopia_queries %]

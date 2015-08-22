@@ -22,8 +22,9 @@
 
 Testopia.TestPlan.Store = function(params, auto){
     params.ctype = 'json';
+    params.id = 'tr_list_plans.html';
     Testopia.TestPlan.Store.superclass.constructor.call(this, {
-        url: 'tr_list_plans.cgi',
+        url: 'page.cgi',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: params,
         totalProperty: 'totalResultsAvailable',
@@ -649,7 +650,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                     },{
                         text: 'Plans as XML',
                         handler: function(){
-                            window.location='tr_list_plans.cgi?ctype=xml&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');             
+                            window.location='page.cgi?id=tr_list_plans.html&ctype=xml&viewall=1&plan_id=' + Testopia.Util.getSelectedObjects(grid, 'plan_id');
                         }
                     }]
                 }]

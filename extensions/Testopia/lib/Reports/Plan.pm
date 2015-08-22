@@ -145,7 +145,7 @@ sub report {
     else {
         $input->{'current_tab'} = 'plan';
         $input->{'viewall'} = 1;
-        my $report = Bugzilla::Extension::Testopia::Report->new('plan', 'tr_list_plans.cgi', $cgi);
+        my $report = Bugzilla::Extension::Testopia::Report->new('plan', 'page.cgi?id=tr_list_plans.html', $cgi);
         $vars->{'report'} = $report;
         $vars->{'qname'} = $input->{'qname'};
 

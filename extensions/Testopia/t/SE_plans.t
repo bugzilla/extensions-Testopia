@@ -262,13 +262,13 @@ sub test_list_plans
 {
 	my $self = shift;
 
-    $sel->open("tr_list_plans.cgi");
+    $sel->open("page.cgi?id=tr_list_plans.html");
     $sel->wait_for_page_to_load(TIMEOUT);
     $sel->pause(10000);
     $self->assert($sel->is_text_present("Test Plans"), 
-                  "tr_list_plans.cgi didn't display 'Test Plans'");
+                  "page.cgi?id=tr_list_plans.html didn't display 'Test Plans'");
 	$self->assert($sel->is_text_present("Displaying test plans"), 
-                  "tr_list_plans.cgi didn't display 'Displaying test plans'");
+                  "page.cgi?id=tr_list_plans.html didn't display 'Displaying test plans'");
 }
 
 =item test_update
@@ -282,9 +282,10 @@ sub test_update
 	my $self = shift;
 	
 	my $test = {
-	    url => "tr_list_plans.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_plans.html",
 	    	ids => TEST_PLAN_1 . "," . TEST_PLAN_2
 	    }
 	};
@@ -292,7 +293,7 @@ sub test_update
 	$sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"), 
-		"tr_list_plans.cgi didn't display '{'success': true}'");
+		"page.cgi?id=tr_list_plans.html didn't display '{'success': true}'");
 }
 
 =item test_update_plan_type
@@ -306,9 +307,10 @@ sub test_update_plan_type
 	my $self = shift;
 	
 	my $test = {
-	    url => "tr_list_plans.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_plans.html",
 	    	ids => TEST_PLAN_1 . "," . TEST_PLAN_2,
 	    	plan_type => "1"
 	    }
@@ -317,7 +319,7 @@ sub test_update_plan_type
 	$sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("{'success': true}"), 
-		"tr_list_plans.cgi didn't display '{'success': true}'");
+		"page.cgi?id=tr_list_plans.html didn't display '{'success': true}'");
 	
 	my $dbh = Bugzilla->dbh;
     my $ref = $dbh->selectrow_hashref(
@@ -343,9 +345,10 @@ sub test_update_invalid_plan_type
 	my $self = shift;
 	
 	my $test = {
-	    url => "tr_list_plans.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_plans.html",
 	    	ids => TEST_PLAN_1 . "," . TEST_PLAN_2,
 	    	plan_type => "-1"
 	    }
@@ -354,7 +357,7 @@ sub test_update_invalid_plan_type
 	$sel->open(Testopia::Test::Selenium::Util::format_url($test));
 	$sel->wait_for_page_to_load(TIMEOUT);
 	$self->assert($sel->is_text_present("invalid-test-id-non-existent"), 
-		"tr_list_plans.cgi didn't display 'invalid-test-id-non-existent'");
+		"page.cgi?id=tr_list_plans.html didn't display 'invalid-test-id-non-existent'");
 }
 
 sub test_archive

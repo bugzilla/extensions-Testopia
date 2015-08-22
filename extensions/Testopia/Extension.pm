@@ -355,6 +355,14 @@ sub page_before_template {
         require Bugzilla::Extension::Testopia::Reports::CaseRun;
         Bugzilla::Extension::Testopia::Reports::CaseRun::report($vars);
     }
+    elsif ($page eq 'tr_list_cases.html') {
+        require Bugzilla::Extension::Testopia::List::Cases;
+        Bugzilla::Extension::Testopia::List::Cases::report($vars);
+    }
+    elsif ($page eq 'tr_list_plans.html') {
+        require Bugzilla::Extension::Testopia::List::Plans;
+        Bugzilla::Extension::Testopia::List::Plans::report($vars);
+    }
     elsif ($page eq 'tr_plan_reports.html') {
         require Bugzilla::Extension::Testopia::Reports::Plan;
         Bugzilla::Extension::Testopia::Reports::Plan::report($vars);
@@ -366,10 +374,6 @@ sub page_before_template {
     elsif ($page eq 'tr_run_reports.html') {
         require Bugzilla::Extension::Testopia::Reports::Run;
         Bugzilla::Extension::Testopia::Reports::Run::report($vars);
-    }
-    elsif ($page eq 'tr_list_cases.html') {
-        require Bugzilla::Extension::Testopia::List::Cases;
-        Bugzilla::Extension::Testopia::List::Cases::report($vars);
     }
 }
 

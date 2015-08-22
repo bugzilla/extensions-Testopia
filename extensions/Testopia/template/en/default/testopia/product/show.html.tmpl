@@ -127,7 +127,7 @@ Ext.onReady(function(){
                         alert('Please select a product first!');
                         return;
                     }
-                    window.location = 'tr_list_plans.cgi?ctype=xml&viewall=1&product_id=' + Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id;             
+                    window.location = 'page.cgi?id=tr_list_plans.html&ctype=xml&viewall=1&product_id=' + Ext.getCmp('products_pane').getSelectionModel().getSelectedNode().id;             
                 }
             }]
         }]

@@ -25,7 +25,8 @@
    obj = plan
 %]   
 [% ELSE %]
-<form id="plan_search_form" action="tr_list_plans.cgi" method="GET">
+<form id="plan_search_form" action="page.cgi" method="GET">
+  <input type="hidden" name="id" value="tr_list_plans.html">
 [% END %]
   <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]">
 <fieldset>
