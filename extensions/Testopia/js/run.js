@@ -668,7 +668,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                 }, {
                     text: 'View Test Run in a New Window',
                     handler: function(){
-                        window.open('tr_show_run.cgi?run_id=' + grid.store.getAt(grid.selindex).get('run_id'));
+                        window.open('page.cgi?id=tr_show_run.html&run_id=' + grid.store.getAt(grid.selindex).get('run_id'));
                     }
                 }, {
                     text: 'View Run\'s Test Cases in a New Window',
@@ -966,7 +966,7 @@ Testopia.TestRun.NewRunForm = function(plan){
                             icon: Ext.MessageBox.QUESTION,
                             fn: function(btn){
                                 if (btn == 'yes') {
-                                    window.location = 'tr_show_run.cgi?run_id=' + data.result.run_id;
+                                    window.location = 'page.cgi?id=tr_show_run.html&run_id=' + data.result.run_id;
                                 }
                             }
                         });
@@ -1082,7 +1082,7 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
                             icon: Ext.MessageBox.QUESTION,
                             fn: function(btn){
                                 if (btn == 'yes') {
-                                    window.location = 'tr_show_run.cgi?run_id=' + a.result.runlist[0];
+                                    window.location = 'page.cgi?id=tr_show_run.html&run_id=' + a.result.runlist[0];
                                 }
                             }
                         });

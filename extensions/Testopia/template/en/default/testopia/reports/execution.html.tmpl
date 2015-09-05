@@ -60,7 +60,7 @@
 <div id="execution_report">
 <h4>Execution Report for Run[% 's' IF runs.size > 1 %]: 
 [% FOREACH r IN runs %]
- <a href="tr_show_run.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
+ <a href="page.cgi?id=tr_show_run.html&run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
 [% END %] 
 [% IF plans %]
  <br>In Plans: 

@@ -620,7 +620,7 @@ sub test_search_runs
 	my $self = shift;
 	
 	#Show search plan
-    $sel->open("tr_show_run.cgi");
+    $sel->open("page.cgi?id=tr_show_run.html");
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("Search by Test Run Number"),
                   "Did not display 'Search by Test Run Number' in test_search_runs.");
@@ -638,7 +638,7 @@ sub test_show_runs
 	my $self = shift;
 	
 	#Show case
-    $sel->open("tr_show_run.cgi?run_id=" . TEST_RUN_1);
+    $sel->open("page.cgi?id=tr_show_run.html&run_id=" . TEST_RUN_1);
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("Run List"),
                   "Did not display 'Run List' in test_show_runs.");

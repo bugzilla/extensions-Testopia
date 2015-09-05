@@ -69,7 +69,7 @@
 <h1>[% qname FILTER html %]</h1>
 <h4>Priority Report for Runs: 
 [% FOREACH r IN runs.split(',') %]
- <a href="tr_show_run.cgi?run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
+ <a href="page.cgi?id=tr_show_run.html&run_id=[% r FILTER html %]">[% r FILTER html %]</a>&nbsp;
 [% END %] 
 [% IF plans %]
  <br>In Plans: 
@@ -124,14 +124,14 @@
           [% FOREACH p = priorities.keys.sort %]
           <tr>
             <td style="border-right: 2px solid black; font-weight: bold; text-align: left;">[% p FILTER no_break %]</td>
-            <td class="idle_cell"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=IDLE&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.idle FILTER none %]</a></td>
-            <td class="passed_cell"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=PASSED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.passed FILTER none %]</a></td>
-            <td class="failed_cell"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=FAILED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.failed FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=BLOCKED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.blocked FILTER none %]</a></td>
-            <td class="passed_cell"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=RUNNING&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.running FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=PAUSED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.paused FILTER none %]</a></td>
-            <td class="blocked_cell"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=ERROR&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.error FILTER none %]</a></td>
-            <td align="center"><a href="tr_show_run.cgi?run_id=[% runs FILTER uri %]" target="_blank">[% priorities.$p.total FILTER none %]</a></td>
+            <td class="idle_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=IDLE&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.idle FILTER none %]</a></td>
+            <td class="passed_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=PASSED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.passed FILTER none %]</a></td>
+            <td class="failed_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=FAILED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.failed FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=BLOCKED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.blocked FILTER none %]</a></td>
+            <td class="passed_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=RUNNING&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.running FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=PAUSED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.paused FILTER none %]</a></td>
+            <td class="blocked_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=ERROR&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.error FILTER none %]</a></td>
+            <td align="center"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]" target="_blank">[% priorities.$p.total FILTER none %]</a></td>
           </tr>
           [% END %]
         </table>
