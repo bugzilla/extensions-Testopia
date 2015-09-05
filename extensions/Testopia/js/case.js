@@ -1535,7 +1535,7 @@ Ext.extend(Testopia.TestCase.PlanList, Ext.grid.GridPanel, {
                 }, {
                     text: 'Go to Plan',
                     handler: function(){
-                        window.location = 'tr_show_plan.cgi?plan_id=' + grid.getSelectionModel().getSelected().get('plan_id');
+                        window.location = 'page.cgi?id=tr_show_plan.html&plan_id=' + grid.getSelectionModel().getSelected().get('plan_id');
                     }
                 }, {
                     text: 'Refresh',

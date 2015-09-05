@@ -61,7 +61,7 @@ Ext.onReady(function(){
                         buttons: Ext.Msg.OK,
                         icon: Ext.MessageBox.INFO
                     });
-                    window.location = 'tr_show_plan.cgi?plan_id=[% case.plans.0.id FILTER none %]';
+                    window.location = 'page.cgi?id=tr_show_plan.html&plan_id=[% case.plans.0.id FILTER none %]';
                 },
                 failure: Testopia.Util.error
             });

@@ -31,8 +31,8 @@ Testopia.Util.makeLink = function(id, m, r, ri, ci, s, type){
         return '<a href="show_bug.cgi?id=' + id + '">' + id + '</a>';
     }
     if (s.isTreport === true) 
-        return '<a href="tr_show_' + type + '.cgi?' + type +'_id=' + id + '" target="_blank">' + id + '</a>';
-    return '<a href="tr_show_' + type +'.cgi?' + type + '_id=' + id + '">' + id + '</a>';
+        return '<a href="page.cgi?id=tr_show_' + type + '.html&' + type +'_id=' + id + '" target="_blank">' + id + '</a>';
+    return '<a href="page.cgi?id=tr_show_' + type +'.html&' + type + '_id=' + id + '">' + id + '</a>';
 };
 
 Testopia.Util.CascadeProductSelection = function(){

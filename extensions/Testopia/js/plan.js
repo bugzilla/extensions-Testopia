@@ -632,7 +632,7 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
                         var plan_ids = Testopia.Util.getSelectedObjects(grid, 'plan_id').split(',');
                         var i;
                         for (i = 0; i < plan_ids.length; i += 1) {
-                            window.open('tr_show_plan.cgi?plan_id=' + plan_ids[i]);
+                            window.open('page.cgi?id=tr_show_plan.html&plan_id=' + plan_ids[i]);
                         }
                     }
                 },{
@@ -813,7 +813,7 @@ Testopia.TestPlan.NewPlanForm = function(product_id){
                             icon: Ext.MessageBox.QUESTION,
                             fn: function(btn){
                                 if (btn == 'yes') {
-                                    window.location = 'tr_show_plan.cgi?plan_id=' + data.result.plan;
+                                    window.location = 'page.cgi?id=tr_show_plan.html&plan_id=' + data.result.plan;
                                 }
                             }
                         });
@@ -926,7 +926,7 @@ Testopia.TestPlan.ClonePanel = function(plan){
                         icon: Ext.MessageBox.QUESTION,
                         fn: function(btn){
                             if (btn == 'yes') {
-                                window.location = 'tr_show_plan.cgi?plan_id=' + a.result.plan_id;
+                                window.location = 'page.cgi?id=tr_show_plan.html&plan_id=' + a.result.plan_id;
                             }
                         }
                     });

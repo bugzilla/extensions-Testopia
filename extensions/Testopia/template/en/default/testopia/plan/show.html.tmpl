@@ -117,7 +117,7 @@
             ,{
                 text: "Print",
                 handler: function(){
-                    window.location='tr_show_plan.cgi?&plan_id=[% plan.id FILTER none %]&ctype=print';
+                    window.location='page.cgi?id=tr_show_plan.html&plan_id=[% plan.id FILTER none %]&ctype=print';
                 }
             },{
                 text: 'Export',
@@ -129,12 +129,12 @@
                 },{
                     text: 'Cases as CSV',
                     handler: function(){
-                        window.location='tr_show_plan.cgi?&plan_id=[% plan.id FILTER none %]&export=testcases&ctype=csv&viewall=1';
+                        window.location='page.cgi?id=tr_show_plan.html&plan_id=[% plan.id FILTER none %]&export=testcases&ctype=csv&viewall=1';
                     }
                 },{
                     text: 'Plan as XML',
                     handler: function(){
-                        window.location='tr_show_plan.cgi?&plan_id=[% plan.id FILTER none %]&export=testcases&ctype=xml&viewall=1';             
+                        window.location='page.cgi?id=tr_show_plan.html&plan_id=[% plan.id FILTER none %]&export=testcases&ctype=xml&viewall=1';             
                     }
                 }]
             },{

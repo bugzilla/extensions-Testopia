@@ -473,7 +473,7 @@ sub to_yui_json {
         $out .= '"Type":"' .    $i->type . '",';
         $out .= '"Cases":"' .   $i->test_case_count . '",';
         $out .= '"Runs":"' .    $i->test_run_count . '",';
-        $out .= '"ClickUrl":"tr_show_plan.cgi?plan_id=' . $i->id;
+        $out .= '"ClickUrl":"page.cgi?id=tr_show_plan.html&plan_id=' . $i->id;
         $out .= '"},';
     }
     chomp($out);

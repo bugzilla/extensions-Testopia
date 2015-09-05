@@ -1003,7 +1003,7 @@ sub TO_JSON {
     $obj->{'canedit'}      = $self->canedit;
     $obj->{'canview'}      = $self->canview;
     $obj->{'candelete'}    = $self->candelete;
-    $obj->{'link_url'}     = 'tr_show_plan.cgi?plan_id=' . $self->id;
+    $obj->{'link_url'}     = 'page.cgi?id=tr_show_plan.html&plan_id=' . $self->id;
     $obj->{'type'}         = $self->type;
     $obj->{'id'}           = $self->id;
     $obj->{'creation_date'} = format_time($self->{'creation_date'}, TIME_FORMAT);

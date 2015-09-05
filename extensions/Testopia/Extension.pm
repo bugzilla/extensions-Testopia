@@ -375,6 +375,10 @@ sub page_before_template {
         require Bugzilla::Extension::Testopia::Reports::Run;
         Bugzilla::Extension::Testopia::Reports::Run::report($vars);
     }
+    elsif ($page eq 'tr_show_plan.html') {
+        require Bugzilla::Extension::Testopia::Show::Plan;
+        Bugzilla::Extension::Testopia::Show::Plan::report($vars);
+    }
 }
 
 sub post_bug_after_creation {

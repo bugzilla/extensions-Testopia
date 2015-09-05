@@ -806,7 +806,7 @@ sub test_search_plans
 	my $self = shift;
 	
 	#Show search plan
-    $sel->open("tr_show_plan.cgi");
+    $sel->open("page.cgi?id=tr_show_plan.html");
     $sel->wait_for_page_to_load(TIMEOUT);
     #$sel->pause(30000);
     $self->assert($sel->is_text_present("Choose a Test Plan"),
@@ -825,7 +825,7 @@ sub test_show_plans
 	my $self = shift;
 	
 	#Show case
-    $sel->open("tr_show_plan.cgi?plan_id=" . TEST_PLAN_1);
+    $sel->open("page.cgi?id=tr_show_plan.html&plan_id=" . TEST_PLAN_1);
     $sel->wait_for_page_to_load(TIMEOUT);
     #$sel->pause(30000);
     $self->assert($sel->is_text_present("Plan List"),

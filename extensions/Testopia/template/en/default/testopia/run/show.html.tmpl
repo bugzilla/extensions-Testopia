@@ -99,7 +99,7 @@ Ext.onReady(function(){
                         buttons: Ext.Msg.OK,
                         icon: Ext.MessageBox.INFO
                     });
-                    window.location="tr_show_plan.cgi?plan_id=" + run.plan.id;
+                    window.location="page.cgi?id=tr_show_plan.html&plan_id=" + run.plan.id;
                 },
                 failure: Testopia.Util.error
             });
@@ -512,7 +512,7 @@ Ext.onReady(function(){
       <th>Start Date</th>
       </tr>
     <tr class="bz_row_data">
-      <td><a href="tr_show_plan.cgi?plan_id=[% run.plan.id FILTER none %]">[% run.plan.name FILTER html %]</a></td>
+      <td><a href="page.cgi?id=tr_show_plan.html&plan_id=[% run.plan.id FILTER none %]">[% run.plan.name FILTER html %]</a></td>
       <td>[% run.plan_text_version FILTER html %]</td>
       <td>[% run.start_date FILTER time %]</td>
       </tr>
