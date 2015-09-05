@@ -147,7 +147,7 @@ sub test_search_cases
 	my $self = shift;
 	
 	#Show search case
-    $sel->open("tr_show_case.cgi");
+    $sel->open("page.cgi?id=tr_show_case.html");
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("Search by Test Case Number"),
                   "Did not display 'Search by Test Case Number' in test_search_cases.");
@@ -165,7 +165,7 @@ sub test_show_cases
 	my $self = shift;
 	
 	#Show case
-    $sel->open("tr_show_case.cgi?case_id=" . TEST_CASE_1);
+    $sel->open("page.cgi?id=tr_show_case.html&case_id=" . TEST_CASE_1);
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("Case List"),
                   "Did not display 'Case List' in test_show_cases.");

@@ -34,7 +34,7 @@
 [% IF table && list > 0 %]
 [% curr = lsearch(list, case.id) %]
 [% IF curr != -1 && (curr > 0) %]
-  <a href="tr_show_case.cgi?case_id=[% list.first %]">&lt;&lt;&nbsp;First</a>
+  <a href="page.cgi?id=tr_show_case.html&case_id=[% list.first %]">&lt;&lt;&nbsp;First</a>
 [% ELSE %]
   <i><font color="#777777">&lt;&lt;First</font></i>  
 [% END %]
@@ -43,7 +43,7 @@
     [% IF curr != -1 %]
       [% IF curr > 0 %]
         [% prev = curr - 1 %]
-        <a href="tr_show_case.cgi?case_id=[% list.$prev %]">&lt;&nbsp;Prev</a>
+        <a href="page.cgi?id=tr_show_case.html&case_id=[% list.$prev %]">&lt;&nbsp;Prev</a>
       [% ELSE %]
         <i><font color="#777777">Prev</font></i>
       [% END %]
@@ -54,7 +54,7 @@
 
       [% IF curr + 1 < list.size %]
         [% next = curr + 1 %]
-        <a href="tr_show_case.cgi?case_id=[% list.$next %]">Next&nbsp;&gt;</a>
+        <a href="page.cgi?id=tr_show_case.html&case_id=[% list.$next %]">Next&nbsp;&gt;</a>
       [% ELSE %]
         <i><font color="#777777">Next</font></i>
       [% END %]
@@ -64,7 +64,7 @@
   [% END %]
 
 [% IF curr != -1 && (curr + 1 < list.size) %]
-  <a href="tr_show_case.cgi?case_id=[% list.last %]">Last&nbsp;&gt;&gt;</a>
+  <a href="page.cgi?id=tr_show_case.html&case_id=[% list.last %]">Last&nbsp;&gt;&gt;</a>
 [% ELSE %]
     <i><font color="#777777">Last&gt;&gt;</font></i>
 [% END %]

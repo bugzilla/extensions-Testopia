@@ -414,6 +414,53 @@ sub product_confirm_delete {
     $vars->{'testopia_product'} = new Bugzilla::Extension::Testopia::Product($vars->{product}->id);
 }
 
+sub page_before_template {
+    my ($self, $args) = @_;
+    my $page = $args->{'page_id'};
+    my $vars = $args->{'vars'};
+
+    if ($page eq 'tr_admin.html') {
+        require Bugzilla::Extension::Testopia::Admin;
+        Bugzilla::Extension::Testopia::Admin::report($vars);
+    }
+    elsif ($page eq 'tr_case_reports.html') {
+        require Bugzilla::Extension::Testopia::Reports::Case;
+        Bugzilla::Extension::Testopia::Reports::Case::report($vars);
+    }
+    elsif ($page eq 'tr_caserun_reports.html') {
+        require Bugzilla::Extension::Testopia::Reports::CaseRun;
+        Bugzilla::Extension::Testopia::Reports::CaseRun::report($vars);
+    }
+    elsif ($page eq 'tr_plan_reports.html') {
+        require Bugzilla::Extension::Testopia::Reports::Plan;
+        Bugzilla::Extension::Testopia::Reports::Plan::report($vars);
+    }
+    elsif ($page eq 'tr_product_reports.html') {
+        require Bugzilla::Extension::Testopia::Reports::Product;
+        Bugzilla::Extension::Testopia::Reports::Product::report($vars);
+    }
+    elsif ($page eq 'tr_run_reports.html') {
+        require Bugzilla::Extension::Testopia::Reports::Run;
+        Bugzilla::Extension::Testopia::Reports::Run::report($vars);
+    }
+    elsif ($page eq 'tr_list_cases.html') {
+        require Bugzilla::Extension::Testopia::List::Cases;
+        Bugzilla::Extension::Testopia::List::Cases::report($vars);
+    }
+    elsif ($page eq 'tr_list_plans.html') {
+        require Bugzilla::Extension::Testopia::List::Plans;
+        Bugzilla::Extension::Testopia::List::Plans::report($vars);
+    }
+    elsif ($page eq 'tr_show_plan.html') {
+        require Bugzilla::Extension::Testopia::Show::Plan;
+        Bugzilla::Extension::Testopia::Show::Plan::report($vars);
+    }
+    elsif ($page eq 'tr_show_case.html') {
+        require Bugzilla::Extension::Testopia::Show::Case;
+        Bugzilla::Extension::Testopia::Show::Case::report($vars);
+    }
+}
+
 sub webservice {
     my ($self, $args) = @_;
     

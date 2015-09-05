@@ -2057,7 +2057,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                 }, {
                     text: 'View Test Case in a New Window',
                     handler: function(){
-                        window.open('tr_show_case.cgi?case_id=' + grid.store.getAt(grid.selindex).get('case_id'));
+                        window.open('page.cgi?id=tr_show_case.html&case_id=' + grid.store.getAt(grid.selindex).get('case_id'));
                     }
                 }, {
                     text: 'List These Test Cases in a New Window',

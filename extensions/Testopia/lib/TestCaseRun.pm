@@ -757,7 +757,7 @@ sub update_bugs {
         }
         
         my $comment  = "Status updated by Testopia:  ". Bugzilla->params->{"urlbase"};
-           $comment .= "tr_show_case.cgi?case_id=" . $self->case->id;
+           $comment .= "page.cgi?id=tr_show_case.html&case_id=" . $self->case->id;
           
         $dbh->bz_start_transaction();
         

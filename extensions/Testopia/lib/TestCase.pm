@@ -1570,7 +1570,7 @@ sub update_deps {
     if (scalar(@isect) > 0) {
         my $both = "";
         foreach my $i (@isect) {
-           $both .= "<a href=\"tr_show_case.cgi?case_id=$i\">$i</a> " ;
+           $both .= "<a href=\"page.cgi?id=tr_show_case.html&case_id=$i\">$i</a> " ;
         }
         ThrowUserError("dependency_loop_multi", { both => $both });
     }

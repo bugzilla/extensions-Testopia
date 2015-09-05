@@ -977,7 +977,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
                         var case_ids = Testopia.Util.getSelectedObjects(grid, 'case_id').split(',');
                         var i;
                         for (i = 0; i < case_ids.length; i += 1) {
-                            window.open('tr_show_case.cgi?case_id=' + case_ids[i]);
+                            window.open('page.cgi?id=tr_show_case.html&case_id=' + case_ids[i]);
                         }
                     }
                 }]
@@ -1325,7 +1325,7 @@ Testopia.TestCase.NewCaseForm = function(plan_ids, product_id, run_id){
                             icon: Ext.MessageBox.QUESTION,
                             fn: function(btn){
                                 if (btn == 'yes') {
-                                    window.location = 'tr_show_case.cgi?case_id=' + data.result.tc;
+                                    window.location = 'page.cgi?id=tr_show_case.html&case_id=' + data.result.tc;
                                 }
                             }
                         });
@@ -1676,7 +1676,7 @@ Testopia.TestCase.Clone = function(product_id, cases){
                                     icon: Ext.MessageBox.QUESTION,
                                     fn: function(btn){
                                         if (btn == 'yes') {
-                                            window.location = 'tr_show_case.cgi?case_id=' + data.result.tclist[0];
+                                            window.location = 'page.cgi?id=tr_show_case.html&case_id=' + data.result.tclist[0];
                                         }
                                     }
                                 });
