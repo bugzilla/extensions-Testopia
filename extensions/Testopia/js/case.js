@@ -1358,7 +1358,7 @@ Testopia.TestCase.NewCaseForm = function(plan_ids, product_id, run_id){
                         Ext.getCmp('newcase-win').close();
                     }
                     else {
-                        window.location = 'tr_show_product.cgi';
+                        window.location = 'page.cgi?id=tr_show_product.html';
                     }
                 } 
                 catch (err) {
@@ -1717,7 +1717,7 @@ Testopia.TestCase.Clone = function(product_id, cases){
                     Ext.getCmp('case-clone-win').close();
                 } 
                 catch (err) {
-                    window.location = 'tr_show_product.cgi';
+                    window.location = 'page.cgi?id=tr_show_product.html';
                 }
             }
         }]

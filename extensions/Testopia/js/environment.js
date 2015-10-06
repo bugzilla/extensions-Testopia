@@ -89,7 +89,7 @@ Testopia.Environment.Grid = function(params, cfg){
         return '<a href="tr_environments.cgi?env_id=' + id + '">' + id + '</a>';
     }
     function productLink(id){
-        return '<a href="tr_show_product.cgi?product_id=' + id + '">' + id + '</a>';
+        return '<a href="page.cgi?id=tr_show_product.html&product_id=' + id + '">' + id + '</a>';
     }
     
     this.store = new Testopia.Environment.Store(params, false);

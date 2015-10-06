@@ -987,7 +987,7 @@ Testopia.TestRun.NewRunForm = function(plan){
                     Ext.getCmp('newRun-win').close();
                 } 
                 catch (err) {
-                    window.location = 'tr_show_product.cgi';
+                    window.location = 'page.cgi?id=tr_show_product.html';
                 }
             }
         }]

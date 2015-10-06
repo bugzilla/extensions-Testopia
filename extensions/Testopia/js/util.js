@@ -571,8 +571,9 @@ Testopia.Util.updateFromList = function(type, params, grid){
     var form = new Ext.form.BasicForm('testopia_helper_frm', {});
     params.ctype = 'json';
     params.action = 'update';
+    params.id = 'tr_list_' + type + 's.html';
     form.submit({
-        url: 'tr_list_' + type + 's.cgi',
+        url: 'page.cgi',
         params: params,
         success: function(f, a){
             if (type == 'caserun') {

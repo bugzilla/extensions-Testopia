@@ -20,7 +20,7 @@
   #                 Greg Hendricks <ghendricks@novell.com>
   #%]
   
-<a href="tr_show_product.cgi?product_id=[% case.plans.0.product_id FILTER none %]">Product: [% case.plans.0.product.name FILTER html %]</a>
+<a href="page.cgi?id=tr_show_product.html&product_id=[% case.plans.0.product_id FILTER none %]">Product: [% case.plans.0.product.name FILTER html %]</a>
 &nbsp;&gt;&nbsp;
 [% IF plan_id %]
 <a href="page.cgi?id=tr_show_plan.html&plan_id=[% plan_id FILTER none %]">Plan: [% plan_id FILTER html %]</a>

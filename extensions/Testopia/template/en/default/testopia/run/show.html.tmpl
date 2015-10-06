@@ -522,7 +522,7 @@ Ext.onReady(function(){
       <th>Stop Date</th>
       </tr>
     <tr class="bz_row_data">
-      <td><a href="tr_show_product.cgi?product_id=[% run.plan.product.id FILTER none %]">[% run.plan.product.name FILTER html %]</a></td>
+      <td><a href="page.cgi?id=tr_show_product.html&product_id=[% run.plan.product.id FILTER none %]">[% run.plan.product.name FILTER html %]</a></td>
       <td>[% IF run.canedit %]
           [% PROCESS select sel = { name  => 'product_version',
                                     list  => run.plan.product.versions,

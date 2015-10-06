@@ -69,7 +69,7 @@
                             buttons: Ext.Msg.OK,
                             icon: Ext.MessageBox.INFO
                         });
-                        window.location = 'tr_show_product.cgi?product_id=' + plan.product_id;
+                        window.location = 'page.cgi?id=tr_show_product.html&product_id=' + plan.product_id;
                     },
                     failure: Testopia.Util.error
                 });
@@ -578,7 +578,7 @@
       <th>Created</th>
     </tr>
     <tr class="bz_row_data">
-      <td><a href="tr_show_product.cgi?product_id=[% plan.product_id FILTER none %]">[% plan.product.name FILTER html %]</a></td>
+      <td><a href="page.cgi?id=tr_show_product.html&product_id=[% plan.product_id FILTER none %]">[% plan.product.name FILTER html %]</a></td>
       <td>[% IF plan.canedit %]
           [% PROCESS select sel = { name  => 'product_version',
                                     list  => plan.product.versions,

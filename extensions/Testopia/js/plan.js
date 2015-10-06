@@ -833,7 +833,7 @@ Testopia.TestPlan.NewPlanForm = function(product_id){
                     Ext.getCmp('newplan-win').close();
                 }
                 else {
-                    window.location = 'tr_show_product.cgi';
+                    window.location = 'page.cgi?id=tr_show_product.html';
                 }
             }
         }]

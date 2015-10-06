@@ -48,7 +48,7 @@ Testopia.Search.save = function(type, params){
                 ntype = 1;
             }
             else {
-                loc = 'tr_list_' + type + 's.cgi?';
+                loc = 'page.cgi?id=tr_list_' + type + 's.html&';
                 ntype = 0;
             }
             loc = loc + Testopia.Util.JSONToURLQuery(params, '', ['ctype']);
@@ -810,7 +810,7 @@ Ext.extend(Testopia.Search.SavedReportsList, Ext.grid.GridPanel, {
                         plain: true,
                         shadow: false,
                         items: [new Ext.form.TextField({
-                            value: encodeURI(l.protocol + '//' + l.host + pathprefix + '/' + 'tr_show_product.cgi?dashboard=' + r.get('name') + '&userid=' + Testopia_user.id),
+                            value: encodeURI(l.protocol + '//' + l.host + pathprefix + '/' + 'page.cgi?id=tr_show_product.html&dashboard=' + r.get('name') + '&userid=' + Testopia_user.id),
                             width: 287
                         })]
                     });
@@ -974,7 +974,7 @@ Testopia.Search.LinkPopup = function(params){
         file = 'tr_' + params.current_tab + '_reports.cgi';
     }
     else {
-        file = 'tr_list_' + params.current_tab + 's.cgi';
+        file = 'page.cgi?id=tr_list_' + params.current_tab + 's.html';
     }
     var l = window.location;
     var pathprefix = l.pathname.match(/(.*)[\/\\]([^\/\\]+\.\w+)$/);
