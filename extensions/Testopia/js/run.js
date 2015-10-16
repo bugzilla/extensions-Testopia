@@ -23,9 +23,10 @@
 Testopia.TestRun.Grid = function(params, cfg){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
     params.current_tab = 'run';
+    params.id = 'tr_list_runs.html';
     this.params = params;
     this.store = new Ext.data.JsonStore({
-        url: 'tr_list_runs.cgi',
+        url: 'page.cgi',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: params,
         totalProperty: 'totalResultsAvailable',
@@ -727,8 +728,9 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                 if (btn == 'yes') {
                     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
                     testopia_form.submit({
-                        url: 'tr_list_runs.cgi',
+                        url: 'page.cgi',
                         params: {
+                            id: 'tr_list_runs.html',
                             run_ids: Testopia.Util.getSelectedObjects(grid, 'run_id'),
                             action: 'delete'
                         },
@@ -1091,7 +1093,7 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
                         msg = a.result.failures.length > 0 ? a.result.failures.join.length + ' Test cases were not included. They are either DISABLED or PROPOSED. <a href="page.cgi?id=tr_list_cases.html&case_id=' + a.result.failures.join(',') + '">View List</a> <br>' : '';
                         Ext.Msg.show({
                             title: 'Test Run Copied',
-                            msg: msg + a.result.runlist.length + ' Test runs Copied successfully. <a href="tr_list_runs.cgi?run_id=' + a.result.runlist.join(',') + '">View List</a>',
+                            msg: msg + a.result.runlist.length + ' Test runs Copied successfully. <a href="page.cgi?id=tr_list_runs.html&run_id=' + a.result.runlist.join(',') + '">View List</a>',
                             buttons: Ext.Msg.OK,
                             icon: Ext.MessageBox.INFO
                         });
@@ -1116,7 +1118,7 @@ Testopia.TestRun.CloneForm = function(product_id, runs, caselist){
         }, {
             region: 'center',
             xtype: 'form',
-            url: 'tr_list_runs.cgi',
+            url: 'page.cgi?id=tr_list_runs.html',
             title: 'Clone Options',
             autoScroll: true,
             id: 'run_clone_frm',

@@ -43,7 +43,7 @@ sub report {
     ThrowUserError("invalid-test-id-non-existent", {'type' => 'run', id => $run_id}) unless $run;
     ThrowUserError("testopia-permission-denied", {'object' => $run}) unless $run->canview;
 
-    $vars->{'table'} = Bugzilla::Extension::Testopia::Table->new('run', 'tr_list_runs.cgi', $cgi);
+    $vars->{'table'} = Bugzilla::Extension::Testopia::Table->new('run', 'page.cgi?id=tr_list_runs.html', $cgi);
     $vars->{'caserun'} = Bugzilla::Extension::Testopia::TestCaseRun->new({});
     $vars->{'case'} = Bugzilla::Extension::Testopia::TestCase->new({});
     $vars->{'run'} = $run;

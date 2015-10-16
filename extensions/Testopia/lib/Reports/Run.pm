@@ -307,7 +307,7 @@ sub report {
 
     $input->{'current_tab', 'run'};
     $input->{'viewall', 1};
-    my $report = Bugzilla::Extension::Testopia::Report->new('run', 'tr_list_runs.cgi', $cgi);
+    my $report = Bugzilla::Extension::Testopia::Report->new('run', 'page.cgi?id=tr_list_runs.html', $cgi);
     $vars->{'report'} = $report;
 
     ### From Bugzilla report.cgi by Gervase Markham

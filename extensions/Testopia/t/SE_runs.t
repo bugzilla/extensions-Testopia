@@ -77,10 +77,10 @@ sub test_list_plans
 {
 	my $self = shift;
 	
-    $sel->open("tr_list_runs.cgi");
+    $sel->open("page.cgi?id=tr_list_runs.html");
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("Test Runs"), 
-           "Failed to find 'Test Runs' on 'tr_list_runs.cgi'");
+           "Failed to find 'Test Runs' on 'page.cgi?id=tr_list_runs.html'");
 }
 
 =item test_update_without_ids
@@ -94,9 +94,10 @@ sub test_list_update_without_ids
 	my $self = shift;
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_runs.html"
 	    }
 	};
 	
@@ -104,7 +105,7 @@ sub test_list_update_without_ids
     
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{\"success\":false"), 
-           "Failed to find '{\"success\":false' on tr_list_runs.cgi when updating without ids");;
+           "Failed to find '{\"success\":false' on page.cgi?id=tr_list_runs.html when updating without ids");;
 }
 
 =item test_update_with_ids
@@ -118,9 +119,10 @@ sub test_list_update_with_ids
 	my $self = shift;
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_runs.html",
 	    	ids => TEST_RUN_1
 	    }
 	};
@@ -129,7 +131,7 @@ sub test_list_update_with_ids
     
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true}"), 
-           "Failed to find '{'success': true}' on tr_list_runs.cgi when updating with ids");;
+           "Failed to find '{'success': true}' on page.cgi?id=tr_list_runs.html when updating with ids");;
 }
 
 =item test_list_update_manager
@@ -152,9 +154,10 @@ sub test_list_update_manager
 	my $currentManagerId = $ref->{manager_id};
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_runs.html",
 	    	ids => TEST_RUN_1,
 	    	manager => PARTNER_USER_ID
 	    }
@@ -163,7 +166,7 @@ sub test_list_update_manager
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true}"), 
-           "Failed to find '{'success': true}' on tr_list_runs.cgi when updating manager");;
+           "Failed to find '{'success': true}' on page.cgi?id=tr_list_runs.html when updating manager");;
 	
 	#check to see if value updated correctly
     $ref = $dbh->selectrow_hashref(
@@ -212,9 +215,10 @@ sub test_list_update_build
 	my $currentBuildId = $ref->{build_id};
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_runs.html",
 	    	ids => TEST_RUN_1,
 	    	build => TEST_BUILD_3
 	    }
@@ -223,7 +227,7 @@ sub test_list_update_build
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true}"), 
-           "Failed to find '{'success': true}' on tr_list_runs.cgi when updating build");;
+           "Failed to find '{'success': true}' on page.cgi?id=tr_list_runs.html when updating build");;
 	
 	#check to see if value updated correctly
     $ref = $dbh->selectrow_hashref(
@@ -272,9 +276,10 @@ sub test_list_update_environment
 	my $currentEnvironmentId = $ref->{environment_id};
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_runs.html",
 	    	ids => TEST_RUN_1,
 	    	environment => TEST_ENV_3
 	    }
@@ -283,7 +288,7 @@ sub test_list_update_environment
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true}"), 
-           "Failed to find '{'success': true}' on tr_list_runs.cgi when updating environment");;
+           "Failed to find '{'success': true}' on page.cgi?id=tr_list_runs.html when updating environment");;
 	
 	#check to see if value updated correctly
     $ref = $dbh->selectrow_hashref(
@@ -326,9 +331,10 @@ sub test_list_clone_using_current_user_as_manager_and_tests_deleting
     my $summary = "Selenium Summary - " . localtime();
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "clone",
 	    params => {
+                id => "tr_list_runs.html",
 	    	ids => TEST_RUN_1 . "," . TEST_RUN_3,
 	    	plan_ids => TEST_PLAN_1 . "," . TEST_PLAN_2,
 	    	new_run_environment => TEST_ENV_3,
@@ -340,7 +346,7 @@ sub test_list_clone_using_current_user_as_manager_and_tests_deleting
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true"), 
-           "Failed to find '{'success': true' on tr_list_runs.cgi when cloning runs.");;
+           "Failed to find '{'success': true' on page.cgi?id=tr_list_runs.html when cloning runs.");;
 	
 	#test the first clone
 	my $ref = $dbh->selectrow_hashref(
@@ -432,9 +438,10 @@ sub test_list_clone_using_current_user_as_manager_and_tests_deleting
 	
 	#delete all created runs
 	my $test2 = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "delete",
 	    params => {
+                id => "tr_list_runs.html",
 	    	run_ids => $clone_id1 . "," . $clone_id2 .
 	    	"," . $clone_id3 . "," . $clone_id4
 	    }
@@ -442,7 +449,7 @@ sub test_list_clone_using_current_user_as_manager_and_tests_deleting
     $sel->open(Testopia::Test::Selenium::Util::format_url($test2));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true"), 
-           "Failed to find '{'success': true' on tr_list_runs.cgi when cloning runs.");;
+           "Failed to find '{'success': true' on page.cgi?id=tr_list_runs.html when cloning runs.");;
 	
 	#Make sure it is deleted
 	$ref = $dbh->selectrow_hashref(
@@ -471,9 +478,10 @@ sub test_list_clone_using_existing_user_as_manager_and_tests_deleting
     my $summary = "Selenium Summary - " . localtime();
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "clone",
 	    params => {
+                id => "tr_list_runs.html",
 	    	ids => TEST_RUN_1,
 	    	plan_ids => TEST_PLAN_1,
 	    	new_run_environment => TEST_ENV_3,
@@ -486,7 +494,7 @@ sub test_list_clone_using_existing_user_as_manager_and_tests_deleting
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true"), 
-           "Failed to find '{'success': true' on tr_list_runs.cgi when cloning runs.");;
+           "Failed to find '{'success': true' on page.cgi?id=tr_list_runs.html when cloning runs.");;
 	
 	#test the first clone
 	my $ref = $dbh->selectrow_hashref(
@@ -512,16 +520,17 @@ sub test_list_clone_using_existing_user_as_manager_and_tests_deleting
 	
 	#delete all created runs
 	my $test2 = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "delete",
 	    params => {
+                id => "tr_list_runs.html",
 	    	run_ids => $clone_id1
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test2));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true"), 
-           "Failed to find '{'success': true' on tr_list_runs.cgi when cloning runs.");;
+           "Failed to find '{'success': true' on page.cgi?id=tr_list_runs.html when cloning runs.");;
 	
 	#Make sure it is deleted
 	$ref = $dbh->selectrow_hashref(
@@ -547,9 +556,10 @@ sub test_list_clone_testing_copy_cases_without_case_list
     my $summary = "Selenium Summary - " . localtime();
     
     my $test = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "clone",
 	    params => {
+                id => "tr_list_runs.html",
 	    	ids => TEST_RUN_1,
 	    	plan_ids => TEST_PLAN_1,
 	    	new_run_environment => TEST_ENV_3,
@@ -563,7 +573,7 @@ sub test_list_clone_testing_copy_cases_without_case_list
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true"), 
-           "Failed to find '{'success': true' on tr_list_runs.cgi when cloning runs.");;
+           "Failed to find '{'success': true' on page.cgi?id=tr_list_runs.html when cloning runs.");;
 	
 	#test the first clone
 	my $ref = $dbh->selectrow_hashref(
@@ -602,16 +612,17 @@ sub test_list_clone_testing_copy_cases_without_case_list
 	
 	#delete all created runs
 	my $test2 = {
-	    url => "tr_list_runs.cgi",
+	    url => "page.cgi",
 	    action => "delete",
 	    params => {
+                id => "tr_list_runs.html",
 	    	run_ids => $clone_id1
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test2));
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("{'success': true"), 
-           "Failed to find '{'success': true' on tr_list_runs.cgi when cloning runs.");;
+           "Failed to find '{'success': true' on page.cgi?id=tr_list_runs.html when cloning runs.");;
 }
 
 
