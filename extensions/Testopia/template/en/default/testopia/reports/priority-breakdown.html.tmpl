@@ -96,7 +96,7 @@
           </tr>
           [% FOREACH p = priorities.keys.sort %]
           <tr>
-            <td style="border-right: 2px solid black; font-weight: bold; text-align: left;">[% p FILTER no_break %]</td>
+            <td class="nowrap" style="border-right: 2px solid black; font-weight: bold; text-align: left;">[% p FILTER html %]</td>
             <td class="idle_cell"><a href="page.cgi?id=tr_list_caseruns.html&run_id=[% runs FILTER uri %]&build_id=[% builds FILTER uri %]&isactive=0&case_run_status=IDLE" target="_blank">[% priorities.$p.idle FILTER none %]</a></td>
             <td class="passed_cell"><a href="page.cgi?id=tr_list_caseruns.html&run_id=[% runs FILTER uri %]&build_id=[% builds FILTER uri %]&isactive=0&case_run_status=PASSED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.passed FILTER none %]</a></td>
             <td class="failed_cell"><a href="page.cgi?id=tr_list_caseruns.html&run_id=[% runs FILTER uri %]&build_id=[% builds FILTER uri %]&isactive=0&case_run_status=FAILED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.failed FILTER none %]</a></td>
@@ -123,7 +123,7 @@
           </tr>
           [% FOREACH p = priorities.keys.sort %]
           <tr>
-            <td style="border-right: 2px solid black; font-weight: bold; text-align: left;">[% p FILTER no_break %]</td>
+            <td class="nowrap" style="border-right: 2px solid black; font-weight: bold; text-align: left;">[% p FILTER html %]</td>
             <td class="idle_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=IDLE&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.idle FILTER none %]</a></td>
             <td class="passed_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=PASSED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.passed FILTER none %]</a></td>
             <td class="failed_cell"><a href="page.cgi?id=tr_show_run.html&run_id=[% runs FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=FAILED&priority=[% p FILTER uri %]" target="_blank">[% priorities.$p.failed FILTER none %]</a></td>
