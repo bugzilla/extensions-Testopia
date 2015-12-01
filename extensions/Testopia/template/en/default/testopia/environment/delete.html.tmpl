@@ -44,7 +44,7 @@ Environment Deleted
 [% IF environment.get_run_count OR environment.case_run_count %]
 
 <b>This environment is being used by <a href="page.cgi?id=tr_list_runs.html&environment_id=[% environment.id FILTER none %]">[% environment.get_run_count FILTER none %]
-test runs</a> and <a href="tr_list_caseruns.cgi?environment_id=[% environment.id FILTER none %]">[% environment.case_run_count FILTER none %] case-runs</a>. 
+test runs</a> and <a href="page.cgi?id=tr_list_caseruns.html&environment_id=[% environment.id FILTER none %]">[% environment.case_run_count FILTER none %] case-runs</a>. 
 
 These will also be deleted.</b>
 [% END %]

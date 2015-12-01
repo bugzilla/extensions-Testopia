@@ -76,10 +76,10 @@
 <table style="margin-top: 15px;">
   <tr><th>PASSED</th><th>FAILED</th><th>BLOCKED</th><th>TOTAL</th><tr>
   <tr style="align: center">
-    <td class="passed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=PASSED" target="_blank">[% passed FILTER html %]</a></td>
-    <td class="failed_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=FAILED" target="_blank">[% failed FILTER html %]</a></td>
-    <td class="blocked_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=BLOCKED" target="_blank">[% blocked FILTER html %]</a></td>
-    <td class="complete_cell"><a href="tr_list_caseruns.cgi?run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=BLOCKED" target="_blank">[% total FILTER html %]</a></td>
+    <td class="passed_cell"><a href="page.cgi?id=tr_list_caseruns.html&run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=PASSED" target="_blank">[% passed FILTER html %]</a></td>
+    <td class="failed_cell"><a href="page.cgi?id=tr_list_caseruns.html&run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=FAILED" target="_blank">[% failed FILTER html %]</a></td>
+    <td class="blocked_cell"><a href="page.cgi?id=tr_list_caseruns.html&run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=BLOCKED" target="_blank">[% blocked FILTER html %]</a></td>
+    <td class="complete_cell"><a href="page.cgi?id=tr_list_caseruns.html&run_id=[% runs.join(',') FILTER uri %]&closed_from=[% closed_from FILTER uri %]&closed_to=[% closed_to FILTER uri %]&case_run_status=PASSED&case_run_status=FAILED&case_run_status=BLOCKED" target="_blank">[% total FILTER html %]</a></td>
   <tr>
 </table>
 </div>

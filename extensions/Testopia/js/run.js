@@ -537,7 +537,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                         }, {
                             text: 'Case Roll-up Report',
                             handler: function(){
-                                window.open('tr_list_caseruns.cgi?report_type=rollup&run_ids=' + Testopia.Util.getSelectedObjects(grid, 'run_id'));
+                                window.open('page.cgi?id=tr_list_caseruns.html&report_type=rollup&run_ids=' + Testopia.Util.getSelectedObjects(grid, 'run_id'));
                             }
                         }]
                     }
@@ -679,7 +679,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
                 },{
                     text: 'Export Results as CSV',
                     handler: function(){
-                        window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&run_id=' + Testopia.Util.getSelectedObjects(grid, 'run_id');
+                        window.location = 'page.cgi?id=tr_list_caseruns.html&ctype=csv&viewall=1&run_id=' + Testopia.Util.getSelectedObjects(grid, 'run_id');
                     }
                 }]
             });

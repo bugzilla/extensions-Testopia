@@ -922,9 +922,10 @@ Testopia.TestCaseRun.Filter = function(){
 Ext.extend(Testopia.TestCaseRun.Filter, Ext.Panel);
 
 Testopia.TestCaseRun.List = function(params, cfg){
+    params.id = 'tr_list_caseruns.html';
     this.params = params;
     this.store = new Ext.data.GroupingStore({
-        url: 'tr_list_caseruns.cgi',
+        url: 'page.cgi',
         baseParams: params,
         reader: new Ext.data.JsonReader({
             totalProperty: 'totalResultsAvailable',
@@ -1128,7 +1129,7 @@ Testopia.TestCaseRun.List = function(params, cfg){
         iconCls: 'img_button_16x',
         tooltip: 'Export Results to CSV',
         handler: function(){
-            window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery( Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams, '', ['viewall', 'ctype']);
+            window.location = 'page.cgi?id=tr_list_caseruns.html&ctype=csv&viewall=1&' + Testopia.Util.JSONToURLQuery( Ext.getCmp(cfg.id || 'caserun_list_grid').store.baseParams, '', ['viewall', 'ctype']);
         }
     },{
         xtype: 'button',
@@ -1184,8 +1185,9 @@ Ext.extend(Testopia.TestCaseRun.List, Ext.grid.GridPanel, {
                 if (btn == 'yes') {
                     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
                     testopia_form.submit({
-                        url: 'tr_list_caseruns.cgi',
+                        url: 'page.cgi',
                         params: {
+                            id: 'tr_list_caseruns.html',
                             caserun_ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id'),
                             action: 'delete',
                             deltype: 'cr',
@@ -1218,6 +1220,7 @@ Ext.extend(Testopia.TestCaseRun.List, Ext.grid.GridPanel, {
 
 Testopia.TestCaseRun.Grid = function(params, run){
     params.limit = Ext.state.Manager.get('TESTOPIA_DEFAULT_PAGE_SIZE', 25);
+    params.id = 'tr_list_caseruns.html';
     this.params = params;
     this.run = run;
     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm', {});
@@ -1240,7 +1243,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
         }
     };
     this.store = new Ext.data.GroupingStore({
-        url: 'tr_list_caseruns.cgi',
+        url: 'page.cgi',
         baseParams: params,
         reader: new Ext.data.JsonReader({
             totalProperty: 'totalResultsAvailable',
@@ -1647,7 +1650,7 @@ Testopia.TestCaseRun.Grid = function(params, run){
             iconCls: 'img_button_16x',
             tooltip: 'Export Results to CSV',
             handler: function(){
-                window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&run_id=' + run.run_id;
+                window.location = 'page.cgi?id=tr_list_caseruns.html&ctype=csv&viewall=1&run_id=' + run.run_id;
             }
         }, {
             xtype: 'button',
@@ -2190,8 +2193,9 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                 handler: function(){
                     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
                     testopia_form.submit({
-                        url: 'tr_list_caseruns.cgi',
+                        url: 'page.cgi',
                         params: {
+                            id: 'tr_list_caseruns.html',
                             caserun_ids: Testopia.Util.getSelectedObjects(grid, 'caserun_id'),
                             action: 'delete',
                             deltype: Ext.getCmp('delete_cases_radio_group').getGroupValue(),
@@ -2273,8 +2277,9 @@ Testopia.TestCaseRun.Info = function(){
     appendNote = function(){
         var form = new Ext.form.BasicForm('testopia_helper_frm', {});
         form.submit({
-            url: 'tr_list_caseruns.cgi',
+            url: 'page.cgi',
             params: {
+                id: 'tr_list_caseruns.html',
                 action: 'update',
                 note: Ext.getCmp('caserun_append_note_fld').getValue(),
                 ids: Testopia.Util.getSelectedObjects(Ext.getCmp('caserun_grid'), 'caserun_id')

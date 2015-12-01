@@ -30,7 +30,7 @@ sub report {
 
     $input->{'current_tab'} = 'case_run';
     $input->{'viewall'} = 1;
-    my $report = Bugzilla::Extension::Testopia::Report->new('caserun', 'tr_list_caseruns.cgi', $cgi);
+    my $report = Bugzilla::Extension::Testopia::Report->new('caserun', 'page.cgi?id=tr_list_caseruns.html', $cgi);
     $vars->{'report'} = $report;
     $vars->{'qname'} = $input->{'qname'};
 

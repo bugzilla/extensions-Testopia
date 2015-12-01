@@ -78,7 +78,7 @@ sub test_list_caseruns
 {
 	my $self = shift;
 	
-	$sel->open("tr_list_caseruns.cgi");
+	$sel->open("page.cgi?id=tr_list_caseruns.html");
     $sel->wait_for_page_to_load(TIMEOUT);
     $self->assert($sel->is_text_present("Case Run History"),
                   "'tr_list_caseruns' failed to display 'Case Run History'");
@@ -95,9 +95,10 @@ sub test_update
 	my $self = shift;
 	
     my $test = {
-	    url => "tr_list_caseruns.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id => "tr_list_caseruns.html",
 	    	ids => TEST_RUN_1
 	    }
 	};
@@ -129,9 +130,10 @@ sub test_update_status_id
 	
 	#update status id
     my $test = {
-	    url => "tr_list_caseruns.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id              => "tr_list_caseruns.html",
 	    	ids 		=> TEST_CASERUN_1,
 	    	status_id	=> 2
 	    }
@@ -199,9 +201,10 @@ sub test_update_assignee
 	
 	#update assignee
     my $test = {
-	    url => "tr_list_caseruns.cgi",
+	    url => "page.cgi",
 	    action => "update",
 	    params => {
+                id              => "tr_list_caseruns.html",
 	    	ids 		=> TEST_CASERUN_1,
 	    	assignee	=> PARTNER_USER_LOGIN
 	    }
@@ -268,9 +271,10 @@ sub test_delete
     
     #Perform deletion
     my $test = {
-	    url => "tr_list_caseruns.cgi",
+	    url => "page.cgi",
 	    action => "delete",
 	    params => {
+                id              => "tr_list_caseruns.html",
 	    	ids 		=> $del_cr
 	    }
 	};

@@ -124,7 +124,7 @@
                 menu: [{
                     text: 'Test Results as CSV',
                     handler: function(){
-                        window.location = 'tr_list_caseruns.cgi?ctype=csv&viewall=1&plan_id=[% plan.id FILTER none %]';
+                        window.location = 'page.cgi?id=tr_list_caseruns.html&ctype=csv&viewall=1&plan_id=[% plan.id FILTER none %]';
                     }
                 },{
                     text: 'Cases as CSV',
@@ -344,7 +344,7 @@
                 }, {
                     text: 'Case Roll-up Report',
                     handler: function(){
-                        window.open('tr_list_caseruns.cgi?report_type=rollup&plan_ids=' + plan.plan_id);
+                        window.open('page.cgi?id=tr_list_caseruns.html&report_type=rollup&plan_ids=' + plan.plan_id);
                     }
                 }]
             }]

@@ -120,7 +120,7 @@ sub report {
                     $cgi->delete('plan_ids');
 
                     my $search = Bugzilla::Extension::Testopia::Search->new($cgi);
-                    my $table = Bugzilla::Extension::Testopia::Table->new('case_run', 'tr_list_caseruns.cgi', $cgi, undef, $search->query);
+                    my $table = Bugzilla::Extension::Testopia::Table->new('case_run', 'page.cgi?id=tr_list_caseruns.html', $cgi, undef, $search->query);
 
                     @caseruns = @{$table->list};
                 }

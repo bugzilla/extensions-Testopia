@@ -26,7 +26,8 @@
    obj = caserun
 %]   
 [% ELSE %]
-<form id="caserun_search_form" action="tr_list_caseruns.cgi" method="GET">
+<form id="caserun_search_form" action="page.cgi" method="GET">
+  <input type="hidden" name="id" value="tr_list_caseruns.html">
 [% END %]
   <input type="hidden" name="current_tab" value="[% current_tab FILTER none %]">
 <fieldset>

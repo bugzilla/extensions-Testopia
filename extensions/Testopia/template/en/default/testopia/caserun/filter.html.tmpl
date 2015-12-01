@@ -18,8 +18,9 @@
   # Contributor(s): Greg Hendricks <ghendricks@novell.com>
   #%]
 <div id="caserun-filter-div" style="visibility:hidden">
-<form method="GET" action="tr_list_caseruns.cgi" id="caserun_filter_form">
-<input type="hidden" name="run_id" value="[% run.id FILTER none %]" />
+<form method="GET" action="page.cgi" id="caserun_filter_form">
+<input type="hidden" name="id" value="tr_list_caseruns.html">
+<input type="hidden" name="run_id" value="[% run.id FILTER none %]">
 <input type="hidden" name="current_tab" value="case_run" />
 [% query = table.get_query_part %]
 <table>
