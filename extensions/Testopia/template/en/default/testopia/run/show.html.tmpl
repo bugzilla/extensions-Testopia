@@ -40,7 +40,7 @@ Ext.onReady(function(){
     var testopia_form = new Ext.form.BasicForm('testopia_helper_frm',{});
     
     function submitEdits(field, value){
-        var params = {action: 'edit', run_id: run.run_id};
+        var params = {id: 'tr_process_run.html', action: 'edit', run_id: run.run_id};
         switch(field){
             case 'run_product_version': 
                 params.run_product_version = value;
@@ -71,7 +71,7 @@ Ext.onReady(function(){
                 break;
         }
         testopia_form.submit({
-            url: 'tr_process_run.cgi',
+            url: 'page.cgi',
             params: params,
             success: function(f,a){
                 Testopia.Util.notify.msg('Test Run updated', 'Test Run {0} was updated successfully', field);
@@ -90,8 +90,8 @@ Ext.onReady(function(){
         if (btn == 'yes'){
             var form = new Ext.form.BasicForm("testopia_helper_frm",{});
             form.submit({
-                url: 'tr_process_run.cgi',
-                params: {run_id: run.run_id, action:'delete'},
+                url: 'page.cgi',
+                params: {id: 'tr_process_run.html', run_id: run.run_id, action:'delete'},
                 success: function(data){
                     Ext.Msg.show({
                         title:'Test Run Deleted',

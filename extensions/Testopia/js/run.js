@@ -693,6 +693,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
     onGridEdit: function(e){
         var ds = this.store;
         var myparams = e.record.data;
+        myparams.id = 'tr_process_run.html';
         myparams.action = 'edit';
         status = myparams.status;
         delete myparams.status;
@@ -702,7 +703,7 @@ Ext.extend(Testopia.TestRun.Grid, Ext.grid.GridPanel, {
             delete myparams.manager;
         }
         this.form.submit({
-            url: "tr_process_run.cgi",
+            url: "page.cgi",
             params: myparams,
             success: function(f, a){
                 myparams.manager = manager;
@@ -1416,9 +1417,10 @@ Testopia.TestRun.AddCasePopup = function(run){
 Testopia.TestRun.FiltersList = function(run){
 
     this.store = new Ext.data.JsonStore({
-        url: 'tr_process_run.cgi',
+        url: 'page.cgi',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
+            id: 'tr_process_run.html',
             action: 'getfilters',
             run_id: run.run_id
         },
@@ -1498,8 +1500,9 @@ Ext.extend(Testopia.TestRun.FiltersList, Ext.grid.GridPanel, {
                     handler: function(){
                         var form = new Ext.form.BasicForm('testopia_helper_frm', {});
                         form.submit({
-                            url: 'tr_process_run.cgi',
+                            url: 'page.cgi',
                             params: {
+                                id: 'tr_process_run.html',
                                 action: 'delete_filter',
                                 query_name: grid.store.getAt(index).get('name'),
                                 run_id: grid.store.baseParams.run_id

@@ -22,11 +22,12 @@
 
 [% PROCESS testopia/blocks.html.tmpl %]
 
-<form method="POST" action="tr_process_run.cgi" id="run_clone_frm">
-<input type="hidden" name="action" value="clone" /> 
-<input type="hidden" name="ctype" value="json" /> 
-<input type="hidden" name="run_id" value="[% run.id FILTER none %]" />
-<input type="hidden" name="case_list" value="[% case_list FILTER html %]" />
+<form method="POST" action="page.cgi" id="run_clone_frm">
+<input type="hidden" name="id" value="tr_process_run.html">
+<input type="hidden" name="action" value="clone"> 
+<input type="hidden" name="ctype" value="json"> 
+<input type="hidden" name="run_id" value="[% run.id FILTER none %]">
+<input type="hidden" name="case_list" value="[% case_list FILTER html %]">
 
 <table border="0" cellspacing="4">
   <tr>

@@ -868,10 +868,11 @@ Testopia.TestCaseRun.Filter = function(){
                 }
                 var testopia_form = new Ext.form.BasicForm('testopia_helper_frm', {});
                 var params = searchform.getValues();
+                params.id = 'tr_process_run.html';
                 params.action = 'save_filter';
                 params.query_name = Ext.getCmp('caserun_save_filter_txt').getValue();
                 testopia_form.submit({
-                    url: 'tr_process_run.cgi',
+                    url: 'page.cgi',
                     params: params,
                     success: function(){
                         Ext.getCmp('run_east_panel').activate('run_filter_grid');
