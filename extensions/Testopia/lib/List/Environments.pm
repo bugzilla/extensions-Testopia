@@ -14,15 +14,10 @@ use Bugzilla::Config;
 use Bugzilla::Constants;
 use Bugzilla::Error;
 
+use Bugzilla::Extension::Testopia::Constants;
 use Bugzilla::Extension::Testopia::Search;
 use Bugzilla::Extension::Testopia::Table;
 use Bugzilla::Extension::Testopia::Util;
-use Bugzilla::Extension::Testopia::TestRun;
-use Bugzilla::Extension::Testopia::Environment;
-use Bugzilla::Extension::Testopia::Environment::Element;
-use Bugzilla::Extension::Testopia::Environment::Category;
-use Bugzilla::Extension::Testopia::Environment::Property;
-use Bugzilla::Extension::Testopia::Constants;
 use Bugzilla::Extension::Testopia::Product;
 
 sub report {

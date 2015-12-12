@@ -16,13 +16,11 @@ use Bugzilla::User;
 use Bugzilla::Error;
 use Bugzilla::Constants;
 
+use Bugzilla::Extension::Testopia::Constants;
 use Bugzilla::Extension::Testopia::Util;
 use Bugzilla::Extension::Testopia::TestCase;
-use Bugzilla::Extension::Testopia::Category;
 use Bugzilla::Extension::Testopia::TestCaseRun;
-use Bugzilla::Extension::Testopia::TestTag;
-use Bugzilla::Extension::Testopia::Attachment;
-use Bugzilla::Extension::Testopia::Constants;
+use Bugzilla::Extension::Testopia::TestPlan;
 use JSON;
 
 sub report {
