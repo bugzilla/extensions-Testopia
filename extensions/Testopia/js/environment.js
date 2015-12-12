@@ -20,9 +20,10 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 Testopia.Environment.Store = function(params, auto){
+    params.id = 'tr_list_environments.html';
     params.ctype = 'json';
     Testopia.Environment.Store.superclass.constructor.call(this, {
-        url: 'tr_list_environments.cgi',
+        url: 'page.cgi',
         listeners: {
             'exception': Testopia.Util.loadError
         },

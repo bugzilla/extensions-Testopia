@@ -76,7 +76,7 @@ SKIP: {
 sub test_list{
 	my $self = shift;
 
-    $se->open("tr_list_environments.cgi?ctype=json");
+    $se->open("page.cgi?id=tr_list_environments.html&ctype=json");
     $se->wait_for_page_to_load(TIMEOUT);
     ok($se->is_text_present('totalResultsAvailable'), "basic list - environments");
     

@@ -363,6 +363,10 @@ sub page_before_template {
         require Bugzilla::Extension::Testopia::List::Cases;
         Bugzilla::Extension::Testopia::List::Cases::report($vars);
     }
+    elsif ($page eq 'tr_list_environments.html') {
+        require Bugzilla::Extension::Testopia::List::Environments;
+        Bugzilla::Extension::Testopia::List::Environments::report($vars);
+    }
     elsif ($page eq 'tr_list_plans.html') {
         require Bugzilla::Extension::Testopia::List::Plans;
         Bugzilla::Extension::Testopia::List::Plans::report($vars);
