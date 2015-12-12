@@ -375,10 +375,11 @@ sub test_archive
 	
 	# Test setting archieve status
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => $isactive ? "archive" : "unarchive",
-	    params => {
-    	    plan_id => TEST_PLAN_1
+	    url     => "page.cgi",
+	    action  => $isactive ? "archive" : "unarchive",
+	    params  => {
+                id      => "tr_process_plan.html",
+    	        plan_id => TEST_PLAN_1
 	    }
 	};
 	
@@ -431,16 +432,17 @@ sub test_clone_and_delete
 	
 	# Test Cloning with keeping permissions
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "clone",
-	    params => {
-    	    plan_id 			=> TEST_PLAN_1,
-    	    plan_name 			=> "Selenium Plan Clone Test - " . localtime(),
-    	    product_id 			=> TEST_PRODUCT,
-    	    prod_version	 	=>TEST_PRODUCT_VERSION,
-    	    copy_tags	 		=> "1",
-    	    copy_attachments	=> "1",
-    	    copy_cases			=> "1"
+	    url     => "page.cgi",
+	    action  => "clone",
+	    params  => {
+                id                  => "tr_process_plan.html",
+    	        plan_id 	    => TEST_PLAN_1,
+    	        plan_name 	    => "Selenium Plan Clone Test - " . localtime(),
+    	        product_id 	    => TEST_PRODUCT,
+    	        prod_version	    => TEST_PRODUCT_VERSION,
+    	        copy_tags	    => "1",
+    	        copy_attachments    => "1",
+    	        copy_cases	    => "1"
 	    }
 	};
 	$sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -456,10 +458,11 @@ sub test_clone_and_delete
 	              
     # Delete the the plan 
     $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "delete",
-	    params => {
-    	    plan_id => $del_plan
+	    url     => "page.cgi",
+	    action  => "delete",
+	    params  => {
+                id      => "tr_process_plan.html",
+    	        plan_id => $del_plan
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -482,17 +485,18 @@ sub test_clone_with_permissions_and_delete
 	
 	# Test Cloning with keeping permissions
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "clone",
-	    params => {
-    	    plan_id => TEST_PLAN_1,
-    	    plan_name => "Selenium Plan Clone Test - " . localtime(),
-			product_id => TEST_PRODUCT,
-	        prod_version => TEST_PRODUCT_VERSION, 
-	        copy_tags => "1",
-	        copy_attachments => "1",
-	        copy_perms => "1",
-	        copy_cases => "1"
+	    url     => "page.cgi",
+	    action  => "clone",
+	    params  => {
+                id                  => "tr_process_plan.html",
+    	        plan_id             => TEST_PLAN_1,
+    	        plan_name           => "Selenium Plan Clone Test - " . localtime(),
+		product_id          => TEST_PRODUCT,
+	        prod_version        => TEST_PRODUCT_VERSION, 
+	        copy_tags           => "1",
+	        copy_attachments    => "1",
+	        copy_perms          => "1",
+	        copy_cases          => "1"
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -506,10 +510,11 @@ sub test_clone_with_permissions_and_delete
 	              
     # Delete the the plan 
     $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "delete",
-	    params => {
-    	    plan_id => $del_plan
+	    url     => "page.cgi",
+	    action  => "delete",
+	    params  => {
+                id      => "tr_process_plan.html",
+    	        plan_id => $del_plan
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -539,11 +544,12 @@ sub test_edit_version
 	
 	# Test Editing a document
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "edit",
-	    params => {
-    	    plan_id => TEST_PLAN_1,
-    	    prod_version => TEST_PRODUCT_VERSION_2
+	    url     => "page.cgi",
+	    action  => "edit",
+	    params  => {
+                id              => "tr_process_plan.html",
+    	        plan_id         => TEST_PLAN_1,
+    	        prod_version    => TEST_PRODUCT_VERSION_2
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -600,11 +606,12 @@ sub test_edit_type
 	
 	# Test Editing a document
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "edit",
-	    params => {
-    	    plan_id => TEST_PLAN_1,
-    	    type => TEST_PLAN_TYPE
+	    url     => "page.cgi",
+	    action  => "edit",
+	    params  => {
+                id      => "tr_process_plan.html",
+    	        plan_id => TEST_PLAN_1,
+    	        type    => TEST_PLAN_TYPE
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -663,11 +670,12 @@ sub test_edit_name
 	
 	# Test Editing a document
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "edit",
-	    params => {
-    	    plan_id => TEST_PLAN_1,
-    	    name => $new_name
+	    url     => "page.cgi",
+	    action  => "edit",
+	    params  => {
+                id      => "tr_process_plan.html",
+    	        plan_id => TEST_PLAN_1,
+    	        name    => $new_name
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -730,11 +738,12 @@ sub test_edit_plandoc
 	
 	# Test Editing a document
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "edit",
-	    params => {
-    	    plan_id => TEST_PLAN_1,
-    	    plandoc => $new_plan_text
+	    url     => "page.cgi",
+	    action  => "edit",
+	    params  => {
+                id      => "tr_process_plan.html",
+    	        plan_id => TEST_PLAN_1,
+    	        plandoc => $new_plan_text
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));
@@ -788,10 +797,11 @@ sub test_noaction
 	              
 	# Test Editing a document
 	my $test = {
-	    url => "tr_process_plan.cgi",
-	    action => "badaction",
-	    params => {
-    	    plan_id => TEST_PLAN_1
+	    url     => "page.cgi",
+	    action  => "badaction",
+	    params  => {
+                id      => "tr_process_plan.html",
+    	        plan_id => TEST_PLAN_1
 	    }
 	};
     $sel->open(Testopia::Test::Selenium::Util::format_url($test));

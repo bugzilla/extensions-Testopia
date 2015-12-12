@@ -700,9 +700,10 @@ Ext.extend(Testopia.TestPlan.Grid, Ext.grid.GridPanel, {
     onGridEdit: function(e){
         var ds = this.store;
         var myparams = e.record.data;
+        myparams.id = 'tr_process_plan.html',
         myparams.action = 'edit';
         this.form.submit({
-            url: "tr_process_plan.cgi",
+            url: 'page.cgi',
             params: myparams,
             success: function(f, a){
                 ds.commitChanges();
@@ -937,8 +938,9 @@ Testopia.TestPlan.ClonePanel = function(plan){
     }
     Testopia.TestPlan.ClonePanel.superclass.constructor.call(this, {
         id: 'plan_clone_panel',
-        url: 'tr_process_plan.cgi',
+        url: 'page.cgi',
         baseParams: {
+            id: 'tr_process_plan.html',
             action: 'clone'
         },
         bodyStyle: 'padding: 10px',

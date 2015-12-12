@@ -60,8 +60,8 @@
         var planDelete = function(btn){
             if (btn == 'yes'){
                 testopia_form.submit({
-                    url: 'tr_process_plan.cgi',
-                    params: {plan_id: plan.plan_id, action:'delete'},
+                    url: 'page.cgi',
+                    params: {id:'tr_process_plan.html', plan_id: plan.plan_id, action:'delete'},
                     success: function(data){
                         Ext.Msg.show({
                             title:'Test Plan Deleted',
@@ -89,8 +89,8 @@
                 checked: [% plan.isactive ? 'false' : 'true' %],
                 checkHandler: function(i,c){
                     testopia_form.submit({
-                        url: 'tr_process_plan.cgi',
-                        params: {action: c ? 'archive':'unarchive' , plan_id: plan.plan_id},
+                        url: 'page.cgi',
+                        params: {id: 'tr_process_plan.html', action: c ? 'archive':'unarchive' , plan_id: plan.plan_id},
                         success: function(){
                             Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'archival');
                             if (c){
@@ -424,8 +424,8 @@
                             disabled: plan.canedit ? false : true,
                             handler: function(){
                                 testopia_form.submit({
-                                    url: 'tr_process_plan.cgi',
-                                    params: {action: 'edit', plandoc: Ext.getCmp('plan_doc').getValue(), plan_id: plan.plan_id},
+                                    url: 'page.cgi',
+                                    params: {id: 'tr_process_plan.html', action: 'edit', plandoc: Ext.getCmp('plan_doc').getValue(), plan_id: plan.plan_id},
                                     success: function(){
                                         Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'Document');
                                     },
@@ -471,8 +471,8 @@
         });
         vbox.on('select', function(c,r,i){
             testopia_form.submit({
-                url: 'tr_process_plan.cgi',
-                params: {action: 'edit', prod_version: r.get('value'), plan_id: plan.plan_id},
+                url: 'page.cgi',
+                params: {id: 'tr_process_plan.html', action: 'edit', prod_version: r.get('value'), plan_id: plan.plan_id},
                 success: function(){
                     Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'Product Version');
                 },
@@ -494,8 +494,8 @@
         });
         types.on('select', function(c,r,i){
             testopia_form.submit({
-                url: 'tr_process_plan.cgi',
-                params: {action: 'edit', type: r.get('value'), plan_id: plan.plan_id},
+                url: 'page.cgi',
+                params: {id: 'tr_process_plan.html', action: 'edit', type: r.get('value'), plan_id: plan.plan_id},
                 success: function(){
                     Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'type');
                 },
@@ -527,8 +527,8 @@
         });
         plan_name_edt.on('complete', function(e,v,sv){
             testopia_form.submit({
-                url: 'tr_process_plan.cgi',
-                params: {action: 'edit', name: v, plan_id: plan.plan_id},
+                url: 'page.cgi',
+                params: {id: 'tr_process_plan.html', action: 'edit', name: v, plan_id: plan.plan_id},
                 success: function(){
                     Testopia.Util.notify.msg('Plan updated', 'Plan {0} was updated successfully', 'name');
                 },

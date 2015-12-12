@@ -809,8 +809,9 @@ Testopia.TestRun.NewRunForm = function(plan){
             listeners: {
                 'render': function(p){
                     p.load({
-                        url: 'tr_process_plan.cgi',
+                        url: 'page.cgi',
                         params: {
+                            id: 'tr_process_plan.html',
                             action: 'getfilter',
                             plan_id: plan.plan_id
                         },
@@ -1344,8 +1345,9 @@ Testopia.TestRun.AddCaseForm = function(run){
             listeners: {
                 'render': function(p){
                     p.load({
-                        url: 'tr_process_plan.cgi',
+                        url: 'page.cgi',
                         params: {
+                            id: 'tr_process_plan.html',
                             action: 'getfilter',
                             plan_id: run.plan_id
                         },
