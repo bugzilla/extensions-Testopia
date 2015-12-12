@@ -992,6 +992,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
     onGridEdit: function(e){
         var ds = this.store;
         var myparams = e.record.data;
+        myparams.id = 'tr_process_case.html';
         myparams.action = 'edit';
         var tester;
         if (!myparams.tester.match('@')){
@@ -999,7 +1000,7 @@ Ext.extend(Testopia.TestCase.Grid, Ext.grid.GridPanel, {
             delete myparams.tester;
         }
         this.form.submit({
-            url: "tr_process_case.cgi",
+            url: "page.cgi",
             params: myparams,
             success: function(f, a){
                 if (tester)
@@ -1398,8 +1399,9 @@ Testopia.TestCase.PlanList = function(tcid, product_id){
     this.remove = function(){
         var form = new Ext.form.BasicForm('testopia_helper_frm', {});
         form.submit({
-            url: 'tr_process_case.cgi',
+            url: 'page.cgi',
             params: {
+                id: 'tr_process_case.html',
                 action: 'unlink',
                 plan_id: Testopia.Util.getSelectedObjects(Ext.getCmp('case_plan_grid'), 'plan_id'),
                 case_id: tcid
@@ -1411,9 +1413,10 @@ Testopia.TestCase.PlanList = function(tcid, product_id){
         });
     };
     this.store = new Ext.data.JsonStore({
-        url: 'tr_process_case.cgi',
+        url: 'page.cgi',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
+            id: 'tr_process_case.html',
             action: 'getplans',
             case_id: tcid
         },
@@ -1466,8 +1469,9 @@ Testopia.TestCase.PlanList = function(tcid, product_id){
         handler: function(){
             var form = new Ext.form.BasicForm('testopia_helper_frm', {});
             form.submit({
-                url: 'tr_process_case.cgi',
+                url: 'page.cgi',
                 params: {
+                    id: 'tr_process_case.html',
                     action: 'link',
                     plan_ids: newplan.getValue(),
                     case_id: tcid

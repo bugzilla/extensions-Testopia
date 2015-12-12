@@ -33,10 +33,11 @@ Testopia.TestCase.Bugs.Grid = function(id){
     
     this.tcid = tcid;
     this.store = new Ext.data.JsonStore({
-        url: 'tr_process_case.cgi',
+        url: 'page.cgi',
         root: 'bugs',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
+            id: 'tr_process_case.html',
             action: 'getbugs'
         },
         fields: [{
@@ -145,8 +146,9 @@ Testopia.TestCase.Bugs.Grid = function(id){
         }
         
         var store = new Ext.data.Store({
-            url: 'tr_process_case.cgi',
+            url: 'page.cgi',
             baseParams: {
+                id: 'tr_process_case.html',
                 action: 'case_to_bug',
                 case_id: this.tcid,
                 caserun_id: caserun_id
@@ -390,10 +392,11 @@ Testopia.TestCase.Components = function(id){
     }
     this.tcid = tcid;
     this.store = new Ext.data.JsonStore({
-        url: 'tr_process_case.cgi',
+        url: 'page.cgi',
         root: 'comps',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
+            id: 'tr_process_case.html',
             action: 'getcomponents'
         },
         id: 'component_id',
@@ -468,8 +471,9 @@ Testopia.TestCase.Components = function(id){
             return;
         }
         testopia_form.submit({
-            url: 'tr_process_case.cgi',
+            url: 'page.cgi',
             params: {
+                id: 'tr_process_case.html',
                 action: 'addcomponent',
                 component_id: compchooser.getValue(),
                 case_id: this.tcid
@@ -504,8 +508,9 @@ Testopia.TestCase.Components = function(id){
             return;
         }
         testopia_form.submit({
-            url: 'tr_process_case.cgi',
+            url: 'page.cgi',
             params: {
+                id: 'tr_process_case.html',
                 action: 'removecomponent',
                 component_id: Testopia.Util.getSelectedObjects(Ext.getCmp('case_comps_panel'), 'id'),
                 case_id: this.tcid
@@ -2294,6 +2299,7 @@ Testopia.TestCaseRun.Info = function(){
     processText = function(){
         var testopia_form = new Ext.form.BasicForm('testopia_helper_frm', {});
         var params = {};
+        params.id = 'tr_process_case.html';
         params.tcsetup = Ext.getCmp('setup_editor').getValue();
         params.tcbreakdown = Ext.getCmp('breakdown_editor').getValue();
         params.tcaction = Ext.getCmp('action_editor').getValue();
@@ -2301,7 +2307,7 @@ Testopia.TestCaseRun.Info = function(){
         params.case_id = Ext.getCmp('caserun_grid').getSelectionModel().getSelected().get('case_id');
         params.action = 'update_doc';
         testopia_form.submit({
-            url: 'tr_process_case.cgi',
+            url: 'page.cgi',
             params: params,
             success: function(){
                 Testopia.Util.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'Document');

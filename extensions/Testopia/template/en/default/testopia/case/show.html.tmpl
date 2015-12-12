@@ -52,8 +52,8 @@ Ext.onReady(function(){
     var caseDelete = function(btn){
         if (btn == 'yes'){
             testopia_form.submit({
-                url: 'tr_process_case.cgi',
-                params: {case_id: tcase.case_id, action:'delete'},
+                url: 'page.cgi',
+                params: {id:'tr_process_case.html', case_id: tcase.case_id, action:'delete'},
                 success: function(data){
                     Ext.Msg.show({
                         title:'Test Case Deleted',
@@ -69,7 +69,7 @@ Ext.onReady(function(){
     };
 
     function submitEdits(field, value){
-        var params = {action: 'edit', case_id: tcase.case_id};
+        var params = {id: 'tr_process_case.html', action: 'edit', case_id: tcase.case_id};
         switch(field){
             case 'priority': 
                 params.priority = value;
@@ -97,7 +97,7 @@ Ext.onReady(function(){
                 break;
         }
         testopia_form.submit({
-            url: 'tr_process_case.cgi',
+            url: 'page.cgi',
             params: params,
             success: function(){
                 Testopia.Util.notify.msg('Test Case updated', 'Test Case {0} was updated successfully', field);
@@ -109,6 +109,7 @@ Ext.onReady(function(){
 
     function processText(){
         var params = {};
+        params.id = 'tr_process_case.html';
         params.tcsetup = Ext.getCmp('setup_editor').getValue();
         params.tcbreakdown = Ext.getCmp('breakdown_editor').getValue();
         params.tcaction = Ext.getCmp('action_editor').getValue();
@@ -116,7 +117,7 @@ Ext.onReady(function(){
         params.case_id = tcase.case_id;
         params.action = 'update_doc';
         testopia_form.submit({
-            url: 'tr_process_case.cgi',
+            url: 'page.cgi',
             method: 'POST',
             params: params,
             success: function(){
@@ -302,12 +303,13 @@ Ext.onReady(function(){
                     disabled: tcase.canedit ? false : true,
                     handler: function(){
                         var params = {};
+                        params.id = 'tr_process_case.html';
                         params.tcdependson = Ext.getCmp('tcdependson').getValue();
                         params.tcblocks = Ext.getCmp('tcblocks').getValue();
                         params.action = 'edit';
                         params.case_id = tcase.case_id;
                         testopia_form.submit({
-                            url: 'tr_process_case.cgi',
+                            url: 'page.cgi',
                             params: params,
                             success: function(f,a){
                                 var blocked = '';
@@ -404,11 +406,12 @@ Ext.onReady(function(){
                     disabled: tcase.canedit ? false : true,
                     handler: function(){
                         var params = Ext.getCmp('case_automation_frm').getForm().getValues();
+                        params.id = 'tr_process_case.html';
                         params.case_id = tcase.case_id;
                         params.action = 'edit';
                         params.isautomated = params['ncf-automated-checkbox'] == 'on' ? 'on' : 'off';
                         testopia_form.submit({
-                            url: 'tr_process_case.cgi',
+                            url: 'page.cgi',
                             params: params,
                             success: function(){
                                 Testopia.Util.notify.msg('Test case updated', 'Test Case {0} was updated successfully', 'automation');

@@ -9,9 +9,9 @@
     <comment><![CDATA[[% IF caserun %]STATUS: [% caserun.status %]
 BUILD: [% caserun.build.name FILTER none %]
 ENVIRONMENT: [% caserun.environment.name FILTER none %][% END %]
-STEPS TO REPRODUCE: [% case.text.action FILTER none %]
+STEPS TO REPRODUCE: [% case.text.action FILTER txt %]
 
-EXPECTED OUTCOME: [% case.text.effect FILTER none %]]]></comment>
+EXPECTED OUTCOME: [% case.text.effect FILTER txt %]]]></comment>
     <assigned_to>[% case.components.0.default_assignee.login FILTER xml %]</assigned_to>
     <qa_contact>[% case.components.0.default_qa_contact.login FILTER xml %]</qa_contact>
 </newbug>
