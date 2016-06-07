@@ -20,10 +20,11 @@
  *                 Daniel Parker <dparker1@novell.com>
  */
 
-Testopia.Build.Store = function(params, auto){
+Testopia.Build.Store = function(params, auto) {
+    params.id = 'tr_builds.html';
     params.action = 'list';
     Testopia.Build.Store.superclass.constructor.call(this, {
-        url: 'tr_builds.cgi',
+        url: 'page.cgi',
         root: 'builds',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: params,
@@ -223,7 +224,7 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.GridPanel, {
                                     autoScroll: true,
                                     tools: PortalTools
                                 });
-                                newPortlet.url = 'tr_builds.cgi?action=report&product_id=' + grid.product_id + '&build_ids=' + Testopia.Util.getSelectedObjects(grid, 'id');
+                                newPortlet.url = 'page.cgi?id=tr_builds.html&action=report&product_id=' + grid.product_id + '&build_ids=' + Testopia.Util.getSelectedObjects(grid, 'id');
                                 Testopia.Search.dashboard_urls.push(newPortlet.url);
                                 Ext.getCmp('dashboard_leftcol').add(newPortlet);
                                 Ext.getCmp('dashboard_leftcol').doLayout();
@@ -261,6 +262,7 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.GridPanel, {
     onGridEdit: function(e){
         var myparams = e.record.data;
         var ds = this.store;
+        myparams.id = "tr_builds.html";
         myparams.product_id = this.product_id;
         if (myparams.build_id) {
             myparams.action = "edit";
@@ -269,7 +271,7 @@ Ext.extend(Testopia.Build.Grid, Ext.grid.GridPanel, {
             myparams.action = "add";
         }
         this.form.submit({
-            url: "tr_builds.cgi",
+            url: "page.cgi",
             params: myparams,
             success: function(f, a){
                 if (a.result.build_id) {

@@ -82,7 +82,7 @@
     [% title = "No Builds Defined" %]
     No builds have been created for this product yet.
     [% IF plan %]
-    You can create builds <a href="tr_builds.cgi?product_id=[% plan.product.id FILTER none %]">
+    You can create builds <a href="page.cgi?id=tr_builds.html&product_id=[% plan.product.id FILTER none %]">
     here</a>.
     [% END %]
   [% ELSIF error == "testopia-create-environment" %]
