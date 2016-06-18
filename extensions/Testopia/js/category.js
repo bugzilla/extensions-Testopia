@@ -19,10 +19,11 @@
  *                 Ryan Hamilton <rhamilton@novell.com>
  *                 Daniel Parker <dparker1@novell.com>
  */
-Testopia.Category.Store = function(params, auto){
+Testopia.Category.Store = function(params, auto) {
+    params.id = 'tr_categories.html';
     params.action = 'list';
     Testopia.Category.Store.superclass.constructor.call(this, {
-        url: 'tr_categories.cgi',
+        url: 'page.cgi',
         root: 'categories',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: params,
@@ -203,6 +204,7 @@ Ext.extend(Testopia.Category.Grid, Ext.grid.GridPanel, {
     onGridEdit: function(e){
         var myparams = e.record.data;
         var ds = this.store;
+        myparams.id = "tr_categories.html";
         myparams.product_id = this.product_id;
         if (myparams.category_id) {
             myparams.action = "edit";
@@ -211,7 +213,7 @@ Ext.extend(Testopia.Category.Grid, Ext.grid.GridPanel, {
             myparams.action = "add";
         }
         this.form.submit({
-            url: "tr_categories.cgi",
+            url: "page.cgi",
             params: myparams,
             success: function(f, a){
                 if (a.result.category_id) {
@@ -260,8 +262,9 @@ Testopia.Category.remove = function(){
             if (btn == 'yes') {
                 var testopia_form = new Ext.form.BasicForm('testopia_helper_frm');
                 testopia_form.submit({
-                    url: 'tr_categories.cgi',
+                    url: 'page.cgi',
                     params: {
+                        id: 'tr_categories.html',
                         category_id: Ext.getCmp('category_grid').getSelectionModel().getSelected().get('category_id'),
                         action: 'delete',
                         product_id: Ext.getCmp('category_grid').product_id

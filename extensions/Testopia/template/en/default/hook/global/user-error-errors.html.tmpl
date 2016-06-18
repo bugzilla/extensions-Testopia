@@ -75,7 +75,7 @@
     [% title = "No Categories Defined" %]
     No categories have been created for this product yet.
     [% IF plan %]
-    You can create categories <a href="tr_categories.cgi?product_id=[% plan.product.id FILTER none %]">
+    You can create categories <a href="page.cgi?id=tr_categories.html&product_id=[% plan.product.id FILTER none %]">
     here</a>.
     [% END %]
   [% ELSIF error == "testopia-create-build" %]
