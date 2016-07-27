@@ -56,7 +56,7 @@ As our development has moved forward, we have decided to try to keep abreast of 
 - Notification emails
 - More Reports
 
-See the [Roadmap](http://wiki.mozilla.org/Testopia:Roadmap) and [Bug List](https://bugzilla.mozilla.org/buglist.cgi?query_format=advanced&amp;short_desc_type=allwordssubstr&amp;short_desc=&amp;product=Testopia&amp;long_desc_type=substring&amp;long_desc=&amp;bug_file_loc_type=allwordssubstr&amp;bug_file_loc=&amp;status_whiteboard_type=allwordssubstr&amp;status_whiteboard=&amp;keywords_type=allwords&amp;keywords=&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;emailassigned_to1=1&amp;emailtype1=exact&amp;email1=&amp;emailassigned_to2=1&amp;emailreporter2=1&amp;emailqa_contact2=1&amp;emailtype2=exact&amp;email2=&amp;bugidtype=include&amp;bug_id=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;cmdtype=doit&amp;order=Reuse+same+sort+as+last+time&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=) for more details.
+See the [Roadmap](http://wiki.mozilla.org/Testopia:Roadmap) and [Bug List](https://bugzilla.mozilla.org/buglist.cgi?quicksearch=prod%3DTestopia) for more details.
 
 ## Links
 
