@@ -409,7 +409,7 @@ else{
         $vars->{'resolution'}   = convert_bugzilla_fields('resolution');
     }
     else{
-        print "Location: tr_show_product.cgi?search=1 \n\n";
+        print "Location: page.cgi?id=tr_show_product.html&search=1 \n\n";
         exit;
     }
     print $cgi->header;
