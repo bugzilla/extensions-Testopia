@@ -1438,9 +1438,9 @@ class Testopia(object):
 
         Example: testrun_list(run_id=20, run_id_type='lessthan')
 
-        Result: A list of TestCase dictionaries
+        Result: A list of TestRun dictionaries
         """
-        return self.do_command("TestCase.list", [self._options_ne_dict(
+        return self.do_command("TestRun.list", [self._options_ne_dict(
                    self._number_option('run_id', run_id),
                    self._search_op('runid_type', run_id_type),
                    self._number_option('build_id', build_id),
