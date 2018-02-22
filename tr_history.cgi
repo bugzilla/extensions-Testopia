@@ -25,7 +25,7 @@ my $cgi = Bugzilla->cgi;
 
 my $action = $cgi->param("action");
 
-print "Location: tr_show_product.cgi\n\n" unless $action;
+print "Location: page.cgi?id=tr_show_product.html\n\n" unless $action;
 
 print $cgi->header;
 
