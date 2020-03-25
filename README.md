@@ -76,7 +76,7 @@ See the [Roadmap](http://wiki.mozilla.org/Testopia:Roadmap) and [Bug List](https
 - [Archived Versions](https://ftp.mozilla.org/pub/mozilla.org/webtools/testopia/)
 
 ## Developers
-Ryan Wilson (former developer) 
+Ryan Wilson (former developer)  
 Greg Hendricks (former developer)  
 Vance Baarda (former developer)  
 Ed Fuentetaja (former developer)  
