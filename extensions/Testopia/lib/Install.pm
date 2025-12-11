@@ -13,7 +13,7 @@ use warnings;
 use Bugzilla::Constants;
 
 sub bz_version {
-    BUGZILLA_VERSION =~ /^(\d+\.\d+)(?:(rc|\.)(\d+))?\+?$/;
+    BUGZILLA_VERSION =~ /^(\d+\.\d+)((?:rc|\.)\d+)?/;
 
     # There are no DB schema changes on stable branches so
     # we don't care about minor releases.
