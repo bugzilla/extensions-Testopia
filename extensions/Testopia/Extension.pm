@@ -359,6 +359,10 @@ sub page_before_template {
         require Bugzilla::Extension::Testopia::Reports::CaseRun;
         Bugzilla::Extension::Testopia::Reports::CaseRun::report($vars);
     }
+    elsif ($page eq 'tr_caserun.html') {
+        require Bugzilla::Extension::Testopia::CaseRun;
+        Bugzilla::Extension::Testopia::CaseRun::report($vars);
+    }
     elsif ($page eq 'tr_categories.html') {
         require Bugzilla::Extension::Testopia::Categories;
         Bugzilla::Extension::Testopia::Categories::report($vars);

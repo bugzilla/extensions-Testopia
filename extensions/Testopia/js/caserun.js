@@ -654,9 +654,10 @@ Testopia.TestCase.Bugs.update = function(grid){
 
 Testopia.TestCaseRun.History = function(){
     this.store = new Ext.data.JsonStore({
-        url: 'tr_caserun.cgi',
+        url: 'page.cgi',
         listeners: { 'exception': Testopia.Util.loadError },
         baseParams: {
+            id: 'tr_caserun.html',
             action: 'gethistory'
         },
         root: 'records',
@@ -2090,6 +2091,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
     },
     onGridEdit: function(gevent){
         var myparams = {
+            id: 'tr_caserun.html',
             caserun_id: gevent.record.get('caserun_id')
         };
         var ds = this.store;
@@ -2121,7 +2123,7 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
                 break;
         }
         this.form.submit({
-            url: "tr_caserun.cgi",
+            url: "page.cgi",
             params: myparams,
             success: function(f, a){
                 if (a.result.caserun) {
@@ -2241,8 +2243,9 @@ Ext.extend(Testopia.TestCaseRun.Grid, Ext.grid.EditorGridPanel, {
 Testopia.TestCaseRun.Info = function(){
     this.caserun_id;
     this.store = new Ext.data.Store({
-        url: 'tr_caserun.cgi',
+        url: 'page.cgi',
         baseParams: {
+            id: 'tr_caserun.html',
             action: 'gettext'
         },
         reader: new Ext.data.XmlReader({
